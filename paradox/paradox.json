@@ -1,7 +1,7 @@
 {
   "packageName": "INFRA",
   "packageId": "@ankhorage/infra",
-  "description": "Provider-neutral infrastructure generation for Ankhorage apps: turns app manifests, datasets, auth, state, storage, and deployment config into generated infra artifacts, migrations, seeds, APIs, and runtime dependencies.",
+  "description": "Provider-neutral infrastructure generation: turns app manifests, datasets, auth, state, storage, and deployment config into generated infra artifacts, migrations, seeds, APIs, and runtime dependencies.",
   "badges": [
     {
       "id": "license",
@@ -61,7 +61,9 @@
   "usage": null,
   "readmeUsage": [],
   "config": null,
-  "entrypoints": ["src/index.ts"],
+  "entrypoints": [
+    "src/index.ts"
+  ],
   "modules": [
     {
       "path": "src/index.ts",
