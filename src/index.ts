@@ -6,8 +6,8 @@ import type {
   InfrastructureGenerationResult,
 } from './types';
 
-export type { DatasetInfrastructureArtifacts } from './datasets';
-export { generateDatasetInfrastructureArtifacts } from './datasets';
+export type { ApiInfrastructureArtifacts } from './apis';
+export { generateApiInfrastructureArtifacts } from './apis';
 export type {
   GeneratedFile,
   GeneratedInfrastructureFile,
