@@ -115,7 +115,7 @@
         "src/adapters/minikube/authz/index.ts",
         "src/adapters/minikube/base/index.ts",
         "src/adapters/minikube/storage/index.ts",
-        "src/datasets.ts",
+        "src/apis.ts",
         "src/types.ts"
       ],
       "exports": ["generateMinikubeInfra"]
@@ -137,18 +137,18 @@
       "exports": ["generateSupabaseStorageArtifacts"]
     },
     {
-      "path": "src/datasets.ts",
+      "path": "src/apis.ts",
       "isEntrypoint": false,
       "dependencies": ["src/types.ts"],
-      "exports": ["DatasetInfrastructureArtifacts", "generateDatasetInfrastructureArtifacts"]
+      "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
     },
     {
       "path": "src/index.ts",
       "isEntrypoint": true,
       "dependencies": ["src/adapters/minikube/index.ts", "src/types.ts"],
       "exports": [
-        "DatasetInfrastructureArtifacts",
-        "generateDatasetInfrastructureArtifacts",
+        "ApiInfrastructureArtifacts",
+        "generateApiInfrastructureArtifacts",
         "GeneratedFile",
         "GeneratedInfrastructureFile",
         "GeneratedPackageDependency",
@@ -187,15 +187,15 @@
   ],
   "exports": [
     {
-      "name": "DatasetInfrastructureArtifacts",
+      "name": "ApiInfrastructureArtifacts",
       "description": null,
       "isReadme": false,
       "examples": [],
       "kind": "type",
-      "modulePath": "src/datasets.ts",
+      "modulePath": "src/apis.ts",
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 10,
+        "filePath": "src/apis.ts",
+        "line": 11,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -220,22 +220,22 @@
       "structuredRows": []
     },
     {
-      "name": "generateDatasetInfrastructureArtifacts",
+      "name": "generateApiInfrastructureArtifacts",
       "description": null,
       "isReadme": false,
       "examples": [],
       "kind": "function",
-      "modulePath": "src/datasets.ts",
+      "modulePath": "src/apis.ts",
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 65,
+        "filePath": "src/apis.ts",
+        "line": 72,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["DatasetInfrastructureArtifacts"],
+      "relatedSymbols": ["ApiInfrastructureArtifacts"],
       "signatures": [
         {
-          "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => DatasetInfrastructureArtifacts",
+          "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => ApiInfrastructureArtifacts",
           "parameters": [
             {
               "name": "args",
@@ -244,7 +244,7 @@
               "description": null
             }
           ],
-          "returnType": "DatasetInfrastructureArtifacts",
+          "returnType": "ApiInfrastructureArtifacts",
           "returnDescription": null
         }
       ],
@@ -1274,20 +1274,29 @@
       }
     },
     {
-      "name": "generateDatasetInfrastructureArtifacts",
+      "name": "generateApiInfrastructureArtifacts",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 65,
+        "filePath": "src/apis.ts",
+        "line": 72,
         "column": 1
       }
     },
     {
-      "name": "listDatasets",
+      "name": "listGeneratedApis",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 130,
+        "filePath": "src/apis.ts",
+        "line": 137,
+        "column": 1
+      }
+    },
+    {
+      "name": "isGeneratedApiWithCollectionResource",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/apis.ts",
+        "line": 148,
         "column": 1
       }
     },
@@ -1295,8 +1304,8 @@
       "name": "createSeedManifest",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 134,
+        "filePath": "src/apis.ts",
+        "line": 154,
         "column": 1
       }
     },
@@ -1304,8 +1313,8 @@
       "name": "materializeSeedRecords",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 144,
+        "filePath": "src/apis.ts",
+        "line": 164,
         "column": 1
       }
     },
@@ -1313,8 +1322,8 @@
       "name": "createSeedWarnings",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 164,
+        "filePath": "src/apis.ts",
+        "line": 186,
         "column": 1
       }
     },
@@ -1322,17 +1331,17 @@
       "name": "generateReadme",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 185,
+        "filePath": "src/apis.ts",
+        "line": 206,
         "column": 1
       }
     },
     {
-      "name": "generateCollectionsTs",
+      "name": "generateResourcesTs",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 196,
+        "filePath": "src/apis.ts",
+        "line": 217,
         "column": 1
       }
     },
@@ -1340,8 +1349,8 @@
       "name": "generateApiTs",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 204,
+        "filePath": "src/apis.ts",
+        "line": 225,
         "column": 1
       }
     },
@@ -1349,26 +1358,17 @@
       "name": "generateApiHandlersTs",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 212,
+        "filePath": "src/apis.ts",
+        "line": 233,
         "column": 1
       }
     },
     {
-      "name": "createDatasetOperations",
+      "name": "createApiOperations",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 223,
-        "column": 1
-      }
-    },
-    {
-      "name": "createDatasetOperation",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 230,
+        "filePath": "src/apis.ts",
+        "line": 244,
         "column": 1
       }
     },
@@ -1376,8 +1376,8 @@
       "name": "createOpenApi",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 281,
+        "filePath": "src/apis.ts",
+        "line": 254,
         "column": 1
       }
     },
@@ -1385,8 +1385,8 @@
       "name": "addOpenApiOperation",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 310,
+        "filePath": "src/apis.ts",
+        "line": 289,
         "column": 1
       }
     },
@@ -1394,8 +1394,8 @@
       "name": "generateSupabaseMigrationSql",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 333,
+        "filePath": "src/apis.ts",
+        "line": 299,
         "column": 1
       }
     },
@@ -1403,8 +1403,8 @@
       "name": "generateCreateTableSql",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 349,
+        "filePath": "src/apis.ts",
+        "line": 315,
         "column": 1
       }
     },
@@ -1412,8 +1412,8 @@
       "name": "collectSqlFields",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 359,
+        "filePath": "src/apis.ts",
+        "line": 325,
         "column": 1
       }
     },
@@ -1421,8 +1421,8 @@
       "name": "generateSupabaseSeedSql",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 373,
+        "filePath": "src/apis.ts",
+        "line": 339,
         "column": 1
       }
     },
@@ -1430,8 +1430,8 @@
       "name": "generateSeedInsertStatements",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 386,
+        "filePath": "src/apis.ts",
+        "line": 350,
         "column": 1
       }
     },
@@ -1439,8 +1439,8 @@
       "name": "collectSeedColumns",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 411,
+        "filePath": "src/apis.ts",
+        "line": 375,
         "column": 1
       }
     },
@@ -1448,8 +1448,8 @@
       "name": "formatSqlColumn",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 436,
+        "filePath": "src/apis.ts",
+        "line": 400,
         "column": 1
       }
     },
@@ -1457,8 +1457,8 @@
       "name": "mapSqlFieldType",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 445,
+        "filePath": "src/apis.ts",
+        "line": 409,
         "column": 1
       }
     },
@@ -1466,8 +1466,8 @@
       "name": "formatSqlDefaultValue",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 462,
+        "filePath": "src/apis.ts",
+        "line": 426,
         "column": 1
       }
     },
@@ -1475,8 +1475,8 @@
       "name": "formatSqlValue",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 482,
+        "filePath": "src/apis.ts",
+        "line": 446,
         "column": 1
       }
     },
@@ -1484,8 +1484,8 @@
       "name": "stringifyJsonValue",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 506,
+        "filePath": "src/apis.ts",
+        "line": 470,
         "column": 1
       }
     },
@@ -1493,8 +1493,8 @@
       "name": "quoteSqlIdentifier",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 514,
+        "filePath": "src/apis.ts",
+        "line": 478,
         "column": 1
       }
     },
@@ -1502,8 +1502,8 @@
       "name": "escapeSqlString",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 518,
+        "filePath": "src/apis.ts",
+        "line": 482,
         "column": 1
       }
     },
@@ -1511,8 +1511,8 @@
       "name": "createPrimaryKeyRegistry",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 522,
+        "filePath": "src/apis.ts",
+        "line": 486,
         "column": 1
       }
     },
@@ -1520,8 +1520,8 @@
       "name": "findPrimaryKeyField",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 530,
+        "filePath": "src/apis.ts",
+        "line": 494,
         "column": 1
       }
     },
@@ -1529,8 +1529,8 @@
       "name": "createDeterministicSeedUuid",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 539,
+        "filePath": "src/apis.ts",
+        "line": 505,
         "column": 1
       }
     },
@@ -1538,8 +1538,8 @@
       "name": "hashHex",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 547,
+        "filePath": "src/apis.ts",
+        "line": 513,
         "column": 1
       }
     },
@@ -1547,8 +1547,17 @@
       "name": "formatCollectionName",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/datasets.ts",
-        "line": 558,
+        "filePath": "src/apis.ts",
+        "line": 524,
+        "column": 1
+      }
+    },
+    {
+      "name": "joinApiPath",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/apis.ts",
+        "line": 530,
         "column": 1
       }
     },
@@ -1574,9 +1583,9 @@
   "sequenceScenarios": [
     {
       "kind": "export",
-      "name": "generateDatasetInfrastructureArtifacts",
-      "sourcePath": "src/datasets.ts",
-      "symbolName": "generateDatasetInfrastructureArtifacts",
+      "name": "generateApiInfrastructureArtifacts",
+      "sourcePath": "src/apis.ts",
+      "symbolName": "generateApiInfrastructureArtifacts",
       "description": null,
       "isReadme": false
     },
@@ -1600,9 +1609,9 @@
   "graphs": {
     "imports": [
       {
-        "fromPath": "src/datasets.ts",
+        "fromPath": "src/apis.ts",
         "toPath": "src/types.ts",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromPath": "src/index.ts",
@@ -1616,7 +1625,7 @@
       },
       {
         "fromPath": "src/index.ts",
-        "toPath": "src/datasets.ts",
+        "toPath": "src/apis.ts",
         "sourcePath": "src/index.ts"
       },
       {
@@ -1626,7 +1635,7 @@
       },
       {
         "fromPath": "src/adapters/minikube/index.ts",
-        "toPath": "src/datasets.ts",
+        "toPath": "src/apis.ts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -1732,214 +1741,214 @@
     ],
     "calls": [
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
-        "toSymbol": "listDatasets",
-        "callExpression": "listDatasets",
-        "sourcePath": "src/datasets.ts"
+        "fromSymbol": "generateApiInfrastructureArtifacts",
+        "toSymbol": "listGeneratedApis",
+        "callExpression": "listGeneratedApis",
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "createSeedManifest",
         "callExpression": "createSeedManifest",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "generateSupabaseMigrationSql",
         "callExpression": "generateSupabaseMigrationSql",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "generateSupabaseSeedSql",
         "callExpression": "generateSupabaseSeedSql",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "generateReadme",
         "callExpression": "generateReadme",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
-        "toSymbol": "generateCollectionsTs",
-        "callExpression": "generateCollectionsTs",
-        "sourcePath": "src/datasets.ts"
+        "fromSymbol": "generateApiInfrastructureArtifacts",
+        "toSymbol": "generateResourcesTs",
+        "callExpression": "generateResourcesTs",
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "generateApiTs",
         "callExpression": "generateApiTs",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "generateApiHandlersTs",
         "callExpression": "generateApiHandlersTs",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "createOpenApi",
         "callExpression": "createOpenApi",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "createSeedWarnings",
         "callExpression": "createSeedWarnings",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "materializeSeedRecords",
         "callExpression": "materializeSeedRecords",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "materializeSeedRecords",
         "toSymbol": "findPrimaryKeyField",
         "callExpression": "findPrimaryKeyField",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "createDeterministicSeedUuid",
         "callExpression": "createDeterministicSeedUuid",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "findPrimaryKeyField",
         "callExpression": "findPrimaryKeyField",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "formatCollectionName",
         "callExpression": "formatCollectionName",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "generateApiHandlersTs",
         "toSymbol": "createPrimaryKeyRegistry",
         "callExpression": "createPrimaryKeyRegistry",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
-        "toSymbol": "createDatasetOperation",
-        "callExpression": "createDatasetOperation",
-        "sourcePath": "src/datasets.ts"
+        "fromSymbol": "src/apis.ts",
+        "toSymbol": "joinApiPath",
+        "callExpression": "joinApiPath",
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "createOpenApi",
-        "toSymbol": "createDatasetOperations",
-        "callExpression": "createDatasetOperations",
-        "sourcePath": "src/datasets.ts"
+        "toSymbol": "createApiOperations",
+        "callExpression": "createApiOperations",
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "createOpenApi",
         "toSymbol": "addOpenApiOperation",
         "callExpression": "addOpenApiOperation",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "quoteSqlIdentifier",
         "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "generateCreateTableSql",
         "callExpression": "generateCreateTableSql",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "generateCreateTableSql",
         "toSymbol": "quoteSqlIdentifier",
         "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "generateCreateTableSql",
         "toSymbol": "collectSqlFields",
         "callExpression": "collectSqlFields",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "formatSqlColumn",
         "callExpression": "formatSqlColumn",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "generateSeedInsertStatements",
         "callExpression": "generateSeedInsertStatements",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "generateSeedInsertStatements",
         "toSymbol": "collectSeedColumns",
         "callExpression": "collectSeedColumns",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "generateSeedInsertStatements",
         "toSymbol": "quoteSqlIdentifier",
         "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "src/datasets.ts",
+        "fromSymbol": "src/apis.ts",
         "toSymbol": "formatSqlValue",
         "callExpression": "formatSqlValue",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "formatSqlColumn",
         "toSymbol": "formatSqlDefaultValue",
         "callExpression": "formatSqlDefaultValue",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "formatSqlColumn",
         "toSymbol": "quoteSqlIdentifier",
         "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "formatSqlColumn",
         "toSymbol": "mapSqlFieldType",
         "callExpression": "mapSqlFieldType",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "formatSqlDefaultValue",
         "toSymbol": "escapeSqlString",
         "callExpression": "escapeSqlString",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "formatSqlValue",
         "toSymbol": "escapeSqlString",
         "callExpression": "escapeSqlString",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "formatSqlValue",
         "toSymbol": "stringifyJsonValue",
         "callExpression": "stringifyJsonValue",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "createDeterministicSeedUuid",
         "toSymbol": "hashHex",
         "callExpression": "hashHex",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "generateInfra",
@@ -1979,8 +1988,8 @@
       },
       {
         "fromSymbol": "generateMinikubeInfra",
-        "toSymbol": "generateDatasetInfrastructureArtifacts",
-        "callExpression": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "generateApiInfrastructureArtifacts",
+        "callExpression": "generateApiInfrastructureArtifacts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -2437,19 +2446,19 @@
         "sourcePath": "src/index.ts"
       },
       {
-        "fromSymbol": "DatasetInfrastructureArtifacts",
+        "fromSymbol": "ApiInfrastructureArtifacts",
         "toType": "GeneratedInfrastructureFile",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "fromSymbol": "generateApiInfrastructureArtifacts",
+        "toType": "ApiInfrastructureArtifacts",
+        "sourcePath": "src/apis.ts"
+      },
+      {
+        "fromSymbol": "generateApiInfrastructureArtifacts",
         "toType": "AppDataManifest",
-        "sourcePath": "src/datasets.ts"
-      },
-      {
-        "fromSymbol": "generateDatasetInfrastructureArtifacts",
-        "toType": "DatasetInfrastructureArtifacts",
-        "sourcePath": "src/datasets.ts"
+        "sourcePath": "src/apis.ts"
       },
       {
         "fromSymbol": "InfraGenerationInput",

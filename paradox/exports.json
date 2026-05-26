@@ -1,14 +1,14 @@
 [
   {
-    "name": "DatasetInfrastructureArtifacts",
+    "name": "ApiInfrastructureArtifacts",
     "description": null,
     "isReadme": false,
     "examples": [],
     "kind": "type",
-    "modulePath": "src/datasets.ts",
+    "modulePath": "src/apis.ts",
     "sourceLocation": {
-      "filePath": "src/datasets.ts",
-      "line": 10,
+      "filePath": "src/apis.ts",
+      "line": 11,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -33,22 +33,22 @@
     "structuredRows": []
   },
   {
-    "name": "generateDatasetInfrastructureArtifacts",
+    "name": "generateApiInfrastructureArtifacts",
     "description": null,
     "isReadme": false,
     "examples": [],
     "kind": "function",
-    "modulePath": "src/datasets.ts",
+    "modulePath": "src/apis.ts",
     "sourceLocation": {
-      "filePath": "src/datasets.ts",
-      "line": 65,
+      "filePath": "src/apis.ts",
+      "line": 72,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["DatasetInfrastructureArtifacts"],
+    "relatedSymbols": ["ApiInfrastructureArtifacts"],
     "signatures": [
       {
-        "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => DatasetInfrastructureArtifacts",
+        "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => ApiInfrastructureArtifacts",
         "parameters": [
           {
             "name": "args",
@@ -57,7 +57,7 @@
             "description": null
           }
         ],
-        "returnType": "DatasetInfrastructureArtifacts",
+        "returnType": "ApiInfrastructureArtifacts",
         "returnDescription": null
       }
     ],
