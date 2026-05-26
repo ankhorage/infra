@@ -1,4 +1,5 @@
 import type {
+  AppApiDefinition,
   AppApiEndpointDefinition,
   AppDataManifest,
   AppGeneratedApiDefinition,
@@ -12,9 +13,13 @@ export interface ApiInfrastructureArtifacts {
   readonly warnings: readonly string[];
 }
 
+type GeneratedApiWithCollectionResource = AppGeneratedApiDefinition & {
+  readonly resource: NonNullable<AppGeneratedApiDefinition['resource']>;
+};
+
 interface GeneratedApiResource {
-  readonly api: AppGeneratedApiDefinition;
-  readonly collection: NonNullable<AppGeneratedApiDefinition['resource']>['collection'];
+  readonly api: GeneratedApiWithCollectionResource;
+  readonly collection: GeneratedApiWithCollectionResource['resource']['collection'];
   readonly seed: readonly Record<string, unknown>[];
 }
 
@@ -131,14 +136,19 @@ export function generateApiInfrastructureArtifacts(args: {
 
 function listGeneratedApis(data: AppDataManifest | undefined): readonly GeneratedApiResource[] {
   return Object.values(data?.apis ?? {})
-    .filter((api): api is AppGeneratedApiDefinition => api.kind === 'generated')
-    .filter((api) => api.resource?.kind === 'collection')
+    .filter(isGeneratedApiWithCollectionResource)
     .map((api) => ({
       api,
       collection: api.resource.collection,
       seed: materializeSeedRecords(api),
     }))
     .sort((left, right) => left.api.id.localeCompare(right.api.id));
+}
+
+function isGeneratedApiWithCollectionResource(
+  api: AppApiDefinition,
+): api is GeneratedApiWithCollectionResource {
+  return api.kind === 'generated' && api.resource?.kind === 'collection';
 }
 
 function createSeedManifest(
@@ -151,11 +161,7 @@ function createSeedManifest(
   }));
 }
 
-function materializeSeedRecords(api: AppGeneratedApiDefinition): readonly Record<string, unknown>[] {
-  if (api.resource?.kind !== 'collection') {
-    return [];
-  }
-
+function materializeSeedRecords(api: GeneratedApiWithCollectionResource): readonly Record<string, unknown>[] {
   const { primaryKey } = api.resource.collection;
   const primaryKeyField = findPrimaryKeyField(api);
 
@@ -478,11 +484,7 @@ function createPrimaryKeyRegistry(
   );
 }
 
-function findPrimaryKeyField(api: AppGeneratedApiDefinition): DbFieldDefinition | undefined {
-  if (api.resource?.kind !== 'collection') {
-    return undefined;
-  }
-
+function findPrimaryKeyField(api: GeneratedApiWithCollectionResource): DbFieldDefinition | undefined {
   const { primaryKey } = api.resource.collection;
   if (primaryKey === undefined) {
     return undefined;
