@@ -61,9 +61,7 @@
   "usage": null,
   "readmeUsage": [],
   "config": null,
-  "entrypoints": [
-    "src/index.ts"
-  ],
+  "entrypoints": ["src/index.ts"],
   "modules": [
     {
       "path": "src/index.ts",
