@@ -1,0 +1,13 @@
+node_modules
+
+dist
+tsconfig.tsbuildinfo
+
+.DS_Store
+.swp
+
+.expo/
+android
+ios
+
+examples/*/*/bun.lock
