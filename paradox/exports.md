@@ -1,10 +1,10 @@
 # Public API
 
-## DatasetInfrastructureArtifacts
+## ApiInfrastructureArtifacts
 
 Kind: `type`
-Module: `src/datasets.ts`
-Source: `src/datasets.ts:10:1`
+Module: `src/apis.ts`
+Source: `src/apis.ts:11:1`
 
 ### Members
 
@@ -13,17 +13,17 @@ Source: `src/datasets.ts:10:1`
 | files    | property | `readonly GeneratedInfrastructureFile[]` | yes      |             |
 | warnings | property | `readonly string[]`                      | yes      |             |
 
-## generateDatasetInfrastructureArtifacts
+## generateApiInfrastructureArtifacts
 
 Kind: `function`
-Module: `src/datasets.ts`
-Source: `src/datasets.ts:65:1`
+Module: `src/apis.ts`
+Source: `src/apis.ts:72:1`
 
 ### Signatures
 
-- `(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => DatasetInfrastructureArtifacts`
+- `(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => ApiInfrastructureArtifacts`
   - args: `{ readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }`
-  - returns: `DatasetInfrastructureArtifacts`
+  - returns: `ApiInfrastructureArtifacts`
 
 ## GeneratedFile
 
