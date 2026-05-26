@@ -199,6 +199,104 @@
                 <small>Overview, CLI, public API, diagrams</small>
               </button>
             </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/auth/index.ts"
+              >
+                src/adapters/minikube/auth/index.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/auth/supabase/index.ts"
+              >
+                src/adapters/minikube/auth/supabase/index.ts
+                <small>8 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/authz/cerbos/index.ts"
+              >
+                src/adapters/minikube/authz/cerbos/index.ts
+                <small>20 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/authz/index.ts"
+              >
+                src/adapters/minikube/authz/index.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/base/index.ts"
+              >
+                src/adapters/minikube/base/index.ts
+                <small>22 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/contracts.ts"
+              >
+                src/adapters/minikube/contracts.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/adapters/minikube/index.ts">
+                src/adapters/minikube/index.ts
+                <small>6 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/storage/index.ts"
+              >
+                src/adapters/minikube/storage/index.ts
+                <small>2 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/adapters/minikube/storage/supabase/index.ts"
+              >
+                src/adapters/minikube/storage/supabase/index.ts
+                <small>4 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/datasets.ts">
+                src/datasets.ts
+                <small>31 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/index.ts">
+                src/index.ts
+                <small>2 functions</small>
+              </button>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -207,9 +305,9 @@
           <section class="panel">
             <h2>Package overview</h2>
             <div class="summary">
-              <div><strong>0</strong><span class="muted">public exports</span></div>
+              <div><strong>16</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>1</strong><span class="muted">modules</span></div>
+              <div><strong>12</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -220,15 +318,743 @@
 
           <section class="panel">
             <h2>Modules</h2>
-            <article class="item" data-search="src/index.ts">
+            <article
+              class="item"
+              data-search="src/adapters/minikube/auth/index.ts src/adapters/minikube/auth/supabase/index.ts src/adapters/minikube/contracts.ts src/types.ts generateAuthProviderArtifacts"
+            >
+              <h3>src/adapters/minikube/auth/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong>
+                <code>src/adapters/minikube/auth/supabase/index.ts</code>,
+                <code>src/adapters/minikube/contracts.ts</code>, <code>src/types.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>generateAuthProviderArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/auth/supabase/index.ts src/adapters/minikube/contracts.ts src/types.ts generateSupabaseAuthArtifacts"
+            >
+              <h3>src/adapters/minikube/auth/supabase/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/adapters/minikube/contracts.ts</code>,
+                <code>src/types.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>generateSupabaseAuthArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/authz/cerbos/index.ts src/adapters/minikube/contracts.ts src/types.ts generateCerbosAuthzArtifacts"
+            >
+              <h3>src/adapters/minikube/authz/cerbos/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/adapters/minikube/contracts.ts</code>,
+                <code>src/types.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>generateCerbosAuthzArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/authz/index.ts src/adapters/minikube/authz/cerbos/index.ts src/adapters/minikube/contracts.ts src/types.ts generateAuthorizationArtifacts"
+            >
+              <h3>src/adapters/minikube/authz/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong>
+                <code>src/adapters/minikube/authz/cerbos/index.ts</code>,
+                <code>src/adapters/minikube/contracts.ts</code>, <code>src/types.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>generateAuthorizationArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/base/index.ts src/types.ts generateMinikubeBaseArtifacts"
+            >
+              <h3>src/adapters/minikube/base/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
+              <p><strong>Exports:</strong> <code>generateMinikubeBaseArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/contracts.ts src/types.ts emptyMinikubeArtifacts MinikubeAdapterArtifacts"
+            >
+              <h3>src/adapters/minikube/contracts.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
+              <p>
+                <strong>Exports:</strong> <code>emptyMinikubeArtifacts</code>,
+                <code>MinikubeAdapterArtifacts</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/index.ts src/adapters/minikube/auth/index.ts src/adapters/minikube/authz/index.ts src/adapters/minikube/base/index.ts src/adapters/minikube/storage/index.ts src/datasets.ts src/types.ts generateMinikubeInfra"
+            >
+              <h3>src/adapters/minikube/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/adapters/minikube/auth/index.ts</code>,
+                <code>src/adapters/minikube/authz/index.ts</code>,
+                <code>src/adapters/minikube/base/index.ts</code>,
+                <code>src/adapters/minikube/storage/index.ts</code>, <code>src/datasets.ts</code>,
+                <code>src/types.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>generateMinikubeInfra</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/storage/index.ts src/adapters/minikube/contracts.ts src/adapters/minikube/storage/supabase/index.ts src/types.ts generateStorageArtifacts"
+            >
+              <h3>src/adapters/minikube/storage/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/adapters/minikube/contracts.ts</code>,
+                <code>src/adapters/minikube/storage/supabase/index.ts</code>,
+                <code>src/types.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>generateStorageArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/storage/supabase/index.ts src/adapters/minikube/contracts.ts generateSupabaseStorageArtifacts"
+            >
+              <h3>src/adapters/minikube/storage/supabase/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/adapters/minikube/contracts.ts</code></p>
+              <p><strong>Exports:</strong> <code>generateSupabaseStorageArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/datasets.ts src/types.ts DatasetInfrastructureArtifacts generateDatasetInfrastructureArtifacts"
+            >
+              <h3>src/datasets.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
+              <p>
+                <strong>Exports:</strong> <code>DatasetInfrastructureArtifacts</code>,
+                <code>generateDatasetInfrastructureArtifacts</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/index.ts src/adapters/minikube/index.ts src/types.ts DatasetInfrastructureArtifacts generateDatasetInfrastructureArtifacts GeneratedFile GeneratedInfrastructureFile GeneratedPackageDependency generateInfra generateInfrastructure InfraDiagnostic InfraGenerationInput InfraGenerationOptions InfraGenerationResult InfraManifestInput InfrastructureGenerationMeta InfrastructureGenerationOptions InfrastructureGenerationResult PackageDependency"
+            >
               <h3>src/index.ts</h3>
               <p class="muted">Configured entrypoint</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/adapters/minikube/index.ts</code>,
+                <code>src/types.ts</code>
+              </p>
+              <p>
+                <strong>Exports:</strong> <code>DatasetInfrastructureArtifacts</code>,
+                <code>generateDatasetInfrastructureArtifacts</code>, <code>GeneratedFile</code>,
+                <code>GeneratedInfrastructureFile</code>, <code>GeneratedPackageDependency</code>,
+                <code>generateInfra</code>, <code>generateInfrastructure</code>,
+                <code>InfraDiagnostic</code>, <code>InfraGenerationInput</code>,
+                <code>InfraGenerationOptions</code>, <code>InfraGenerationResult</code>,
+                <code>InfraManifestInput</code>, <code>InfrastructureGenerationMeta</code>,
+                <code>InfrastructureGenerationOptions</code>,
+                <code>InfrastructureGenerationResult</code>, <code>PackageDependency</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/types.ts GeneratedFile GeneratedInfrastructureFile GeneratedPackageDependency InfraDiagnostic InfraGenerationInput InfraGenerationOptions InfraGenerationResult InfraManifestInput InfrastructureGenerationMeta InfrastructureGenerationOptions InfrastructureGenerationResult PackageDependency"
+            >
+              <h3>src/types.ts</h3>
+              <p class="muted">Referenced module</p>
               <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
-              <p><strong>Exports:</strong> <span class="empty">None</span></p>
+              <p>
+                <strong>Exports:</strong> <code>GeneratedFile</code>,
+                <code>GeneratedInfrastructureFile</code>, <code>GeneratedPackageDependency</code>,
+                <code>InfraDiagnostic</code>, <code>InfraGenerationInput</code>,
+                <code>InfraGenerationOptions</code>, <code>InfraGenerationResult</code>,
+                <code>InfraManifestInput</code>, <code>InfrastructureGenerationMeta</code>,
+                <code>InfrastructureGenerationOptions</code>,
+                <code>InfrastructureGenerationResult</code>, <code>PackageDependency</code>
+              </p>
             </article>
           </section>
           <section class="panel">
             <h2>Public API</h2>
+
+            <section>
+              <h3>src/datasets.ts</h3>
+              <article
+                class="item"
+                id="symbol-datasetinfrastructureartifacts"
+                data-search="DatasetInfrastructureArtifacts type src/datasets.ts  GeneratedInfrastructureFile"
+              >
+                <h4>DatasetInfrastructureArtifacts</h4>
+                <p class="muted">type • <code>src/datasets.ts:10:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">GeneratedInfrastructureFile</li>
+                  </ul>
+                </div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>files</code></td>
+                      <td>property</td>
+                      <td><code>readonly GeneratedInfrastructureFile[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>warnings</code></td>
+                      <td>property</td>
+                      <td><code>readonly string[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-generatedatasetinfrastructureartifacts"
+                data-search="generateDatasetInfrastructureArtifacts function src/datasets.ts  DatasetInfrastructureArtifacts (args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) =&gt; DatasetInfrastructureArtifacts"
+              >
+                <h4>generateDatasetInfrastructureArtifacts</h4>
+                <p class="muted">function • <code>src/datasets.ts:65:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">DatasetInfrastructureArtifacts</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Signature</h5>
+                  <pre>
+(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) =&gt; DatasetInfrastructureArtifacts</pre
+                  >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>args</code></td>
+                        <td>
+                          <code
+                            >{ readonly data: AppDataManifest | undefined; readonly
+                            databaseProvider: string | undefined; }</code
+                          >
+                        </td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p><strong>Returns:</strong> <code>DatasetInfrastructureArtifacts</code></p>
+                </div>
+              </article>
+            </section>
+            <section>
+              <h3>src/index.ts</h3>
+              <article
+                class="item"
+                id="symbol-generateinfra"
+                data-search="generateInfra function src/index.ts  InfraGenerationInput InfrastructureGenerationResult (input: InfraGenerationInput) =&gt; InfrastructureGenerationResult"
+              >
+                <h4>generateInfra</h4>
+                <p class="muted">function • <code>src/index.ts:26:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">InfraGenerationInput</li>
+                    <li class="chip">InfrastructureGenerationResult</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Signature</h5>
+                  <pre>(input: InfraGenerationInput) =&gt; InfrastructureGenerationResult</pre>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>input</code></td>
+                        <td><code>InfraGenerationInput</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p><strong>Returns:</strong> <code>InfrastructureGenerationResult</code></p>
+                </div>
+              </article>
+              <article
+                class="item"
+                id="symbol-generateinfrastructure"
+                data-search="generateInfrastructure function src/index.ts  InfraManifestInput InfrastructureGenerationOptions InfrastructureGenerationResult (manifest: InfraManifestInput, options?: InfrastructureGenerationOptions) =&gt; InfrastructureGenerationResult"
+              >
+                <h4>generateInfrastructure</h4>
+                <p class="muted">function • <code>src/index.ts:30:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">InfraManifestInput</li>
+                    <li class="chip">InfrastructureGenerationOptions</li>
+                    <li class="chip">InfrastructureGenerationResult</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Signature</h5>
+                  <pre>
+(manifest: InfraManifestInput, options?: InfrastructureGenerationOptions) =&gt; InfrastructureGenerationResult</pre
+                  >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>manifest</code></td>
+                        <td><code>InfraManifestInput</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td><code>options</code></td>
+                        <td><code>InfrastructureGenerationOptions</code></td>
+                        <td>no</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p><strong>Returns:</strong> <code>InfrastructureGenerationResult</code></p>
+                </div>
+              </article>
+            </section>
+            <section>
+              <h3>src/types.ts</h3>
+              <article
+                class="item"
+                id="symbol-generatedfile"
+                data-search="GeneratedFile unknown src/types.ts "
+              >
+                <h4>GeneratedFile</h4>
+                <p class="muted">unknown • <code>src/types.ts:59:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+              </article>
+              <article
+                class="item"
+                id="symbol-generatedinfrastructurefile"
+                data-search="GeneratedInfrastructureFile type src/types.ts "
+              >
+                <h4>GeneratedInfrastructureFile</h4>
+                <p class="muted">type • <code>src/types.ts:3:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>content</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>executable</code></td>
+                      <td>property</td>
+                      <td><code>boolean | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>path</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-generatedpackagedependency"
+                data-search="GeneratedPackageDependency type src/types.ts "
+              >
+                <h4>GeneratedPackageDependency</h4>
+                <p class="muted">type • <code>src/types.ts:12:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>name</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>reason</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>version</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-infradiagnostic"
+                data-search="InfraDiagnostic type src/types.ts "
+              >
+                <h4>InfraDiagnostic</h4>
+                <p class="muted">type • <code>src/types.ts:62:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>message</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>severity</code></td>
+                      <td>property</td>
+                      <td><code>&quot;warning&quot;</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-infragenerationinput"
+                data-search="InfraGenerationInput type src/types.ts  InfraManifestInput InfrastructureGenerationOptions"
+              >
+                <h4>InfraGenerationInput</h4>
+                <p class="muted">type • <code>src/types.ts:44:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">InfraManifestInput</li>
+                    <li class="chip">InfrastructureGenerationOptions</li>
+                  </ul>
+                </div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>manifest</code></td>
+                      <td>property</td>
+                      <td><code>InfraManifestInput</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>options</code></td>
+                      <td>property</td>
+                      <td><code>InfrastructureGenerationOptions | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>outputRoot</code></td>
+                      <td>property</td>
+                      <td><code>string | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-infragenerationoptions"
+                data-search="InfraGenerationOptions unknown src/types.ts "
+              >
+                <h4>InfraGenerationOptions</h4>
+                <p class="muted">unknown • <code>src/types.ts:57:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+              </article>
+              <article
+                class="item"
+                id="symbol-infragenerationresult"
+                data-search="InfraGenerationResult unknown src/types.ts "
+              >
+                <h4>InfraGenerationResult</h4>
+                <p class="muted">unknown • <code>src/types.ts:58:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+              </article>
+              <article
+                class="item"
+                id="symbol-inframanifestinput"
+                data-search="InfraManifestInput unknown src/types.ts "
+              >
+                <h4>InfraManifestInput</h4>
+                <p class="muted">unknown • <code>src/types.ts:80:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+              </article>
+              <article
+                class="item"
+                id="symbol-infrastructuregenerationmeta"
+                data-search="InfrastructureGenerationMeta type src/types.ts "
+              >
+                <h4>InfrastructureGenerationMeta</h4>
+                <p class="muted">type • <code>src/types.ts:18:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>providers</code></td>
+                      <td>property</td>
+                      <td><code>readonly string[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>target</code></td>
+                      <td>property</td>
+                      <td>
+                        <code
+                          >import(&quot;/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types&quot;).DeploymentTarget</code
+                        >
+                      </td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-infrastructuregenerationoptions"
+                data-search="InfrastructureGenerationOptions type src/types.ts "
+              >
+                <h4>InfrastructureGenerationOptions</h4>
+                <p class="muted">type • <code>src/types.ts:30:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>appManifest</code></td>
+                      <td>property</td>
+                      <td>
+                        <code
+                          >Pick&lt;AppManifest, &quot;data&quot; | &quot;metadata&quot; |
+                          &quot;navigator&quot; | &quot;screens&quot; | &quot;settings&quot;&gt; |
+                          undefined</code
+                        >
+                      </td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>namespaceHint</code></td>
+                      <td>property</td>
+                      <td><code>string | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-infrastructuregenerationresult"
+                data-search="InfrastructureGenerationResult type src/types.ts  GeneratedInfrastructureFile GeneratedPackageDependency InfrastructureGenerationMeta"
+              >
+                <h4>InfrastructureGenerationResult</h4>
+                <p class="muted">type • <code>src/types.ts:23:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">GeneratedInfrastructureFile</li>
+                    <li class="chip">GeneratedPackageDependency</li>
+                    <li class="chip">InfrastructureGenerationMeta</li>
+                  </ul>
+                </div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>dependencies</code></td>
+                      <td>property</td>
+                      <td><code>readonly GeneratedPackageDependency[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>files</code></td>
+                      <td>property</td>
+                      <td><code>readonly GeneratedInfrastructureFile[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>meta</code></td>
+                      <td>property</td>
+                      <td><code>InfrastructureGenerationMeta</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>warnings</code></td>
+                      <td>property</td>
+                      <td><code>readonly string[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-packagedependency"
+                data-search="PackageDependency unknown src/types.ts "
+              >
+                <h4>PackageDependency</h4>
+                <p class="muted">unknown • <code>src/types.ts:60:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+              </article>
+            </section>
           </section>
           <section class="panel">
             <h2>Component registry</h2>
@@ -245,7 +1071,65 @@
               <div class="mermaid">
                 graph TD package__ankhorage_infra[&quot;INFRA&quot;]
                 entrypoint_src_index_ts[&quot;src/index.ts&quot;] package__ankhorage_infra --&gt;
-                entrypoint_src_index_ts module_src_index_ts[&quot;src/index.ts&quot;]
+                entrypoint_src_index_ts
+                module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
+                module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_auth_supabase_index_ts
+                module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_auth_index_ts
+                --&gt; module_src_types_ts
+                module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_supabase_index_ts
+                module_src_adapters_minikube_auth_supabase_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_authz_cerbos_index_ts
+                module_src_adapters_minikube_authz_cerbos_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_authz_index_ts
+                module_src_adapters_minikube_authz_index_ts --&gt;
+                module_src_adapters_minikube_authz_cerbos_index_ts
+                module_src_adapters_minikube_authz_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_authz_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_base_index_ts
+                module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_index_ts
+                module_src_adapters_minikube_index_ts --&gt;
+                module_src_adapters_minikube_auth_index_ts module_src_adapters_minikube_index_ts
+                --&gt; module_src_adapters_minikube_authz_index_ts
+                module_src_adapters_minikube_index_ts --&gt;
+                module_src_adapters_minikube_base_index_ts module_src_adapters_minikube_index_ts
+                --&gt; module_src_adapters_minikube_storage_index_ts
+                module_src_adapters_minikube_index_ts --&gt; module_src_datasets_ts
+                module_src_adapters_minikube_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_storage_index_ts
+                module_src_adapters_minikube_storage_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_storage_index_ts --&gt;
+                module_src_adapters_minikube_storage_supabase_index_ts
+                module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+                package__ankhorage_infra -.-&gt;
+                module_src_adapters_minikube_storage_supabase_index_ts
+                module_src_adapters_minikube_storage_supabase_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_datasets_ts[&quot;src/datasets.ts&quot;] package__ankhorage_infra -.-&gt;
+                module_src_datasets_ts module_src_datasets_ts --&gt; module_src_types_ts
+                module_src_index_ts[&quot;src/index.ts&quot;] module_src_index_ts --&gt;
+                module_src_adapters_minikube_index_ts module_src_index_ts --&gt; module_src_types_ts
+                module_src_types_ts[&quot;src/types.ts&quot;] package__ankhorage_infra -.-&gt;
+                module_src_types_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -254,7 +1138,54 @@ graph TD
   package__ankhorage_infra[&quot;INFRA&quot;]
   entrypoint_src_index_ts[&quot;src/index.ts&quot;]
   package__ankhorage_infra --&gt; entrypoint_src_index_ts
+  module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_authz_cerbos_index_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_authz_index_ts
+  module_src_adapters_minikube_authz_index_ts --&gt; module_src_adapters_minikube_authz_cerbos_index_ts
+  module_src_adapters_minikube_authz_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_authz_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_base_index_ts
+  module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_auth_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_authz_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_base_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_storage_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_datasets_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_storage_index_ts
+  module_src_adapters_minikube_storage_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_storage_index_ts --&gt; module_src_adapters_minikube_storage_supabase_index_ts
+  module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_storage_supabase_index_ts
+  module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_datasets_ts[&quot;src/datasets.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_datasets_ts
+  module_src_datasets_ts --&gt; module_src_types_ts
   module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
+  module_src_index_ts --&gt; module_src_types_ts
+  module_src_types_ts[&quot;src/types.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_types_ts
 </pre
                 >
               </details>
@@ -265,12 +1196,96 @@ graph TD
             >
               <h3>Module relationships</h3>
               <p class="muted"><code>diagrams/module-relationships.mmd</code></p>
-              <div class="mermaid">graph LR module_src_index_ts[&quot;src/index.ts&quot;]</div>
+              <div class="mermaid">
+                graph LR
+                module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+                module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
+                module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
+                module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
+                module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
+                module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
+                module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
+                module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
+                module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+                module_src_datasets_ts[&quot;src/datasets.ts&quot;]
+                module_src_index_ts[&quot;src/index.ts&quot;]
+                module_src_types_ts[&quot;src/types.ts&quot;]
+                module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_auth_supabase_index_ts
+                module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_auth_index_ts
+                --&gt; module_src_types_ts module_src_adapters_minikube_auth_supabase_index_ts
+                --&gt; module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_authz_cerbos_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_authz_index_ts --&gt;
+                module_src_adapters_minikube_authz_cerbos_index_ts
+                module_src_adapters_minikube_authz_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_authz_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_index_ts --&gt;
+                module_src_adapters_minikube_auth_index_ts module_src_adapters_minikube_index_ts
+                --&gt; module_src_adapters_minikube_authz_index_ts
+                module_src_adapters_minikube_index_ts --&gt;
+                module_src_adapters_minikube_base_index_ts module_src_adapters_minikube_index_ts
+                --&gt; module_src_adapters_minikube_storage_index_ts
+                module_src_adapters_minikube_index_ts --&gt; module_src_datasets_ts
+                module_src_adapters_minikube_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_storage_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_storage_index_ts --&gt;
+                module_src_adapters_minikube_storage_supabase_index_ts
+                module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_storage_supabase_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts module_src_datasets_ts --&gt;
+                module_src_types_ts module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
+                module_src_index_ts --&gt; module_src_types_ts
+              </div>
               <details>
                 <summary>View Mermaid source</summary>
                 <pre>
 graph LR
+  module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+  module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
+  module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
+  module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
+  module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
+  module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
+  module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
+  module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
+  module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+  module_src_datasets_ts[&quot;src/datasets.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_ts[&quot;src/types.ts&quot;]
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_authz_index_ts --&gt; module_src_adapters_minikube_authz_cerbos_index_ts
+  module_src_adapters_minikube_authz_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_authz_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_auth_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_authz_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_base_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_storage_index_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_datasets_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_storage_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_storage_index_ts --&gt; module_src_adapters_minikube_storage_supabase_index_ts
+  module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_datasets_ts --&gt; module_src_types_ts
+  module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
+  module_src_index_ts --&gt; module_src_types_ts
 </pre
                 >
               </details>
@@ -278,15 +1293,881 @@ graph LR
             <article class="item" data-search="Export graph diagrams/export-graph.mmd">
               <h3>Export graph</h3>
               <p class="muted"><code>diagrams/export-graph.mmd</code></p>
-              <div class="mermaid">graph LR module_src_index_ts[&quot;src/index.ts&quot;]</div>
+              <div class="mermaid">
+                graph LR
+                module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+                module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
+                module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
+                module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
+                module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
+                module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
+                module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
+                module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
+                module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+                module_src_datasets_ts[&quot;src/datasets.ts&quot;]
+                module_src_index_ts[&quot;src/index.ts&quot;]
+                module_src_types_ts[&quot;src/types.ts&quot;]
+                export_DatasetInfrastructureArtifacts[&quot;DatasetInfrastructureArtifacts&quot;]
+                module_src_datasets_ts --&gt; export_DatasetInfrastructureArtifacts
+                export_DatasetInfrastructureArtifacts -.-&gt; export_GeneratedInfrastructureFile
+                export_generateDatasetInfrastructureArtifacts[&quot;generateDatasetInfrastructureArtifacts&quot;]
+                module_src_datasets_ts --&gt; export_generateDatasetInfrastructureArtifacts
+                export_generateDatasetInfrastructureArtifacts -.-&gt;
+                export_DatasetInfrastructureArtifacts
+                export_GeneratedFile[&quot;GeneratedFile&quot;] module_src_types_ts --&gt;
+                export_GeneratedFile
+                export_GeneratedInfrastructureFile[&quot;GeneratedInfrastructureFile&quot;]
+                module_src_types_ts --&gt; export_GeneratedInfrastructureFile
+                export_GeneratedPackageDependency[&quot;GeneratedPackageDependency&quot;]
+                module_src_types_ts --&gt; export_GeneratedPackageDependency
+                export_generateInfra[&quot;generateInfra&quot;] module_src_index_ts --&gt;
+                export_generateInfra export_generateInfra -.-&gt; export_InfraGenerationInput
+                export_generateInfra -.-&gt; export_InfrastructureGenerationResult
+                export_generateInfrastructure[&quot;generateInfrastructure&quot;]
+                module_src_index_ts --&gt; export_generateInfrastructure
+                export_generateInfrastructure -.-&gt; export_InfraManifestInput
+                export_generateInfrastructure -.-&gt; export_InfrastructureGenerationOptions
+                export_generateInfrastructure -.-&gt; export_InfrastructureGenerationResult
+                export_InfraDiagnostic[&quot;InfraDiagnostic&quot;] module_src_types_ts --&gt;
+                export_InfraDiagnostic export_InfraGenerationInput[&quot;InfraGenerationInput&quot;]
+                module_src_types_ts --&gt; export_InfraGenerationInput export_InfraGenerationInput
+                -.-&gt; export_InfraManifestInput export_InfraGenerationInput -.-&gt;
+                export_InfrastructureGenerationOptions
+                export_InfraGenerationOptions[&quot;InfraGenerationOptions&quot;]
+                module_src_types_ts --&gt; export_InfraGenerationOptions
+                export_InfraGenerationResult[&quot;InfraGenerationResult&quot;] module_src_types_ts
+                --&gt; export_InfraGenerationResult
+                export_InfraManifestInput[&quot;InfraManifestInput&quot;] module_src_types_ts --&gt;
+                export_InfraManifestInput
+                export_InfrastructureGenerationMeta[&quot;InfrastructureGenerationMeta&quot;]
+                module_src_types_ts --&gt; export_InfrastructureGenerationMeta
+                export_InfrastructureGenerationOptions[&quot;InfrastructureGenerationOptions&quot;]
+                module_src_types_ts --&gt; export_InfrastructureGenerationOptions
+                export_InfrastructureGenerationResult[&quot;InfrastructureGenerationResult&quot;]
+                module_src_types_ts --&gt; export_InfrastructureGenerationResult
+                export_InfrastructureGenerationResult -.-&gt; export_GeneratedInfrastructureFile
+                export_InfrastructureGenerationResult -.-&gt; export_GeneratedPackageDependency
+                export_InfrastructureGenerationResult -.-&gt; export_InfrastructureGenerationMeta
+                export_PackageDependency[&quot;PackageDependency&quot;] module_src_types_ts --&gt;
+                export_PackageDependency
+              </div>
               <details>
                 <summary>View Mermaid source</summary>
                 <pre>
 graph LR
+  module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+  module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
+  module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
+  module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
+  module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
+  module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
+  module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
+  module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
+  module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+  module_src_datasets_ts[&quot;src/datasets.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_ts[&quot;src/types.ts&quot;]
+  export_DatasetInfrastructureArtifacts[&quot;DatasetInfrastructureArtifacts&quot;]
+  module_src_datasets_ts --&gt; export_DatasetInfrastructureArtifacts
+  export_DatasetInfrastructureArtifacts -.-&gt; export_GeneratedInfrastructureFile
+  export_generateDatasetInfrastructureArtifacts[&quot;generateDatasetInfrastructureArtifacts&quot;]
+  module_src_datasets_ts --&gt; export_generateDatasetInfrastructureArtifacts
+  export_generateDatasetInfrastructureArtifacts -.-&gt; export_DatasetInfrastructureArtifacts
+  export_GeneratedFile[&quot;GeneratedFile&quot;]
+  module_src_types_ts --&gt; export_GeneratedFile
+  export_GeneratedInfrastructureFile[&quot;GeneratedInfrastructureFile&quot;]
+  module_src_types_ts --&gt; export_GeneratedInfrastructureFile
+  export_GeneratedPackageDependency[&quot;GeneratedPackageDependency&quot;]
+  module_src_types_ts --&gt; export_GeneratedPackageDependency
+  export_generateInfra[&quot;generateInfra&quot;]
+  module_src_index_ts --&gt; export_generateInfra
+  export_generateInfra -.-&gt; export_InfraGenerationInput
+  export_generateInfra -.-&gt; export_InfrastructureGenerationResult
+  export_generateInfrastructure[&quot;generateInfrastructure&quot;]
+  module_src_index_ts --&gt; export_generateInfrastructure
+  export_generateInfrastructure -.-&gt; export_InfraManifestInput
+  export_generateInfrastructure -.-&gt; export_InfrastructureGenerationOptions
+  export_generateInfrastructure -.-&gt; export_InfrastructureGenerationResult
+  export_InfraDiagnostic[&quot;InfraDiagnostic&quot;]
+  module_src_types_ts --&gt; export_InfraDiagnostic
+  export_InfraGenerationInput[&quot;InfraGenerationInput&quot;]
+  module_src_types_ts --&gt; export_InfraGenerationInput
+  export_InfraGenerationInput -.-&gt; export_InfraManifestInput
+  export_InfraGenerationInput -.-&gt; export_InfrastructureGenerationOptions
+  export_InfraGenerationOptions[&quot;InfraGenerationOptions&quot;]
+  module_src_types_ts --&gt; export_InfraGenerationOptions
+  export_InfraGenerationResult[&quot;InfraGenerationResult&quot;]
+  module_src_types_ts --&gt; export_InfraGenerationResult
+  export_InfraManifestInput[&quot;InfraManifestInput&quot;]
+  module_src_types_ts --&gt; export_InfraManifestInput
+  export_InfrastructureGenerationMeta[&quot;InfrastructureGenerationMeta&quot;]
+  module_src_types_ts --&gt; export_InfrastructureGenerationMeta
+  export_InfrastructureGenerationOptions[&quot;InfrastructureGenerationOptions&quot;]
+  module_src_types_ts --&gt; export_InfrastructureGenerationOptions
+  export_InfrastructureGenerationResult[&quot;InfrastructureGenerationResult&quot;]
+  module_src_types_ts --&gt; export_InfrastructureGenerationResult
+  export_InfrastructureGenerationResult -.-&gt; export_GeneratedInfrastructureFile
+  export_InfrastructureGenerationResult -.-&gt; export_GeneratedPackageDependency
+  export_InfrastructureGenerationResult -.-&gt; export_InfrastructureGenerationMeta
+  export_PackageDependency[&quot;PackageDependency&quot;]
+  module_src_types_ts --&gt; export_PackageDependency
 </pre
                 >
               </details>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-auth-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/auth/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/auth/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateAuthProviderArtifacts src/adapters/minikube/auth/index.ts "
+            >
+              <h3>generateAuthProviderArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/index.ts:5:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-auth-supabase-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/auth/supabase/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/auth/supabase/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateSupabaseAuthArtifacts src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>generateSupabaseAuthArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:4:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getSupabaseConfigMap src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>getSupabaseConfigMap</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:74:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getSupabaseSecret src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>getSupabaseSecret</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:101:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getRuntimeAuthEnvConfigMap src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>getRuntimeAuthEnvConfigMap</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:118:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getSupabaseRuntimeWiringGuide src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>getSupabaseRuntimeWiringGuide</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:148:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="resolveAuthFieldModel src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>resolveAuthFieldModel</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:220:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="normalizeFieldList src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>normalizeFieldList</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:245:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="escapeYamlDoubleQuoted src/adapters/minikube/auth/supabase/index.ts "
+            >
+              <h3>escapeYamlDoubleQuoted</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/supabase/index.ts:267:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-authz-cerbos-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/authz/cerbos/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/authz/cerbos/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateCerbosAuthzArtifacts src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>generateCerbosAuthzArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:6:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getCerbosConfigMap src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getCerbosConfigMap</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:47:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getCerbosPolicyConfigMap src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getCerbosPolicyConfigMap</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:64:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getCerbosDeployment src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getCerbosDeployment</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:85:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getCerbosService src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getCerbosService</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:126:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getCerbosPolicyEntries src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getCerbosPolicyEntries</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:173:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getAppPolicy src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getAppPolicy</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:198:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getRoutePolicy src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getRoutePolicy</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:210:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getScreenPolicy src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getScreenPolicy</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:242:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="renderRule src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>renderRule</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:274:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getInConditionExpr src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>getInConditionExpr</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:292:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="indentLines src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>indentLines</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:296:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="buildCerbosPolicyIntent src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>buildCerbosPolicyIntent</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:305:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="flattenNavigatorRoutes src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>flattenNavigatorRoutes</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:375:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="walk src/adapters/minikube/authz/cerbos/index.ts ">
+              <h3>walk</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:378:9</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="normalizeGuards src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>normalizeGuards</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:398:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="isPublicRoute src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>isPublicRoute</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:402:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="hasAny src/adapters/minikube/authz/cerbos/index.ts ">
+              <h3>hasAny</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:440:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="unique src/adapters/minikube/authz/cerbos/index.ts ">
+              <h3>unique</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:447:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="authFlowPathToRouteName src/adapters/minikube/authz/cerbos/index.ts "
+            >
+              <h3>authFlowPathToRouteName</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:451:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-authz-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/authz/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/authz/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateAuthorizationArtifacts src/adapters/minikube/authz/index.ts "
+            >
+              <h3>generateAuthorizationArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/authz/index.ts:7:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-base-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/base/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/base/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateMinikubeBaseArtifacts src/adapters/minikube/base/index.ts "
+            >
+              <h3>generateMinikubeBaseArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:25:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getReadmeMarkdown src/adapters/minikube/base/index.ts "
+            >
+              <h3>getReadmeMarkdown</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:136:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="getEnvExample src/adapters/minikube/base/index.ts ">
+              <h3>getEnvExample</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:327:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getNamespaceManifest src/adapters/minikube/base/index.ts "
+            >
+              <h3>getNamespaceManifest</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:385:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getAppConfigMap src/adapters/minikube/base/index.ts "
+            >
+              <h3>getAppConfigMap</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:395:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="resolveAppInfraStorageMetadata src/adapters/minikube/base/index.ts "
+            >
+              <h3>resolveAppInfraStorageMetadata</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:436:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="normalizeBuckets src/adapters/minikube/base/index.ts "
+            >
+              <h3>normalizeBuckets</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:471:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="escapeYamlDoubleQuoted src/adapters/minikube/base/index.ts "
+            >
+              <h3>escapeYamlDoubleQuoted</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:486:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getKustomizationManifest src/adapters/minikube/base/index.ts "
+            >
+              <h3>getKustomizationManifest</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:490:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getAppDeploymentManifest src/adapters/minikube/base/index.ts "
+            >
+              <h3>getAppDeploymentManifest</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:507:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getAppServiceManifest src/adapters/minikube/base/index.ts "
+            >
+              <h3>getAppServiceManifest</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:561:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="getUpScript src/adapters/minikube/base/index.ts ">
+              <h3>getUpScript</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:580:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getBuildAppImageScript src/adapters/minikube/base/index.ts "
+            >
+              <h3>getBuildAppImageScript</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:821:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getAppImageDockerfile src/adapters/minikube/base/index.ts "
+            >
+              <h3>getAppImageDockerfile</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:898:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getPortForwardScript src/adapters/minikube/base/index.ts "
+            >
+              <h3>getPortForwardScript</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:922:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="getDownScript src/adapters/minikube/base/index.ts ">
+              <h3>getDownScript</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:963:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getStatusScript src/adapters/minikube/base/index.ts "
+            >
+              <h3>getStatusScript</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:983:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getSupabaseLocalEnvScript src/adapters/minikube/base/index.ts "
+            >
+              <h3>getSupabaseLocalEnvScript</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1074:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getDefaultAppImage src/adapters/minikube/base/index.ts "
+            >
+              <h3>getDefaultAppImage</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1444:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="resolveSupabaseLocalPorts src/adapters/minikube/base/index.ts "
+            >
+              <h3>resolveSupabaseLocalPorts</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1448:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="resolveSupabaseLocalPortBucket src/adapters/minikube/base/index.ts "
+            >
+              <h3>resolveSupabaseLocalPortBucket</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1464:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="hashProjectId src/adapters/minikube/base/index.ts ">
+              <h3>hashProjectId</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1469:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-contracts-ts"
+          class="view"
+          data-view="src/adapters/minikube/contracts.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/contracts.ts</h2>
+            <article
+              class="item"
+              data-search="emptyMinikubeArtifacts src/adapters/minikube/contracts.ts "
+            >
+              <h3>emptyMinikubeArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/contracts.ts:10:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateMinikubeInfra src/adapters/minikube/index.ts "
+            >
+              <h3>generateMinikubeInfra</h3>
+              <p class="muted"><code>src/adapters/minikube/index.ts:15:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="collectProviders src/adapters/minikube/index.ts ">
+              <h3>collectProviders</h3>
+              <p class="muted"><code>src/adapters/minikube/index.ts:88:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="collectDependencies src/adapters/minikube/index.ts ">
+              <h3>collectDependencies</h3>
+              <p class="muted"><code>src/adapters/minikube/index.ts:100:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="collectWarnings src/adapters/minikube/index.ts ">
+              <h3>collectWarnings</h3>
+              <p class="muted"><code>src/adapters/minikube/index.ts:114:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="resolveNamespace src/adapters/minikube/index.ts ">
+              <h3>resolveNamespace</h3>
+              <p class="muted"><code>src/adapters/minikube/index.ts:130:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="unique src/adapters/minikube/index.ts ">
+              <h3>unique</h3>
+              <p class="muted"><code>src/adapters/minikube/index.ts:147:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-storage-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/storage/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/storage/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateStorageArtifacts src/adapters/minikube/storage/index.ts "
+            >
+              <h3>generateStorageArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/storage/index.ts:5:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="normalizeBuckets src/adapters/minikube/storage/index.ts "
+            >
+              <h3>normalizeBuckets</h3>
+              <p class="muted"><code>src/adapters/minikube/storage/index.ts:78:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-storage-supabase-index-ts"
+          class="view"
+          data-view="src/adapters/minikube/storage/supabase/index.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/storage/supabase/index.ts</h2>
+            <article
+              class="item"
+              data-search="generateSupabaseStorageArtifacts src/adapters/minikube/storage/supabase/index.ts "
+            >
+              <h3>generateSupabaseStorageArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/storage/supabase/index.ts:3:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getSupabaseStorageConfigMap src/adapters/minikube/storage/supabase/index.ts "
+            >
+              <h3>getSupabaseStorageConfigMap</h3>
+              <p class="muted"><code>src/adapters/minikube/storage/supabase/index.ts:68:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getRuntimeStorageEnvConfigMap src/adapters/minikube/storage/supabase/index.ts "
+            >
+              <h3>getRuntimeStorageEnvConfigMap</h3>
+              <p class="muted"><code>src/adapters/minikube/storage/supabase/index.ts:87:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="escapeYamlDoubleQuoted src/adapters/minikube/storage/supabase/index.ts "
+            >
+              <h3>escapeYamlDoubleQuoted</h3>
+              <p class="muted">
+                <code>src/adapters/minikube/storage/supabase/index.ts:110:1</code>
+              </p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section id="view-src-datasets-ts" class="view" data-view="src/datasets.ts" hidden>
+          <section class="panel">
+            <h2>src/datasets.ts</h2>
+            <article
+              class="item"
+              data-search="generateDatasetInfrastructureArtifacts src/datasets.ts "
+            >
+              <h3>generateDatasetInfrastructureArtifacts</h3>
+              <p class="muted"><code>src/datasets.ts:65:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="listDatasets src/datasets.ts ">
+              <h3>listDatasets</h3>
+              <p class="muted"><code>src/datasets.ts:130:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createSeedManifest src/datasets.ts ">
+              <h3>createSeedManifest</h3>
+              <p class="muted"><code>src/datasets.ts:134:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="materializeSeedRecords src/datasets.ts ">
+              <h3>materializeSeedRecords</h3>
+              <p class="muted"><code>src/datasets.ts:144:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createSeedWarnings src/datasets.ts ">
+              <h3>createSeedWarnings</h3>
+              <p class="muted"><code>src/datasets.ts:164:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateReadme src/datasets.ts ">
+              <h3>generateReadme</h3>
+              <p class="muted"><code>src/datasets.ts:185:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateCollectionsTs src/datasets.ts ">
+              <h3>generateCollectionsTs</h3>
+              <p class="muted"><code>src/datasets.ts:196:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateApiTs src/datasets.ts ">
+              <h3>generateApiTs</h3>
+              <p class="muted"><code>src/datasets.ts:204:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateApiHandlersTs src/datasets.ts ">
+              <h3>generateApiHandlersTs</h3>
+              <p class="muted"><code>src/datasets.ts:212:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createDatasetOperations src/datasets.ts ">
+              <h3>createDatasetOperations</h3>
+              <p class="muted"><code>src/datasets.ts:223:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createDatasetOperation src/datasets.ts ">
+              <h3>createDatasetOperation</h3>
+              <p class="muted"><code>src/datasets.ts:230:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createOpenApi src/datasets.ts ">
+              <h3>createOpenApi</h3>
+              <p class="muted"><code>src/datasets.ts:281:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="addOpenApiOperation src/datasets.ts ">
+              <h3>addOpenApiOperation</h3>
+              <p class="muted"><code>src/datasets.ts:310:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateSupabaseMigrationSql src/datasets.ts ">
+              <h3>generateSupabaseMigrationSql</h3>
+              <p class="muted"><code>src/datasets.ts:333:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateCreateTableSql src/datasets.ts ">
+              <h3>generateCreateTableSql</h3>
+              <p class="muted"><code>src/datasets.ts:349:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="collectSqlFields src/datasets.ts ">
+              <h3>collectSqlFields</h3>
+              <p class="muted"><code>src/datasets.ts:359:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateSupabaseSeedSql src/datasets.ts ">
+              <h3>generateSupabaseSeedSql</h3>
+              <p class="muted"><code>src/datasets.ts:373:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateSeedInsertStatements src/datasets.ts ">
+              <h3>generateSeedInsertStatements</h3>
+              <p class="muted"><code>src/datasets.ts:386:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="collectSeedColumns src/datasets.ts ">
+              <h3>collectSeedColumns</h3>
+              <p class="muted"><code>src/datasets.ts:411:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatSqlColumn src/datasets.ts ">
+              <h3>formatSqlColumn</h3>
+              <p class="muted"><code>src/datasets.ts:436:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="mapSqlFieldType src/datasets.ts ">
+              <h3>mapSqlFieldType</h3>
+              <p class="muted"><code>src/datasets.ts:445:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatSqlDefaultValue src/datasets.ts ">
+              <h3>formatSqlDefaultValue</h3>
+              <p class="muted"><code>src/datasets.ts:462:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatSqlValue src/datasets.ts ">
+              <h3>formatSqlValue</h3>
+              <p class="muted"><code>src/datasets.ts:482:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="stringifyJsonValue src/datasets.ts ">
+              <h3>stringifyJsonValue</h3>
+              <p class="muted"><code>src/datasets.ts:506:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="quoteSqlIdentifier src/datasets.ts ">
+              <h3>quoteSqlIdentifier</h3>
+              <p class="muted"><code>src/datasets.ts:514:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="escapeSqlString src/datasets.ts ">
+              <h3>escapeSqlString</h3>
+              <p class="muted"><code>src/datasets.ts:518:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createPrimaryKeyRegistry src/datasets.ts ">
+              <h3>createPrimaryKeyRegistry</h3>
+              <p class="muted"><code>src/datasets.ts:522:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="findPrimaryKeyField src/datasets.ts ">
+              <h3>findPrimaryKeyField</h3>
+              <p class="muted"><code>src/datasets.ts:530:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createDeterministicSeedUuid src/datasets.ts ">
+              <h3>createDeterministicSeedUuid</h3>
+              <p class="muted"><code>src/datasets.ts:539:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="hashHex src/datasets.ts ">
+              <h3>hashHex</h3>
+              <p class="muted"><code>src/datasets.ts:547:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatCollectionName src/datasets.ts ">
+              <h3>formatCollectionName</h3>
+              <p class="muted"><code>src/datasets.ts:558:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section id="view-src-index-ts" class="view" data-view="src/index.ts" hidden>
+          <section class="panel">
+            <h2>src/index.ts</h2>
+            <article class="item" data-search="generateInfra src/index.ts ">
+              <h3>generateInfra</h3>
+              <p class="muted"><code>src/index.ts:26:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateInfrastructure src/index.ts ">
+              <h3>generateInfrastructure</h3>
+              <p class="muted"><code>src/index.ts:30:1</code></p>
+              <p class="empty">No description available.</p>
             </article>
           </section>
         </section>

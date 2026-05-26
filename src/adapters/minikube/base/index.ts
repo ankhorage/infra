@@ -1,0 +1,1478 @@
+import type { GeneratedInfrastructureFile } from '../../../types';
+import type { InfraManifestInput } from '../../../types';
+
+interface SupabaseLocalPorts {
+  base: number;
+  shadow: number;
+  api: number;
+  db: number;
+  studio: number;
+  inbucket: number;
+  analytics: number;
+}
+
+interface AppInfraStorageMetadata {
+  provider: 'supabase';
+  bucketsCsv: string;
+  defaultBucket: string;
+}
+
+const SUPABASE_LOCAL_PORT_BASE = 55320;
+const SUPABASE_LOCAL_PORT_BUCKET_SIZE = 10;
+const SUPABASE_LOCAL_PORT_BUCKET_COUNT = 1000;
+const SUPABASE_LOCAL_PORT_REFERENCE_PROJECT = 'my-app';
+
+export function generateMinikubeBaseArtifacts(args: {
+  manifest: InfraManifestInput;
+  namespace: string;
+  extraResources: string[];
+  extraEnvEntries: string[];
+}): GeneratedInfrastructureFile[] {
+  const { manifest, namespace, extraResources, extraEnvEntries } = args;
+
+  const root = 'infra/minikube';
+  const k8sRoot = `${root}/k8s`;
+  const scriptsRoot = `${root}/scripts`;
+  const appImageRoot = `${root}/app-image`;
+  const defaultAppImage = getDefaultAppImage(namespace);
+  const supabaseLocalPorts = resolveSupabaseLocalPorts(namespace);
+
+  const authScope = manifest.auth?.scope ?? 'none';
+  const authProvider = manifest.auth?.provider ?? 'none';
+  const authzEngine = manifest.auth?.authorization.engine ?? 'none';
+  const databaseProvider = manifest.database?.provider ?? 'none';
+  const storageMetadata = resolveAppInfraStorageMetadata(manifest);
+  const monitoringEnabled = manifest.deployment?.monitoring === true;
+  const domain = manifest.networking?.domain ?? '';
+
+  return [
+    {
+      path: `${root}/README.md`,
+      content: getReadmeMarkdown({
+        namespace,
+        defaultAppImage,
+        monitoringEnabled,
+        authProvider,
+        authzEngine,
+        extraResources,
+        supabaseLocalPorts,
+      }),
+    },
+    {
+      path: `${root}/.env.example`,
+      content: getEnvExample({
+        namespace,
+        domain,
+        extraEnvEntries,
+        defaultAppImage,
+        supabaseLocalPorts,
+      }),
+    },
+    {
+      path: `${k8sRoot}/namespace.yaml`,
+      content: getNamespaceManifest(namespace),
+    },
+    {
+      path: `${k8sRoot}/app.configmap.yaml`,
+      content: getAppConfigMap({
+        namespace,
+        authScope,
+        authProvider,
+        databaseProvider,
+        storageMetadata,
+        monitoringEnabled,
+        domain,
+      }),
+    },
+    {
+      path: `${k8sRoot}/app/deployment.yaml`,
+      content: getAppDeploymentManifest({ namespace, defaultAppImage }),
+    },
+    {
+      path: `${k8sRoot}/app/service.yaml`,
+      content: getAppServiceManifest(namespace),
+    },
+    {
+      path: `${k8sRoot}/kustomization.yaml`,
+      content: getKustomizationManifest(extraResources),
+    },
+    {
+      path: `${scriptsRoot}/up.sh`,
+      content: getUpScript({ defaultNamespace: namespace, defaultAppImage }),
+      executable: true,
+    },
+    {
+      path: `${scriptsRoot}/build-app-image.sh`,
+      content: getBuildAppImageScript({ defaultNamespace: namespace, defaultAppImage }),
+      executable: true,
+    },
+    {
+      path: `${scriptsRoot}/port-forward.sh`,
+      content: getPortForwardScript(namespace),
+      executable: true,
+    },
+    {
+      path: `${scriptsRoot}/down.sh`,
+      content: getDownScript(),
+      executable: true,
+    },
+    {
+      path: `${scriptsRoot}/status.sh`,
+      content: getStatusScript(namespace),
+      executable: true,
+    },
+    {
+      path: `${scriptsRoot}/supabase-local-env.sh`,
+      content: getSupabaseLocalEnvScript(supabaseLocalPorts),
+      executable: true,
+    },
+    {
+      path: `${appImageRoot}/Dockerfile`,
+      content: getAppImageDockerfile(),
+    },
+  ];
+}
+
+function getReadmeMarkdown(args: {
+  namespace: string;
+  defaultAppImage: string;
+  monitoringEnabled: boolean;
+  authProvider: string;
+  authzEngine: string;
+  extraResources: string[];
+  supabaseLocalPorts: SupabaseLocalPorts;
+}): string {
+  const {
+    namespace,
+    defaultAppImage,
+    monitoringEnabled,
+    authProvider,
+    authzEngine,
+    extraResources,
+    supabaseLocalPorts,
+  } = args;
+  const resourceLines = [
+    'namespace.yaml',
+    'app.configmap.yaml',
+    'app/deployment.yaml',
+    'app/service.yaml',
+    ...extraResources,
+  ]
+    .map((r) => `- \`k8s/${r}\``)
+    .join('\n');
+
+  return `# Minikube Infra
+
+This directory is generated from \`ankh.config.json\` (infra manifest).
+
+## Requirements
+
+- minikube
+- kubectl
+- docker (when using the default driver)
+- bun (for Expo web export in app image build flow)
+- python3 (for patching generated local Supabase port defaults and checking port availability)
+
+## Quick Start
+
+1. Copy env template:
+   \`\`\`bash
+   cp .env.example .env
+   \`\`\`
+2. Optional: import local Supabase credentials from \`supabase status\` output:
+   \`\`\`bash
+   ./scripts/supabase-local-env.sh
+   \`\`\`
+3. Apply baseline infra:
+   \`\`\`bash
+   ./scripts/up.sh
+   \`\`\`
+4. Start app port-forward:
+   \`\`\`bash
+   ./scripts/port-forward.sh
+   \`\`\`
+5. Check status:
+   \`\`\`bash
+   ./scripts/status.sh
+   \`\`\`
+6. Tear down:
+   \`\`\`bash
+   ./scripts/down.sh
+   \`\`\`
+
+## Generated Resources
+
+${resourceLines}
+
+## Generated Helpers
+
+- \`scripts/build-app-image.sh\`
+- \`scripts/port-forward.sh\`
+- \`scripts/supabase-local-env.sh\`
+- \`app-image/Dockerfile\`
+
+## Runtime Conventions
+
+- Namespace: \`${namespace}\`
+- Monitoring requested: \`${monitoringEnabled ? 'true' : 'false'}\`
+- Auth provider: \`${authProvider}\`
+- Authorization engine: \`${authzEngine}\`
+- Namespace source: \`infra.networking.domain\` first, otherwise project slug hint from CLI.
+
+## App Runtime
+
+Default app runtime manifests are generated:
+
+- \`k8s/app/deployment.yaml\`
+- \`k8s/app/service.yaml\`
+
+Deployment env wiring includes:
+
+- \`ConfigMap/app-infra-config\`
+- \`ConfigMap/app-runtime-auth-env\` (optional)
+- \`ConfigMap/app-runtime-storage-env\` (optional)
+- \`Secret/supabase-auth-secrets\` (optional)
+
+If \`auth.provider\` is \`supabase\`, use:
+
+- \`k8s/auth/supabase/supabase-auth.secret.yaml\`
+- \`k8s/auth/supabase/app-runtime-auth.env.configmap.yaml\`
+- \`auth/supabase-runtime-wiring.md\`
+
+The app deployment should import runtime config sources in this order:
+
+\`\`\`yaml
+envFrom:
+  - configMapRef:
+      name: app-runtime-auth-env
+  - configMapRef:
+      name: app-runtime-storage-env
+  - secretRef:
+      name: supabase-auth-secrets
+\`\`\`
+
+Default runtime knobs in \`.env\`:
+
+- \`APP_BUILD_ENABLED\`
+- \`APP_SOURCE_DIR\`
+- \`APP_WEB_EXPORT_DIR\`
+- \`APP_IMAGE\`
+- \`APP_IMAGE_SYNC_STRATEGY\`
+- \`APP_IMAGE_CLEANUP_ON_DOWN\`
+- \`APP_IMAGE_CLEANUP_MINIKUBE\`
+- \`APP_IMAGE_CLEANUP_DOCKER\`
+- \`AUTH_RUNTIME_MODE\`
+- \`APP_PORT_FORWARD_LOCAL_PORT\`
+- \`APP_PORT_FORWARD_REMOTE_PORT\`
+- \`APP_REPLICAS\`
+- \`APP_FORCE_ROLLOUT_RESTART\`
+- \`SUPABASE_PROJECT_DIR\` (optional supabase CLI project path)
+- \`SUPABASE_LOCAL_PORT_BASE\` (generated default \`${supabaseLocalPorts.base}\`)
+- \`SUPABASE_LOCAL_API_PORT\` (generated default \`${supabaseLocalPorts.api}\`)
+- \`SUPABASE_LOCAL_DB_PORT\` (generated default \`${supabaseLocalPorts.db}\`)
+- \`SUPABASE_LOCAL_STUDIO_PORT\` (generated default \`${supabaseLocalPorts.studio}\`)
+- \`SUPABASE_LOCAL_INBUCKET_PORT\` (generated default \`${supabaseLocalPorts.inbucket}\`)
+- \`SUPABASE_LOCAL_ANALYTICS_PORT\` (generated default \`${supabaseLocalPorts.analytics}\`)
+- \`SUPABASE_LOCAL_SHADOW_PORT\` (generated default \`${supabaseLocalPorts.shadow}\`)
+- \`APP_IMAGE_PULL_SECRET_NAME\` + credentials (optional, private registry)
+- \`SUPABASE_SECRET_SYNC_ENABLED\`
+
+Generated app Supabase local defaults:
+
+- Port base: \`${supabaseLocalPorts.base}\`
+- API: \`http://127.0.0.1:${supabaseLocalPorts.api}\`
+- DB: \`127.0.0.1:${supabaseLocalPorts.db}\`
+- Studio: \`http://127.0.0.1:${supabaseLocalPorts.studio}\`
+- Inbucket: \`http://127.0.0.1:${supabaseLocalPorts.inbucket}\`
+- Analytics: \`http://127.0.0.1:${supabaseLocalPorts.analytics}\`
+- Shadow DB: \`127.0.0.1:${supabaseLocalPorts.shadow}\`
+
+Override with:
+
+- \`SUPABASE_LOCAL_PORT_BASE\`
+- \`SUPABASE_LOCAL_API_PORT\`
+- \`SUPABASE_LOCAL_DB_PORT\`
+- \`SUPABASE_LOCAL_STUDIO_PORT\`
+- \`SUPABASE_LOCAL_INBUCKET_PORT\`
+- \`SUPABASE_LOCAL_ANALYTICS_PORT\`
+- \`SUPABASE_LOCAL_SHADOW_PORT\`
+
+Build flow:
+
+- \`./scripts/up.sh\` calls \`./scripts/build-app-image.sh\` when \`APP_BUILD_ENABLED=true\`.
+- \`./scripts/supabase-local-env.sh\` can populate Supabase keys in \`.env\` from local \`supabase status -o env\`.
+- \`./scripts/supabase-local-env.sh\` writes \`EXPO_PUBLIC_SUPABASE_URL\` + \`EXPO_PUBLIC_SUPABASE_ANON_KEY\` into \`$APP_SOURCE_DIR/.env.local\` (e.g. \`apps/card/.env.local\`) for local app runs.
+- With \`AUTH_RUNTIME_MODE=local\` (default), \`up.sh\` auto-runs \`supabase-local-env.sh\` when Supabase keys are missing.
+- \`supabase-local-env.sh\` checks configured host ports before starting a missing local Supabase stack.
+- \`build-app-image.sh\` runs \`bunx expo export --platform web\` from app source.
+- \`app-image/Dockerfile\` builds an nginx image from exported web artifacts.
+- \`build-app-image.sh\` labels the generated Docker image with Ankhorage metadata for diagnostics.
+- \`up.sh\` syncs runtime image by strategy:
+  - \`APP_IMAGE_SYNC_STRATEGY=docker-load\` (default): load prebuilt local Docker image into Minikube.
+  - \`APP_IMAGE_SYNC_STRATEGY=minikube-build\`: build directly into Minikube image store.
+  - \`APP_IMAGE_SYNC_STRATEGY=none\`: skip local image sync.
+- \`up.sh\` applies image/replica changes and (by default) restarts \`deployment/app-runtime\`.
+- If Supabase keys are provided, \`up.sh\` syncs \`Secret/supabase-auth-secrets\` from env.
+
+Default generated app image tag: \`${defaultAppImage}\`.
+
+## Notes
+
+- Auth/database/authorization resources are generated in adapter modules.
+- Cerbos route/screen policies derive from app navigator + authFlow intent when available.
+- Re-generate infra by saving the manifest or calling the bridge infra endpoint.
+`;
+}
+
+function getEnvExample(args: {
+  namespace: string;
+  domain: string;
+  extraEnvEntries: string[];
+  defaultAppImage: string;
+  supabaseLocalPorts: SupabaseLocalPorts;
+}): string {
+  const { namespace, domain, extraEnvEntries, defaultAppImage, supabaseLocalPorts } = args;
+
+  const baseEntries = [
+    '# Minikube runtime configuration',
+    `ANKH_NAMESPACE=${namespace}`,
+    'MINIKUBE_PROFILE=minikube',
+    'MINIKUBE_DRIVER=docker',
+    'APP_BUILD_ENABLED=true',
+    'APP_SOURCE_DIR=',
+    'APP_WEB_EXPORT_DIR=.ankh/web-export',
+    'SUPABASE_PROJECT_DIR=',
+    `SUPABASE_LOCAL_PORT_BASE=${supabaseLocalPorts.base}`,
+    `SUPABASE_LOCAL_SHADOW_PORT=${supabaseLocalPorts.shadow}`,
+    `SUPABASE_LOCAL_API_PORT=${supabaseLocalPorts.api}`,
+    `SUPABASE_LOCAL_DB_PORT=${supabaseLocalPorts.db}`,
+    `SUPABASE_LOCAL_STUDIO_PORT=${supabaseLocalPorts.studio}`,
+    `SUPABASE_LOCAL_INBUCKET_PORT=${supabaseLocalPorts.inbucket}`,
+    `SUPABASE_LOCAL_ANALYTICS_PORT=${supabaseLocalPorts.analytics}`,
+    `APP_IMAGE=${defaultAppImage}`,
+    'APP_IMAGE_SYNC_STRATEGY=docker-load',
+    'APP_IMAGE_CLEANUP_ON_DOWN=true',
+    'APP_IMAGE_CLEANUP_MINIKUBE=true',
+    'APP_IMAGE_CLEANUP_DOCKER=true',
+    'AUTH_RUNTIME_MODE=local',
+    'APP_PORT_FORWARD_LOCAL_PORT=18080',
+    'APP_PORT_FORWARD_REMOTE_PORT=80',
+    'APP_REPLICAS=1',
+    'APP_FORCE_ROLLOUT_RESTART=true',
+    '',
+    '# Optional private registry auth for APP_IMAGE',
+    'APP_IMAGE_PULL_SECRET_NAME=',
+    'APP_IMAGE_PULL_SECRET_SERVER=ghcr.io',
+    'APP_IMAGE_PULL_SECRET_USERNAME=',
+    'APP_IMAGE_PULL_SECRET_PASSWORD=',
+    'APP_IMAGE_PULL_SECRET_EMAIL=',
+    '',
+    '# Optional app networking domain',
+    `APP_DOMAIN=${domain}`,
+    '',
+    '# Adapter-provided runtime keys',
+  ];
+
+  const merged = [...baseEntries, ...extraEnvEntries];
+  const unique: string[] = [];
+  for (const entry of merged) {
+    if (!unique.includes(entry)) unique.push(entry);
+  }
+
+  return `${unique.join('\n')}\n`;
+}
+
+function getNamespaceManifest(namespace: string): string {
+  return `apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${namespace}
+  labels:
+    app.kubernetes.io/part-of: ankhorage
+`;
+}
+
+function getAppConfigMap(args: {
+  namespace: string;
+  authScope: string;
+  authProvider: string;
+  databaseProvider: string;
+  storageMetadata: AppInfraStorageMetadata | null;
+  monitoringEnabled: boolean;
+  domain: string;
+}): string {
+  const {
+    namespace,
+    authScope,
+    authProvider,
+    databaseProvider,
+    storageMetadata,
+    monitoringEnabled,
+    domain,
+  } = args;
+
+  const storageLines = storageMetadata
+    ? `  STORAGE_PROVIDER: "${storageMetadata.provider}"
+  STORAGE_BUCKETS: "${escapeYamlDoubleQuoted(storageMetadata.bucketsCsv)}"
+  STORAGE_DEFAULT_BUCKET: "${escapeYamlDoubleQuoted(storageMetadata.defaultBucket)}"
+`
+    : '';
+
+  return `apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-infra-config
+  namespace: ${namespace}
+data:
+  DEPLOYMENT_TARGET: "minikube"
+  MONITORING_ENABLED: "${monitoringEnabled ? 'true' : 'false'}"
+  AUTH_SCOPE: "${authScope}"
+  AUTH_PROVIDER: "${authProvider}"
+  DATABASE_PROVIDER: "${databaseProvider}"
+${storageLines}  NETWORK_DOMAIN: "${domain}"
+`;
+}
+
+function resolveAppInfraStorageMetadata(
+  manifest: InfraManifestInput,
+): AppInfraStorageMetadata | null {
+  const spec = manifest.storage;
+  if (!spec) return null;
+
+  const buckets = normalizeBuckets(spec.buckets);
+  if (buckets.length === 0) return null;
+  const [defaultBucket] = buckets;
+  if (!defaultBucket) return null;
+
+  if (spec.provider === 'supabase') {
+    return {
+      provider: 'supabase',
+      bucketsCsv: buckets.join(','),
+      defaultBucket,
+    };
+  }
+
+  if (spec.provider === 'auto') {
+    const shouldResolveToSupabase =
+      manifest.database?.provider === 'supabase' || manifest.auth?.provider === 'supabase';
+
+    if (!shouldResolveToSupabase) return null;
+
+    return {
+      provider: 'supabase',
+      bucketsCsv: buckets.join(','),
+      defaultBucket,
+    };
+  }
+
+  return null;
+}
+
+function normalizeBuckets(rawBuckets: readonly string[]): string[] {
+  const normalized: string[] = [];
+  const seen = new Set<string>();
+
+  for (const raw of rawBuckets) {
+    const bucket = raw.trim();
+    if (!bucket) continue;
+    if (seen.has(bucket)) continue;
+    seen.add(bucket);
+    normalized.push(bucket);
+  }
+
+  return normalized;
+}
+
+function escapeYamlDoubleQuoted(value: string): string {
+  return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
+}
+
+function getKustomizationManifest(extraResources: string[]): string {
+  const resources = [
+    'namespace.yaml',
+    'app.configmap.yaml',
+    'app/deployment.yaml',
+    'app/service.yaml',
+    ...extraResources,
+  ];
+  const resourceLines = resources.map((r) => `  - ${r}`).join('\n');
+
+  return `apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+${resourceLines}
+`;
+}
+
+function getAppDeploymentManifest(args: { namespace: string; defaultAppImage: string }): string {
+  const { namespace, defaultAppImage } = args;
+
+  return `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-runtime
+  namespace: ${namespace}
+  labels:
+    app.kubernetes.io/name: app-runtime
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app-runtime
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app-runtime
+    spec:
+      containers:
+        - name: app
+          image: ${defaultAppImage}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: app-infra-config
+            - configMapRef:
+                name: app-runtime-auth-env
+                optional: true
+            - configMapRef:
+                name: app-runtime-storage-env
+                optional: true
+            - secretRef:
+                name: supabase-auth-secrets
+                optional: true
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+`;
+}
+
+function getAppServiceManifest(namespace: string): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: app-runtime
+  namespace: ${namespace}
+  labels:
+    app.kubernetes.io/name: app-runtime
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: app-runtime
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+`;
+}
+
+function getUpScript(args: { defaultNamespace: string; defaultAppImage: string }): string {
+  const { defaultNamespace, defaultAppImage } = args;
+
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+K8S_DIR="\${ROOT_DIR}/k8s"
+BUILD_SCRIPT="\${SCRIPT_DIR}/build-app-image.sh"
+
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ROOT_DIR}/.env"
+  set +a
+fi
+
+PROFILE="\${MINIKUBE_PROFILE:-minikube}"
+DRIVER="\${MINIKUBE_DRIVER:-docker}"
+NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
+APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-true}"
+APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
+APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-.ankh/web-export}"
+APP_IMAGE="\${APP_IMAGE:-${defaultAppImage}}"
+APP_IMAGE_SYNC_STRATEGY="\${APP_IMAGE_SYNC_STRATEGY:-docker-load}"
+APP_REPLICAS="\${APP_REPLICAS:-1}"
+APP_FORCE_ROLLOUT_RESTART="\${APP_FORCE_ROLLOUT_RESTART:-true}"
+APP_IMAGE_PULL_SECRET_NAME="\${APP_IMAGE_PULL_SECRET_NAME:-}"
+APP_IMAGE_PULL_SECRET_SERVER="\${APP_IMAGE_PULL_SECRET_SERVER:-ghcr.io}"
+APP_IMAGE_PULL_SECRET_USERNAME="\${APP_IMAGE_PULL_SECRET_USERNAME:-}"
+APP_IMAGE_PULL_SECRET_PASSWORD="\${APP_IMAGE_PULL_SECRET_PASSWORD:-}"
+APP_IMAGE_PULL_SECRET_EMAIL="\${APP_IMAGE_PULL_SECRET_EMAIL:-}"
+AUTH_RUNTIME_MODE="\${AUTH_RUNTIME_MODE:-local}"
+SUPABASE_SECRET_SYNC_ENABLED="\${SUPABASE_SECRET_SYNC_ENABLED:-true}"
+SUPABASE_LOCAL_ENV_SCRIPT="\${SCRIPT_DIR}/supabase-local-env.sh"
+SUPABASE_URL="\${SUPABASE_URL:-}"
+SUPABASE_ANON_KEY="\${SUPABASE_ANON_KEY:-}"
+SUPABASE_SERVICE_ROLE_KEY="\${SUPABASE_SERVICE_ROLE_KEY:-}"
+SUPABASE_JWT_SECRET="\${SUPABASE_JWT_SECRET:-}"
+SUPABASE_PUBLIC_URL="\${EXPO_PUBLIC_SUPABASE_URL:-\${SUPABASE_URL}}"
+SUPABASE_PUBLIC_ANON_KEY="\${EXPO_PUBLIC_SUPABASE_ANON_KEY:-\${SUPABASE_ANON_KEY}}"
+
+refresh_supabase_env() {
+  SUPABASE_URL="\${SUPABASE_URL:-}"
+  SUPABASE_ANON_KEY="\${SUPABASE_ANON_KEY:-}"
+  SUPABASE_SERVICE_ROLE_KEY="\${SUPABASE_SERVICE_ROLE_KEY:-}"
+  SUPABASE_JWT_SECRET="\${SUPABASE_JWT_SECRET:-}"
+  SUPABASE_PUBLIC_URL="\${EXPO_PUBLIC_SUPABASE_URL:-\${SUPABASE_URL}}"
+  SUPABASE_PUBLIC_ANON_KEY="\${EXPO_PUBLIC_SUPABASE_ANON_KEY:-\${SUPABASE_ANON_KEY}}"
+}
+
+has_required_supabase_env() {
+  [[ -n "\${SUPABASE_URL}" && -n "\${SUPABASE_ANON_KEY}" && -n "\${SUPABASE_SERVICE_ROLE_KEY}" && -n "\${SUPABASE_JWT_SECRET}" ]]
+}
+
+refresh_supabase_env
+
+if [[ "\${AUTH_RUNTIME_MODE}" != "local" && "\${AUTH_RUNTIME_MODE}" != "remote" ]]; then
+  echo "Unsupported AUTH_RUNTIME_MODE=\${AUTH_RUNTIME_MODE}. Use local or remote."
+  exit 1
+fi
+
+if ! command -v minikube >/dev/null 2>&1; then
+  echo "minikube is required but not installed."
+  exit 1
+fi
+
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "kubectl is required but not installed."
+  exit 1
+fi
+
+HOST_STATUS="$(minikube -p "\${PROFILE}" status --format='{{.Host}}' 2>/dev/null || true)"
+if [[ "\${HOST_STATUS}" != "Running" ]]; then
+  minikube start -p "\${PROFILE}" --driver="\${DRIVER}"
+fi
+
+if ! has_required_supabase_env && [[ "\${AUTH_RUNTIME_MODE}" == "local" ]]; then
+  if [[ ! -x "\${SUPABASE_LOCAL_ENV_SCRIPT}" ]]; then
+    echo "Supabase local bootstrap skipped before app build: missing executable \${SUPABASE_LOCAL_ENV_SCRIPT}."
+  else
+    echo "Supabase keys missing before app build; running \${SUPABASE_LOCAL_ENV_SCRIPT}."
+    if ! "\${SUPABASE_LOCAL_ENV_SCRIPT}"; then
+      echo "Supabase local bootstrap failed before app build; continuing."
+    fi
+    if [[ -f "\${ROOT_DIR}/.env" ]]; then
+      set -a
+      # shellcheck disable=SC1090
+      source "\${ROOT_DIR}/.env"
+      set +a
+    fi
+    refresh_supabase_env
+  fi
+fi
+
+if [[ "\${APP_BUILD_ENABLED}" == "true" ]]; then
+  if [[ ! -x "\${BUILD_SCRIPT}" ]]; then
+    echo "Missing build helper script: \${BUILD_SCRIPT}"
+    exit 1
+  fi
+
+  "\${BUILD_SCRIPT}"
+fi
+
+if [[ "\${APP_WEB_EXPORT_DIR}" = /* ]]; then
+  EXPORT_DIR="\${APP_WEB_EXPORT_DIR}"
+else
+  EXPORT_DIR="\${APP_SOURCE_DIR}/\${APP_WEB_EXPORT_DIR}"
+fi
+
+docker_load_image_to_minikube() {
+  if command -v docker >/dev/null 2>&1 && docker image inspect "\${APP_IMAGE}" >/dev/null 2>&1; then
+    minikube -p "\${PROFILE}" image load --daemon=true --overwrite=true "\${APP_IMAGE}" >/dev/null
+    return 0
+  fi
+
+  return 1
+}
+
+case "\${APP_IMAGE_SYNC_STRATEGY}" in
+  minikube-build)
+    if [[ ! -f "\${EXPORT_DIR}/index.html" ]]; then
+      echo "Expected web export output not found at \${EXPORT_DIR}/index.html"
+      echo "Run build-app-image.sh first or switch APP_IMAGE_SYNC_STRATEGY=docker-load."
+      exit 1
+    fi
+
+    if minikube -p "\${PROFILE}" image build -t "\${APP_IMAGE}" -f "\${ROOT_DIR}/app-image/Dockerfile" "\${EXPORT_DIR}" >/dev/null; then
+      if ! minikube -p "\${PROFILE}" image ls 2>/dev/null | grep -Fq "\${APP_IMAGE}"; then
+        echo "minikube image build did not register \${APP_IMAGE}; falling back to docker-load."
+        if ! docker_load_image_to_minikube; then
+          echo "Fallback docker-load failed: local Docker image \${APP_IMAGE} not found."
+          exit 1
+        fi
+      fi
+    else
+      echo "minikube image build failed for \${APP_IMAGE}; falling back to docker-load."
+      if ! docker_load_image_to_minikube; then
+        echo "Fallback docker-load failed: local Docker image \${APP_IMAGE} not found."
+        exit 1
+      fi
+    fi
+    ;;
+  docker-load)
+    if ! docker_load_image_to_minikube; then
+      echo "Skipping docker-load image sync; local Docker image \${APP_IMAGE} not found."
+    fi
+    ;;
+  none)
+    echo "Skipping local image sync (APP_IMAGE_SYNC_STRATEGY=none)."
+    ;;
+  *)
+    echo "Unsupported APP_IMAGE_SYNC_STRATEGY=\${APP_IMAGE_SYNC_STRATEGY}. Use minikube-build, docker-load, or none."
+    exit 1
+    ;;
+esac
+
+kubectl apply -k "\${K8S_DIR}"
+
+if [[ "\${SUPABASE_SECRET_SYNC_ENABLED}" == "true" ]]; then
+  if ! has_required_supabase_env && [[ "\${AUTH_RUNTIME_MODE}" == "local" ]]; then
+    if [[ ! -x "\${SUPABASE_LOCAL_ENV_SCRIPT}" ]]; then
+      echo "Supabase local bootstrap skipped: missing executable \${SUPABASE_LOCAL_ENV_SCRIPT}."
+    else
+      echo "Supabase keys missing; running \${SUPABASE_LOCAL_ENV_SCRIPT}."
+      if ! "\${SUPABASE_LOCAL_ENV_SCRIPT}"; then
+        echo "Supabase local bootstrap failed; continuing without local credential import."
+      fi
+      if [[ -f "\${ROOT_DIR}/.env" ]]; then
+        set -a
+        # shellcheck disable=SC1090
+        source "\${ROOT_DIR}/.env"
+        set +a
+      fi
+      refresh_supabase_env
+    fi
+  fi
+
+  if ! has_required_supabase_env; then
+    if [[ "\${AUTH_RUNTIME_MODE}" == "local" ]]; then
+      echo "Supabase secret sync skipped: local credentials still missing after bootstrap."
+      echo "Run ./scripts/supabase-local-env.sh and retry."
+    else
+      echo "Supabase secret sync skipped: set SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, and SUPABASE_JWT_SECRET in .env."
+    fi
+  else
+    TMP_SUPABASE_ENV_FILE="$(mktemp)"
+    trap 'rm -f "\${TMP_SUPABASE_ENV_FILE}"' EXIT
+
+    cat > "\${TMP_SUPABASE_ENV_FILE}" <<EOF
+SUPABASE_URL=\${SUPABASE_URL}
+SUPABASE_ANON_KEY=\${SUPABASE_ANON_KEY}
+SUPABASE_SERVICE_ROLE_KEY=\${SUPABASE_SERVICE_ROLE_KEY}
+SUPABASE_JWT_SECRET=\${SUPABASE_JWT_SECRET}
+EXPO_PUBLIC_SUPABASE_URL=\${SUPABASE_PUBLIC_URL}
+EXPO_PUBLIC_SUPABASE_ANON_KEY=\${SUPABASE_PUBLIC_ANON_KEY}
+EOF
+
+    kubectl -n "\${NAMESPACE}" create secret generic supabase-auth-secrets --from-env-file="\${TMP_SUPABASE_ENV_FILE}" --dry-run=client -o yaml | kubectl -n "\${NAMESPACE}" apply -f -
+
+    rm -f "\${TMP_SUPABASE_ENV_FILE}"
+    trap - EXIT
+    echo "Synchronized supabase-auth-secrets from environment values."
+  fi
+fi
+
+if [[ -n "\${APP_IMAGE_PULL_SECRET_NAME}" ]]; then
+  if [[ -z "\${APP_IMAGE_PULL_SECRET_USERNAME}" || -z "\${APP_IMAGE_PULL_SECRET_PASSWORD}" ]]; then
+    echo "APP_IMAGE_PULL_SECRET_NAME is set, but username/password are missing."
+    exit 1
+  fi
+
+  SECRET_EMAIL_ARG=()
+  if [[ -n "\${APP_IMAGE_PULL_SECRET_EMAIL}" ]]; then
+    SECRET_EMAIL_ARG=(--docker-email="\${APP_IMAGE_PULL_SECRET_EMAIL}")
+  fi
+
+  kubectl -n "\${NAMESPACE}" create secret docker-registry "\${APP_IMAGE_PULL_SECRET_NAME}" --docker-server="\${APP_IMAGE_PULL_SECRET_SERVER}" --docker-username="\${APP_IMAGE_PULL_SECRET_USERNAME}" --docker-password="\${APP_IMAGE_PULL_SECRET_PASSWORD}" "\${SECRET_EMAIL_ARG[@]}" --dry-run=client -o yaml | kubectl -n "\${NAMESPACE}" apply -f -
+
+  PULL_SECRET_PATCH="$(cat <<EOF
+{"spec":{"template":{"spec":{"imagePullSecrets":[{"name":"\${APP_IMAGE_PULL_SECRET_NAME}"}]}}}}
+EOF
+)"
+  kubectl -n "\${NAMESPACE}" patch deployment app-runtime --type=merge --patch "\${PULL_SECRET_PATCH}" >/dev/null
+else
+  kubectl -n "\${NAMESPACE}" patch deployment app-runtime --type=json --patch='[{"op":"remove","path":"/spec/template/spec/imagePullSecrets"}]' >/dev/null 2>&1 || true
+fi
+
+kubectl -n "\${NAMESPACE}" set image deployment/app-runtime app="\${APP_IMAGE}" >/dev/null
+kubectl -n "\${NAMESPACE}" scale deployment/app-runtime --replicas="\${APP_REPLICAS}" >/dev/null
+
+if [[ "\${APP_FORCE_ROLLOUT_RESTART}" == "true" ]]; then
+  kubectl -n "\${NAMESPACE}" rollout restart deployment/app-runtime >/dev/null
+fi
+
+kubectl -n "\${NAMESPACE}" rollout status deployment/app-runtime --timeout=180s >/dev/null
+echo "Minikube infrastructure applied."
+`;
+}
+
+function getBuildAppImageScript(args: {
+  defaultNamespace: string;
+  defaultAppImage: string;
+}): string {
+  const { defaultNamespace, defaultAppImage } = args;
+
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+DOCKERFILE_PATH="\${ROOT_DIR}/app-image/Dockerfile"
+
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ROOT_DIR}/.env"
+  set +a
+fi
+
+NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
+APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-true}"
+APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
+APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-.ankh/web-export}"
+APP_IMAGE="\${APP_IMAGE:-${defaultAppImage}}"
+
+if [[ "\${APP_BUILD_ENABLED}" != "true" ]]; then
+  echo "Skipping app image build (APP_BUILD_ENABLED=\${APP_BUILD_ENABLED})."
+  exit 0
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "docker is required to build app image."
+  exit 1
+fi
+
+if ! command -v bunx >/dev/null 2>&1; then
+  echo "bunx is required to export the app for container image build."
+  exit 1
+fi
+
+if [[ ! -f "\${APP_SOURCE_DIR}/package.json" ]]; then
+  echo "APP_SOURCE_DIR does not look like an app root: \${APP_SOURCE_DIR}"
+  exit 1
+fi
+
+if [[ ! -f "\${DOCKERFILE_PATH}" ]]; then
+  echo "Dockerfile for app image build is missing: \${DOCKERFILE_PATH}"
+  exit 1
+fi
+
+(
+  cd "\${APP_SOURCE_DIR}"
+  bunx expo export --platform web --output-dir "\${APP_WEB_EXPORT_DIR}"
+)
+
+if [[ "\${APP_WEB_EXPORT_DIR}" = /* ]]; then
+  EXPORT_DIR="\${APP_WEB_EXPORT_DIR}"
+else
+  EXPORT_DIR="\${APP_SOURCE_DIR}/\${APP_WEB_EXPORT_DIR}"
+fi
+
+if [[ ! -f "\${EXPORT_DIR}/index.html" ]]; then
+  echo "Expected web export output not found at \${EXPORT_DIR}/index.html"
+  exit 1
+fi
+
+docker build -t "\${APP_IMAGE}" \
+  --label "ankhorage.kind=generated-app" \
+  --label "ankhorage.namespace=\${NAMESPACE}" \
+  --label "ankhorage.image=\${APP_IMAGE}" \
+  -f "\${DOCKERFILE_PATH}" \
+  "\${EXPORT_DIR}"
+echo "Built app image: \${APP_IMAGE} (namespace: \${NAMESPACE})"
+`;
+}
+
+function getAppImageDockerfile(): string {
+  return `FROM nginx:1.27-alpine
+
+RUN cat <<'EOF' > /etc/nginx/conf.d/default.conf
+server {
+  listen 8080;
+  server_name _;
+  root /usr/share/nginx/html;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}
+EOF
+
+COPY . /usr/share/nginx/html
+
+EXPOSE 8080
+
+CMD ["nginx", "-g", "daemon off;"]
+`;
+}
+
+function getPortForwardScript(defaultNamespace: string): string {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ROOT_DIR}/.env"
+  set +a
+fi
+
+NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
+LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-18080}"
+REMOTE_PORT="\${APP_PORT_FORWARD_REMOTE_PORT:-80}"
+
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "kubectl is required but not installed."
+  exit 1
+fi
+
+if ! kubectl get namespace "\${NAMESPACE}" >/dev/null 2>&1; then
+  echo "Namespace '\${NAMESPACE}' was not found."
+  echo "Run ./scripts/up.sh to create infrastructure first."
+  exit 1
+fi
+
+if ! kubectl -n "\${NAMESPACE}" get service app-runtime >/dev/null 2>&1; then
+  echo "Service 'app-runtime' was not found in namespace '\${NAMESPACE}'."
+  echo "Run ./scripts/up.sh to apply runtime resources."
+  exit 1
+fi
+
+echo "Forwarding app-runtime from namespace '\${NAMESPACE}' to http://127.0.0.1:\${LOCAL_PORT}"
+echo "Press Ctrl+C to stop."
+kubectl -n "\${NAMESPACE}" port-forward service/app-runtime "\${LOCAL_PORT}:\${REMOTE_PORT}"
+`;
+}
+
+function getDownScript(): string {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+K8S_DIR="\${ROOT_DIR}/k8s"
+
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ROOT_DIR}/.env"
+  set +a
+fi
+
+kubectl delete -k "\${K8S_DIR}" --ignore-not-found
+echo "Minikube infrastructure removed."
+`;
+}
+
+function getStatusScript(defaultNamespace: string): string {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ROOT_DIR}/.env"
+  set +a
+fi
+
+NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
+AUTH_RUNTIME_MODE="\${AUTH_RUNTIME_MODE:-local}"
+SUPABASE_SECRET_SYNC_ENABLED="\${SUPABASE_SECRET_SYNC_ENABLED:-true}"
+
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "kubectl is required but not installed."
+  exit 1
+fi
+
+if ! kubectl config current-context >/dev/null 2>&1; then
+  echo "No active kubectl context is configured."
+  echo "Run ./scripts/up.sh to start Minikube and apply manifests."
+  exit 1
+fi
+
+if ! kubectl cluster-info >/dev/null 2>&1; then
+  CONTEXT="$(kubectl config current-context 2>/dev/null || echo "unknown")"
+  echo "Cannot reach Kubernetes API server for context '\${CONTEXT}'."
+  echo "Run ./scripts/up.sh or verify your kubeconfig context."
+  exit 1
+fi
+
+if ! kubectl get namespace "\${NAMESPACE}" >/dev/null 2>&1; then
+  echo "Namespace '\${NAMESPACE}' was not found in the current cluster."
+  echo "Run ./scripts/up.sh to create it and apply resources."
+  exit 1
+fi
+
+kubectl get all -n "\${NAMESPACE}"
+
+echo
+echo "Runtime auth checks:"
+echo "- AUTH_RUNTIME_MODE=\${AUTH_RUNTIME_MODE}"
+echo "- SUPABASE_SECRET_SYNC_ENABLED=\${SUPABASE_SECRET_SYNC_ENABLED}"
+
+if kubectl -n "\${NAMESPACE}" get configmap app-runtime-auth-env >/dev/null 2>&1; then
+  echo "- configmap/app-runtime-auth-env: present"
+else
+  echo "- configmap/app-runtime-auth-env: missing"
+fi
+
+if [[ "\${SUPABASE_SECRET_SYNC_ENABLED}" == "true" ]]; then
+  if kubectl -n "\${NAMESPACE}" get secret supabase-auth-secrets >/dev/null 2>&1; then
+    echo "- secret/supabase-auth-secrets: present"
+
+    has_secret_key() {
+      local key="$1"
+      local value
+      value="$(kubectl -n "\${NAMESPACE}" get secret supabase-auth-secrets -o "jsonpath={.data.\${key}}" 2>/dev/null || true)"
+      [[ -n "\${value}" ]]
+    }
+
+    required_secret_keys=(
+      SUPABASE_URL
+      SUPABASE_ANON_KEY
+      SUPABASE_SERVICE_ROLE_KEY
+      SUPABASE_JWT_SECRET
+      EXPO_PUBLIC_SUPABASE_URL
+      EXPO_PUBLIC_SUPABASE_ANON_KEY
+    )
+
+    for key in "\${required_secret_keys[@]}"; do
+      if has_secret_key "\${key}"; then
+        echo "  - \${key}: present"
+      else
+        echo "  - \${key}: missing"
+      fi
+    done
+  else
+    echo "- secret/supabase-auth-secrets: missing"
+  fi
+else
+  echo "- secret/supabase-auth-secrets: skipped (SUPABASE_SECRET_SYNC_ENABLED=false)"
+fi
+`;
+}
+
+function getSupabaseLocalEnvScript(supabaseLocalPorts: SupabaseLocalPorts): string {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+ENV_FILE="\${ROOT_DIR}/.env"
+ENV_EXAMPLE_FILE="\${ROOT_DIR}/.env.example"
+
+if [[ -f "\${ENV_FILE}" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ENV_FILE}"
+  set +a
+fi
+
+APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
+SUPABASE_PROJECT_DIR="\${SUPABASE_PROJECT_DIR:-\${APP_SOURCE_DIR}}"
+APP_SUPABASE_ENV_FILE="\${APP_SUPABASE_ENV_FILE:-\${APP_SOURCE_DIR}/.env.local}"
+
+SUPABASE_LOCAL_PORT_BASE="\${SUPABASE_LOCAL_PORT_BASE:-${supabaseLocalPorts.base}}"
+SUPABASE_LOCAL_SHADOW_PORT="\${SUPABASE_LOCAL_SHADOW_PORT:-\${SUPABASE_LOCAL_PORT_BASE}}"
+SUPABASE_LOCAL_API_PORT="\${SUPABASE_LOCAL_API_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 1))}"
+SUPABASE_LOCAL_DB_PORT="\${SUPABASE_LOCAL_DB_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 2))}"
+SUPABASE_LOCAL_STUDIO_PORT="\${SUPABASE_LOCAL_STUDIO_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 3))}"
+SUPABASE_LOCAL_INBUCKET_PORT="\${SUPABASE_LOCAL_INBUCKET_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 4))}"
+SUPABASE_LOCAL_ANALYTICS_PORT="\${SUPABASE_LOCAL_ANALYTICS_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 5))}"
+export SUPABASE_LOCAL_PORT_BASE
+export SUPABASE_LOCAL_SHADOW_PORT
+export SUPABASE_LOCAL_API_PORT
+export SUPABASE_LOCAL_DB_PORT
+export SUPABASE_LOCAL_STUDIO_PORT
+export SUPABASE_LOCAL_INBUCKET_PORT
+export SUPABASE_LOCAL_ANALYTICS_PORT
+if ! command -v supabase >/dev/null 2>&1; then
+  echo "supabase CLI is required but not installed."
+  echo "Install: https://supabase.com/docs/guides/local-development/cli/getting-started"
+  exit 1
+fi
+
+configure_supabase_local_ports() {
+  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "python3 is required to patch supabase/config.toml with generated local port defaults."
+    echo "Install python3 (recommended) or manually edit \${config_file} ports:"
+    echo "- [api] port = \${SUPABASE_LOCAL_API_PORT}"
+    echo "- [db] port = \${SUPABASE_LOCAL_DB_PORT}"
+    echo "- [db] shadow_port = \${SUPABASE_LOCAL_SHADOW_PORT}"
+    echo "- [studio] port = \${SUPABASE_LOCAL_STUDIO_PORT}"
+    echo "- [inbucket] port = \${SUPABASE_LOCAL_INBUCKET_PORT}"
+    echo "- [analytics] port = \${SUPABASE_LOCAL_ANALYTICS_PORT}"
+    exit 1
+  fi
+
+  python3 - "\${config_file}" <<'PY'
+import os
+import re
+import sys
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Patch:
+    section: str
+    key: str
+    value: str
+
+
+def _env_required(name):
+    value = os.environ.get(name)
+    if value is None or value == "":
+        raise RuntimeError(f"Missing required env var: {name}")
+    return value
+
+
+def _is_section_header(line):
+    return re.match(r"^\\s*\\[[^\\]]+\\]\\s*$", line) is not None
+
+
+def _section_name(line):
+    match = re.match(r"^\\s*\\[([^\\]]+)\\]\\s*$", line)
+    return match.group(1) if match else None
+
+
+def _patch_section(lines, section, key, value):
+    current_section = None
+    section_start = None
+
+    for i, line in enumerate(lines):
+        if _is_section_header(line):
+            current_section = _section_name(line)
+            if current_section == section and section_start is None:
+                section_start = i
+
+    if section_start is None:
+        if lines and not lines[-1].endswith("\\n"):
+            lines[-1] = lines[-1] + "\\n"
+        if lines and lines[-1].strip() != "":
+            lines.append("\\n")
+        lines.append(f"[{section}]\\n")
+        lines.append(f"{key} = {value}\\n")
+        return lines
+
+    section_end = len(lines)
+    for j in range(section_start + 1, len(lines)):
+        if _is_section_header(lines[j]):
+            section_end = j
+            break
+
+    key_re = re.compile(rf"^(\\s*){re.escape(key)}\\s*=\\s*(.*?)(\\s*(#.*)?)?$")
+    for k in range(section_start + 1, section_end):
+        match = key_re.match(lines[k])
+        if match:
+            indent = match.group(1) or ""
+            trailing = match.group(3) or ""
+            suffix = trailing.rstrip("\\n")
+            lines[k] = f"{indent}{key} = {value}{suffix}\\n"
+            return lines
+
+    insert_at = section_end
+    while insert_at > section_start + 1 and lines[insert_at - 1].strip() == "":
+        insert_at -= 1
+    lines.insert(insert_at, f"{key} = {value}\\n")
+    return lines
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise RuntimeError("Usage: patch_config.py <supabase/config.toml>")
+
+    config_path = sys.argv[1]
+    with open(config_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    patches = [
+        Patch("api", "port", _env_required("SUPABASE_LOCAL_API_PORT")),
+        Patch("db", "port", _env_required("SUPABASE_LOCAL_DB_PORT")),
+        Patch("db", "shadow_port", _env_required("SUPABASE_LOCAL_SHADOW_PORT")),
+        Patch("studio", "port", _env_required("SUPABASE_LOCAL_STUDIO_PORT")),
+        Patch("inbucket", "port", _env_required("SUPABASE_LOCAL_INBUCKET_PORT")),
+        Patch("analytics", "port", _env_required("SUPABASE_LOCAL_ANALYTICS_PORT")),
+    ]
+
+    for p in patches:
+        lines = _patch_section(lines, p.section, p.key, p.value)
+
+    with open(config_path, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+PY
+}
+
+assert_supabase_local_ports_available() {
+  local project_label="\${ANKH_NAMESPACE:-$(basename "\${APP_SOURCE_DIR}")}"
+
+  ANKH_PROJECT_LABEL="\${project_label}" python3 - <<'PY'
+import os
+import socket
+import sys
+
+
+PORT_KEYS = [
+    "SUPABASE_LOCAL_SHADOW_PORT",
+    "SUPABASE_LOCAL_API_PORT",
+    "SUPABASE_LOCAL_DB_PORT",
+    "SUPABASE_LOCAL_STUDIO_PORT",
+    "SUPABASE_LOCAL_INBUCKET_PORT",
+    "SUPABASE_LOCAL_ANALYTICS_PORT",
+]
+
+
+def read_port(key):
+    value = os.environ.get(key, "")
+    try:
+        port = int(value)
+    except ValueError:
+        raise RuntimeError(f"{key} must be an integer, got {value!r}") from None
+
+    if port < 1 or port > 65535:
+        raise RuntimeError(f"{key} must be between 1 and 65535, got {port}")
+
+    return port
+
+
+def can_bind(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        try:
+            sock.bind(("0.0.0.0", port))
+        except OSError:
+            return False
+    return True
+
+
+def main():
+    project_label = os.environ.get("ANKH_PROJECT_LABEL", "unknown")
+    ports = [(key, read_port(key)) for key in PORT_KEYS]
+
+    seen = {}
+    duplicates = []
+    for key, port in ports:
+      existing = seen.get(port)
+      if existing is not None:
+        duplicates.append((key, existing, port))
+      else:
+        seen[port] = key
+
+    blocked = [(key, port) for key, port in ports if not can_bind(port)]
+
+    if not duplicates and not blocked:
+        return 0
+
+    print(f"Supabase local port preflight failed for project '{project_label}'.", file=sys.stderr)
+
+    for key, existing, port in duplicates:
+        print(f"- {key} duplicates {existing} on port {port}.", file=sys.stderr)
+
+    for key, port in blocked:
+        print(f"- {key}={port} is already in use on this host.", file=sys.stderr)
+
+    print("Override SUPABASE_LOCAL_PORT_BASE or the specific SUPABASE_LOCAL_*_PORT values in infra/minikube/.env and retry.", file=sys.stderr)
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+PY
+}
+
+if [[ ! -f "\${SUPABASE_PROJECT_DIR}/supabase/config.toml" ]]; then
+  echo "No supabase/config.toml found in \${SUPABASE_PROJECT_DIR}. Initializing Supabase project..."
+  (
+    cd "\${SUPABASE_PROJECT_DIR}"
+    supabase init --yes >/dev/null
+  )
+fi
+
+configure_supabase_local_ports
+
+STATUS_ENV="$(
+  cd "\${SUPABASE_PROJECT_DIR}"
+  supabase status -o env 2>/dev/null || true
+)"
+
+start_supabase_local_stack() {
+  if supabase start >/dev/null; then
+    return 0
+  fi
+
+  echo "Supabase local start failed. Stopping stale local stack and retrying once..."
+  supabase stop --no-backup >/dev/null 2>&1 || true
+
+  if supabase start >/dev/null; then
+    return 0
+  fi
+
+  echo "Supabase local start failed after retry."
+  return 1
+}
+
+if [[ -z "\${STATUS_ENV}" ]]; then
+  assert_supabase_local_ports_available
+  echo "Supabase local stack not detected. Starting with 'supabase start'..."
+  (
+    cd "\${SUPABASE_PROJECT_DIR}"
+    start_supabase_local_stack
+  )
+
+  STATUS_ENV="$(
+    cd "\${SUPABASE_PROJECT_DIR}"
+    supabase status -o env
+  )"
+fi
+
+read_env_value() {
+  local key="$1"
+  local line
+  line="$(printf '%s\\n' "\${STATUS_ENV}" | awk -v key="\${key}" '
+    $0 ~ "^(export[[:space:]]+)?" key "=" {print}
+  ' | tail -n1)"
+
+  if [[ -z "\${line}" ]]; then
+    echo ""
+    return
+  fi
+
+  line="\${line#export }"
+  line="\${line#\${key}=}"
+  line="\${line%\\"}"
+  line="\${line#\\"}"
+  printf '%s' "\${line}"
+}
+
+API_URL="$(read_env_value API_URL)"
+ANON_KEY="$(read_env_value ANON_KEY)"
+SERVICE_ROLE_KEY="$(read_env_value SERVICE_ROLE_KEY)"
+JWT_SECRET="$(read_env_value JWT_SECRET)"
+
+if [[ -z "\${API_URL}" || -z "\${ANON_KEY}" || -z "\${SERVICE_ROLE_KEY}" || -z "\${JWT_SECRET}" ]]; then
+  echo "Unable to read required Supabase values from 'supabase status -o env'."
+  echo "Expected API_URL, ANON_KEY, SERVICE_ROLE_KEY, JWT_SECRET."
+  exit 1
+fi
+
+upsert_env() {
+  local file="$1"
+  local key="$2"
+  local value="$3"
+  local tmp_file
+  tmp_file="$(mktemp)"
+
+  awk -v key="\${key}" -v value="\${value}" '
+    BEGIN { replaced = 0 }
+    index($0, key "=") == 1 {
+      print key "=" value
+      replaced = 1
+      next
+    }
+    { print }
+    END {
+      if (replaced == 0) {
+        print key "=" value
+      }
+    }
+  ' "\${file}" > "\${tmp_file}"
+
+  mv "\${tmp_file}" "\${file}"
+}
+
+if [[ ! -f "\${ENV_FILE}" ]]; then
+  cp "\${ENV_EXAMPLE_FILE}" "\${ENV_FILE}"
+fi
+
+if [[ ! -f "\${APP_SUPABASE_ENV_FILE}" ]]; then
+  touch "\${APP_SUPABASE_ENV_FILE}"
+fi
+
+upsert_env "\${ENV_FILE}" "SUPABASE_SECRET_SYNC_ENABLED" "true"
+upsert_env "\${ENV_FILE}" "SUPABASE_URL" "\${API_URL}"
+upsert_env "\${ENV_FILE}" "SUPABASE_ANON_KEY" "\${ANON_KEY}"
+upsert_env "\${ENV_FILE}" "SUPABASE_SERVICE_ROLE_KEY" "\${SERVICE_ROLE_KEY}"
+upsert_env "\${ENV_FILE}" "SUPABASE_JWT_SECRET" "\${JWT_SECRET}"
+upsert_env "\${ENV_FILE}" "EXPO_PUBLIC_SUPABASE_URL" "\${API_URL}"
+upsert_env "\${ENV_FILE}" "EXPO_PUBLIC_SUPABASE_ANON_KEY" "\${ANON_KEY}"
+upsert_env "\${ENV_FILE}" "SUPABASE_PROJECT_DIR" "\${SUPABASE_PROJECT_DIR}"
+upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_PORT_BASE" "\${SUPABASE_LOCAL_PORT_BASE}"
+upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_SHADOW_PORT" "\${SUPABASE_LOCAL_SHADOW_PORT}"
+upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_API_PORT" "\${SUPABASE_LOCAL_API_PORT}"
+upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_DB_PORT" "\${SUPABASE_LOCAL_DB_PORT}"
+upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_STUDIO_PORT" "\${SUPABASE_LOCAL_STUDIO_PORT}"
+upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_INBUCKET_PORT" "\${SUPABASE_LOCAL_INBUCKET_PORT}"
+upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_ANALYTICS_PORT" "\${SUPABASE_LOCAL_ANALYTICS_PORT}"
+
+upsert_env "\${APP_SUPABASE_ENV_FILE}" "EXPO_PUBLIC_SUPABASE_URL" "\${API_URL}"
+upsert_env "\${APP_SUPABASE_ENV_FILE}" "EXPO_PUBLIC_SUPABASE_ANON_KEY" "\${ANON_KEY}"
+upsert_env "\${APP_SUPABASE_ENV_FILE}" "SUPABASE_URL" "\${API_URL}"
+upsert_env "\${APP_SUPABASE_ENV_FILE}" "SUPABASE_ANON_KEY" "\${ANON_KEY}"
+
+echo "Updated \${ENV_FILE} with local Supabase credentials from \${SUPABASE_PROJECT_DIR}."
+echo "Updated \${APP_SUPABASE_ENV_FILE} with Expo Supabase credentials for local app runs."
+echo "If Expo is already running, restart it to pick up updated EXPO_PUBLIC_* variables."
+echo "Next: run ./scripts/up.sh to sync Kubernetes secrets and apply infrastructure."
+`;
+}
+
+function getDefaultAppImage(namespace: string): string {
+  return `ankh/${namespace}:dev`;
+}
+
+function resolveSupabaseLocalPorts(namespace: string): SupabaseLocalPorts {
+  const base =
+    SUPABASE_LOCAL_PORT_BASE +
+    resolveSupabaseLocalPortBucket(namespace) * SUPABASE_LOCAL_PORT_BUCKET_SIZE;
+
+  return {
+    base,
+    shadow: base,
+    api: base + 1,
+    db: base + 2,
+    studio: base + 3,
+    inbucket: base + 4,
+    analytics: base + 5,
+  };
+}
+
+function resolveSupabaseLocalPortBucket(namespace: string): number {
+  const rawBucket = hashProjectId(namespace) - hashProjectId(SUPABASE_LOCAL_PORT_REFERENCE_PROJECT);
+  return (rawBucket + SUPABASE_LOCAL_PORT_BUCKET_COUNT) % SUPABASE_LOCAL_PORT_BUCKET_COUNT;
+}
+
+function hashProjectId(value: string): number {
+  const source = value.trim().length > 0 ? value.trim() : 'app';
+  let hash = 0;
+
+  for (const char of source) {
+    hash = (hash * 31 + char.charCodeAt(0)) % SUPABASE_LOCAL_PORT_BUCKET_COUNT;
+  }
+
+  return hash;
+}

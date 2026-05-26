@@ -1,1 +1,501 @@
-[]
+[
+  {
+    "name": "DatasetInfrastructureArtifacts",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/datasets.ts",
+    "sourceLocation": {
+      "filePath": "src/datasets.ts",
+      "line": 10,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["GeneratedInfrastructureFile"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "files",
+        "kind": "property",
+        "type": "readonly GeneratedInfrastructureFile[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "warnings",
+        "kind": "property",
+        "type": "readonly string[]",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "generateDatasetInfrastructureArtifacts",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/datasets.ts",
+    "sourceLocation": {
+      "filePath": "src/datasets.ts",
+      "line": 65,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["DatasetInfrastructureArtifacts"],
+    "signatures": [
+      {
+        "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => DatasetInfrastructureArtifacts",
+        "parameters": [
+          {
+            "name": "args",
+            "type": "{ readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "DatasetInfrastructureArtifacts",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "GeneratedFile",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 59,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "GeneratedInfrastructureFile",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 3,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "content",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "executable",
+        "kind": "property",
+        "type": "boolean | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "path",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "GeneratedPackageDependency",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 12,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "name",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "reason",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "version",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "generateInfra",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/index.ts",
+    "sourceLocation": {
+      "filePath": "src/index.ts",
+      "line": 26,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["InfraGenerationInput", "InfrastructureGenerationResult"],
+    "signatures": [
+      {
+        "label": "(input: InfraGenerationInput) => InfrastructureGenerationResult",
+        "parameters": [
+          {
+            "name": "input",
+            "type": "InfraGenerationInput",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "InfrastructureGenerationResult",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "generateInfrastructure",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/index.ts",
+    "sourceLocation": {
+      "filePath": "src/index.ts",
+      "line": 30,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [
+      "InfraManifestInput",
+      "InfrastructureGenerationOptions",
+      "InfrastructureGenerationResult"
+    ],
+    "signatures": [
+      {
+        "label": "(manifest: InfraManifestInput, options?: InfrastructureGenerationOptions) => InfrastructureGenerationResult",
+        "parameters": [
+          {
+            "name": "manifest",
+            "type": "InfraManifestInput",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "options",
+            "type": "InfrastructureGenerationOptions",
+            "required": false,
+            "description": null
+          }
+        ],
+        "returnType": "InfrastructureGenerationResult",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraDiagnostic",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 62,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "message",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "severity",
+        "kind": "property",
+        "type": "\"warning\"",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraGenerationInput",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 44,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["InfraManifestInput", "InfrastructureGenerationOptions"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "manifest",
+        "kind": "property",
+        "type": "InfraManifestInput",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "options",
+        "kind": "property",
+        "type": "InfrastructureGenerationOptions | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "outputRoot",
+        "kind": "property",
+        "type": "string | undefined",
+        "required": false,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraGenerationOptions",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 57,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraGenerationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 58,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraManifestInput",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 80,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfrastructureGenerationMeta",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 18,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "providers",
+        "kind": "property",
+        "type": "readonly string[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "target",
+        "kind": "property",
+        "type": "import(\"/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfrastructureGenerationOptions",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 30,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "appManifest",
+        "kind": "property",
+        "type": "Pick<AppManifest, \"data\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "namespaceHint",
+        "kind": "property",
+        "type": "string | undefined",
+        "required": false,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfrastructureGenerationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 23,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [
+      "GeneratedInfrastructureFile",
+      "GeneratedPackageDependency",
+      "InfrastructureGenerationMeta"
+    ],
+    "signatures": [],
+    "members": [
+      {
+        "name": "dependencies",
+        "kind": "property",
+        "type": "readonly GeneratedPackageDependency[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "files",
+        "kind": "property",
+        "type": "readonly GeneratedInfrastructureFile[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "meta",
+        "kind": "property",
+        "type": "InfrastructureGenerationMeta",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "warnings",
+        "kind": "property",
+        "type": "readonly string[]",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "PackageDependency",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types.ts",
+    "sourceLocation": {
+      "filePath": "src/types.ts",
+      "line": 60,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  }
+]
