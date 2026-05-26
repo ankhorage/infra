@@ -2,4 +2,51 @@ graph TD
   package__ankhorage_infra["INFRA"]
   entrypoint_src_index_ts["src/index.ts"]
   package__ankhorage_infra --> entrypoint_src_index_ts
+  module_src_adapters_minikube_auth_index_ts["src/adapters/minikube/auth/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_auth_index_ts
+  module_src_adapters_minikube_auth_index_ts --> module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_auth_supabase_index_ts["src/adapters/minikube/auth/supabase/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_supabase_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_supabase_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts["src/adapters/minikube/authz/cerbos/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_authz_cerbos_index_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_authz_cerbos_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_authz_index_ts["src/adapters/minikube/authz/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_authz_index_ts
+  module_src_adapters_minikube_authz_index_ts --> module_src_adapters_minikube_authz_cerbos_index_ts
+  module_src_adapters_minikube_authz_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_authz_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_base_index_ts["src/adapters/minikube/base/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_base_index_ts
+  module_src_adapters_minikube_base_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_contracts_ts["src/adapters/minikube/contracts.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_contracts_ts --> module_src_types_ts
+  module_src_adapters_minikube_index_ts["src/adapters/minikube/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_index_ts
+  module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_auth_index_ts
+  module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_authz_index_ts
+  module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_base_index_ts
+  module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_storage_index_ts
+  module_src_adapters_minikube_index_ts --> module_src_datasets_ts
+  module_src_adapters_minikube_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_storage_index_ts["src/adapters/minikube/storage/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_storage_index_ts
+  module_src_adapters_minikube_storage_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_storage_index_ts --> module_src_adapters_minikube_storage_supabase_index_ts
+  module_src_adapters_minikube_storage_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_storage_supabase_index_ts
+  module_src_adapters_minikube_storage_supabase_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_datasets_ts["src/datasets.ts"]
+  package__ankhorage_infra -.-> module_src_datasets_ts
+  module_src_datasets_ts --> module_src_types_ts
   module_src_index_ts["src/index.ts"]
+  module_src_index_ts --> module_src_adapters_minikube_index_ts
+  module_src_index_ts --> module_src_types_ts
+  module_src_types_ts["src/types.ts"]
+  package__ankhorage_infra -.-> module_src_types_ts

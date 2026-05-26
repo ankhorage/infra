@@ -15,8 +15,26 @@
     "type": "git",
     "url": "git+https://github.com/ankhorage/infra.git"
   },
-  "keywords": [],
-  "dependencies": {},
+  "keywords": [
+    "ankhorage",
+    "infra",
+    "infrastructure",
+    "infrastructure-as-code",
+    "code-generation",
+    "app-manifest",
+    "typescript",
+    "bun",
+    "expo",
+    "react-native",
+    "supabase",
+    "postgres",
+    "kubernetes",
+    "minikube",
+    "openapi"
+  ],
+  "dependencies": {
+    "@ankhorage/contracts": "^1.15.0"
+  },
   "files": [
     "dist",
     "src",

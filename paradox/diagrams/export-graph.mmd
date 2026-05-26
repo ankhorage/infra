@@ -1,2 +1,57 @@
 graph LR
+  module_src_adapters_minikube_auth_index_ts["src/adapters/minikube/auth/index.ts"]
+  module_src_adapters_minikube_auth_supabase_index_ts["src/adapters/minikube/auth/supabase/index.ts"]
+  module_src_adapters_minikube_authz_cerbos_index_ts["src/adapters/minikube/authz/cerbos/index.ts"]
+  module_src_adapters_minikube_authz_index_ts["src/adapters/minikube/authz/index.ts"]
+  module_src_adapters_minikube_base_index_ts["src/adapters/minikube/base/index.ts"]
+  module_src_adapters_minikube_contracts_ts["src/adapters/minikube/contracts.ts"]
+  module_src_adapters_minikube_index_ts["src/adapters/minikube/index.ts"]
+  module_src_adapters_minikube_storage_index_ts["src/adapters/minikube/storage/index.ts"]
+  module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
+  module_src_datasets_ts["src/datasets.ts"]
   module_src_index_ts["src/index.ts"]
+  module_src_types_ts["src/types.ts"]
+  export_DatasetInfrastructureArtifacts["DatasetInfrastructureArtifacts"]
+  module_src_datasets_ts --> export_DatasetInfrastructureArtifacts
+  export_DatasetInfrastructureArtifacts -.-> export_GeneratedInfrastructureFile
+  export_generateDatasetInfrastructureArtifacts["generateDatasetInfrastructureArtifacts"]
+  module_src_datasets_ts --> export_generateDatasetInfrastructureArtifacts
+  export_generateDatasetInfrastructureArtifacts -.-> export_DatasetInfrastructureArtifacts
+  export_GeneratedFile["GeneratedFile"]
+  module_src_types_ts --> export_GeneratedFile
+  export_GeneratedInfrastructureFile["GeneratedInfrastructureFile"]
+  module_src_types_ts --> export_GeneratedInfrastructureFile
+  export_GeneratedPackageDependency["GeneratedPackageDependency"]
+  module_src_types_ts --> export_GeneratedPackageDependency
+  export_generateInfra["generateInfra"]
+  module_src_index_ts --> export_generateInfra
+  export_generateInfra -.-> export_InfraGenerationInput
+  export_generateInfra -.-> export_InfrastructureGenerationResult
+  export_generateInfrastructure["generateInfrastructure"]
+  module_src_index_ts --> export_generateInfrastructure
+  export_generateInfrastructure -.-> export_InfraManifestInput
+  export_generateInfrastructure -.-> export_InfrastructureGenerationOptions
+  export_generateInfrastructure -.-> export_InfrastructureGenerationResult
+  export_InfraDiagnostic["InfraDiagnostic"]
+  module_src_types_ts --> export_InfraDiagnostic
+  export_InfraGenerationInput["InfraGenerationInput"]
+  module_src_types_ts --> export_InfraGenerationInput
+  export_InfraGenerationInput -.-> export_InfraManifestInput
+  export_InfraGenerationInput -.-> export_InfrastructureGenerationOptions
+  export_InfraGenerationOptions["InfraGenerationOptions"]
+  module_src_types_ts --> export_InfraGenerationOptions
+  export_InfraGenerationResult["InfraGenerationResult"]
+  module_src_types_ts --> export_InfraGenerationResult
+  export_InfraManifestInput["InfraManifestInput"]
+  module_src_types_ts --> export_InfraManifestInput
+  export_InfrastructureGenerationMeta["InfrastructureGenerationMeta"]
+  module_src_types_ts --> export_InfrastructureGenerationMeta
+  export_InfrastructureGenerationOptions["InfrastructureGenerationOptions"]
+  module_src_types_ts --> export_InfrastructureGenerationOptions
+  export_InfrastructureGenerationResult["InfrastructureGenerationResult"]
+  module_src_types_ts --> export_InfrastructureGenerationResult
+  export_InfrastructureGenerationResult -.-> export_GeneratedInfrastructureFile
+  export_InfrastructureGenerationResult -.-> export_GeneratedPackageDependency
+  export_InfrastructureGenerationResult -.-> export_InfrastructureGenerationMeta
+  export_PackageDependency["PackageDependency"]
+  module_src_types_ts --> export_PackageDependency

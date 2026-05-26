@@ -64,20 +64,2439 @@
   "entrypoints": ["src/index.ts"],
   "modules": [
     {
+      "path": "src/adapters/minikube/auth/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/adapters/minikube/auth/supabase/index.ts",
+        "src/adapters/minikube/contracts.ts",
+        "src/types.ts"
+      ],
+      "exports": ["generateAuthProviderArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/auth/supabase/index.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/adapters/minikube/contracts.ts", "src/types.ts"],
+      "exports": ["generateSupabaseAuthArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/authz/cerbos/index.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/adapters/minikube/contracts.ts", "src/types.ts"],
+      "exports": ["generateCerbosAuthzArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/authz/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/adapters/minikube/authz/cerbos/index.ts",
+        "src/adapters/minikube/contracts.ts",
+        "src/types.ts"
+      ],
+      "exports": ["generateAuthorizationArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/base/index.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types.ts"],
+      "exports": ["generateMinikubeBaseArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/contracts.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types.ts"],
+      "exports": ["emptyMinikubeArtifacts", "MinikubeAdapterArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/adapters/minikube/auth/index.ts",
+        "src/adapters/minikube/authz/index.ts",
+        "src/adapters/minikube/base/index.ts",
+        "src/adapters/minikube/storage/index.ts",
+        "src/datasets.ts",
+        "src/types.ts"
+      ],
+      "exports": ["generateMinikubeInfra"]
+    },
+    {
+      "path": "src/adapters/minikube/storage/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/adapters/minikube/contracts.ts",
+        "src/adapters/minikube/storage/supabase/index.ts",
+        "src/types.ts"
+      ],
+      "exports": ["generateStorageArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/storage/supabase/index.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/adapters/minikube/contracts.ts"],
+      "exports": ["generateSupabaseStorageArtifacts"]
+    },
+    {
+      "path": "src/datasets.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types.ts"],
+      "exports": ["DatasetInfrastructureArtifacts", "generateDatasetInfrastructureArtifacts"]
+    },
+    {
       "path": "src/index.ts",
       "isEntrypoint": true,
+      "dependencies": ["src/adapters/minikube/index.ts", "src/types.ts"],
+      "exports": [
+        "DatasetInfrastructureArtifacts",
+        "generateDatasetInfrastructureArtifacts",
+        "GeneratedFile",
+        "GeneratedInfrastructureFile",
+        "GeneratedPackageDependency",
+        "generateInfra",
+        "generateInfrastructure",
+        "InfraDiagnostic",
+        "InfraGenerationInput",
+        "InfraGenerationOptions",
+        "InfraGenerationResult",
+        "InfraManifestInput",
+        "InfrastructureGenerationMeta",
+        "InfrastructureGenerationOptions",
+        "InfrastructureGenerationResult",
+        "PackageDependency"
+      ]
+    },
+    {
+      "path": "src/types.ts",
+      "isEntrypoint": false,
       "dependencies": [],
-      "exports": []
+      "exports": [
+        "GeneratedFile",
+        "GeneratedInfrastructureFile",
+        "GeneratedPackageDependency",
+        "InfraDiagnostic",
+        "InfraGenerationInput",
+        "InfraGenerationOptions",
+        "InfraGenerationResult",
+        "InfraManifestInput",
+        "InfrastructureGenerationMeta",
+        "InfrastructureGenerationOptions",
+        "InfrastructureGenerationResult",
+        "PackageDependency"
+      ]
     }
   ],
-  "exports": [],
+  "exports": [
+    {
+      "name": "DatasetInfrastructureArtifacts",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/datasets.ts",
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 10,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["GeneratedInfrastructureFile"],
+      "signatures": [],
+      "members": [
+        {
+          "name": "files",
+          "kind": "property",
+          "type": "readonly GeneratedInfrastructureFile[]",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "warnings",
+          "kind": "property",
+          "type": "readonly string[]",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "generateDatasetInfrastructureArtifacts",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/datasets.ts",
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 65,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["DatasetInfrastructureArtifacts"],
+      "signatures": [
+        {
+          "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => DatasetInfrastructureArtifacts",
+          "parameters": [
+            {
+              "name": "args",
+              "type": "{ readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "DatasetInfrastructureArtifacts",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "GeneratedFile",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "unknown",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 59,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "GeneratedInfrastructureFile",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 3,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "content",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "executable",
+          "kind": "property",
+          "type": "boolean | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "path",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "GeneratedPackageDependency",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 12,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "name",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "reason",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "version",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "generateInfra",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/index.ts",
+      "sourceLocation": {
+        "filePath": "src/index.ts",
+        "line": 26,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["InfraGenerationInput", "InfrastructureGenerationResult"],
+      "signatures": [
+        {
+          "label": "(input: InfraGenerationInput) => InfrastructureGenerationResult",
+          "parameters": [
+            {
+              "name": "input",
+              "type": "InfraGenerationInput",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "InfrastructureGenerationResult",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "generateInfrastructure",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/index.ts",
+      "sourceLocation": {
+        "filePath": "src/index.ts",
+        "line": 30,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [
+        "InfraManifestInput",
+        "InfrastructureGenerationOptions",
+        "InfrastructureGenerationResult"
+      ],
+      "signatures": [
+        {
+          "label": "(manifest: InfraManifestInput, options?: InfrastructureGenerationOptions) => InfrastructureGenerationResult",
+          "parameters": [
+            {
+              "name": "manifest",
+              "type": "InfraManifestInput",
+              "required": true,
+              "description": null
+            },
+            {
+              "name": "options",
+              "type": "InfrastructureGenerationOptions",
+              "required": false,
+              "description": null
+            }
+          ],
+          "returnType": "InfrastructureGenerationResult",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "InfraDiagnostic",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 62,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "message",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "severity",
+          "kind": "property",
+          "type": "\"warning\"",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "InfraGenerationInput",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 44,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["InfraManifestInput", "InfrastructureGenerationOptions"],
+      "signatures": [],
+      "members": [
+        {
+          "name": "manifest",
+          "kind": "property",
+          "type": "InfraManifestInput",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "options",
+          "kind": "property",
+          "type": "InfrastructureGenerationOptions | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "outputRoot",
+          "kind": "property",
+          "type": "string | undefined",
+          "required": false,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "InfraGenerationOptions",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "unknown",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 57,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "InfraGenerationResult",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "unknown",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 58,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "InfraManifestInput",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "unknown",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 80,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "InfrastructureGenerationMeta",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 18,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "providers",
+          "kind": "property",
+          "type": "readonly string[]",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "target",
+          "kind": "property",
+          "type": "import(\"/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "InfrastructureGenerationOptions",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 30,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "appManifest",
+          "kind": "property",
+          "type": "Pick<AppManifest, \"data\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "namespaceHint",
+          "kind": "property",
+          "type": "string | undefined",
+          "required": false,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "InfrastructureGenerationResult",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 23,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [
+        "GeneratedInfrastructureFile",
+        "GeneratedPackageDependency",
+        "InfrastructureGenerationMeta"
+      ],
+      "signatures": [],
+      "members": [
+        {
+          "name": "dependencies",
+          "kind": "property",
+          "type": "readonly GeneratedPackageDependency[]",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "files",
+          "kind": "property",
+          "type": "readonly GeneratedInfrastructureFile[]",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "meta",
+          "kind": "property",
+          "type": "InfrastructureGenerationMeta",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "warnings",
+          "kind": "property",
+          "type": "readonly string[]",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "PackageDependency",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "unknown",
+      "modulePath": "src/types.ts",
+      "sourceLocation": {
+        "filePath": "src/types.ts",
+        "line": 60,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
+      "structuredRows": []
+    }
+  ],
   "components": [],
-  "sourceFunctions": [],
-  "sequenceScenarios": [],
+  "sourceFunctions": [
+    {
+      "name": "generateAuthProviderArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/index.ts",
+        "line": 5,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSupabaseAuthArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseConfigMap",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 74,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseSecret",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 101,
+        "column": 1
+      }
+    },
+    {
+      "name": "getRuntimeAuthEnvConfigMap",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 118,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseRuntimeWiringGuide",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 148,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveAuthFieldModel",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 220,
+        "column": 1
+      }
+    },
+    {
+      "name": "normalizeFieldList",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 245,
+        "column": 1
+      }
+    },
+    {
+      "name": "escapeYamlDoubleQuoted",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
+        "line": 267,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateCerbosAuthzArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 6,
+        "column": 1
+      }
+    },
+    {
+      "name": "getCerbosConfigMap",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 47,
+        "column": 1
+      }
+    },
+    {
+      "name": "getCerbosPolicyConfigMap",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 64,
+        "column": 1
+      }
+    },
+    {
+      "name": "getCerbosDeployment",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 85,
+        "column": 1
+      }
+    },
+    {
+      "name": "getCerbosService",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 126,
+        "column": 1
+      }
+    },
+    {
+      "name": "getCerbosPolicyEntries",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 173,
+        "column": 1
+      }
+    },
+    {
+      "name": "getAppPolicy",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 198,
+        "column": 1
+      }
+    },
+    {
+      "name": "getRoutePolicy",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 210,
+        "column": 1
+      }
+    },
+    {
+      "name": "getScreenPolicy",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 242,
+        "column": 1
+      }
+    },
+    {
+      "name": "renderRule",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 274,
+        "column": 1
+      }
+    },
+    {
+      "name": "getInConditionExpr",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 292,
+        "column": 1
+      }
+    },
+    {
+      "name": "indentLines",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 296,
+        "column": 1
+      }
+    },
+    {
+      "name": "buildCerbosPolicyIntent",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 305,
+        "column": 1
+      }
+    },
+    {
+      "name": "flattenNavigatorRoutes",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 375,
+        "column": 1
+      }
+    },
+    {
+      "name": "walk",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 378,
+        "column": 9
+      }
+    },
+    {
+      "name": "normalizeGuards",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 398,
+        "column": 1
+      }
+    },
+    {
+      "name": "isPublicRoute",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 402,
+        "column": 1
+      }
+    },
+    {
+      "name": "hasAny",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 440,
+        "column": 1
+      }
+    },
+    {
+      "name": "unique",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 447,
+        "column": 1
+      }
+    },
+    {
+      "name": "authFlowPathToRouteName",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "line": 451,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateAuthorizationArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/authz/index.ts",
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateMinikubeBaseArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 25,
+        "column": 1
+      }
+    },
+    {
+      "name": "getReadmeMarkdown",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 136,
+        "column": 1
+      }
+    },
+    {
+      "name": "getEnvExample",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 327,
+        "column": 1
+      }
+    },
+    {
+      "name": "getNamespaceManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 385,
+        "column": 1
+      }
+    },
+    {
+      "name": "getAppConfigMap",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 395,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveAppInfraStorageMetadata",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 436,
+        "column": 1
+      }
+    },
+    {
+      "name": "normalizeBuckets",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 471,
+        "column": 1
+      }
+    },
+    {
+      "name": "escapeYamlDoubleQuoted",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 486,
+        "column": 1
+      }
+    },
+    {
+      "name": "getKustomizationManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 490,
+        "column": 1
+      }
+    },
+    {
+      "name": "getAppDeploymentManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 507,
+        "column": 1
+      }
+    },
+    {
+      "name": "getAppServiceManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 561,
+        "column": 1
+      }
+    },
+    {
+      "name": "getUpScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 580,
+        "column": 1
+      }
+    },
+    {
+      "name": "getBuildAppImageScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 821,
+        "column": 1
+      }
+    },
+    {
+      "name": "getAppImageDockerfile",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 898,
+        "column": 1
+      }
+    },
+    {
+      "name": "getPortForwardScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 922,
+        "column": 1
+      }
+    },
+    {
+      "name": "getDownScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 963,
+        "column": 1
+      }
+    },
+    {
+      "name": "getStatusScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 983,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseLocalEnvScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1074,
+        "column": 1
+      }
+    },
+    {
+      "name": "getDefaultAppImage",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1444,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveSupabaseLocalPorts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1448,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveSupabaseLocalPortBucket",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1464,
+        "column": 1
+      }
+    },
+    {
+      "name": "hashProjectId",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1469,
+        "column": 1
+      }
+    },
+    {
+      "name": "emptyMinikubeArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/contracts.ts",
+        "line": 10,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateMinikubeInfra",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 15,
+        "column": 1
+      }
+    },
+    {
+      "name": "collectProviders",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 88,
+        "column": 1
+      }
+    },
+    {
+      "name": "collectDependencies",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 100,
+        "column": 1
+      }
+    },
+    {
+      "name": "collectWarnings",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 114,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveNamespace",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 130,
+        "column": 1
+      }
+    },
+    {
+      "name": "unique",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 147,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateStorageArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/storage/index.ts",
+        "line": 5,
+        "column": 1
+      }
+    },
+    {
+      "name": "normalizeBuckets",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/storage/index.ts",
+        "line": 78,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSupabaseStorageArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/storage/supabase/index.ts",
+        "line": 3,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseStorageConfigMap",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/storage/supabase/index.ts",
+        "line": 68,
+        "column": 1
+      }
+    },
+    {
+      "name": "getRuntimeStorageEnvConfigMap",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/storage/supabase/index.ts",
+        "line": 87,
+        "column": 1
+      }
+    },
+    {
+      "name": "escapeYamlDoubleQuoted",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/storage/supabase/index.ts",
+        "line": 110,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateDatasetInfrastructureArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 65,
+        "column": 1
+      }
+    },
+    {
+      "name": "listDatasets",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 130,
+        "column": 1
+      }
+    },
+    {
+      "name": "createSeedManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 134,
+        "column": 1
+      }
+    },
+    {
+      "name": "materializeSeedRecords",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 144,
+        "column": 1
+      }
+    },
+    {
+      "name": "createSeedWarnings",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 164,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateReadme",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 185,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateCollectionsTs",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 196,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateApiTs",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 204,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateApiHandlersTs",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 212,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDatasetOperations",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 223,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDatasetOperation",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 230,
+        "column": 1
+      }
+    },
+    {
+      "name": "createOpenApi",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 281,
+        "column": 1
+      }
+    },
+    {
+      "name": "addOpenApiOperation",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 310,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSupabaseMigrationSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 333,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateCreateTableSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 349,
+        "column": 1
+      }
+    },
+    {
+      "name": "collectSqlFields",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 359,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSupabaseSeedSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 373,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSeedInsertStatements",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 386,
+        "column": 1
+      }
+    },
+    {
+      "name": "collectSeedColumns",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 411,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatSqlColumn",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 436,
+        "column": 1
+      }
+    },
+    {
+      "name": "mapSqlFieldType",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 445,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatSqlDefaultValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 462,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatSqlValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 482,
+        "column": 1
+      }
+    },
+    {
+      "name": "stringifyJsonValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 506,
+        "column": 1
+      }
+    },
+    {
+      "name": "quoteSqlIdentifier",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 514,
+        "column": 1
+      }
+    },
+    {
+      "name": "escapeSqlString",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 518,
+        "column": 1
+      }
+    },
+    {
+      "name": "createPrimaryKeyRegistry",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 522,
+        "column": 1
+      }
+    },
+    {
+      "name": "findPrimaryKeyField",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 530,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDeterministicSeedUuid",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 539,
+        "column": 1
+      }
+    },
+    {
+      "name": "hashHex",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 547,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatCollectionName",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/datasets.ts",
+        "line": 558,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateInfra",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/index.ts",
+        "line": 26,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateInfrastructure",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/index.ts",
+        "line": 30,
+        "column": 1
+      }
+    }
+  ],
+  "sequenceScenarios": [
+    {
+      "kind": "export",
+      "name": "generateDatasetInfrastructureArtifacts",
+      "sourcePath": "src/datasets.ts",
+      "symbolName": "generateDatasetInfrastructureArtifacts",
+      "description": null,
+      "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "generateInfra",
+      "sourcePath": "src/index.ts",
+      "symbolName": "generateInfra",
+      "description": null,
+      "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "generateInfrastructure",
+      "sourcePath": "src/index.ts",
+      "symbolName": "generateInfrastructure",
+      "description": null,
+      "isReadme": false
+    }
+  ],
   "graphs": {
-    "imports": [],
-    "calls": [],
-    "typeReferences": [],
+    "imports": [
+      {
+        "fromPath": "src/datasets.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/adapters/minikube/index.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/datasets.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/contracts.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/contracts.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/datasets.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/adapters/minikube/auth/index.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/adapters/minikube/authz/index.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/adapters/minikube/base/index.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/adapters/minikube/storage/index.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/index.ts",
+        "toPath": "src/adapters/minikube/auth/supabase/index.ts",
+        "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/authz/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/authz/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/authz/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/authz/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/authz/index.ts",
+        "toPath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "sourcePath": "src/adapters/minikube/authz/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/base/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/storage/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/storage/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/storage/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/storage/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/storage/index.ts",
+        "toPath": "src/adapters/minikube/storage/supabase/index.ts",
+        "sourcePath": "src/adapters/minikube/storage/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/supabase/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/supabase/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/authz/cerbos/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/storage/supabase/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/storage/supabase/index.ts"
+      }
+    ],
+    "calls": [
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "listDatasets",
+        "callExpression": "listDatasets",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "createSeedManifest",
+        "callExpression": "createSeedManifest",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "generateSupabaseMigrationSql",
+        "callExpression": "generateSupabaseMigrationSql",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "generateSupabaseSeedSql",
+        "callExpression": "generateSupabaseSeedSql",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "generateReadme",
+        "callExpression": "generateReadme",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "generateCollectionsTs",
+        "callExpression": "generateCollectionsTs",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "generateApiTs",
+        "callExpression": "generateApiTs",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "generateApiHandlersTs",
+        "callExpression": "generateApiHandlersTs",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "createOpenApi",
+        "callExpression": "createOpenApi",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toSymbol": "createSeedWarnings",
+        "callExpression": "createSeedWarnings",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "materializeSeedRecords",
+        "callExpression": "materializeSeedRecords",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "materializeSeedRecords",
+        "toSymbol": "findPrimaryKeyField",
+        "callExpression": "findPrimaryKeyField",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "createDeterministicSeedUuid",
+        "callExpression": "createDeterministicSeedUuid",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "findPrimaryKeyField",
+        "callExpression": "findPrimaryKeyField",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "formatCollectionName",
+        "callExpression": "formatCollectionName",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateApiHandlersTs",
+        "toSymbol": "createPrimaryKeyRegistry",
+        "callExpression": "createPrimaryKeyRegistry",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "createDatasetOperation",
+        "callExpression": "createDatasetOperation",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "createOpenApi",
+        "toSymbol": "createDatasetOperations",
+        "callExpression": "createDatasetOperations",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "createOpenApi",
+        "toSymbol": "addOpenApiOperation",
+        "callExpression": "addOpenApiOperation",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "quoteSqlIdentifier",
+        "callExpression": "quoteSqlIdentifier",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "generateCreateTableSql",
+        "callExpression": "generateCreateTableSql",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateCreateTableSql",
+        "toSymbol": "quoteSqlIdentifier",
+        "callExpression": "quoteSqlIdentifier",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateCreateTableSql",
+        "toSymbol": "collectSqlFields",
+        "callExpression": "collectSqlFields",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "formatSqlColumn",
+        "callExpression": "formatSqlColumn",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "generateSeedInsertStatements",
+        "callExpression": "generateSeedInsertStatements",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateSeedInsertStatements",
+        "toSymbol": "collectSeedColumns",
+        "callExpression": "collectSeedColumns",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateSeedInsertStatements",
+        "toSymbol": "quoteSqlIdentifier",
+        "callExpression": "quoteSqlIdentifier",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "src/datasets.ts",
+        "toSymbol": "formatSqlValue",
+        "callExpression": "formatSqlValue",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "formatSqlColumn",
+        "toSymbol": "formatSqlDefaultValue",
+        "callExpression": "formatSqlDefaultValue",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "formatSqlColumn",
+        "toSymbol": "quoteSqlIdentifier",
+        "callExpression": "quoteSqlIdentifier",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "formatSqlColumn",
+        "toSymbol": "mapSqlFieldType",
+        "callExpression": "mapSqlFieldType",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "formatSqlDefaultValue",
+        "toSymbol": "escapeSqlString",
+        "callExpression": "escapeSqlString",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "formatSqlValue",
+        "toSymbol": "escapeSqlString",
+        "callExpression": "escapeSqlString",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "formatSqlValue",
+        "toSymbol": "stringifyJsonValue",
+        "callExpression": "stringifyJsonValue",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "createDeterministicSeedUuid",
+        "toSymbol": "hashHex",
+        "callExpression": "hashHex",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateInfra",
+        "toSymbol": "generateInfrastructure",
+        "callExpression": "generateInfrastructure",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "generateInfrastructure",
+        "toSymbol": "generateMinikubeInfra",
+        "callExpression": "generateMinikubeInfra",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "resolveNamespace",
+        "callExpression": "resolveNamespace",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "generateAuthProviderArtifacts",
+        "callExpression": "generateAuthProviderArtifacts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "generateAuthorizationArtifacts",
+        "callExpression": "generateAuthorizationArtifacts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "generateStorageArtifacts",
+        "callExpression": "generateStorageArtifacts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "generateDatasetInfrastructureArtifacts",
+        "callExpression": "generateDatasetInfrastructureArtifacts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "unique",
+        "callExpression": "unique",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "generateMinikubeBaseArtifacts",
+        "callExpression": "generateMinikubeBaseArtifacts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "collectWarnings",
+        "callExpression": "collectWarnings",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "collectProviders",
+        "callExpression": "collectProviders",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "collectDependencies",
+        "callExpression": "collectDependencies",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateAuthProviderArtifacts",
+        "toSymbol": "emptyMinikubeArtifacts",
+        "callExpression": "emptyMinikubeArtifacts",
+        "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromSymbol": "generateAuthProviderArtifacts",
+        "toSymbol": "generateSupabaseAuthArtifacts",
+        "callExpression": "generateSupabaseAuthArtifacts",
+        "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromSymbol": "generateAuthorizationArtifacts",
+        "toSymbol": "emptyMinikubeArtifacts",
+        "callExpression": "emptyMinikubeArtifacts",
+        "sourcePath": "src/adapters/minikube/authz/index.ts"
+      },
+      {
+        "fromSymbol": "generateAuthorizationArtifacts",
+        "toSymbol": "generateCerbosAuthzArtifacts",
+        "callExpression": "generateCerbosAuthzArtifacts",
+        "sourcePath": "src/adapters/minikube/authz/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getDefaultAppImage",
+        "callExpression": "getDefaultAppImage",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "resolveSupabaseLocalPorts",
+        "callExpression": "resolveSupabaseLocalPorts",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "resolveAppInfraStorageMetadata",
+        "callExpression": "resolveAppInfraStorageMetadata",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getReadmeMarkdown",
+        "callExpression": "getReadmeMarkdown",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getEnvExample",
+        "callExpression": "getEnvExample",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getNamespaceManifest",
+        "callExpression": "getNamespaceManifest",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getAppConfigMap",
+        "callExpression": "getAppConfigMap",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getAppDeploymentManifest",
+        "callExpression": "getAppDeploymentManifest",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getAppServiceManifest",
+        "callExpression": "getAppServiceManifest",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getKustomizationManifest",
+        "callExpression": "getKustomizationManifest",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getUpScript",
+        "callExpression": "getUpScript",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getBuildAppImageScript",
+        "callExpression": "getBuildAppImageScript",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getPortForwardScript",
+        "callExpression": "getPortForwardScript",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getDownScript",
+        "callExpression": "getDownScript",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getStatusScript",
+        "callExpression": "getStatusScript",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getSupabaseLocalEnvScript",
+        "callExpression": "getSupabaseLocalEnvScript",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "getAppImageDockerfile",
+        "callExpression": "getAppImageDockerfile",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getAppConfigMap",
+        "toSymbol": "escapeYamlDoubleQuoted",
+        "callExpression": "escapeYamlDoubleQuoted",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "resolveAppInfraStorageMetadata",
+        "toSymbol": "normalizeBuckets",
+        "callExpression": "normalizeBuckets",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseLocalPorts",
+        "toSymbol": "resolveSupabaseLocalPortBucket",
+        "callExpression": "resolveSupabaseLocalPortBucket",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseLocalPortBucket",
+        "toSymbol": "hashProjectId",
+        "callExpression": "hashProjectId",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateStorageArtifacts",
+        "toSymbol": "emptyMinikubeArtifacts",
+        "callExpression": "emptyMinikubeArtifacts",
+        "sourcePath": "src/adapters/minikube/storage/index.ts"
+      },
+      {
+        "fromSymbol": "generateStorageArtifacts",
+        "toSymbol": "normalizeBuckets",
+        "callExpression": "normalizeBuckets",
+        "sourcePath": "src/adapters/minikube/storage/index.ts"
+      },
+      {
+        "fromSymbol": "generateStorageArtifacts",
+        "toSymbol": "generateSupabaseStorageArtifacts",
+        "callExpression": "generateSupabaseStorageArtifacts",
+        "sourcePath": "src/adapters/minikube/storage/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseAuthArtifacts",
+        "toSymbol": "resolveAuthFieldModel",
+        "callExpression": "resolveAuthFieldModel",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseAuthArtifacts",
+        "toSymbol": "getSupabaseConfigMap",
+        "callExpression": "getSupabaseConfigMap",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseAuthArtifacts",
+        "toSymbol": "getSupabaseSecret",
+        "callExpression": "getSupabaseSecret",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseAuthArtifacts",
+        "toSymbol": "getRuntimeAuthEnvConfigMap",
+        "callExpression": "getRuntimeAuthEnvConfigMap",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseAuthArtifacts",
+        "toSymbol": "getSupabaseRuntimeWiringGuide",
+        "callExpression": "getSupabaseRuntimeWiringGuide",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseConfigMap",
+        "toSymbol": "escapeYamlDoubleQuoted",
+        "callExpression": "escapeYamlDoubleQuoted",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "getRuntimeAuthEnvConfigMap",
+        "toSymbol": "escapeYamlDoubleQuoted",
+        "callExpression": "escapeYamlDoubleQuoted",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "resolveAuthFieldModel",
+        "toSymbol": "normalizeFieldList",
+        "callExpression": "normalizeFieldList",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "generateCerbosAuthzArtifacts",
+        "toSymbol": "buildCerbosPolicyIntent",
+        "callExpression": "buildCerbosPolicyIntent",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "generateCerbosAuthzArtifacts",
+        "toSymbol": "getCerbosConfigMap",
+        "callExpression": "getCerbosConfigMap",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "generateCerbosAuthzArtifacts",
+        "toSymbol": "getCerbosPolicyConfigMap",
+        "callExpression": "getCerbosPolicyConfigMap",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "generateCerbosAuthzArtifacts",
+        "toSymbol": "getCerbosDeployment",
+        "callExpression": "getCerbosDeployment",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "generateCerbosAuthzArtifacts",
+        "toSymbol": "getCerbosService",
+        "callExpression": "getCerbosService",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getCerbosPolicyConfigMap",
+        "toSymbol": "getCerbosPolicyEntries",
+        "callExpression": "getCerbosPolicyEntries",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "src/adapters/minikube/authz/cerbos/index.ts",
+        "toSymbol": "indentLines",
+        "callExpression": "indentLines",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getCerbosPolicyEntries",
+        "toSymbol": "getAppPolicy",
+        "callExpression": "getAppPolicy",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getCerbosPolicyEntries",
+        "toSymbol": "getRoutePolicy",
+        "callExpression": "getRoutePolicy",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getCerbosPolicyEntries",
+        "toSymbol": "getScreenPolicy",
+        "callExpression": "getScreenPolicy",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getAppPolicy",
+        "toSymbol": "indentLines",
+        "callExpression": "indentLines",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getAppPolicy",
+        "toSymbol": "renderRule",
+        "callExpression": "renderRule",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getRoutePolicy",
+        "toSymbol": "renderRule",
+        "callExpression": "renderRule",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getRoutePolicy",
+        "toSymbol": "getInConditionExpr",
+        "callExpression": "getInConditionExpr",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getRoutePolicy",
+        "toSymbol": "indentLines",
+        "callExpression": "indentLines",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getScreenPolicy",
+        "toSymbol": "renderRule",
+        "callExpression": "renderRule",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getScreenPolicy",
+        "toSymbol": "getInConditionExpr",
+        "callExpression": "getInConditionExpr",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "getScreenPolicy",
+        "toSymbol": "indentLines",
+        "callExpression": "indentLines",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "buildCerbosPolicyIntent",
+        "toSymbol": "flattenNavigatorRoutes",
+        "callExpression": "flattenNavigatorRoutes",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "buildCerbosPolicyIntent",
+        "toSymbol": "isPublicRoute",
+        "callExpression": "isPublicRoute",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "walk",
+        "toSymbol": "normalizeGuards",
+        "callExpression": "normalizeGuards",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "walk",
+        "toSymbol": "unique",
+        "callExpression": "unique",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "walk",
+        "toSymbol": "walk",
+        "callExpression": "walk",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "flattenNavigatorRoutes",
+        "toSymbol": "walk",
+        "callExpression": "walk",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "isPublicRoute",
+        "toSymbol": "authFlowPathToRouteName",
+        "callExpression": "authFlowPathToRouteName",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "isPublicRoute",
+        "toSymbol": "hasAny",
+        "callExpression": "hasAny",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseStorageArtifacts",
+        "toSymbol": "getSupabaseStorageConfigMap",
+        "callExpression": "getSupabaseStorageConfigMap",
+        "sourcePath": "src/adapters/minikube/storage/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseStorageArtifacts",
+        "toSymbol": "getRuntimeStorageEnvConfigMap",
+        "callExpression": "getRuntimeStorageEnvConfigMap",
+        "sourcePath": "src/adapters/minikube/storage/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseStorageConfigMap",
+        "toSymbol": "escapeYamlDoubleQuoted",
+        "callExpression": "escapeYamlDoubleQuoted",
+        "sourcePath": "src/adapters/minikube/storage/supabase/index.ts"
+      },
+      {
+        "fromSymbol": "getRuntimeStorageEnvConfigMap",
+        "toSymbol": "escapeYamlDoubleQuoted",
+        "callExpression": "escapeYamlDoubleQuoted",
+        "sourcePath": "src/adapters/minikube/storage/supabase/index.ts"
+      }
+    ],
+    "typeReferences": [
+      {
+        "fromSymbol": "generateInfra",
+        "toType": "InfraGenerationInput",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "generateInfra",
+        "toType": "InfrastructureGenerationResult",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "generateInfrastructure",
+        "toType": "InfraManifestInput",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "generateInfrastructure",
+        "toType": "InfrastructureGenerationOptions",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "generateInfrastructure",
+        "toType": "InfrastructureGenerationResult",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "DatasetInfrastructureArtifacts",
+        "toType": "GeneratedInfrastructureFile",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toType": "AppDataManifest",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "generateDatasetInfrastructureArtifacts",
+        "toType": "DatasetInfrastructureArtifacts",
+        "sourcePath": "src/datasets.ts"
+      },
+      {
+        "fromSymbol": "InfraGenerationInput",
+        "toType": "InfraManifestInput",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfraGenerationInput",
+        "toType": "InfrastructureGenerationOptions",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfrastructureGenerationMeta",
+        "toType": "DeploymentTarget",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfrastructureGenerationMeta",
+        "toType": "Users",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfrastructureGenerationOptions",
+        "toType": "AppManifest",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfrastructureGenerationOptions",
+        "toType": "Pick",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfrastructureGenerationResult",
+        "toType": "GeneratedInfrastructureFile",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfrastructureGenerationResult",
+        "toType": "GeneratedPackageDependency",
+        "sourcePath": "src/types.ts"
+      },
+      {
+        "fromSymbol": "InfrastructureGenerationResult",
+        "toType": "InfrastructureGenerationMeta",
+        "sourcePath": "src/types.ts"
+      }
+    ],
     "componentComposition": []
   }
 }
