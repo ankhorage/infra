@@ -152,7 +152,9 @@ describe('API infrastructure generation', () => {
     expect(handlersFile?.content).toContain('poker_situations');
     expect(handlersFile?.content).not.toContain('Dataset');
 
-    const openApiFile = result.files.find((file) => file.path === 'src/generated/apis/openapi.json');
+    const openApiFile = result.files.find(
+      (file) => file.path === 'src/generated/apis/openapi.json',
+    );
     expect(openApiFile?.content).toContain('Generated app API');
     expect(openApiFile?.content).toContain('poker_situations.create');
     expect(openApiFile?.content).toContain('poker_situations.leaderboard');

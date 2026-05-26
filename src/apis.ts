@@ -161,7 +161,9 @@ function createSeedManifest(
   }));
 }
 
-function materializeSeedRecords(api: GeneratedApiWithCollectionResource): readonly Record<string, unknown>[] {
+function materializeSeedRecords(
+  api: GeneratedApiWithCollectionResource,
+): readonly Record<string, unknown>[] {
   const { primaryKey } = api.resource.collection;
   const primaryKeyField = findPrimaryKeyField(api);
 
@@ -254,10 +256,14 @@ function createOpenApi(resources: readonly GeneratedApiResource[]): GeneratedApi
 
   for (const resource of resources) {
     for (const operation of createApiOperations(resource)) {
-      const endpoint = resource.api.endpoints.find((candidate) => candidate.id === operation.operationId);
+      const endpoint = resource.api.endpoints.find(
+        (candidate) => candidate.id === operation.operationId,
+      );
       addOpenApiOperation(paths, operation, {
         operationId: operation.operationId,
-        summary: endpoint?.label ?? `${operation.intent ?? 'custom'} ${resource.api.label ?? resource.api.id}`,
+        summary:
+          endpoint?.label ??
+          `${operation.intent ?? 'custom'} ${resource.api.label ?? resource.api.id}`,
         responses: {
           [operation.intent === 'create' ? '201' : '200']: { description: 'Successful response.' },
         },
@@ -324,12 +330,13 @@ function collectSqlFields(resource: GeneratedApiResource): readonly DbFieldDefin
     return resource.collection.fields;
   }
 
-  return [{ name: primaryKey, type: 'uuid', required: true, unique: true }, ...resource.collection.fields];
+  return [
+    { name: primaryKey, type: 'uuid', required: true, unique: true },
+    ...resource.collection.fields,
+  ];
 }
 
-function generateSupabaseSeedSql(
-  seedManifest: readonly GeneratedApiSeedManifestEntry[],
-): string {
+function generateSupabaseSeedSql(seedManifest: readonly GeneratedApiSeedManifestEntry[]): string {
   const inserts = seedManifest.flatMap((entry) => generateSeedInsertStatements(entry));
 
   return [
@@ -484,7 +491,9 @@ function createPrimaryKeyRegistry(
   );
 }
 
-function findPrimaryKeyField(api: GeneratedApiWithCollectionResource): DbFieldDefinition | undefined {
+function findPrimaryKeyField(
+  api: GeneratedApiWithCollectionResource,
+): DbFieldDefinition | undefined {
   const { primaryKey } = api.resource.collection;
   if (primaryKey === undefined) {
     return undefined;
