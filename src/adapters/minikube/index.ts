@@ -1,4 +1,4 @@
-import { generateDatasetInfrastructureArtifacts } from '../../datasets';
+import { generateApiInfrastructureArtifacts } from '../../apis';
 import type {
   GeneratedPackageDependency,
   InfraManifestInput,
@@ -37,7 +37,7 @@ export function generateMinikubeInfra(
     appManifest: options.appManifest,
   });
   const storageArtifacts = generateStorageArtifacts({ manifest, namespace });
-  const datasetArtifacts = generateDatasetInfrastructureArtifacts({
+  const apiArtifacts = generateApiInfrastructureArtifacts({
     data: options.appManifest?.data,
     databaseProvider: manifest.database?.provider,
   });
@@ -65,7 +65,7 @@ export function generateMinikubeInfra(
     ...authArtifacts.warnings,
     ...authzArtifacts.warnings,
     ...storageArtifacts.warnings,
-    ...datasetArtifacts.warnings,
+    ...apiArtifacts.warnings,
   ]);
 
   return {
@@ -74,7 +74,7 @@ export function generateMinikubeInfra(
       ...authArtifacts.files,
       ...authzArtifacts.files,
       ...storageArtifacts.files,
-      ...datasetArtifacts.files,
+      ...apiArtifacts.files,
     ],
     warnings,
     meta: {
