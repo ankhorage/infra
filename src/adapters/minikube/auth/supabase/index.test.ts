@@ -19,7 +19,8 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     });
 
     const runtimeConfig = artifacts.files.find(
-      (file) => file.path === 'infra/minikube/k8s/auth/supabase/app-runtime-auth.env.configmap.yaml',
+      (file) =>
+        file.path === 'infra/minikube/k8s/auth/supabase/app-runtime-auth.env.configmap.yaml',
     );
     expect(runtimeConfig?.content).toContain('AUTH_PROFILE_TABLE: "profiles"');
     expect(runtimeConfig?.content).toContain('AUTH_PROFILE_PRIMARY_KEY: "authUserId"');
@@ -30,11 +31,13 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
       (file) => file.path === 'infra/minikube/supabase/migrations/0001_auth_profiles.sql',
     );
     expect(migration?.content).toContain('create table if not exists public."profiles"');
-    expect(migration?.content).toContain('id uuid primary key references auth.users(id) on delete cascade');
+    expect(migration?.content).toContain(
+      'id uuid primary key references auth.users(id) on delete cascade',
+    );
     expect(migration?.content).toContain('"display_name" text');
     expect(migration?.content).toContain('"avatar_url" text');
     expect(migration?.content).toContain('alter table public."profiles" enable row level security');
-    expect(migration?.content).toContain('create policy \'profiles_select_own\'');
+    expect(migration?.content).toContain("create policy 'profiles_select_own'");
     expect(migration?.content).toContain('using (auth.uid() = id)');
     expect(migration?.content).toContain('create trigger "on_auth_user_created_profiles"');
     expect(migration?.content).toContain('after insert on auth.users');

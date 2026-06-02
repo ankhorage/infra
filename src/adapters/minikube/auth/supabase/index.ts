@@ -332,7 +332,9 @@ function getSupabaseProfileMigration(profileModel: ResolvedProfileModel): string
   );
   const updateAssignments = profileModel.columns
     .filter((column) => column.field === 'email')
-    .map((column) => `${quoteIdentifier(column.column)} = excluded.${quoteIdentifier(column.column)}`);
+    .map(
+      (column) => `${quoteIdentifier(column.column)} = excluded.${quoteIdentifier(column.column)}`,
+    );
   const conflictUpdate = [...updateAssignments, 'updated_at = now()'].join(',\n    ');
   const triggerSql =
     profileModel.createStrategy === 'trigger'
@@ -418,21 +420,24 @@ function mapProfileFieldToColumn(field: string): ProfileColumnSpec | null {
         field,
         column: 'first_name',
         sqlType: 'text',
-        fromNewUser: "coalesce(new.raw_user_meta_data->>'firstName', new.raw_user_meta_data->>'first_name')",
+        fromNewUser:
+          "coalesce(new.raw_user_meta_data->>'firstName', new.raw_user_meta_data->>'first_name')",
       };
     case 'lastName':
       return {
         field,
         column: 'last_name',
         sqlType: 'text',
-        fromNewUser: "coalesce(new.raw_user_meta_data->>'lastName', new.raw_user_meta_data->>'last_name')",
+        fromNewUser:
+          "coalesce(new.raw_user_meta_data->>'lastName', new.raw_user_meta_data->>'last_name')",
       };
     case 'avatarUrl':
       return {
         field,
         column: 'avatar_url',
         sqlType: 'text',
-        fromNewUser: "coalesce(new.raw_user_meta_data->>'avatarUrl', new.raw_user_meta_data->>'avatar_url')",
+        fromNewUser:
+          "coalesce(new.raw_user_meta_data->>'avatarUrl', new.raw_user_meta_data->>'avatar_url')",
       };
     case 'username':
       return {
