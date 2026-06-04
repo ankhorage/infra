@@ -37,7 +37,14 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     expect(migration?.content).toContain('"display_name" text');
     expect(migration?.content).toContain('"avatar_url" text');
     expect(migration?.content).toContain('alter table public."profiles" enable row level security');
-    expect(migration?.content).toContain("create policy 'profiles_select_own'");
+    expect(migration?.content).toContain('revoke all on table public."profiles" from anon, authenticated');
+    expect(migration?.content).toContain('grant select on table public."profiles" to authenticated');
+    expect(migration?.content).toContain(
+      'grant update ("email", "display_name", "avatar_url") on table public."profiles" to authenticated',
+    );
+    expect(migration?.content).not.toContain('grant update ("role")');
+    expect(migration?.content).toContain('create policy "profiles_select_own"');
+    expect(migration?.content).toContain('create policy "profiles_update_own"');
     expect(migration?.content).toContain('using (auth.uid() = id)');
     expect(migration?.content).toContain('create trigger "on_auth_user_created_profiles"');
     expect(migration?.content).toContain('after insert on auth.users');
