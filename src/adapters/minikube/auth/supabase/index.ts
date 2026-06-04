@@ -180,6 +180,7 @@ The generated migration:
 - creates the profile table
 - enables row-level security
 - allows signed-in users to read and update their own profile row
+- protects the generated \`role\` column from self-service profile updates
 - creates a trigger for new auth users when \`AUTH_PROFILE_CREATE_STRATEGY=trigger\`
 `
     : '';
@@ -336,6 +337,11 @@ function getSupabaseProfileMigration(profileModel: ResolvedProfileModel): string
       (column) => `${quoteIdentifier(column.column)} = excluded.${quoteIdentifier(column.column)}`,
     );
   const conflictUpdate = [...updateAssignments, 'updated_at = now()'].join(',\n    ');
+  const updateGrantColumns = profileModel.columns.map((column) => quoteIdentifier(column.column));
+  const updateGrantSql =
+    updateGrantColumns.length > 0
+      ? `grant update (${updateGrantColumns.join(', ')}) on table public.${table} to authenticated;\n`
+      : '';
   const triggerSql =
     profileModel.createStrategy === 'trigger'
       ? `
@@ -376,12 +382,15 @@ create table if not exists public.${table} (
 
 alter table public.${table} enable row level security;
 
-create policy ${quoteLiteral(`${profileModel.table}_select_own`)}
+revoke all on table public.${table} from anon, authenticated;
+grant select on table public.${table} to authenticated;
+${updateGrantSql}
+create policy ${quoteIdentifier(`${profileModel.table}_select_own`)}
   on public.${table}
   for select
   using (auth.uid() = id);
 
-create policy ${quoteLiteral(`${profileModel.table}_update_own`)}
+create policy ${quoteIdentifier(`${profileModel.table}_update_own`)}
   on public.${table}
   for update
   using (auth.uid() = id)
@@ -490,10 +499,6 @@ function normalizeIdentifier(value: string): string {
 
 function quoteIdentifier(value: string): string {
   return `"${value.replaceAll('"', '""')}"`;
-}
-
-function quoteLiteral(value: string): string {
-  return `'${value.replaceAll("'", "''")}'`;
 }
 
 function escapeYamlDoubleQuoted(value: string): string {
