@@ -1,7 +1,7 @@
 {
   "name": "@ankhorage/infra",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Provider-neutral infrastructure generation: turns app manifests, datasets, auth, state, storage, and deployment config into generated infra artifacts, migrations, seeds, APIs, and runtime dependencies.",
   "homepage": "https://github.com/ankhorage/infra#readme",
   "bugs": {
