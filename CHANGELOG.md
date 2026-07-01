@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.3.0
+
+### Minor Changes
+
+- 0952c75: Add executable Ankh infra provider metadata, standalone CLI, and shared command dispatch.
+
 ## 0.2.1
 
 ### Patch Changes
