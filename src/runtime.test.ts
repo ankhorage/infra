@@ -111,10 +111,14 @@ describe('runtime scripts', () => {
 });
 
 async function expectRejectMessage(promise: Promise<unknown>, text: string): Promise<void> {
+  let didReject = false;
+
   try {
     await promise;
-    throw new Error(`Expected promise to reject with: ${text}`);
   } catch (error) {
+    didReject = true;
     expect(error instanceof Error ? error.message : String(error)).toContain(text);
   }
+
+  expect(didReject).toBe(true);
 }

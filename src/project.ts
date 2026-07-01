@@ -21,7 +21,10 @@ export async function resolveInfraProject(options: {
   }
 
   const appsRoot = path.join(workspaceRoot, 'apps');
-  const projectId = options.projectId ?? inferProjectId(options.cwd, appsRoot);
+  const projectId =
+    options.projectId === undefined
+      ? inferProjectId(options.cwd, appsRoot)
+      : validateExplicitProjectId(options.projectId);
   if (projectId === null) {
     throw new Error(
       'Could not infer a project from cwd. Pass a project id or run the command inside apps/<project>.',
@@ -51,8 +54,7 @@ export async function resolveInfraProject(options: {
 }
 
 function resolveProjectPath(appsRoot: string, projectId: string): string {
-  const safeId = path.basename(projectId);
-  const projectPath = path.resolve(appsRoot, safeId);
+  const projectPath = path.resolve(appsRoot, projectId);
   const appsRootPath = `${path.resolve(appsRoot)}${path.sep}`;
 
   if (!projectPath.startsWith(appsRootPath)) {
@@ -149,6 +151,24 @@ function inferProjectId(cwd: string, appsRoot: string): string | null {
 
   const [projectId] = relativePath.split(path.sep);
   return projectId === undefined || projectId.length === 0 ? null : path.basename(projectId);
+}
+
+function validateExplicitProjectId(projectId: string): string {
+  if (projectId.trim().length === 0) {
+    throw new Error('Invalid project id: expected a single safe project segment.');
+  }
+
+  if (
+    projectId === '.' ||
+    projectId === '..' ||
+    path.isAbsolute(projectId) ||
+    projectId.includes('/') ||
+    projectId.includes('\\')
+  ) {
+    throw new Error(`Invalid project id: ${projectId}. Expected a single safe project segment.`);
+  }
+
+  return projectId;
 }
 
 function isAppManifest(value: unknown): value is AppManifest {

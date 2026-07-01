@@ -85,7 +85,85 @@ describe('resolveInfraProject', () => {
         cwd: fixture.rootPath,
         projectId: '../shop',
       }),
-      "Project 'shop' not found.",
+      'Invalid project id:',
+    );
+  });
+
+  test('rejects explicit project ids with nested traversal segments', async () => {
+    const fixture = await createWorkspaceFixture();
+    tempRoots.add(fixture.rootPath);
+
+    await expectRejectMessage(
+      resolveInfraProject({
+        cwd: fixture.rootPath,
+        projectId: 'shop/../other',
+      }),
+      'Invalid project id:',
+    );
+  });
+
+  test('rejects explicit absolute project ids', async () => {
+    const fixture = await createWorkspaceFixture();
+    tempRoots.add(fixture.rootPath);
+
+    await expectRejectMessage(
+      resolveInfraProject({
+        cwd: fixture.rootPath,
+        projectId: '/tmp/shop',
+      }),
+      'Invalid project id:',
+    );
+  });
+
+  test('rejects explicit dot project ids', async () => {
+    const fixture = await createWorkspaceFixture();
+    tempRoots.add(fixture.rootPath);
+
+    await expectRejectMessage(
+      resolveInfraProject({
+        cwd: fixture.rootPath,
+        projectId: '.',
+      }),
+      'Invalid project id:',
+    );
+  });
+
+  test('rejects explicit dot-dot project ids', async () => {
+    const fixture = await createWorkspaceFixture();
+    tempRoots.add(fixture.rootPath);
+
+    await expectRejectMessage(
+      resolveInfraProject({
+        cwd: fixture.rootPath,
+        projectId: '..',
+      }),
+      'Invalid project id:',
+    );
+  });
+
+  test('rejects explicit empty project ids', async () => {
+    const fixture = await createWorkspaceFixture();
+    tempRoots.add(fixture.rootPath);
+
+    await expectRejectMessage(
+      resolveInfraProject({
+        cwd: fixture.rootPath,
+        projectId: '',
+      }),
+      'Invalid project id:',
+    );
+  });
+
+  test('rejects explicit blank project ids', async () => {
+    const fixture = await createWorkspaceFixture();
+    tempRoots.add(fixture.rootPath);
+
+    await expectRejectMessage(
+      resolveInfraProject({
+        cwd: fixture.rootPath,
+        projectId: '   ',
+      }),
+      'Invalid project id:',
     );
   });
 
@@ -127,10 +205,14 @@ describe('resolveInfraProject', () => {
 });
 
 async function expectRejectMessage(promise: Promise<unknown>, text: string): Promise<void> {
+  let didReject = false;
+
   try {
     await promise;
-    throw new Error(`Expected promise to reject with: ${text}`);
   } catch (error) {
+    didReject = true;
     expect(error instanceof Error ? error.message : String(error)).toContain(text);
   }
+
+  expect(didReject).toBe(true);
 }
