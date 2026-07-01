@@ -710,7 +710,7 @@
         {
           "name": "target",
           "kind": "property",
-          "type": "import(\"/Users/a_rtiphishl_e/git/ankhorage4/.tmp-infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+          "type": "import(\"/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
           "required": true,
           "description": null
         }
@@ -1799,7 +1799,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 126,
+        "line": 122,
         "column": 1
       }
     },
@@ -1808,7 +1808,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 152,
+        "line": 148,
         "column": 1
       }
     },
@@ -1817,7 +1817,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 160,
+        "line": 156,
         "column": 1
       }
     },
@@ -1826,7 +1826,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 164,
+        "line": 160,
         "column": 1
       }
     },
@@ -1835,7 +1835,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 185,
+        "line": 181,
         "column": 1
       }
     },
@@ -1844,7 +1844,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 189,
+        "line": 185,
         "column": 1
       }
     },
@@ -1853,7 +1853,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 203,
+        "line": 199,
         "column": 1
       }
     },
@@ -1862,7 +1862,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 216,
+        "line": 212,
         "column": 1
       }
     },
@@ -1871,7 +1871,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 234,
+        "line": 230,
         "column": 1
       }
     },
@@ -1880,7 +1880,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 251,
+        "line": 247,
         "column": 1
       }
     },
@@ -1889,7 +1889,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 279,
+        "line": 275,
         "column": 1
       }
     },
@@ -1898,7 +1898,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 309,
+        "line": 305,
         "column": 1
       }
     },
@@ -1907,7 +1907,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 356,
+        "line": 352,
         "column": 1
       }
     },
@@ -1916,7 +1916,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 387,
+        "line": 383,
         "column": 1
       }
     },
@@ -1925,7 +1925,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 398,
+        "line": 394,
         "column": 1
       }
     },
@@ -1934,7 +1934,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 402,
+        "line": 398,
         "column": 1
       }
     },
@@ -1943,7 +1943,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/commands.ts",
-        "line": 406,
+        "line": 402,
         "column": 1
       }
     },

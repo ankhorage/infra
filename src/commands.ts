@@ -2,11 +2,7 @@ import type { AnkhCapabilityId, AnkhCommandDescriptor } from '@ankhorage/contrac
 
 import type { InfraCommandContext, InfraCommandRunResult } from './commandContext.js';
 import { validateInfraSupport } from './infraValidation.js';
-import {
-  INFRA_CAPABILITIES,
-  INFRA_COMMAND_CATEGORY,
-  INFRA_PACKAGE_NAME,
-} from './packageMetadata.js';
+import { INFRA_CAPABILITIES, INFRA_COMMAND_CATEGORY } from './packageMetadata.js';
 import type { ResolvedInfraProject } from './project.js';
 import { resolveInfraProject } from './project.js';
 import type { InfraSyncResult } from './projectInfrastructure.js';
