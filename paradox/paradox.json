@@ -1,7 +1,7 @@
 {
   "packageName": "INFRA",
   "packageId": "@ankhorage/infra",
-  "description": "Provider-neutral infrastructure generation: turns app manifests, datasets, auth, state, storage, and deployment config into generated infra artifacts, migrations, seeds, APIs, and runtime dependencies.",
+  "description": "Executable infra provider and standalone CLI for Ankhorage project workflows.",
   "badges": [
     {
       "id": "license",
@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.2.0",
+      "value": "v0.2.1",
       "color": "cb3837"
     },
     {
@@ -58,11 +58,33 @@
       "color": "0f766e"
     }
   ],
-  "usage": null,
-  "readmeUsage": [],
+  "usage": {
+    "packageName": "@ankhorage/infra",
+    "commands": [
+      {
+        "name": "ankhorage-infra",
+        "command": "bunx @ankhorage/infra"
+      }
+    ]
+  },
+  "readmeUsage": [
+    {
+      "title": "Provider and CLI surface",
+      "description": "Provider and CLI surface\n\n`@ankhorage/infra` owns infra command behavior.\n\nThe same shared command implementation backs both:\n\n- `ankh infra ...`\n- `bunx @ankhorage/infra ...`\n\nCurrent command surface:\n\n- `validate`\n- `generate`\n- `status`\n- `up`\n- `down`\n\n`status` runs the generated live runtime status script for a project.\n\nProject resolution is project-aware:\n\n- pass `[project]`, or\n- omit it when cwd is already inside `apps/<project>`",
+      "language": "ts",
+      "code": "import { runCli } from './cli.js';\n\nawait runCli(['--help']);",
+      "sourcePath": "src/readme-usage.ts"
+    }
+  ],
   "config": null,
   "entrypoints": ["src/index.ts"],
   "modules": [
+    {
+      "path": "package.json",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": []
+    },
     {
       "path": "src/adapters/minikube/auth/index.ts",
       "isEntrypoint": false,
@@ -137,10 +159,53 @@
       "exports": ["generateSupabaseStorageArtifacts"]
     },
     {
+      "path": "src/ankh.provider.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/commands.ts", "src/packageMetadata.ts"],
+      "exports": ["createInfraRuntimeProvider", "CreateInfraRuntimeProviderOptions", "default"]
+    },
+    {
       "path": "src/apis.ts",
       "isEntrypoint": false,
       "dependencies": ["src/types.ts"],
       "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
+    },
+    {
+      "path": "src/cli.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/commandContext.ts", "src/commands.ts"],
+      "exports": ["InfraCliOptions", "runCli"]
+    },
+    {
+      "path": "src/commandContext.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/packageMetadata.ts"],
+      "exports": ["createDefaultCommandContext", "InfraCommandContext", "InfraCommandRunResult"]
+    },
+    {
+      "path": "src/commands.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/commandContext.ts",
+        "src/infraValidation.ts",
+        "src/packageMetadata.ts",
+        "src/project.ts",
+        "src/projectInfrastructure.ts",
+        "src/runtime.ts"
+      ],
+      "exports": [
+        "createProviderCommandDescriptors",
+        "findInfraCommandByStandaloneName",
+        "INFRA_COMMANDS",
+        "InfraCommandDefinition",
+        "InfraCommandInvocation",
+        "InfraCommandServices",
+        "renderRootHelp",
+        "renderUnknownCommand",
+        "runInfraCommand",
+        "RunInfraCommandImpl",
+        "RunInfraCommandOptions"
+      ]
     },
     {
       "path": "src/index.ts",
@@ -163,6 +228,75 @@
         "InfrastructureGenerationOptions",
         "InfrastructureGenerationResult",
         "PackageDependency"
+      ]
+    },
+    {
+      "path": "src/infraValidation.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types.ts"],
+      "exports": ["validateInfraSupport"]
+    },
+    {
+      "path": "src/metadata/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "INFRA_CAPABILITIES",
+        "INFRA_COMMAND_CATEGORY",
+        "INFRA_PACKAGE_METADATA",
+        "INFRA_PACKAGE_NAME",
+        "INFRA_PACKAGE_VERSION"
+      ]
+    },
+    {
+      "path": "src/packageMetadata.ts",
+      "isEntrypoint": false,
+      "dependencies": ["package.json"],
+      "exports": [
+        "INFRA_CAPABILITIES",
+        "INFRA_COMMAND_CATEGORY",
+        "INFRA_PACKAGE_METADATA",
+        "INFRA_PACKAGE_NAME",
+        "INFRA_PACKAGE_VERSION"
+      ]
+    },
+    {
+      "path": "src/project.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": ["ResolvedInfraProject", "resolveInfraProject"]
+    },
+    {
+      "path": "src/projectInfrastructure.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts", "src/infraValidation.ts"],
+      "exports": [
+        "InfraSyncResult",
+        "resolveProjectFile",
+        "resolveProjectInfrastructureTarget",
+        "syncProjectInfrastructure"
+      ]
+    },
+    {
+      "path": "src/runtime.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/commandContext.ts"],
+      "exports": [
+        "InfraLifecycleScript",
+        "InfraScriptExecutionError",
+        "resolveProjectInfraScriptPath",
+        "runProjectInfraScript"
+      ]
+    },
+    {
+      "path": "src/testSupport.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/commandContext.ts"],
+      "exports": [
+        "CapturedCommandContext",
+        "createAppManifest",
+        "createCapturedCommandContext",
+        "createWorkspaceFixture"
       ]
     },
     {
@@ -1328,6 +1462,15 @@
       }
     },
     {
+      "name": "createInfraRuntimeProvider",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/ankh.provider.ts",
+        "line": 22,
+        "column": 1
+      }
+    },
+    {
       "name": "generateApiInfrastructureArtifacts",
       "description": null,
       "sourceLocation": {
@@ -1616,6 +1759,195 @@
       }
     },
     {
+      "name": "runCli",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/cli.ts",
+        "line": 20,
+        "column": 1
+      }
+    },
+    {
+      "name": "isHelpToken",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/cli.ts",
+        "line": 56,
+        "column": 1
+      }
+    },
+    {
+      "name": "isVersionToken",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/cli.ts",
+        "line": 60,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDefaultCommandContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commandContext.ts",
+        "line": 15,
+        "column": 1
+      }
+    },
+    {
+      "name": "runInfraCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 122,
+        "column": 1
+      }
+    },
+    {
+      "name": "createProviderCommandDescriptors",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 148,
+        "column": 1
+      }
+    },
+    {
+      "name": "findInfraCommandByStandaloneName",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 156,
+        "column": 1
+      }
+    },
+    {
+      "name": "renderRootHelp",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 160,
+        "column": 1
+      }
+    },
+    {
+      "name": "renderUnknownCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 181,
+        "column": 1
+      }
+    },
+    {
+      "name": "renderCommandHelp",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 185,
+        "column": 1
+      }
+    },
+    {
+      "name": "createInfraCommandServices",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 199,
+        "column": 1
+      }
+    },
+    {
+      "name": "parseCommandArguments",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 212,
+        "column": 1
+      }
+    },
+    {
+      "name": "runValidateCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 230,
+        "column": 1
+      }
+    },
+    {
+      "name": "runGenerateCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 247,
+        "column": 1
+      }
+    },
+    {
+      "name": "runStatusCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 275,
+        "column": 1
+      }
+    },
+    {
+      "name": "runUpCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 305,
+        "column": 1
+      }
+    },
+    {
+      "name": "runDownCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 352,
+        "column": 1
+      }
+    },
+    {
+      "name": "writeWarnings",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 383,
+        "column": 1
+      }
+    },
+    {
+      "name": "renderCommandFailure",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 394,
+        "column": 1
+      }
+    },
+    {
+      "name": "getErrorMessage",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 398,
+        "column": 1
+      }
+    },
+    {
+      "name": "isHelpToken",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/commands.ts",
+        "line": 402,
+        "column": 1
+      }
+    },
+    {
       "name": "generateInfra",
       "description": null,
       "sourceLocation": {
@@ -1632,9 +1964,377 @@
         "line": 30,
         "column": 1
       }
+    },
+    {
+      "name": "validateInfraSupport",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/infraValidation.ts",
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "name": "warningForUnsupportedValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/infraValidation.ts",
+        "line": 72,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatSupportedValues",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/infraValidation.ts",
+        "line": 80,
+        "column": 1
+      }
+    },
+    {
+      "name": "isSupported",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/infraValidation.ts",
+        "line": 88,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveInfraProject",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 14,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProjectPath",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 56,
+        "column": 1
+      }
+    },
+    {
+      "name": "createFallbackManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 67,
+        "column": 1
+      }
+    },
+    {
+      "name": "readProjectManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 100,
+        "column": 1
+      }
+    },
+    {
+      "name": "findWorkspaceRoot",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 128,
+        "column": 1
+      }
+    },
+    {
+      "name": "inferProjectId",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 146,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateExplicitProjectId",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 156,
+        "column": 1
+      }
+    },
+    {
+      "name": "isAppManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 174,
+        "column": 1
+      }
+    },
+    {
+      "name": "isAppManifestMetadata",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 190,
+        "column": 1
+      }
+    },
+    {
+      "name": "isInfraManifestRecord",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 202,
+        "column": 1
+      }
+    },
+    {
+      "name": "isNavigatorSpec",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 206,
+        "column": 1
+      }
+    },
+    {
+      "name": "isSettingsRecord",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 215,
+        "column": 1
+      }
+    },
+    {
+      "name": "isLocalizationRecord",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 224,
+        "column": 1
+      }
+    },
+    {
+      "name": "isAuthFlowConfig",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 233,
+        "column": 1
+      }
+    },
+    {
+      "name": "isRecord",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 246,
+        "column": 1
+      }
+    },
+    {
+      "name": "isDirectory",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 250,
+        "column": 1
+      }
+    },
+    {
+      "name": "pathExists",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 259,
+        "column": 1
+      }
+    },
+    {
+      "name": "getErrorMessage",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/project.ts",
+        "line": 268,
+        "column": 1
+      }
+    },
+    {
+      "name": "syncProjectInfrastructure",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 28,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProjectInfrastructureTarget",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 100,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProjectFile",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 113,
+        "column": 1
+      }
+    },
+    {
+      "name": "readInfraLedger",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 125,
+        "column": 1
+      }
+    },
+    {
+      "name": "writeInfraLedger",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 137,
+        "column": 1
+      }
+    },
+    {
+      "name": "removeInfraLedger",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 143,
+        "column": 1
+      }
+    },
+    {
+      "name": "removeFiles",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 147,
+        "column": 1
+      }
+    },
+    {
+      "name": "isInfraLedger",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 158,
+        "column": 1
+      }
+    },
+    {
+      "name": "isRecord",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 171,
+        "column": 1
+      }
+    },
+    {
+      "name": "uniqueStrings",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 175,
+        "column": 1
+      }
+    },
+    {
+      "name": "runProjectInfraScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 28,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProjectInfraScriptPath",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 48,
+        "column": 1
+      }
+    },
+    {
+      "name": "getInfraScriptsDirectory",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 56,
+        "column": 1
+      }
+    },
+    {
+      "name": "runShellScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 65,
+        "column": 1
+      }
+    },
+    {
+      "name": "pathExists",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 120,
+        "column": 1
+      }
+    },
+    {
+      "name": "createCapturedCommandContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/testSupport.ts",
+        "line": 14,
+        "column": 1
+      }
+    },
+    {
+      "name": "createWorkspaceFixture",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/testSupport.ts",
+        "line": 38,
+        "column": 1
+      }
+    },
+    {
+      "name": "createAppManifest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/testSupport.ts",
+        "line": 80,
+        "column": 1
+      }
     }
   ],
   "sequenceScenarios": [
+    {
+      "kind": "bin",
+      "name": "ankhorage-infra",
+      "sourcePath": "src/cli.ts",
+      "symbolName": "runCli",
+      "description": null,
+      "isReadme": false
+    },
     {
       "kind": "export",
       "name": "generateApiInfrastructureArtifacts",
@@ -1663,9 +2363,64 @@
   "graphs": {
     "imports": [
       {
+        "fromPath": "src/ankh.provider.ts",
+        "toPath": "src/commands.ts",
+        "sourcePath": "src/ankh.provider.ts"
+      },
+      {
+        "fromPath": "src/ankh.provider.ts",
+        "toPath": "src/packageMetadata.ts",
+        "sourcePath": "src/ankh.provider.ts"
+      },
+      {
         "fromPath": "src/apis.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/apis.ts"
+      },
+      {
+        "fromPath": "src/cli.ts",
+        "toPath": "src/commandContext.ts",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromPath": "src/cli.ts",
+        "toPath": "src/commands.ts",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromPath": "src/commandContext.ts",
+        "toPath": "src/packageMetadata.ts",
+        "sourcePath": "src/commandContext.ts"
+      },
+      {
+        "fromPath": "src/commands.ts",
+        "toPath": "src/commandContext.ts",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromPath": "src/commands.ts",
+        "toPath": "src/infraValidation.ts",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromPath": "src/commands.ts",
+        "toPath": "src/packageMetadata.ts",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromPath": "src/commands.ts",
+        "toPath": "src/project.ts",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromPath": "src/commands.ts",
+        "toPath": "src/projectInfrastructure.ts",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromPath": "src/commands.ts",
+        "toPath": "src/runtime.ts",
+        "sourcePath": "src/commands.ts"
       },
       {
         "fromPath": "src/index.ts",
@@ -1681,6 +2436,46 @@
         "fromPath": "src/index.ts",
         "toPath": "src/apis.ts",
         "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/infraValidation.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/infraValidation.ts"
+      },
+      {
+        "fromPath": "src/packageMetadata.ts",
+        "toPath": "package.json",
+        "sourcePath": "src/packageMetadata.ts"
+      },
+      {
+        "fromPath": "src/projectInfrastructure.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromPath": "src/projectInfrastructure.ts",
+        "toPath": "src/infraValidation.ts",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromPath": "src/readme-usage.ts",
+        "toPath": "src/cli.ts",
+        "sourcePath": "src/readme-usage.ts"
+      },
+      {
+        "fromPath": "src/runtime.ts",
+        "toPath": "src/commandContext.ts",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromPath": "src/testSupport.ts",
+        "toPath": "src/commandContext.ts",
+        "sourcePath": "src/testSupport.ts"
+      },
+      {
+        "fromPath": "src/metadata/index.ts",
+        "toPath": "src/packageMetadata.ts",
+        "sourcePath": "src/metadata/index.ts"
       },
       {
         "fromPath": "src/adapters/minikube/contracts.ts",
@@ -1794,6 +2589,24 @@
       }
     ],
     "calls": [
+      {
+        "fromSymbol": "createInfraRuntimeProvider",
+        "toSymbol": "createProviderCommandDescriptors",
+        "callExpression": "createProviderCommandDescriptors",
+        "sourcePath": "src/ankh.provider.ts"
+      },
+      {
+        "fromSymbol": "handler",
+        "toSymbol": "runCommandImpl",
+        "callExpression": "runCommandImpl",
+        "sourcePath": "src/ankh.provider.ts"
+      },
+      {
+        "fromSymbol": "src/ankh.provider.ts",
+        "toSymbol": "createInfraRuntimeProvider",
+        "callExpression": "createInfraRuntimeProvider",
+        "sourcePath": "src/ankh.provider.ts"
+      },
       {
         "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "listGeneratedApis",
@@ -2005,6 +2818,252 @@
         "sourcePath": "src/apis.ts"
       },
       {
+        "fromSymbol": "runCli",
+        "toSymbol": "createDefaultCommandContext",
+        "callExpression": "createDefaultCommandContext",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "isHelpToken",
+        "callExpression": "isHelpToken",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "writeStdout",
+        "callExpression": "context.writeStdout",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "renderRootHelp",
+        "callExpression": "renderRootHelp",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "isVersionToken",
+        "callExpression": "isVersionToken",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "findInfraCommandByStandaloneName",
+        "callExpression": "findInfraCommandByStandaloneName",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "writeStderr",
+        "callExpression": "context.writeStderr",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "renderUnknownCommand",
+        "callExpression": "renderUnknownCommand",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "runCommand",
+        "callExpression": "runCommand",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "src/cli.ts",
+        "toSymbol": "runCli",
+        "callExpression": "runCli",
+        "sourcePath": "src/cli.ts"
+      },
+      {
+        "fromSymbol": "runInfraCommand",
+        "toSymbol": "createInfraCommandServices",
+        "callExpression": "createInfraCommandServices",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runInfraCommand",
+        "toSymbol": "parseCommandArguments",
+        "callExpression": "parseCommandArguments",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runInfraCommand",
+        "toSymbol": "writeStdout",
+        "callExpression": "request.context.writeStdout",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runInfraCommand",
+        "toSymbol": "renderCommandHelp",
+        "callExpression": "renderCommandHelp",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runInfraCommand",
+        "toSymbol": "run",
+        "callExpression": "request.command.run",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runInfraCommand",
+        "toSymbol": "writeStderr",
+        "callExpression": "request.context.writeStderr",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runInfraCommand",
+        "toSymbol": "renderCommandFailure",
+        "callExpression": "renderCommandFailure",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "parseCommandArguments",
+        "toSymbol": "isHelpToken",
+        "callExpression": "isHelpToken",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runValidateCommand",
+        "toSymbol": "resolveProject",
+        "callExpression": "services.resolveProject",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runValidateCommand",
+        "toSymbol": "validateInfraSupport",
+        "callExpression": "services.validateInfraSupport",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runValidateCommand",
+        "toSymbol": "writeStdout",
+        "callExpression": "request.context.writeStdout",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runValidateCommand",
+        "toSymbol": "writeWarnings",
+        "callExpression": "writeWarnings",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runGenerateCommand",
+        "toSymbol": "resolveProject",
+        "callExpression": "services.resolveProject",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runGenerateCommand",
+        "toSymbol": "writeStdout",
+        "callExpression": "request.context.writeStdout",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runGenerateCommand",
+        "toSymbol": "syncProjectInfrastructure",
+        "callExpression": "services.syncProjectInfrastructure",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runGenerateCommand",
+        "toSymbol": "writeWarnings",
+        "callExpression": "writeWarnings",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runStatusCommand",
+        "toSymbol": "resolveProject",
+        "callExpression": "services.resolveProject",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runStatusCommand",
+        "toSymbol": "resolveProjectInfrastructureTarget",
+        "callExpression": "services.resolveProjectInfrastructureTarget",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runStatusCommand",
+        "toSymbol": "runProjectInfraScript",
+        "callExpression": "services.runProjectInfraScript",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runUpCommand",
+        "toSymbol": "resolveProject",
+        "callExpression": "services.resolveProject",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runUpCommand",
+        "toSymbol": "writeStdout",
+        "callExpression": "request.context.writeStdout",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runUpCommand",
+        "toSymbol": "syncProjectInfrastructure",
+        "callExpression": "services.syncProjectInfrastructure",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runUpCommand",
+        "toSymbol": "writeWarnings",
+        "callExpression": "writeWarnings",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runUpCommand",
+        "toSymbol": "resolveProjectInfrastructureTarget",
+        "callExpression": "services.resolveProjectInfrastructureTarget",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runUpCommand",
+        "toSymbol": "runProjectInfraScript",
+        "callExpression": "services.runProjectInfraScript",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runDownCommand",
+        "toSymbol": "resolveProject",
+        "callExpression": "services.resolveProject",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runDownCommand",
+        "toSymbol": "resolveProjectInfrastructureTarget",
+        "callExpression": "services.resolveProjectInfrastructureTarget",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runDownCommand",
+        "toSymbol": "runProjectInfraScript",
+        "callExpression": "services.runProjectInfraScript",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "runDownCommand",
+        "toSymbol": "writeStdout",
+        "callExpression": "request.context.writeStdout",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "writeWarnings",
+        "toSymbol": "writeStderr",
+        "callExpression": "context.writeStderr",
+        "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "renderCommandFailure",
+        "toSymbol": "getErrorMessage",
+        "callExpression": "getErrorMessage",
+        "sourcePath": "src/commands.ts"
+      },
+      {
         "fromSymbol": "generateInfra",
         "toSymbol": "generateInfrastructure",
         "callExpression": "generateInfrastructure",
@@ -2015,6 +3074,306 @@
         "toSymbol": "generateMinikubeInfra",
         "callExpression": "generateMinikubeInfra",
         "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "validateInfraSupport",
+        "toSymbol": "isSupported",
+        "callExpression": "isSupported",
+        "sourcePath": "src/infraValidation.ts"
+      },
+      {
+        "fromSymbol": "validateInfraSupport",
+        "toSymbol": "warningForUnsupportedValue",
+        "callExpression": "warningForUnsupportedValue",
+        "sourcePath": "src/infraValidation.ts"
+      },
+      {
+        "fromSymbol": "warningForUnsupportedValue",
+        "toSymbol": "formatSupportedValues",
+        "callExpression": "formatSupportedValues",
+        "sourcePath": "src/infraValidation.ts"
+      },
+      {
+        "fromSymbol": "resolveInfraProject",
+        "toSymbol": "findWorkspaceRoot",
+        "callExpression": "findWorkspaceRoot",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "resolveInfraProject",
+        "toSymbol": "inferProjectId",
+        "callExpression": "inferProjectId",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "resolveInfraProject",
+        "toSymbol": "validateExplicitProjectId",
+        "callExpression": "validateExplicitProjectId",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "resolveInfraProject",
+        "toSymbol": "resolveProjectPath",
+        "callExpression": "resolveProjectPath",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "resolveInfraProject",
+        "toSymbol": "pathExists",
+        "callExpression": "pathExists",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "resolveInfraProject",
+        "toSymbol": "readProjectManifest",
+        "callExpression": "readProjectManifest",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "readProjectManifest",
+        "toSymbol": "pathExists",
+        "callExpression": "pathExists",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "readProjectManifest",
+        "toSymbol": "createFallbackManifest",
+        "callExpression": "createFallbackManifest",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "readProjectManifest",
+        "toSymbol": "getErrorMessage",
+        "callExpression": "getErrorMessage",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "readProjectManifest",
+        "toSymbol": "isAppManifest",
+        "callExpression": "isAppManifest",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "findWorkspaceRoot",
+        "toSymbol": "isDirectory",
+        "callExpression": "isDirectory",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isAppManifest",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isAppManifest",
+        "toSymbol": "isAppManifestMetadata",
+        "callExpression": "isAppManifestMetadata",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isAppManifest",
+        "toSymbol": "isInfraManifestRecord",
+        "callExpression": "isInfraManifestRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isAppManifest",
+        "toSymbol": "isNavigatorSpec",
+        "callExpression": "isNavigatorSpec",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isAppManifest",
+        "toSymbol": "isSettingsRecord",
+        "callExpression": "isSettingsRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isAppManifestMetadata",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isInfraManifestRecord",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isNavigatorSpec",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isSettingsRecord",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isSettingsRecord",
+        "toSymbol": "isLocalizationRecord",
+        "callExpression": "isLocalizationRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isSettingsRecord",
+        "toSymbol": "isAuthFlowConfig",
+        "callExpression": "isAuthFlowConfig",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isLocalizationRecord",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "isAuthFlowConfig",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/project.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "validateInfraSupport",
+        "callExpression": "validateInfraSupport",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "readInfraLedger",
+        "callExpression": "readInfraLedger",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "removeFiles",
+        "callExpression": "removeFiles",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "removeInfraLedger",
+        "callExpression": "removeInfraLedger",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "generateInfrastructure",
+        "callExpression": "(args.generateInfrastructureImpl ?? generateInfrastructure)",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "uniqueStrings",
+        "callExpression": "uniqueStrings",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "resolveProjectFile",
+        "callExpression": "resolveProjectFile",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "syncProjectInfrastructure",
+        "toSymbol": "writeInfraLedger",
+        "callExpression": "writeInfraLedger",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "resolveProjectInfrastructureTarget",
+        "toSymbol": "readInfraLedger",
+        "callExpression": "readInfraLedger",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "readInfraLedger",
+        "toSymbol": "isInfraLedger",
+        "callExpression": "isInfraLedger",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "removeFiles",
+        "toSymbol": "resolveProjectFile",
+        "callExpression": "resolveProjectFile",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "isInfraLedger",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "src/readme-usage.ts",
+        "toSymbol": "runCli",
+        "callExpression": "runCli",
+        "sourcePath": "src/readme-usage.ts"
+      },
+      {
+        "fromSymbol": "runProjectInfraScript",
+        "toSymbol": "resolveProjectInfraScriptPath",
+        "callExpression": "resolveProjectInfraScriptPath",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "runProjectInfraScript",
+        "toSymbol": "pathExists",
+        "callExpression": "pathExists",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "runProjectInfraScript",
+        "toSymbol": "runShellScript",
+        "callExpression": "runShellScript",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "resolveProjectInfraScriptPath",
+        "toSymbol": "getInfraScriptsDirectory",
+        "callExpression": "getInfraScriptsDirectory",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "src/runtime.ts",
+        "toSymbol": "spawn",
+        "callExpression": "spawn",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "src/runtime.ts",
+        "toSymbol": "writeStdout",
+        "callExpression": "args.context.writeStdout",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "src/runtime.ts",
+        "toSymbol": "writeStderr",
+        "callExpression": "args.context.writeStderr",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "src/runtime.ts",
+        "toSymbol": "reject",
+        "callExpression": "reject",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "src/runtime.ts",
+        "toSymbol": "resolve",
+        "callExpression": "resolve",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "createWorkspaceFixture",
+        "toSymbol": "createAppManifest",
+        "callExpression": "createAppManifest",
+        "sourcePath": "src/testSupport.ts"
       },
       {
         "fromSymbol": "generateMinikubeInfra",

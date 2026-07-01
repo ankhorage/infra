@@ -2,7 +2,7 @@
   "name": "@ankhorage/infra",
   "type": "module",
   "version": "0.2.1",
-  "description": "Provider-neutral infrastructure generation: turns app manifests, datasets, auth, state, storage, and deployment config into generated infra artifacts, migrations, seeds, APIs, and runtime dependencies.",
+  "description": "Project-aware infrastructure generation library and executable Ankh provider for Ankhorage.",
   "homepage": "https://github.com/ankhorage/infra#readme",
   "bugs": {
     "url": "https://github.com/ankhorage/infra/issues"
@@ -33,7 +33,7 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/contracts": "^1.18.3"
+    "@ankhorage/contracts": "^1.19.0"
   },
   "files": [
     "dist",
@@ -56,6 +56,20 @@
     },
     "./package.json": "./package.json"
   },
+  "bin": {
+    "ankhorage-infra": "./dist/cli.js"
+  },
+  "ankh": {
+    "category": "infra",
+    "provider": "./dist/ankh.provider.js",
+    "capabilities": [
+      "infra.validate",
+      "infra.generate",
+      "infra.status",
+      "infra.up",
+      "infra.down"
+    ]
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -75,6 +89,7 @@
     "version-packages": "changeset version"
   },
   "devDependencies": {
+    "@ankhorage/ankh": "^0.4.0",
     "@ankhorage/devtools": "^1.0.6",
     "@ankhorage/paradox": "^0.1.10",
     "@changesets/cli": "^2.31.0",

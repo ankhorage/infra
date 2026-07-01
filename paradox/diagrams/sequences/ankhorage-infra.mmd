@@ -1,0 +1,29 @@
+sequenceDiagram
+  participant participant_createDefaultCommandContext as createDefaultCommandContext
+  participant participant_findInfraCommandByStandaloneName as findInfraCommandByStandaloneName
+  participant participant_isHelpToken as isHelpToken
+  participant participant_isVersionToken as isVersionToken
+  participant participant_renderRootHelp as renderRootHelp
+  participant participant_renderUnknownCommand as renderUnknownCommand
+  participant participant_runCli as runCli
+  participant participant_runCommand as runCommand
+  participant participant_writeStderr as writeStderr
+  participant participant_writeStdout as writeStdout
+  participant_runCli->>participant_createDefaultCommandContext: createDefaultCommandContext()
+  participant_createDefaultCommandContext-->>participant_runCli: return
+  participant_runCli->>participant_isHelpToken: isHelpToken()
+  participant_isHelpToken-->>participant_runCli: return
+  participant_runCli->>participant_writeStdout: context.writeStdout()
+  participant_writeStdout-->>participant_runCli: return
+  participant_runCli->>participant_renderRootHelp: renderRootHelp()
+  participant_renderRootHelp-->>participant_runCli: return
+  participant_runCli->>participant_isVersionToken: isVersionToken()
+  participant_isVersionToken-->>participant_runCli: return
+  participant_runCli->>participant_findInfraCommandByStandaloneName: findInfraCommandByStandaloneName()
+  participant_findInfraCommandByStandaloneName-->>participant_runCli: return
+  participant_runCli->>participant_writeStderr: context.writeStderr()
+  participant_writeStderr-->>participant_runCli: return
+  participant_runCli->>participant_renderUnknownCommand: renderUnknownCommand()
+  participant_renderUnknownCommand-->>participant_runCli: return
+  participant_runCli->>participant_runCommand: runCommand()
+  participant_runCommand-->>participant_runCli: return
