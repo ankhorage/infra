@@ -5,6 +5,10 @@ export default defineParadoxConfig({
 
   docs: {
     title: 'INFRA',
+    description: 'Executable infra provider and standalone CLI for Ankhorage project workflows.',
+    usage: {
+      entrypoints: ['src/readme-usage.ts'],
+    },
   },
 
   package: {

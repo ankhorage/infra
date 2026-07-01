@@ -3,9 +3,49 @@
 
 # INFRA
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v0.2.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v0.2.1](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
 
-Provider-neutral infrastructure generation: turns app manifests, datasets, auth, state, storage, and deployment config into generated infra artifacts, migrations, seeds, APIs, and runtime dependencies.
+Executable infra provider and standalone CLI for Ankhorage project workflows.
+
+## Usage
+
+### Provider and CLI surface
+
+`@ankhorage/infra` owns infra command behavior.
+
+The same shared command implementation backs both:
+
+- `ankh infra ...`
+- `bunx @ankhorage/infra ...`
+
+Current command surface:
+
+- `validate`
+- `generate`
+- `status`
+- `up`
+- `down`
+
+`status` runs the generated live runtime status script for a project.
+
+Project resolution is project-aware:
+
+- pass `[project]`, or
+- omit it when cwd is already inside `apps/<project>`
+
+Source: `src/readme-usage.ts`
+
+```ts
+import { runCli } from './cli.js';
+
+await runCli(['--help']);
+```
+
+## Installation
+
+```bash
+bunx @ankhorage/infra
+```
 
 ## Generated documentation
 
@@ -15,3 +55,4 @@ Provider-neutral infrastructure generation: turns app manifests, datasets, auth,
 - [Architecture overview](././paradox/diagrams/architecture-overview.mmd)
 - [Module relationships](././paradox/diagrams/module-relationships.mmd)
 - [Export graph](././paradox/diagrams/export-graph.mmd)
+- [ankhorage-infra sequence](././paradox/diagrams/sequences/ankhorage-infra.mmd)

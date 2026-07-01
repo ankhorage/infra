@@ -185,11 +185,7 @@
       <aside class="sidebar">
         <p class="muted">Generated with Paradox</p>
         <h1>INFRA</h1>
-        <p>
-          Provider-neutral infrastructure generation: turns app manifests, datasets, auth, state,
-          storage, and deployment config into generated infra artifacts, migrations, seeds, APIs,
-          and runtime dependencies.
-        </p>
+        <p>Executable infra provider and standalone CLI for Ankhorage project workflows.</p>
         <input id="search" class="search" type="search" placeholder="Search current view" />
         <nav aria-label="Documentation sections">
           <ul class="nav-list">
@@ -286,15 +282,69 @@
               </button>
             </li>
             <li>
+              <button class="nav-button" type="button" data-target="src/ankh.provider.ts">
+                src/ankh.provider.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
               <button class="nav-button" type="button" data-target="src/apis.ts">
                 src/apis.ts
                 <small>32 functions</small>
               </button>
             </li>
             <li>
+              <button class="nav-button" type="button" data-target="src/cli.ts">
+                src/cli.ts
+                <small>3 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/commandContext.ts">
+                src/commandContext.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/commands.ts">
+                src/commands.ts
+                <small>17 functions</small>
+              </button>
+            </li>
+            <li>
               <button class="nav-button" type="button" data-target="src/index.ts">
                 src/index.ts
                 <small>2 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/infraValidation.ts">
+                src/infraValidation.ts
+                <small>4 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/project.ts">
+                src/project.ts
+                <small>17 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/projectInfrastructure.ts">
+                src/projectInfrastructure.ts
+                <small>10 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/runtime.ts">
+                src/runtime.ts
+                <small>5 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/testSupport.ts">
+                src/testSupport.ts
+                <small>3 functions</small>
               </button>
             </li>
           </ul>
@@ -307,7 +357,7 @@
             <div class="summary">
               <div><strong>16</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>12</strong><span class="muted">modules</span></div>
+              <div><strong>24</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -318,6 +368,12 @@
 
           <section class="panel">
             <h2>Modules</h2>
+            <article class="item" data-search="package.json">
+              <h3>package.json</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p><strong>Exports:</strong> <span class="empty">None</span></p>
+            </article>
             <article
               class="item"
               data-search="src/adapters/minikube/auth/index.ts src/adapters/minikube/auth/supabase/index.ts src/adapters/minikube/contracts.ts src/types.ts generateAuthProviderArtifacts"
@@ -428,6 +484,21 @@
             </article>
             <article
               class="item"
+              data-search="src/ankh.provider.ts src/commands.ts src/packageMetadata.ts createInfraRuntimeProvider CreateInfraRuntimeProviderOptions default"
+            >
+              <h3>src/ankh.provider.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/commands.ts</code>,
+                <code>src/packageMetadata.ts</code>
+              </p>
+              <p>
+                <strong>Exports:</strong> <code>createInfraRuntimeProvider</code>,
+                <code>CreateInfraRuntimeProviderOptions</code>, <code>default</code>
+              </p>
+            </article>
+            <article
+              class="item"
               data-search="src/apis.ts src/types.ts ApiInfrastructureArtifacts generateApiInfrastructureArtifacts"
             >
               <h3>src/apis.ts</h3>
@@ -436,6 +507,51 @@
               <p>
                 <strong>Exports:</strong> <code>ApiInfrastructureArtifacts</code>,
                 <code>generateApiInfrastructureArtifacts</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/cli.ts src/commandContext.ts src/commands.ts InfraCliOptions runCli"
+            >
+              <h3>src/cli.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/commandContext.ts</code>,
+                <code>src/commands.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>InfraCliOptions</code>, <code>runCli</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/commandContext.ts src/packageMetadata.ts createDefaultCommandContext InfraCommandContext InfraCommandRunResult"
+            >
+              <h3>src/commandContext.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/packageMetadata.ts</code></p>
+              <p>
+                <strong>Exports:</strong> <code>createDefaultCommandContext</code>,
+                <code>InfraCommandContext</code>, <code>InfraCommandRunResult</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/commands.ts src/commandContext.ts src/infraValidation.ts src/packageMetadata.ts src/project.ts src/projectInfrastructure.ts src/runtime.ts createProviderCommandDescriptors findInfraCommandByStandaloneName INFRA_COMMANDS InfraCommandDefinition InfraCommandInvocation InfraCommandServices renderRootHelp renderUnknownCommand runInfraCommand RunInfraCommandImpl RunInfraCommandOptions"
+            >
+              <h3>src/commands.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/commandContext.ts</code>,
+                <code>src/infraValidation.ts</code>, <code>src/packageMetadata.ts</code>,
+                <code>src/project.ts</code>, <code>src/projectInfrastructure.ts</code>,
+                <code>src/runtime.ts</code>
+              </p>
+              <p>
+                <strong>Exports:</strong> <code>createProviderCommandDescriptors</code>,
+                <code>findInfraCommandByStandaloneName</code>, <code>INFRA_COMMANDS</code>,
+                <code>InfraCommandDefinition</code>, <code>InfraCommandInvocation</code>,
+                <code>InfraCommandServices</code>, <code>renderRootHelp</code>,
+                <code>renderUnknownCommand</code>, <code>runInfraCommand</code>,
+                <code>RunInfraCommandImpl</code>, <code>RunInfraCommandOptions</code>
               </p>
             </article>
             <article
@@ -458,6 +574,95 @@
                 <code>InfraManifestInput</code>, <code>InfrastructureGenerationMeta</code>,
                 <code>InfrastructureGenerationOptions</code>,
                 <code>InfrastructureGenerationResult</code>, <code>PackageDependency</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/infraValidation.ts src/types.ts validateInfraSupport"
+            >
+              <h3>src/infraValidation.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
+              <p><strong>Exports:</strong> <code>validateInfraSupport</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/metadata/index.ts INFRA_CAPABILITIES INFRA_COMMAND_CATEGORY INFRA_PACKAGE_METADATA INFRA_PACKAGE_NAME INFRA_PACKAGE_VERSION"
+            >
+              <h3>src/metadata/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p>
+                <strong>Exports:</strong> <code>INFRA_CAPABILITIES</code>,
+                <code>INFRA_COMMAND_CATEGORY</code>, <code>INFRA_PACKAGE_METADATA</code>,
+                <code>INFRA_PACKAGE_NAME</code>, <code>INFRA_PACKAGE_VERSION</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/packageMetadata.ts package.json INFRA_CAPABILITIES INFRA_COMMAND_CATEGORY INFRA_PACKAGE_METADATA INFRA_PACKAGE_NAME INFRA_PACKAGE_VERSION"
+            >
+              <h3>src/packageMetadata.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>package.json</code></p>
+              <p>
+                <strong>Exports:</strong> <code>INFRA_CAPABILITIES</code>,
+                <code>INFRA_COMMAND_CATEGORY</code>, <code>INFRA_PACKAGE_METADATA</code>,
+                <code>INFRA_PACKAGE_NAME</code>, <code>INFRA_PACKAGE_VERSION</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/project.ts ResolvedInfraProject resolveInfraProject"
+            >
+              <h3>src/project.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p>
+                <strong>Exports:</strong> <code>ResolvedInfraProject</code>,
+                <code>resolveInfraProject</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/projectInfrastructure.ts src/index.ts src/infraValidation.ts InfraSyncResult resolveProjectFile resolveProjectInfrastructureTarget syncProjectInfrastructure"
+            >
+              <h3>src/projectInfrastructure.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/index.ts</code>,
+                <code>src/infraValidation.ts</code>
+              </p>
+              <p>
+                <strong>Exports:</strong> <code>InfraSyncResult</code>,
+                <code>resolveProjectFile</code>, <code>resolveProjectInfrastructureTarget</code>,
+                <code>syncProjectInfrastructure</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/runtime.ts src/commandContext.ts InfraLifecycleScript InfraScriptExecutionError resolveProjectInfraScriptPath runProjectInfraScript"
+            >
+              <h3>src/runtime.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/commandContext.ts</code></p>
+              <p>
+                <strong>Exports:</strong> <code>InfraLifecycleScript</code>,
+                <code>InfraScriptExecutionError</code>, <code>resolveProjectInfraScriptPath</code>,
+                <code>runProjectInfraScript</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/testSupport.ts src/commandContext.ts CapturedCommandContext createAppManifest createCapturedCommandContext createWorkspaceFixture"
+            >
+              <h3>src/testSupport.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/commandContext.ts</code></p>
+              <p>
+                <strong>Exports:</strong> <code>CapturedCommandContext</code>,
+                <code>createAppManifest</code>, <code>createCapturedCommandContext</code>,
+                <code>createWorkspaceFixture</code>
               </p>
             </article>
             <article
@@ -929,7 +1134,7 @@
                       <td>property</td>
                       <td>
                         <code
-                          >import(&quot;/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types&quot;).DeploymentTarget</code
+                          >import(&quot;/Users/a_rtiphishl_e/git/ankhorage4/.tmp-infra/node_modules/@ankhorage/contracts/dist/types&quot;).DeploymentTarget</code
                         >
                       </td>
                       <td>yes</td>
@@ -1071,7 +1276,8 @@
               <div class="mermaid">
                 graph TD package__ankhorage_infra[&quot;INFRA&quot;]
                 entrypoint_src_index_ts[&quot;src/index.ts&quot;] package__ankhorage_infra --&gt;
-                entrypoint_src_index_ts
+                entrypoint_src_index_ts module_package_json[&quot;package.json&quot;]
+                package__ankhorage_infra -.-&gt; module_package_json
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
@@ -1124,12 +1330,47 @@
                 module_src_adapters_minikube_storage_supabase_index_ts
                 module_src_adapters_minikube_storage_supabase_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts
+                module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_ankh_provider_ts
+                module_src_ankh_provider_ts --&gt; module_src_commands_ts
+                module_src_ankh_provider_ts --&gt; module_src_packageMetadata_ts
                 module_src_apis_ts[&quot;src/apis.ts&quot;] package__ankhorage_infra -.-&gt;
                 module_src_apis_ts module_src_apis_ts --&gt; module_src_types_ts
-                module_src_index_ts[&quot;src/index.ts&quot;] module_src_index_ts --&gt;
-                module_src_adapters_minikube_index_ts module_src_index_ts --&gt; module_src_types_ts
-                module_src_types_ts[&quot;src/types.ts&quot;] package__ankhorage_infra -.-&gt;
-                module_src_types_ts
+                module_src_cli_ts[&quot;src/cli.ts&quot;] package__ankhorage_infra -.-&gt;
+                module_src_cli_ts module_src_cli_ts --&gt; module_src_commandContext_ts
+                module_src_cli_ts --&gt; module_src_commands_ts
+                module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_commandContext_ts
+                module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
+                module_src_commands_ts[&quot;src/commands.ts&quot;] package__ankhorage_infra -.-&gt;
+                module_src_commands_ts module_src_commands_ts --&gt; module_src_commandContext_ts
+                module_src_commands_ts --&gt; module_src_infraValidation_ts module_src_commands_ts
+                --&gt; module_src_packageMetadata_ts module_src_commands_ts --&gt;
+                module_src_project_ts module_src_commands_ts --&gt;
+                module_src_projectInfrastructure_ts module_src_commands_ts --&gt;
+                module_src_runtime_ts module_src_index_ts[&quot;src/index.ts&quot;]
+                module_src_index_ts --&gt; module_src_adapters_minikube_index_ts module_src_index_ts
+                --&gt; module_src_types_ts
+                module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_infraValidation_ts
+                module_src_infraValidation_ts --&gt; module_src_types_ts
+                module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_metadata_index_ts
+                module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_packageMetadata_ts
+                module_src_packageMetadata_ts --&gt; module_package_json
+                module_src_project_ts[&quot;src/project.ts&quot;] package__ankhorage_infra -.-&gt;
+                module_src_project_ts
+                module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_projectInfrastructure_ts
+                module_src_projectInfrastructure_ts --&gt; module_src_index_ts
+                module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
+                module_src_runtime_ts[&quot;src/runtime.ts&quot;] package__ankhorage_infra -.-&gt;
+                module_src_runtime_ts module_src_runtime_ts --&gt; module_src_commandContext_ts
+                module_src_testSupport_ts[&quot;src/testSupport.ts&quot;] package__ankhorage_infra
+                -.-&gt; module_src_testSupport_ts module_src_testSupport_ts --&gt;
+                module_src_commandContext_ts module_src_types_ts[&quot;src/types.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_types_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -1138,6 +1379,8 @@ graph TD
   package__ankhorage_infra[&quot;INFRA&quot;]
   entrypoint_src_index_ts[&quot;src/index.ts&quot;]
   package__ankhorage_infra --&gt; entrypoint_src_index_ts
+  module_package_json[&quot;package.json&quot;]
+  package__ankhorage_infra -.-&gt; module_package_json
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
@@ -1178,12 +1421,51 @@ graph TD
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_ankh_provider_ts
+  module_src_ankh_provider_ts --&gt; module_src_commands_ts
+  module_src_ankh_provider_ts --&gt; module_src_packageMetadata_ts
   module_src_apis_ts[&quot;src/apis.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_apis_ts
   module_src_apis_ts --&gt; module_src_types_ts
+  module_src_cli_ts[&quot;src/cli.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_cli_ts
+  module_src_cli_ts --&gt; module_src_commandContext_ts
+  module_src_cli_ts --&gt; module_src_commands_ts
+  module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_commandContext_ts
+  module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
+  module_src_commands_ts[&quot;src/commands.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_commands_ts
+  module_src_commands_ts --&gt; module_src_commandContext_ts
+  module_src_commands_ts --&gt; module_src_infraValidation_ts
+  module_src_commands_ts --&gt; module_src_packageMetadata_ts
+  module_src_commands_ts --&gt; module_src_project_ts
+  module_src_commands_ts --&gt; module_src_projectInfrastructure_ts
+  module_src_commands_ts --&gt; module_src_runtime_ts
   module_src_index_ts[&quot;src/index.ts&quot;]
   module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
   module_src_index_ts --&gt; module_src_types_ts
+  module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_infraValidation_ts
+  module_src_infraValidation_ts --&gt; module_src_types_ts
+  module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_metadata_index_ts
+  module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_packageMetadata_ts
+  module_src_packageMetadata_ts --&gt; module_package_json
+  module_src_project_ts[&quot;src/project.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_project_ts
+  module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_projectInfrastructure_ts
+  module_src_projectInfrastructure_ts --&gt; module_src_index_ts
+  module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
+  module_src_runtime_ts[&quot;src/runtime.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_runtime_ts
+  module_src_runtime_ts --&gt; module_src_commandContext_ts
+  module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_testSupport_ts
+  module_src_testSupport_ts --&gt; module_src_commandContext_ts
   module_src_types_ts[&quot;src/types.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_types_ts
 </pre
@@ -1197,7 +1479,7 @@ graph TD
               <h3>Module relationships</h3>
               <p class="muted"><code>diagrams/module-relationships.mmd</code></p>
               <div class="mermaid">
-                graph LR
+                graph LR module_package_json[&quot;package.json&quot;]
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -1207,8 +1489,19 @@ graph TD
                 module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+                module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
                 module_src_apis_ts[&quot;src/apis.ts&quot;]
+                module_src_cli_ts[&quot;src/cli.ts&quot;]
+                module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
+                module_src_commands_ts[&quot;src/commands.ts&quot;]
                 module_src_index_ts[&quot;src/index.ts&quot;]
+                module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
+                module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
+                module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
+                module_src_project_ts[&quot;src/project.ts&quot;]
+                module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
+                module_src_runtime_ts[&quot;src/runtime.ts&quot;]
+                module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
                 module_src_types_ts[&quot;src/types.ts&quot;]
                 module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_index_ts
@@ -1241,14 +1534,30 @@ graph TD
                 module_src_adapters_minikube_storage_supabase_index_ts
                 module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_storage_supabase_index_ts --&gt;
-                module_src_adapters_minikube_contracts_ts module_src_apis_ts --&gt;
-                module_src_types_ts module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
-                module_src_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_contracts_ts module_src_ankh_provider_ts --&gt;
+                module_src_commands_ts module_src_ankh_provider_ts --&gt;
+                module_src_packageMetadata_ts module_src_apis_ts --&gt; module_src_types_ts
+                module_src_cli_ts --&gt; module_src_commandContext_ts module_src_cli_ts --&gt;
+                module_src_commands_ts module_src_commandContext_ts --&gt;
+                module_src_packageMetadata_ts module_src_commands_ts --&gt;
+                module_src_commandContext_ts module_src_commands_ts --&gt;
+                module_src_infraValidation_ts module_src_commands_ts --&gt;
+                module_src_packageMetadata_ts module_src_commands_ts --&gt; module_src_project_ts
+                module_src_commands_ts --&gt; module_src_projectInfrastructure_ts
+                module_src_commands_ts --&gt; module_src_runtime_ts module_src_index_ts --&gt;
+                module_src_adapters_minikube_index_ts module_src_index_ts --&gt; module_src_types_ts
+                module_src_infraValidation_ts --&gt; module_src_types_ts
+                module_src_packageMetadata_ts --&gt; module_package_json
+                module_src_projectInfrastructure_ts --&gt; module_src_index_ts
+                module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
+                module_src_runtime_ts --&gt; module_src_commandContext_ts module_src_testSupport_ts
+                --&gt; module_src_commandContext_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
                 <pre>
 graph LR
+  module_package_json[&quot;package.json&quot;]
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -1258,8 +1567,19 @@ graph LR
   module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+  module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
   module_src_apis_ts[&quot;src/apis.ts&quot;]
+  module_src_cli_ts[&quot;src/cli.ts&quot;]
+  module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
+  module_src_commands_ts[&quot;src/commands.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
+  module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
+  module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
+  module_src_project_ts[&quot;src/project.ts&quot;]
+  module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
+  module_src_runtime_ts[&quot;src/runtime.ts&quot;]
+  module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
   module_src_types_ts[&quot;src/types.ts&quot;]
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
@@ -1283,9 +1603,26 @@ graph LR
   module_src_adapters_minikube_storage_index_ts --&gt; module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_ankh_provider_ts --&gt; module_src_commands_ts
+  module_src_ankh_provider_ts --&gt; module_src_packageMetadata_ts
   module_src_apis_ts --&gt; module_src_types_ts
+  module_src_cli_ts --&gt; module_src_commandContext_ts
+  module_src_cli_ts --&gt; module_src_commands_ts
+  module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
+  module_src_commands_ts --&gt; module_src_commandContext_ts
+  module_src_commands_ts --&gt; module_src_infraValidation_ts
+  module_src_commands_ts --&gt; module_src_packageMetadata_ts
+  module_src_commands_ts --&gt; module_src_project_ts
+  module_src_commands_ts --&gt; module_src_projectInfrastructure_ts
+  module_src_commands_ts --&gt; module_src_runtime_ts
   module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
   module_src_index_ts --&gt; module_src_types_ts
+  module_src_infraValidation_ts --&gt; module_src_types_ts
+  module_src_packageMetadata_ts --&gt; module_package_json
+  module_src_projectInfrastructure_ts --&gt; module_src_index_ts
+  module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
+  module_src_runtime_ts --&gt; module_src_commandContext_ts
+  module_src_testSupport_ts --&gt; module_src_commandContext_ts
 </pre
                 >
               </details>
@@ -1294,7 +1631,7 @@ graph LR
               <h3>Export graph</h3>
               <p class="muted"><code>diagrams/export-graph.mmd</code></p>
               <div class="mermaid">
-                graph LR
+                graph LR module_package_json[&quot;package.json&quot;]
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -1304,8 +1641,19 @@ graph LR
                 module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+                module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
                 module_src_apis_ts[&quot;src/apis.ts&quot;]
+                module_src_cli_ts[&quot;src/cli.ts&quot;]
+                module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
+                module_src_commands_ts[&quot;src/commands.ts&quot;]
                 module_src_index_ts[&quot;src/index.ts&quot;]
+                module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
+                module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
+                module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
+                module_src_project_ts[&quot;src/project.ts&quot;]
+                module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
+                module_src_runtime_ts[&quot;src/runtime.ts&quot;]
+                module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
                 module_src_types_ts[&quot;src/types.ts&quot;]
                 export_ApiInfrastructureArtifacts[&quot;ApiInfrastructureArtifacts&quot;]
                 module_src_apis_ts --&gt; export_ApiInfrastructureArtifacts
@@ -1354,6 +1702,7 @@ graph LR
                 <summary>View Mermaid source</summary>
                 <pre>
 graph LR
+  module_package_json[&quot;package.json&quot;]
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -1363,8 +1712,19 @@ graph LR
   module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
+  module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
   module_src_apis_ts[&quot;src/apis.ts&quot;]
+  module_src_cli_ts[&quot;src/cli.ts&quot;]
+  module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
+  module_src_commands_ts[&quot;src/commands.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
+  module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
+  module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
+  module_src_project_ts[&quot;src/project.ts&quot;]
+  module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
+  module_src_runtime_ts[&quot;src/runtime.ts&quot;]
+  module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
   module_src_types_ts[&quot;src/types.ts&quot;]
   export_ApiInfrastructureArtifacts[&quot;ApiInfrastructureArtifacts&quot;]
   module_src_apis_ts --&gt; export_ApiInfrastructureArtifacts
@@ -1410,6 +1770,79 @@ graph LR
   export_InfrastructureGenerationResult -.-&gt; export_InfrastructureGenerationMeta
   export_PackageDependency[&quot;PackageDependency&quot;]
   module_src_types_ts --&gt; export_PackageDependency
+</pre
+                >
+              </details>
+            </article>
+            <article
+              class="item"
+              data-search="ankhorage-infra sequence diagrams/sequences/ankhorage-infra.mmd"
+            >
+              <h3>ankhorage-infra sequence</h3>
+              <p class="muted"><code>diagrams/sequences/ankhorage-infra.mmd</code></p>
+              <div class="mermaid">
+                sequenceDiagram participant participant_createDefaultCommandContext as
+                createDefaultCommandContext participant participant_findInfraCommandByStandaloneName
+                as findInfraCommandByStandaloneName participant participant_isHelpToken as
+                isHelpToken participant participant_isVersionToken as isVersionToken participant
+                participant_renderRootHelp as renderRootHelp participant
+                participant_renderUnknownCommand as renderUnknownCommand participant
+                participant_runCli as runCli participant participant_runCommand as runCommand
+                participant participant_writeStderr as writeStderr participant
+                participant_writeStdout as writeStdout
+                participant_runCli-&gt;&gt;participant_createDefaultCommandContext:
+                createDefaultCommandContext()
+                participant_createDefaultCommandContext--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_isHelpToken: isHelpToken()
+                participant_isHelpToken--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_writeStdout: context.writeStdout()
+                participant_writeStdout--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_renderRootHelp: renderRootHelp()
+                participant_renderRootHelp--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_isVersionToken: isVersionToken()
+                participant_isVersionToken--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_findInfraCommandByStandaloneName:
+                findInfraCommandByStandaloneName()
+                participant_findInfraCommandByStandaloneName--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_writeStderr: context.writeStderr()
+                participant_writeStderr--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_renderUnknownCommand: renderUnknownCommand()
+                participant_renderUnknownCommand--&gt;&gt;participant_runCli: return
+                participant_runCli-&gt;&gt;participant_runCommand: runCommand()
+                participant_runCommand--&gt;&gt;participant_runCli: return
+              </div>
+              <details>
+                <summary>View Mermaid source</summary>
+                <pre>
+sequenceDiagram
+  participant participant_createDefaultCommandContext as createDefaultCommandContext
+  participant participant_findInfraCommandByStandaloneName as findInfraCommandByStandaloneName
+  participant participant_isHelpToken as isHelpToken
+  participant participant_isVersionToken as isVersionToken
+  participant participant_renderRootHelp as renderRootHelp
+  participant participant_renderUnknownCommand as renderUnknownCommand
+  participant participant_runCli as runCli
+  participant participant_runCommand as runCommand
+  participant participant_writeStderr as writeStderr
+  participant participant_writeStdout as writeStdout
+  participant_runCli-&gt;&gt;participant_createDefaultCommandContext: createDefaultCommandContext()
+  participant_createDefaultCommandContext--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_isHelpToken: isHelpToken()
+  participant_isHelpToken--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_writeStdout: context.writeStdout()
+  participant_writeStdout--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_renderRootHelp: renderRootHelp()
+  participant_renderRootHelp--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_isVersionToken: isVersionToken()
+  participant_isVersionToken--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_findInfraCommandByStandaloneName: findInfraCommandByStandaloneName()
+  participant_findInfraCommandByStandaloneName--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_writeStderr: context.writeStderr()
+  participant_writeStderr--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_renderUnknownCommand: renderUnknownCommand()
+  participant_renderUnknownCommand--&gt;&gt;participant_runCli: return
+  participant_runCli-&gt;&gt;participant_runCommand: runCommand()
+  participant_runCommand--&gt;&gt;participant_runCli: return
 </pre
                 >
               </details>
@@ -2040,6 +2473,21 @@ graph LR
             </article>
           </section>
         </section>
+        <section
+          id="view-src-ankh-provider-ts"
+          class="view"
+          data-view="src/ankh.provider.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/ankh.provider.ts</h2>
+            <article class="item" data-search="createInfraRuntimeProvider src/ankh.provider.ts ">
+              <h3>createInfraRuntimeProvider</h3>
+              <p class="muted"><code>src/ankh.provider.ts:22:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
         <section id="view-src-apis-ts" class="view" data-view="src/apis.ts" hidden>
           <section class="panel">
             <h2>src/apis.ts</h2>
@@ -2205,6 +2653,131 @@ graph LR
             </article>
           </section>
         </section>
+        <section id="view-src-cli-ts" class="view" data-view="src/cli.ts" hidden>
+          <section class="panel">
+            <h2>src/cli.ts</h2>
+            <article class="item" data-search="runCli src/cli.ts ">
+              <h3>runCli</h3>
+              <p class="muted"><code>src/cli.ts:20:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isHelpToken src/cli.ts ">
+              <h3>isHelpToken</h3>
+              <p class="muted"><code>src/cli.ts:56:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isVersionToken src/cli.ts ">
+              <h3>isVersionToken</h3>
+              <p class="muted"><code>src/cli.ts:60:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-commandcontext-ts"
+          class="view"
+          data-view="src/commandContext.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/commandContext.ts</h2>
+            <article class="item" data-search="createDefaultCommandContext src/commandContext.ts ">
+              <h3>createDefaultCommandContext</h3>
+              <p class="muted"><code>src/commandContext.ts:15:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section id="view-src-commands-ts" class="view" data-view="src/commands.ts" hidden>
+          <section class="panel">
+            <h2>src/commands.ts</h2>
+            <article class="item" data-search="runInfraCommand src/commands.ts ">
+              <h3>runInfraCommand</h3>
+              <p class="muted"><code>src/commands.ts:126:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createProviderCommandDescriptors src/commands.ts ">
+              <h3>createProviderCommandDescriptors</h3>
+              <p class="muted"><code>src/commands.ts:152:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="findInfraCommandByStandaloneName src/commands.ts ">
+              <h3>findInfraCommandByStandaloneName</h3>
+              <p class="muted"><code>src/commands.ts:160:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="renderRootHelp src/commands.ts ">
+              <h3>renderRootHelp</h3>
+              <p class="muted"><code>src/commands.ts:164:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="renderUnknownCommand src/commands.ts ">
+              <h3>renderUnknownCommand</h3>
+              <p class="muted"><code>src/commands.ts:185:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="renderCommandHelp src/commands.ts ">
+              <h3>renderCommandHelp</h3>
+              <p class="muted"><code>src/commands.ts:189:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createInfraCommandServices src/commands.ts ">
+              <h3>createInfraCommandServices</h3>
+              <p class="muted"><code>src/commands.ts:203:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="parseCommandArguments src/commands.ts ">
+              <h3>parseCommandArguments</h3>
+              <p class="muted"><code>src/commands.ts:216:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="runValidateCommand src/commands.ts ">
+              <h3>runValidateCommand</h3>
+              <p class="muted"><code>src/commands.ts:234:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="runGenerateCommand src/commands.ts ">
+              <h3>runGenerateCommand</h3>
+              <p class="muted"><code>src/commands.ts:251:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="runStatusCommand src/commands.ts ">
+              <h3>runStatusCommand</h3>
+              <p class="muted"><code>src/commands.ts:279:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="runUpCommand src/commands.ts ">
+              <h3>runUpCommand</h3>
+              <p class="muted"><code>src/commands.ts:309:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="runDownCommand src/commands.ts ">
+              <h3>runDownCommand</h3>
+              <p class="muted"><code>src/commands.ts:356:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="writeWarnings src/commands.ts ">
+              <h3>writeWarnings</h3>
+              <p class="muted"><code>src/commands.ts:387:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="renderCommandFailure src/commands.ts ">
+              <h3>renderCommandFailure</h3>
+              <p class="muted"><code>src/commands.ts:398:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="getErrorMessage src/commands.ts ">
+              <h3>getErrorMessage</h3>
+              <p class="muted"><code>src/commands.ts:402:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isHelpToken src/commands.ts ">
+              <h3>isHelpToken</h3>
+              <p class="muted"><code>src/commands.ts:406:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
         <section id="view-src-index-ts" class="view" data-view="src/index.ts" hidden>
           <section class="panel">
             <h2>src/index.ts</h2>
@@ -2216,6 +2789,242 @@ graph LR
             <article class="item" data-search="generateInfrastructure src/index.ts ">
               <h3>generateInfrastructure</h3>
               <p class="muted"><code>src/index.ts:30:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-infravalidation-ts"
+          class="view"
+          data-view="src/infraValidation.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/infraValidation.ts</h2>
+            <article class="item" data-search="validateInfraSupport src/infraValidation.ts ">
+              <h3>validateInfraSupport</h3>
+              <p class="muted"><code>src/infraValidation.ts:11:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="warningForUnsupportedValue src/infraValidation.ts ">
+              <h3>warningForUnsupportedValue</h3>
+              <p class="muted"><code>src/infraValidation.ts:72:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatSupportedValues src/infraValidation.ts ">
+              <h3>formatSupportedValues</h3>
+              <p class="muted"><code>src/infraValidation.ts:80:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isSupported src/infraValidation.ts ">
+              <h3>isSupported</h3>
+              <p class="muted"><code>src/infraValidation.ts:88:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section id="view-src-project-ts" class="view" data-view="src/project.ts" hidden>
+          <section class="panel">
+            <h2>src/project.ts</h2>
+            <article class="item" data-search="resolveInfraProject src/project.ts ">
+              <h3>resolveInfraProject</h3>
+              <p class="muted"><code>src/project.ts:14:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="resolveProjectPath src/project.ts ">
+              <h3>resolveProjectPath</h3>
+              <p class="muted"><code>src/project.ts:53:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createFallbackManifest src/project.ts ">
+              <h3>createFallbackManifest</h3>
+              <p class="muted"><code>src/project.ts:65:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="readProjectManifest src/project.ts ">
+              <h3>readProjectManifest</h3>
+              <p class="muted"><code>src/project.ts:98:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="findWorkspaceRoot src/project.ts ">
+              <h3>findWorkspaceRoot</h3>
+              <p class="muted"><code>src/project.ts:126:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="inferProjectId src/project.ts ">
+              <h3>inferProjectId</h3>
+              <p class="muted"><code>src/project.ts:144:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isAppManifest src/project.ts ">
+              <h3>isAppManifest</h3>
+              <p class="muted"><code>src/project.ts:154:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isAppManifestMetadata src/project.ts ">
+              <h3>isAppManifestMetadata</h3>
+              <p class="muted"><code>src/project.ts:170:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isInfraManifestRecord src/project.ts ">
+              <h3>isInfraManifestRecord</h3>
+              <p class="muted"><code>src/project.ts:182:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isNavigatorSpec src/project.ts ">
+              <h3>isNavigatorSpec</h3>
+              <p class="muted"><code>src/project.ts:186:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isSettingsRecord src/project.ts ">
+              <h3>isSettingsRecord</h3>
+              <p class="muted"><code>src/project.ts:195:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isLocalizationRecord src/project.ts ">
+              <h3>isLocalizationRecord</h3>
+              <p class="muted"><code>src/project.ts:204:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isAuthFlowConfig src/project.ts ">
+              <h3>isAuthFlowConfig</h3>
+              <p class="muted"><code>src/project.ts:213:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isRecord src/project.ts ">
+              <h3>isRecord</h3>
+              <p class="muted"><code>src/project.ts:226:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isDirectory src/project.ts ">
+              <h3>isDirectory</h3>
+              <p class="muted"><code>src/project.ts:230:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="pathExists src/project.ts ">
+              <h3>pathExists</h3>
+              <p class="muted"><code>src/project.ts:239:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="getErrorMessage src/project.ts ">
+              <h3>getErrorMessage</h3>
+              <p class="muted"><code>src/project.ts:248:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-projectinfrastructure-ts"
+          class="view"
+          data-view="src/projectInfrastructure.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/projectInfrastructure.ts</h2>
+            <article
+              class="item"
+              data-search="syncProjectInfrastructure src/projectInfrastructure.ts "
+            >
+              <h3>syncProjectInfrastructure</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:28:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="resolveProjectInfrastructureTarget src/projectInfrastructure.ts "
+            >
+              <h3>resolveProjectInfrastructureTarget</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:100:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="resolveProjectFile src/projectInfrastructure.ts ">
+              <h3>resolveProjectFile</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:113:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="readInfraLedger src/projectInfrastructure.ts ">
+              <h3>readInfraLedger</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:125:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="writeInfraLedger src/projectInfrastructure.ts ">
+              <h3>writeInfraLedger</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:137:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="removeInfraLedger src/projectInfrastructure.ts ">
+              <h3>removeInfraLedger</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:143:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="removeFiles src/projectInfrastructure.ts ">
+              <h3>removeFiles</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:147:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isInfraLedger src/projectInfrastructure.ts ">
+              <h3>isInfraLedger</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:158:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isRecord src/projectInfrastructure.ts ">
+              <h3>isRecord</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:171:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="uniqueStrings src/projectInfrastructure.ts ">
+              <h3>uniqueStrings</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:175:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section id="view-src-runtime-ts" class="view" data-view="src/runtime.ts" hidden>
+          <section class="panel">
+            <h2>src/runtime.ts</h2>
+            <article class="item" data-search="runProjectInfraScript src/runtime.ts ">
+              <h3>runProjectInfraScript</h3>
+              <p class="muted"><code>src/runtime.ts:28:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="resolveProjectInfraScriptPath src/runtime.ts ">
+              <h3>resolveProjectInfraScriptPath</h3>
+              <p class="muted"><code>src/runtime.ts:48:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="getInfraScriptsDirectory src/runtime.ts ">
+              <h3>getInfraScriptsDirectory</h3>
+              <p class="muted"><code>src/runtime.ts:56:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="runShellScript src/runtime.ts ">
+              <h3>runShellScript</h3>
+              <p class="muted"><code>src/runtime.ts:65:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="pathExists src/runtime.ts ">
+              <h3>pathExists</h3>
+              <p class="muted"><code>src/runtime.ts:120:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section id="view-src-testsupport-ts" class="view" data-view="src/testSupport.ts" hidden>
+          <section class="panel">
+            <h2>src/testSupport.ts</h2>
+            <article class="item" data-search="createCapturedCommandContext src/testSupport.ts ">
+              <h3>createCapturedCommandContext</h3>
+              <p class="muted"><code>src/testSupport.ts:14:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createWorkspaceFixture src/testSupport.ts ">
+              <h3>createWorkspaceFixture</h3>
+              <p class="muted"><code>src/testSupport.ts:38:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createAppManifest src/testSupport.ts ">
+              <h3>createAppManifest</h3>
+              <p class="muted"><code>src/testSupport.ts:80:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
