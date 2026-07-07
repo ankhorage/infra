@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.3.1
+
+### Patch Changes
+
+- 997af24: Release package command entry changes.
+
 ## 0.3.0
 
 ### Minor Changes
