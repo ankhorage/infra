@@ -6,7 +6,7 @@ import {
 } from '@ankhorage/ankh';
 import { describe, expect, test } from 'bun:test';
 
-import { createInfraRuntimeProvider } from './ankh.provider.js';
+import { createInfraRuntimeProvider } from './cli/index.js';
 import { runCli } from './cli.js';
 import { createCapturedCommandContext } from './testSupport.js';
 
@@ -108,7 +108,7 @@ function createDiscoveredPackage(): AnkhDiscoveredPackage {
   return {
     metadata: {
       category: 'infra',
-      provider: './dist/ankh.provider.js',
+      provider: './dist/cli/index.js',
       capabilities: ['infra.validate', 'infra.generate', 'infra.status', 'infra.up', 'infra.down'],
     },
     packageJsonPath: '/workspace/package.json',
@@ -131,7 +131,7 @@ function createLoadedProvider(
       commands: provider.commands,
     },
     providerModuleDefaultExport: provider,
-    providerModulePath: '/workspace/dist/ankh.provider.js',
-    providerModuleUrl: 'file:///workspace/dist/ankh.provider.js',
+    providerModulePath: '/workspace/dist/cli/index.js',
+    providerModuleUrl: 'file:///workspace/dist/cli/index.js',
   };
 }
