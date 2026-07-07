@@ -6,13 +6,13 @@ import {
   type InfraCommandServices,
   runInfraCommand,
   type RunInfraCommandImpl,
-} from './commands.js';
+} from '../commands.js';
 import {
   INFRA_CAPABILITIES,
   INFRA_COMMAND_CATEGORY,
   INFRA_PACKAGE_NAME,
   INFRA_PACKAGE_VERSION,
-} from './packageMetadata.js';
+} from '../packageMetadata.js';
 
 export interface CreateInfraRuntimeProviderOptions {
   readonly runCommandImpl?: RunInfraCommandImpl;

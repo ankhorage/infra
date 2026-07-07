@@ -1,10 +1,10 @@
 import type { AnkhRuntimeCommandProvider } from '@ankhorage/ankh';
 import { describe, expect, test } from 'bun:test';
 
-import provider, { createInfraRuntimeProvider } from './ankh.provider.js';
-import { createProviderCommandDescriptors, INFRA_COMMANDS } from './commands.js';
+import { createProviderCommandDescriptors, INFRA_COMMANDS } from '../commands.js';
+import provider, { createInfraRuntimeProvider } from './index.js';
 
-describe('ankh provider', () => {
+describe('infra package cli provider', () => {
   test('publishes the expected runtime provider shape', () => {
     const expectedProvider = createInfraRuntimeProvider() satisfies AnkhRuntimeCommandProvider;
 

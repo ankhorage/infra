@@ -282,12 +282,6 @@
               </button>
             </li>
             <li>
-              <button class="nav-button" type="button" data-target="src/ankh.provider.ts">
-                src/ankh.provider.ts
-                <small>1 function</small>
-              </button>
-            </li>
-            <li>
               <button class="nav-button" type="button" data-target="src/apis.ts">
                 src/apis.ts
                 <small>32 functions</small>
@@ -297,6 +291,12 @@
               <button class="nav-button" type="button" data-target="src/cli.ts">
                 src/cli.ts
                 <small>3 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/cli/index.ts">
+                src/cli/index.ts
+                <small>1 function</small>
               </button>
             </li>
             <li>
@@ -484,21 +484,6 @@
             </article>
             <article
               class="item"
-              data-search="src/ankh.provider.ts src/commands.ts src/packageMetadata.ts createInfraRuntimeProvider CreateInfraRuntimeProviderOptions default"
-            >
-              <h3>src/ankh.provider.ts</h3>
-              <p class="muted">Referenced module</p>
-              <p>
-                <strong>Dependencies:</strong> <code>src/commands.ts</code>,
-                <code>src/packageMetadata.ts</code>
-              </p>
-              <p>
-                <strong>Exports:</strong> <code>createInfraRuntimeProvider</code>,
-                <code>CreateInfraRuntimeProviderOptions</code>, <code>default</code>
-              </p>
-            </article>
-            <article
-              class="item"
               data-search="src/apis.ts src/types.ts ApiInfrastructureArtifacts generateApiInfrastructureArtifacts"
             >
               <h3>src/apis.ts</h3>
@@ -520,6 +505,21 @@
                 <code>src/commands.ts</code>
               </p>
               <p><strong>Exports:</strong> <code>InfraCliOptions</code>, <code>runCli</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/cli/index.ts src/commands.ts src/packageMetadata.ts createInfraRuntimeProvider CreateInfraRuntimeProviderOptions default"
+            >
+              <h3>src/cli/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/commands.ts</code>,
+                <code>src/packageMetadata.ts</code>
+              </p>
+              <p>
+                <strong>Exports:</strong> <code>createInfraRuntimeProvider</code>,
+                <code>CreateInfraRuntimeProviderOptions</code>, <code>default</code>
+              </p>
             </article>
             <article
               class="item"
@@ -1330,15 +1330,14 @@
                 module_src_adapters_minikube_storage_supabase_index_ts
                 module_src_adapters_minikube_storage_supabase_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts
-                module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
-                package__ankhorage_infra -.-&gt; module_src_ankh_provider_ts
-                module_src_ankh_provider_ts --&gt; module_src_commands_ts
-                module_src_ankh_provider_ts --&gt; module_src_packageMetadata_ts
                 module_src_apis_ts[&quot;src/apis.ts&quot;] package__ankhorage_infra -.-&gt;
                 module_src_apis_ts module_src_apis_ts --&gt; module_src_types_ts
                 module_src_cli_ts[&quot;src/cli.ts&quot;] package__ankhorage_infra -.-&gt;
                 module_src_cli_ts module_src_cli_ts --&gt; module_src_commandContext_ts
                 module_src_cli_ts --&gt; module_src_commands_ts
+                module_src_cli_index_ts[&quot;src/cli/index.ts&quot;] package__ankhorage_infra
+                -.-&gt; module_src_cli_index_ts module_src_cli_index_ts --&gt;
+                module_src_commands_ts module_src_cli_index_ts --&gt; module_src_packageMetadata_ts
                 module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_commandContext_ts
                 module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
@@ -1421,10 +1420,6 @@ graph TD
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
-  module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
-  package__ankhorage_infra -.-&gt; module_src_ankh_provider_ts
-  module_src_ankh_provider_ts --&gt; module_src_commands_ts
-  module_src_ankh_provider_ts --&gt; module_src_packageMetadata_ts
   module_src_apis_ts[&quot;src/apis.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_apis_ts
   module_src_apis_ts --&gt; module_src_types_ts
@@ -1432,6 +1427,10 @@ graph TD
   package__ankhorage_infra -.-&gt; module_src_cli_ts
   module_src_cli_ts --&gt; module_src_commandContext_ts
   module_src_cli_ts --&gt; module_src_commands_ts
+  module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_cli_index_ts
+  module_src_cli_index_ts --&gt; module_src_commands_ts
+  module_src_cli_index_ts --&gt; module_src_packageMetadata_ts
   module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_commandContext_ts
   module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
@@ -1489,9 +1488,9 @@ graph TD
                 module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-                module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
                 module_src_apis_ts[&quot;src/apis.ts&quot;]
                 module_src_cli_ts[&quot;src/cli.ts&quot;]
+                module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
                 module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
                 module_src_commands_ts[&quot;src/commands.ts&quot;]
                 module_src_index_ts[&quot;src/index.ts&quot;]
@@ -1534,14 +1533,13 @@ graph TD
                 module_src_adapters_minikube_storage_supabase_index_ts
                 module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_storage_supabase_index_ts --&gt;
-                module_src_adapters_minikube_contracts_ts module_src_ankh_provider_ts --&gt;
-                module_src_commands_ts module_src_ankh_provider_ts --&gt;
-                module_src_packageMetadata_ts module_src_apis_ts --&gt; module_src_types_ts
-                module_src_cli_ts --&gt; module_src_commandContext_ts module_src_cli_ts --&gt;
-                module_src_commands_ts module_src_commandContext_ts --&gt;
-                module_src_packageMetadata_ts module_src_commands_ts --&gt;
-                module_src_commandContext_ts module_src_commands_ts --&gt;
-                module_src_infraValidation_ts module_src_commands_ts --&gt;
+                module_src_adapters_minikube_contracts_ts module_src_apis_ts --&gt;
+                module_src_types_ts module_src_cli_ts --&gt; module_src_commandContext_ts
+                module_src_cli_ts --&gt; module_src_commands_ts module_src_cli_index_ts --&gt;
+                module_src_commands_ts module_src_cli_index_ts --&gt; module_src_packageMetadata_ts
+                module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
+                module_src_commands_ts --&gt; module_src_commandContext_ts module_src_commands_ts
+                --&gt; module_src_infraValidation_ts module_src_commands_ts --&gt;
                 module_src_packageMetadata_ts module_src_commands_ts --&gt; module_src_project_ts
                 module_src_commands_ts --&gt; module_src_projectInfrastructure_ts
                 module_src_commands_ts --&gt; module_src_runtime_ts module_src_index_ts --&gt;
@@ -1567,9 +1565,9 @@ graph LR
   module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-  module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
   module_src_apis_ts[&quot;src/apis.ts&quot;]
   module_src_cli_ts[&quot;src/cli.ts&quot;]
+  module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
   module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
   module_src_commands_ts[&quot;src/commands.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
@@ -1603,11 +1601,11 @@ graph LR
   module_src_adapters_minikube_storage_index_ts --&gt; module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
-  module_src_ankh_provider_ts --&gt; module_src_commands_ts
-  module_src_ankh_provider_ts --&gt; module_src_packageMetadata_ts
   module_src_apis_ts --&gt; module_src_types_ts
   module_src_cli_ts --&gt; module_src_commandContext_ts
   module_src_cli_ts --&gt; module_src_commands_ts
+  module_src_cli_index_ts --&gt; module_src_commands_ts
+  module_src_cli_index_ts --&gt; module_src_packageMetadata_ts
   module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
   module_src_commands_ts --&gt; module_src_commandContext_ts
   module_src_commands_ts --&gt; module_src_infraValidation_ts
@@ -1641,9 +1639,9 @@ graph LR
                 module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-                module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
                 module_src_apis_ts[&quot;src/apis.ts&quot;]
                 module_src_cli_ts[&quot;src/cli.ts&quot;]
+                module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
                 module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
                 module_src_commands_ts[&quot;src/commands.ts&quot;]
                 module_src_index_ts[&quot;src/index.ts&quot;]
@@ -1712,9 +1710,9 @@ graph LR
   module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-  module_src_ankh_provider_ts[&quot;src/ankh.provider.ts&quot;]
   module_src_apis_ts[&quot;src/apis.ts&quot;]
   module_src_cli_ts[&quot;src/cli.ts&quot;]
+  module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
   module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
   module_src_commands_ts[&quot;src/commands.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
@@ -2473,21 +2471,6 @@ sequenceDiagram
             </article>
           </section>
         </section>
-        <section
-          id="view-src-ankh-provider-ts"
-          class="view"
-          data-view="src/ankh.provider.ts"
-          hidden
-        >
-          <section class="panel">
-            <h2>src/ankh.provider.ts</h2>
-            <article class="item" data-search="createInfraRuntimeProvider src/ankh.provider.ts ">
-              <h3>createInfraRuntimeProvider</h3>
-              <p class="muted"><code>src/ankh.provider.ts:22:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-          </section>
-        </section>
         <section id="view-src-apis-ts" class="view" data-view="src/apis.ts" hidden>
           <section class="panel">
             <h2>src/apis.ts</h2>
@@ -2669,6 +2652,16 @@ sequenceDiagram
             <article class="item" data-search="isVersionToken src/cli.ts ">
               <h3>isVersionToken</h3>
               <p class="muted"><code>src/cli.ts:60:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section id="view-src-cli-index-ts" class="view" data-view="src/cli/index.ts" hidden>
+          <section class="panel">
+            <h2>src/cli/index.ts</h2>
+            <article class="item" data-search="createInfraRuntimeProvider src/cli/index.ts ">
+              <h3>createInfraRuntimeProvider</h3>
+              <p class="muted"><code>src/cli/index.ts:22:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
