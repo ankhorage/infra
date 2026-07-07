@@ -49,6 +49,11 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./cli": {
+      "types": "./dist/cli/index.d.ts",
+      "import": "./dist/cli/index.js",
+      "default": "./dist/cli/index.js"
+    },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
       "import": "./dist/metadata/index.js",
@@ -61,7 +66,7 @@
   },
   "ankh": {
     "category": "infra",
-    "provider": "./dist/ankh.provider.js",
+    "provider": "./dist/cli/index.js",
     "capabilities": [
       "infra.validate",
       "infra.generate",
