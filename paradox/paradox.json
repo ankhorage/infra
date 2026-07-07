@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.2.1",
+      "value": "v0.3.0",
       "color": "cb3837"
     },
     {
@@ -159,12 +159,6 @@
       "exports": ["generateSupabaseStorageArtifacts"]
     },
     {
-      "path": "src/ankh.provider.ts",
-      "isEntrypoint": false,
-      "dependencies": ["src/commands.ts", "src/packageMetadata.ts"],
-      "exports": ["createInfraRuntimeProvider", "CreateInfraRuntimeProviderOptions", "default"]
-    },
-    {
       "path": "src/apis.ts",
       "isEntrypoint": false,
       "dependencies": ["src/types.ts"],
@@ -175,6 +169,12 @@
       "isEntrypoint": false,
       "dependencies": ["src/commandContext.ts", "src/commands.ts"],
       "exports": ["InfraCliOptions", "runCli"]
+    },
+    {
+      "path": "src/cli/index.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/commands.ts", "src/packageMetadata.ts"],
+      "exports": ["createInfraRuntimeProvider", "CreateInfraRuntimeProviderOptions", "default"]
     },
     {
       "path": "src/commandContext.ts",
@@ -1462,15 +1462,6 @@
       }
     },
     {
-      "name": "createInfraRuntimeProvider",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/ankh.provider.ts",
-        "line": 22,
-        "column": 1
-      }
-    },
-    {
       "name": "generateApiInfrastructureArtifacts",
       "description": null,
       "sourceLocation": {
@@ -1782,6 +1773,15 @@
       "sourceLocation": {
         "filePath": "src/cli.ts",
         "line": 60,
+        "column": 1
+      }
+    },
+    {
+      "name": "createInfraRuntimeProvider",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/cli/index.ts",
+        "line": 22,
         "column": 1
       }
     },
@@ -2363,16 +2363,6 @@
   "graphs": {
     "imports": [
       {
-        "fromPath": "src/ankh.provider.ts",
-        "toPath": "src/commands.ts",
-        "sourcePath": "src/ankh.provider.ts"
-      },
-      {
-        "fromPath": "src/ankh.provider.ts",
-        "toPath": "src/packageMetadata.ts",
-        "sourcePath": "src/ankh.provider.ts"
-      },
-      {
         "fromPath": "src/apis.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/apis.ts"
@@ -2471,6 +2461,16 @@
         "fromPath": "src/testSupport.ts",
         "toPath": "src/commandContext.ts",
         "sourcePath": "src/testSupport.ts"
+      },
+      {
+        "fromPath": "src/cli/index.ts",
+        "toPath": "src/commands.ts",
+        "sourcePath": "src/cli/index.ts"
+      },
+      {
+        "fromPath": "src/cli/index.ts",
+        "toPath": "src/packageMetadata.ts",
+        "sourcePath": "src/cli/index.ts"
       },
       {
         "fromPath": "src/metadata/index.ts",
@@ -2589,24 +2589,6 @@
       }
     ],
     "calls": [
-      {
-        "fromSymbol": "createInfraRuntimeProvider",
-        "toSymbol": "createProviderCommandDescriptors",
-        "callExpression": "createProviderCommandDescriptors",
-        "sourcePath": "src/ankh.provider.ts"
-      },
-      {
-        "fromSymbol": "handler",
-        "toSymbol": "runCommandImpl",
-        "callExpression": "runCommandImpl",
-        "sourcePath": "src/ankh.provider.ts"
-      },
-      {
-        "fromSymbol": "src/ankh.provider.ts",
-        "toSymbol": "createInfraRuntimeProvider",
-        "callExpression": "createInfraRuntimeProvider",
-        "sourcePath": "src/ankh.provider.ts"
-      },
       {
         "fromSymbol": "generateApiInfrastructureArtifacts",
         "toSymbol": "listGeneratedApis",
@@ -3374,6 +3356,24 @@
         "toSymbol": "createAppManifest",
         "callExpression": "createAppManifest",
         "sourcePath": "src/testSupport.ts"
+      },
+      {
+        "fromSymbol": "createInfraRuntimeProvider",
+        "toSymbol": "createProviderCommandDescriptors",
+        "callExpression": "createProviderCommandDescriptors",
+        "sourcePath": "src/cli/index.ts"
+      },
+      {
+        "fromSymbol": "handler",
+        "toSymbol": "runCommandImpl",
+        "callExpression": "runCommandImpl",
+        "sourcePath": "src/cli/index.ts"
+      },
+      {
+        "fromSymbol": "src/cli/index.ts",
+        "toSymbol": "createInfraRuntimeProvider",
+        "callExpression": "createInfraRuntimeProvider",
+        "sourcePath": "src/cli/index.ts"
       },
       {
         "fromSymbol": "generateMinikubeInfra",
