@@ -2,8 +2,6 @@ name: Resolve PR 16 conflict markers
 
 on:
   push:
-    branches:
-      - '#15/phase0'
 
 permissions:
   contents: write
