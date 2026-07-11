@@ -1,4 +1,4 @@
-import { generateApiInfrastructureArtifacts } from '../../apis';
+import { generateApiInfrastructureArtifacts } from '../../apiArtifacts';
 import type {
   GeneratedPackageDependency,
   InfraManifestInput,
