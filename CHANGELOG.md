@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.4.0
+
+### Minor Changes
+
+- dd7c668: Compose the canonical secret-store adapter from `infra.secretStore.provider`, generate the released Supabase Vault migration through the existing local Supabase lifecycle, and validate OAuth credential references before infrastructure generation.
+
 ## 0.3.7
 
 ### Patch Changes
