@@ -6,8 +6,8 @@ import type {
   InfrastructureGenerationResult,
 } from './types';
 
-export type { ApiInfrastructureArtifacts } from './apis';
-export { generateApiInfrastructureArtifacts } from './apis';
+export type { ApiInfrastructureArtifacts } from './apiArtifacts';
+export { generateApiInfrastructureArtifacts } from './apiArtifacts';
 export type {
   GeneratedFile,
   GeneratedInfrastructureFile,
