@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.3.5
+
+### Patch Changes
+
+- ad6fd70: Support authentication manifests without authorization, resolve auth routes from the canonical `infra.auth.flow`, and keep Cerbos generation compatible with manifests that omit infra context.
+
 ## 0.3.4
 
 ### Patch Changes
