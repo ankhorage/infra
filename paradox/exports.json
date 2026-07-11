@@ -38,10 +38,10 @@
     "isReadme": false,
     "examples": [],
     "kind": "function",
-    "modulePath": "src/apis.ts",
+    "modulePath": "src/apiArtifacts.ts",
     "sourceLocation": {
-      "filePath": "src/apis.ts",
-      "line": 72,
+      "filePath": "src/apiArtifacts.ts",
+      "line": 12,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],

@@ -1,8 +1,8 @@
 import type { AppDataManifest } from '@ankhorage/contracts';
 
 import {
-  generateApiInfrastructureArtifacts as generateRawApiInfrastructureArtifacts,
   type ApiInfrastructureArtifacts,
+  generateApiInfrastructureArtifacts as generateRawApiInfrastructureArtifacts,
 } from './apis';
 
 const GENERATED_API_HANDLERS_PATH = 'src/generated/apis/apiHandlers.ts';

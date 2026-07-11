@@ -10,6 +10,7 @@ graph LR
   module_src_adapters_minikube_index_ts["src/adapters/minikube/index.ts"]
   module_src_adapters_minikube_storage_index_ts["src/adapters/minikube/storage/index.ts"]
   module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
+  module_src_apiArtifacts_ts["src/apiArtifacts.ts"]
   module_src_apis_ts["src/apis.ts"]
   module_src_cli_bin_ts["src/cli/bin.ts"]
   module_src_cli_index_ts["src/cli/index.ts"]
@@ -43,12 +44,13 @@ graph LR
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_authz_index_ts
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_base_index_ts
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_storage_index_ts
-  module_src_adapters_minikube_index_ts --> module_src_apis_ts
+  module_src_adapters_minikube_index_ts --> module_src_apiArtifacts_ts
   module_src_adapters_minikube_index_ts --> module_src_types_ts
   module_src_adapters_minikube_storage_index_ts --> module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_storage_index_ts --> module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_index_ts --> module_src_types_ts
   module_src_adapters_minikube_storage_supabase_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_apiArtifacts_ts --> module_src_apis_ts
   module_src_apis_ts --> module_src_types_ts
   module_src_cli_bin_ts --> module_src_commandContext_ts
   module_src_cli_bin_ts --> module_src_commands_ts

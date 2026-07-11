@@ -40,9 +40,7 @@ describe('generated API artifacts', () => {
       },
     });
 
-    const handlers = result.files.find(
-      (file) => file.path === 'src/generated/apis/apiHandlers.ts',
-    );
+    const handlers = result.files.find((file) => file.path === 'src/generated/apis/apiHandlers.ts');
 
     expect(handlers).toBeDefined();
     expect(handlers?.content).not.toMatch(/\basync (?:list|read|create|update|delete)\(/);

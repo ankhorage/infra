@@ -16,8 +16,8 @@ Source: `src/apis.ts:11:1`
 ## generateApiInfrastructureArtifacts
 
 Kind: `function`
-Module: `src/apis.ts`
-Source: `src/apis.ts:72:1`
+Module: `src/apiArtifacts.ts`
+Source: `src/apiArtifacts.ts:12:1`
 
 ### Signatures
 
