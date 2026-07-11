@@ -1,4 +1,5 @@
 import type { AppManifest, NavigatorSpec, RouteDefinition } from '@ankhorage/contracts';
+import { resolveAuthFlow } from '@ankhorage/contracts/auth';
 
 import type { InfraManifestInput } from '../../../../types';
 import type { MinikubeAdapterArtifacts } from '../../contracts';
@@ -6,7 +7,7 @@ import type { MinikubeAdapterArtifacts } from '../../contracts';
 export function generateCerbosAuthzArtifacts(args: {
   manifest: InfraManifestInput;
   namespace: string;
-  appManifest?: Pick<AppManifest, 'metadata' | 'navigator' | 'screens' | 'settings'>;
+  appManifest?: Pick<AppManifest, 'infra' | 'metadata' | 'navigator' | 'screens'>;
 }): MinikubeAdapterArtifacts {
   const { manifest, namespace, appManifest } = args;
 
@@ -304,15 +305,16 @@ function indentLines(content: string, spaces: number): string {
 
 function buildCerbosPolicyIntent(args: {
   manifest: InfraManifestInput;
-  appManifest?: Pick<AppManifest, 'metadata' | 'navigator' | 'screens' | 'settings'>;
+  appManifest?: Pick<AppManifest, 'infra' | 'metadata' | 'navigator' | 'screens'>;
 }): CerbosPolicyIntent {
   const { manifest, appManifest } = args;
   const authScope = manifest.auth?.scope ?? 'none';
 
   const routes = appManifest?.navigator ? flattenNavigatorRoutes(appManifest.navigator) : [];
-  const signInRoute = appManifest?.settings.authFlow.signInRoute;
-  const signUpRoute = appManifest?.settings.authFlow.signUpRoute;
-  const unauthorizedRoute = appManifest?.settings.authFlow.unauthorizedRoute;
+  const flow = resolveAuthFlow(appManifest?.infra.auth?.flow);
+  const signInRoute = flow.signInRoute;
+  const signUpRoute = flow.signUpRoute;
+  const unauthorizedRoute = flow.unauthorizedRoute;
 
   const publicRouteSet = new Set<string>();
   const protectedRouteSet = new Set<string>();
