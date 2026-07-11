@@ -1,4 +1,4 @@
-import type { AppManifest, AuthFlowConfig, NavigatorSpec } from '@ankhorage/contracts';
+import type { AppManifest, NavigatorSpec } from '@ankhorage/contracts';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -86,12 +86,6 @@ function createFallbackManifest(projectId: string): AppManifest {
       localization: {
         defaultLocale: 'en',
         locales: ['en'],
-      },
-      authFlow: {
-        signInRoute: '/sign-in',
-        signOutRoute: '/sign-out',
-        postSignInRoute: '/',
-        unauthorizedRoute: '/sign-in',
       },
     },
   };
@@ -216,8 +210,7 @@ function isSettingsRecord(value: unknown): value is AppManifest['settings'] {
   return (
     isRecord(value) &&
     (value.apiBaseUrl === undefined || typeof value.apiBaseUrl === 'string') &&
-    isLocalizationRecord(value.localization) &&
-    isAuthFlowConfig(value.authFlow)
+    isLocalizationRecord(value.localization)
   );
 }
 
@@ -227,19 +220,6 @@ function isLocalizationRecord(value: unknown): value is AppManifest['settings'][
     typeof value.defaultLocale === 'string' &&
     Array.isArray(value.locales) &&
     value.locales.every((locale) => typeof locale === 'string')
-  );
-}
-
-function isAuthFlowConfig(value: unknown): value is AuthFlowConfig {
-  return (
-    isRecord(value) &&
-    typeof value.signInRoute === 'string' &&
-    typeof value.postSignInRoute === 'string' &&
-    (value.signUpRoute === undefined || typeof value.signUpRoute === 'string') &&
-    (value.signOutRoute === undefined || typeof value.signOutRoute === 'string') &&
-    (value.forgotPasswordRoute === undefined || typeof value.forgotPasswordRoute === 'string') &&
-    (value.otpRoute === undefined || typeof value.otpRoute === 'string') &&
-    (value.unauthorizedRoute === undefined || typeof value.unauthorizedRoute === 'string')
   );
 }
 
