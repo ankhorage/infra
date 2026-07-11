@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.3.6
+
+### Patch Changes
+
+- 89eb7cf: Generate in-memory API store methods as explicit promises without unnecessary `async`, so generated apps pass `@typescript-eslint/require-await`.
+
 ## 0.3.5
 
 ### Patch Changes
