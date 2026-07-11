@@ -51,12 +51,8 @@ jobs:
           replace_exact(
               'src/adapters/minikube/authz/cerbos/index.ts',
               "import type { AppManifest, NavigatorSpec, RouteDefinition } from '@ankhorage/contracts';",
-              """import {
-            resolveAuthFlow,
-            type AppManifest,
-            type NavigatorSpec,
-            type RouteDefinition,
-          } from '@ankhorage/contracts';""",
+              """import type { AppManifest, NavigatorSpec, RouteDefinition } from '@ankhorage/contracts';
+          import { resolveAuthFlow } from '@ankhorage/contracts/auth';""",
           )
           replace_exact(
               'src/adapters/minikube/authz/cerbos/index.ts',
