@@ -1341,6 +1341,18 @@ begin
     end if;
   end loop;
 
+  foreach expected_column in array (
+    select array_agg(c.column_name::text order by c.ordinal_position)
+    from information_schema.columns c
+    where c.table_schema = 'public'
+      and c.table_name = profile_table
+  ) loop
+    if not expected_column = any(configured_columns)
+      and has_column_privilege('authenticated', format('public.%I', profile_table), expected_column, 'UPDATE') then
+      raise exception 'authenticated role has unexpected UPDATE privilege on profile column %', expected_column;
+    end if;
+  end loop;
+
   foreach expected_column in array ${protectedUpdateColumnsArray} loop
     if exists (
       select 1

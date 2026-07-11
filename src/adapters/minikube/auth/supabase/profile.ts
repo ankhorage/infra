@@ -39,7 +39,7 @@ export interface ResolvedProfileModel {
 
 export function resolveSupabaseProfileModel(manifest: InfraManifestInput): ResolvedProfileModel {
   const table = normalizeIdentifier(manifest.auth?.profile?.table ?? '');
-  const fields = normalizeFieldList(manifest.auth?.profile?.fields, DEFAULT_PROFILE_FIELDS);
+  const fields = normalizeFieldList(manifest.auth?.profile?.fields);
   const primaryKey = manifest.auth?.profile?.primaryKey ?? DEFAULT_PROFILE_PRIMARY_KEY;
   const createStrategy = manifest.auth?.profile?.createStrategy ?? DEFAULT_PROFILE_CREATE_STRATEGY;
   const updateStrategy = manifest.auth?.profile?.updateStrategy ?? DEFAULT_PROFILE_UPDATE_STRATEGY;
@@ -460,7 +460,13 @@ function resolveProfileColumns(fields: readonly string[]): ProfileColumnSpec[] {
 
   for (const field of fields) {
     const column = mapProfileFieldToColumn(field);
-    if (!column || columns.has(column.column)) {
+    if (!column) {
+      throw new Error(
+        `Unsupported Supabase profile field "${field}". Supported fields: ${getSupportedProfileFields().join(', ')}.`,
+      );
+    }
+
+    if (columns.has(column.column)) {
       continue;
     }
     columns.set(column.column, column);
@@ -473,26 +479,27 @@ function resolveProfileColumns(fields: readonly string[]): ProfileColumnSpec[] {
   );
 }
 
-function normalizeFieldList(
-  values: readonly string[] | undefined,
-  fallback: readonly string[],
-): string[] {
-  const source = values ?? fallback;
+function normalizeFieldList(values: readonly string[] | undefined): string[] {
+  const source = values ?? DEFAULT_PROFILE_FIELDS;
   const next: string[] = [];
 
   for (const value of source) {
     const normalized = value.trim();
-    if (!normalized || next.includes(normalized)) {
+    if (!normalized) {
+      throw new Error('Invalid Supabase profile field "". Profile fields must be non-empty.');
+    }
+
+    if (next.includes(normalized)) {
       continue;
     }
     next.push(normalized);
   }
 
-  if (next.length > 0) {
-    return next;
-  }
+  return next;
+}
 
-  return [...fallback];
+function getSupportedProfileFields(): string[] {
+  return ['email', 'displayName', 'firstName', 'lastName', 'avatarUrl', 'username', 'phone'];
 }
 
 function normalizeIdentifier(value: string): string {
