@@ -7,7 +7,7 @@ import type { MinikubeAdapterArtifacts } from '../../contracts';
 export function generateCerbosAuthzArtifacts(args: {
   manifest: InfraManifestInput;
   namespace: string;
-  appManifest?: Pick<AppManifest, 'infra' | 'metadata' | 'navigator' | 'screens'>;
+  appManifest?: CerbosAppManifest;
 }): MinikubeAdapterArtifacts {
   const { manifest, namespace, appManifest } = args;
 
@@ -149,6 +149,10 @@ const AUTH_GUARD_HINTS = new Set([
   'requiresauth',
   'requires-auth',
 ]);
+
+type CerbosAppManifest = Pick<AppManifest, 'metadata' | 'navigator' | 'screens'> & {
+  infra?: AppManifest['infra'];
+};
 
 type AuthScope = NonNullable<InfraManifestInput['auth']>['scope'] | 'none';
 
@@ -305,7 +309,7 @@ function indentLines(content: string, spaces: number): string {
 
 function buildCerbosPolicyIntent(args: {
   manifest: InfraManifestInput;
-  appManifest?: Pick<AppManifest, 'infra' | 'metadata' | 'navigator' | 'screens'>;
+  appManifest?: CerbosAppManifest;
 }): CerbosPolicyIntent {
   const { manifest, appManifest } = args;
   const authScope = manifest.auth?.scope ?? 'none';
