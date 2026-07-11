@@ -1,7 +1,7 @@
 {
   "name": "@ankhorage/infra",
   "type": "module",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Project-aware infrastructure generation library and executable Ankh provider for Ankhorage.",
   "homepage": "https://github.com/ankhorage/infra#readme",
   "bugs": {
