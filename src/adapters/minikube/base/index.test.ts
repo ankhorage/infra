@@ -70,11 +70,10 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(script).toContain('supabase CLI >= 2.106.0 is required');
     expect(script).toContain('supabase CLI does not support required global --workdir flag');
     expect(script).toContain('supabase CLI does not support required migration up --local command');
-    expect(script).toContain(
-      'supabase CLI does not support required db query --local --file command',
-    );
+    expect(script).toContain('psql is required but not installed');
     expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" init --yes');
     expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" migration up --local');
+    expect(script).toContain('psql "${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "${sql_file}"');
   });
 
   test('generates profile reconciliation and live verification flow when profile table is configured', () => {
@@ -102,11 +101,15 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(script).toContain('Supabase project workdir: ${SUPABASE_PROJECT_DIR}');
     expect(script).toContain('Exit status: ${status}');
     expect(script).toContain('ankhorage_internal.generated_schema_state');
+    expect(script).toContain('check_immutable_migrations_applied');
     expect(status).toContain('- immutable migrations: applied');
+    expect(status).toContain('- immutable migrations: pending');
     expect(status).toContain('- profile reconciliation: applied, checksum matches');
     expect(status).toContain('- profile schema: verified');
     expect(status).toContain('reserved conflicting identity table public.users exists');
     expect(status).toContain('stale managed profile column');
+    expect(status).toContain('own-profile SELECT policy is missing or has unsafe definition');
+    expect(status).toContain('generated trigger function execute privilege must be revoked');
   });
 });
 

@@ -68,6 +68,11 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     expect(reconciliation?.content).toContain('using ((select auth.uid()) = id)');
     expect(reconciliation?.content).toContain('create schema if not exists ankhorage_internal');
     expect(reconciliation?.content).toContain('ankhorage_internal.generated_schema_state');
+    expect(reconciliation?.content).toContain('table_name text');
+    expect(reconciliation?.content).toContain('profile.table changed from % to %');
+    expect(reconciliation?.content).toContain(
+      'existing auth.profile generated state is missing table identity',
+    );
     expect(reconciliation?.content).toContain("'auth.profile'");
     expect(reconciliation?.content).toContain('create trigger "on_auth_user_created_profiles"');
     expect(reconciliation?.content).toContain('after insert on auth.users');
@@ -77,6 +82,8 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     expect(reconciliation?.content).toContain(
       'revoke execute on function public."handle_new_profiles_user"() from PUBLIC',
     );
+    expect(reconciliation?.content).toContain('set search_path = pg_catalog, pg_temp');
+    expect(reconciliation?.content).not.toContain('set search_path = public, auth, pg_temp');
     expect(reconciliation?.content).not.toContain('create table if not exists public.users');
   });
 
@@ -126,6 +133,20 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     expect(firstSql?.indexOf('"display_name"')).toBeLessThan(
       firstSql?.indexOf('"avatar_url"') ?? -1,
     );
+  });
+
+  test('rejects public.users as a generated profile table before SQL is emitted', () => {
+    expect(() =>
+      generateSupabaseAuthArtifacts({
+        namespace: 'scan-app',
+        manifest: createManifest({
+          profile: {
+            fields: ['email'],
+            table: 'users',
+          },
+        }),
+      }),
+    ).toThrow('Invalid Supabase profile table identifier "users"');
   });
 });
 
