@@ -20,7 +20,7 @@ export const MANAGED_PROFILE_COLUMNS = [
   'phone',
 ] as const;
 
-export interface ProfileColumnSpec {
+interface ProfileColumnSpec {
   readonly field: string;
   readonly column: string;
   readonly sqlType: string;
@@ -231,7 +231,7 @@ commit;
 `;
 }
 
-export function mapProfileFieldToColumn(field: string): ProfileColumnSpec | null {
+function mapProfileFieldToColumn(field: string): ProfileColumnSpec | null {
   switch (field) {
     case 'email':
       return { field, column: 'email', sqlType: 'text', fromNewUser: 'new.email' };
@@ -281,7 +281,7 @@ export function mapProfileFieldToColumn(field: string): ProfileColumnSpec | null
   }
 }
 
-export function quoteIdentifier(value: string): string {
+function quoteIdentifier(value: string): string {
   return `"${value.replaceAll('"', '""')}"`;
 }
 
