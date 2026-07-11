@@ -1,183 +1,85 @@
-name: Apply final Phase 0 fixes
+name: CI
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  patch:
+  validate:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout PR branch
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: '#15/phase0'
           fetch-depth: 0
 
-      - name: Patch generated verification and tests
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.13'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run build
         run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          def keep_head_side(source: str) -> str:
-              lines = source.splitlines(keepends=True)
-              result: list[str] = []
-              index = 0
-              while index < len(lines):
-                  if not lines[index].lstrip().startswith('<<<<<<< '):
-                      result.append(lines[index])
-                      index += 1
-                      continue
-
-                  index += 1
-                  head: list[str] = []
-                  while index < len(lines) and not lines[index].lstrip().startswith('======='):
-                      head.append(lines[index])
-                      index += 1
-                  if index >= len(lines):
-                      raise SystemExit('Unterminated merge conflict before separator')
-
-                  index += 1
-                  while index < len(lines) and not lines[index].lstrip().startswith('>>>>>>> '):
-                      index += 1
-                  if index >= len(lines):
-                      raise SystemExit('Unterminated merge conflict after separator')
-
-                  result.extend(head)
-                  index += 1
-              return ''.join(result)
-
-          def insert_after_line(lines: list[str], needle: str, inserted_line: str) -> None:
-              for index, line in enumerate(lines):
-                  if needle in line:
-                      if index + 1 < len(lines) and inserted_line.strip() in lines[index + 1]:
-                          return
-                      lines.insert(index + 1, inserted_line)
-                      return
-              raise SystemExit(f'Expected line not found: {needle}')
-
-          base_path = Path('src/adapters/minikube/base/index.ts')
-          base = keep_head_side(base_path.read_text(encoding='utf-8'))
-          base_lines = base.splitlines(keepends=True)
-          insert_after_line(
-              base_lines,
-              "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
-              "    or has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')\n",
-          )
-          insert_after_line(
-              base_lines,
-              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
-              "    or has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')\n",
-          )
-          base = ''.join(base_lines).replace(
-              'authenticated role must not have profile table INSERT or DELETE privilege',
-              'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
-          )
-          base_path.write_text(base, encoding='utf-8')
-
-          unit_path = Path('src/adapters/minikube/base/index.test.ts')
-          unit_lines = unit_path.read_text(encoding='utf-8').splitlines(keepends=True)
-
-          def insert_expectation_after(needle: str, privilege_line: str) -> None:
-              for index, line in enumerate(unit_lines):
-                  if needle not in line:
-                      continue
-                  closing = index + 1
-                  while closing < len(unit_lines) and unit_lines[closing].strip() != ');':
-                      closing += 1
-                  if closing >= len(unit_lines):
-                      raise SystemExit(f'Closing assertion not found for {needle}')
-                  if closing + 2 < len(unit_lines) and privilege_line in unit_lines[closing + 2]:
-                      return
-                  unit_lines[closing + 1:closing + 1] = [
-                      '    expect(status).toContain(\n',
-                      f'      "{privilege_line}",\n',
-                      '    );\n',
-                  ]
-                  return
-              raise SystemExit(f'Expected assertion not found: {needle}')
-
-          insert_expectation_after(
-              "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
-              "has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')",
-          )
-          insert_expectation_after(
-              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
-              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')",
-          )
-          unit = ''.join(unit_lines).replace(
-              'authenticated role must not have profile table INSERT or DELETE privilege',
-              'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
-          )
-          unit_path.write_text(unit, encoding='utf-8')
-
-          integration_path = Path('src/adapters/minikube/auth/supabase/profile.integration.test.ts')
-          integration = integration_path.read_text(encoding='utf-8')
-          test_name = 'status reports column-scoped references privilege drift'
-          if test_name not in integration:
-              marker = "'status reports custom-column update privilege drift'"
-              marker_position = integration.find(marker)
-              if marker_position < 0:
-                  raise SystemExit('Expected integration insertion point not found')
-              insertion_position = integration.rfind('  integrationTest(', 0, marker_position)
-              if insertion_position < 0:
-                  raise SystemExit('Expected integrationTest block start not found')
-
-              new_test = """  integrationTest(
-            'status reports column-scoped references privilege drift',
-            async () => {
-              const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
-
-              try {
-                await writeGeneratedFiles(
-                  appRoot,
-                  generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
-                );
-                await runLocalSupabaseEnv(minikubeRoot);
-                await runSupabaseSql(
-                  minikubeRoot,
-                  'grant references (email) on table public.profiles to anon;',
-                );
-
-                const anonFailure = await expectGeneratedStatusFailure(minikubeRoot);
-                expect(anonFailure).toContain('profile schema: drift detected');
-
-                await runSupabaseSql(
-                  minikubeRoot,
-                  `revoke references (email) on table public.profiles from anon;
-                   grant references (email) on table public.profiles to authenticated;`,
-                );
-
-                const authenticatedFailure = await expectGeneratedStatusFailure(minikubeRoot);
-                expect(authenticatedFailure).toContain('profile schema: drift detected');
-              } finally {
-                await cleanupIntegrationProject(appRoot, minikubeRoot);
-              }
-            },
-            INTEGRATION_TIMEOUT_MS,
-          );
-
-          """
-              integration = integration[:insertion_position] + new_test + integration[insertion_position:]
-              integration_path.write_text(integration, encoding='utf-8')
-          PY
-
-          if grep -RInE '^(<<<<<<<|=======|>>>>>>>)' --exclude-dir=.git .; then
-            echo 'Unresolved merge conflict markers remain.' >&2
-            exit 1
+          if node -e "const p=require('./package.json'); process.exit(p.scripts?.build ? 0 : 1)"; then
+            bun run build
+          else
+            echo "No build script found; skipping."
           fi
 
-          git show origin/main:.github/workflows/ci.yml > .github/workflows/ci.yml
-          git diff --check
+      - name: Run lint
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.scripts?.lint ? 0 : 1)"; then
+            bun run lint
+          else
+            echo "No lint script found; skipping."
+          fi
 
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add \
-            src/adapters/minikube/base/index.ts \
-            src/adapters/minikube/base/index.test.ts \
-            src/adapters/minikube/auth/supabase/profile.integration.test.ts \
-            .github/workflows/ci.yml
-          git commit -m 'fix: finalize Phase 0 privilege verification'
-          git push origin HEAD:'#15/phase0'
+      - name: Run format check
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.scripts?.['format:check'] ? 0 : 1)"; then
+            bun run format:check
+          else
+            echo "No format:check script found; skipping."
+          fi
+
+      - name: Run Knip
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.scripts?.knip ? 0 : 1)"; then
+            bun run knip
+          else
+            echo "No knip script found; skipping."
+          fi
+
+      - name: Run tests
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.scripts?.test ? 0 : 1)"; then
+            bun run test
+          else
+            echo "No test script found; skipping."
+          fi
+
+      - name: Run typecheck
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.scripts?.typecheck ? 0 : 1)"; then
+            bun run typecheck
+          else
+            echo "No typecheck script found; skipping."
+          fi
+
+      - name: Check changesets
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -f ./scripts/check-changeset-status.sh ]; then
+            bash ./scripts/check-changeset-status.sh
+          else
+            echo "No changeset status script found; skipping."
+          fi

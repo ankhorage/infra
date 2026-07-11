@@ -120,10 +120,16 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
       "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
     );
     expect(status).toContain(
+      "has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')",
+    );
+    expect(status).toContain(
       "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
     );
     expect(status).toContain(
-      'authenticated role must not have profile table INSERT or DELETE privilege',
+      "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')",
+    );
+    expect(status).toContain(
+      'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
     );
     expect(status).toContain(
       'authenticated role has unexpected UPDATE privilege on profile column',
