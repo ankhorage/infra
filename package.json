@@ -62,7 +62,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "ankhorage-infra": "./dist/cli.js"
+    "ankhorage-infra": "./dist/cli/bin.js"
   },
   "ankh": {
     "category": "infra",
