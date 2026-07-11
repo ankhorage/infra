@@ -42,7 +42,9 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     expect(reconciliation?.content).toContain(
       'alter table public."profiles" add column if not exists "avatar_url" text',
     );
-    expect(reconciliation?.content).toContain('alter table public."profiles" drop column if exists role');
+    expect(reconciliation?.content).toContain(
+      'alter table public."profiles" drop column if exists role',
+    );
     expect(reconciliation?.content).toContain(
       'alter table public."profiles" drop column if exists "first_name"',
     );
@@ -69,7 +71,9 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     expect(reconciliation?.content).toContain("'auth.profile'");
     expect(reconciliation?.content).toContain('create trigger "on_auth_user_created_profiles"');
     expect(reconciliation?.content).toContain('after insert on auth.users');
-    expect(reconciliation?.content).toContain('execute function public."handle_new_profiles_user"()');
+    expect(reconciliation?.content).toContain(
+      'execute function public."handle_new_profiles_user"()',
+    );
     expect(reconciliation?.content).toContain(
       'revoke execute on function public."handle_new_profiles_user"() from PUBLIC',
     );

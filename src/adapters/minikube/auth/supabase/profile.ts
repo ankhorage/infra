@@ -41,10 +41,8 @@ export function resolveSupabaseProfileModel(manifest: InfraManifestInput): Resol
   const table = normalizeIdentifier(manifest.auth?.profile?.table ?? '');
   const fields = normalizeFieldList(manifest.auth?.profile?.fields, DEFAULT_PROFILE_FIELDS);
   const primaryKey = manifest.auth?.profile?.primaryKey ?? DEFAULT_PROFILE_PRIMARY_KEY;
-  const createStrategy =
-    manifest.auth?.profile?.createStrategy ?? DEFAULT_PROFILE_CREATE_STRATEGY;
-  const updateStrategy =
-    manifest.auth?.profile?.updateStrategy ?? DEFAULT_PROFILE_UPDATE_STRATEGY;
+  const createStrategy = manifest.auth?.profile?.createStrategy ?? DEFAULT_PROFILE_CREATE_STRATEGY;
+  const updateStrategy = manifest.auth?.profile?.updateStrategy ?? DEFAULT_PROFILE_UPDATE_STRATEGY;
   const columns = resolveProfileColumns(fields);
 
   const hash = table
@@ -82,7 +80,9 @@ export function getSupabaseProfileReconciliation(profileModel: ResolvedProfileMo
   const dropStaleManagedColumnSql = MANAGED_PROFILE_COLUMNS.filter(
     (column) => !configuredColumns.has(column),
   )
-    .map((column) => `alter table public.${table} drop column if exists ${quoteIdentifier(column)};`)
+    .map(
+      (column) => `alter table public.${table} drop column if exists ${quoteIdentifier(column)};`,
+    )
     .join('\n');
   const insertColumns = ['id', ...profileModel.columns.map((column) => column.column)]
     .map(quoteIdentifier)

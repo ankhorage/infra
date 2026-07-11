@@ -2,8 +2,8 @@ import type { InfraManifestInput } from '../../../../types';
 import type { MinikubeAdapterArtifacts } from '../../contracts';
 import {
   getSupabaseProfileReconciliation,
-  resolveSupabaseProfileModel,
   type ResolvedProfileModel,
+  resolveSupabaseProfileModel,
 } from './profile';
 
 export function generateSupabaseAuthArtifacts(args: {
