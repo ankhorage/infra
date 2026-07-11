@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.3.2
+
+### Patch Changes
+
+- f407622: Move the standalone infrastructure CLI and its tests under the canonical `src/cli/` package boundary while preserving the published `ankhorage-infra` binary.
+
 ## 0.3.1
 
 ### Patch Changes
