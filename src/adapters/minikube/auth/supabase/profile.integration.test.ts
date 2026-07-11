@@ -68,10 +68,18 @@ $$;`,
 
       await runSupabaseSql(
         minikubeRoot,
-        `select 1
-         from ankhorage_internal.generated_schema_state
-         where artifact_key = 'auth.profile'
-           and table_name = 'profiles';`,
+        `do $$
+begin
+  if not exists (
+    select 1
+    from ankhorage_internal.generated_schema_state
+    where artifact_key = 'auth.profile'
+      and table_name = 'profiles'
+  ) then
+    raise exception 'missing applied profile state';
+  end if;
+end;
+$$;`,
       );
     } finally {
       await execFile('supabase', ['--workdir', minikubeRoot, 'stop', '--no-backup']).catch(() => {
@@ -97,10 +105,18 @@ $$;`,
 
       await runSupabaseSql(
         minikubeRoot,
-        `select 1
-         from ankhorage_internal.generated_schema_state
-         where artifact_key = 'auth.profile'
-           and table_name = 'profiles';`,
+        `do $$
+begin
+  if not exists (
+    select 1
+    from ankhorage_internal.generated_schema_state
+    where artifact_key = 'auth.profile'
+      and table_name = 'profiles'
+  ) then
+    raise exception 'missing applied profile state';
+  end if;
+end;
+$$;`,
       );
     } finally {
       await cleanupIntegrationProject(appRoot, minikubeRoot);
@@ -182,6 +198,113 @@ $$;`,
     }
   });
 
+  integrationTest('preserves unrelated custom foreign keys to auth.users', async () => {
+    const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+    try {
+      await writeGeneratedFiles(
+        appRoot,
+        generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
+      );
+      await runLocalSupabaseEnv(minikubeRoot);
+      await runSupabaseSql(
+        minikubeRoot,
+        `alter table public.profiles add column if not exists manager_id uuid;
+         alter table public.profiles
+           add constraint profiles_manager_id_auth_users_fkey
+           foreign key (manager_id) references auth.users(id) on delete set null;`,
+      );
+
+      await runLocalSupabaseEnv(minikubeRoot);
+      await runSupabaseSql(
+        minikubeRoot,
+        `do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conrelid = 'public.profiles'::regclass
+      and conname = 'profiles_manager_id_auth_users_fkey'
+  ) then
+    raise exception 'custom auth.users foreign key was not preserved';
+  end if;
+end;
+$$;`,
+      );
+    } finally {
+      await cleanupIntegrationProject(appRoot, minikubeRoot);
+    }
+  });
+
+  integrationTest('status reports stale checksum drift', async () => {
+    const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+    try {
+      await writeGeneratedFiles(
+        appRoot,
+        generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
+      );
+      await runLocalSupabaseEnv(minikubeRoot);
+      await runSupabaseSql(
+        minikubeRoot,
+        `update ankhorage_internal.generated_schema_state
+         set content_hash = repeat('0', 64)
+         where artifact_key = 'auth.profile';`,
+      );
+
+      const failure = await expectGeneratedStatusFailure(minikubeRoot);
+      expect(failure).toContain('profile reconciliation: pending or stale');
+    } finally {
+      await cleanupIntegrationProject(appRoot, minikubeRoot);
+    }
+  });
+
+  integrationTest('status reports extra permissive profile policy drift', async () => {
+    const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+    try {
+      await writeGeneratedFiles(
+        appRoot,
+        generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
+      );
+      await runLocalSupabaseEnv(minikubeRoot);
+      await runSupabaseSql(
+        minikubeRoot,
+        `create policy profiles_select_everything
+           on public.profiles
+           for select
+           to authenticated
+           using (true);`,
+      );
+
+      const failure = await expectGeneratedStatusFailure(minikubeRoot);
+      expect(failure).toContain('profile schema: drift detected');
+    } finally {
+      await cleanupIntegrationProject(appRoot, minikubeRoot);
+    }
+  });
+
+  integrationTest('status reports authenticated insert and delete privilege drift', async () => {
+    const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+    try {
+      await writeGeneratedFiles(
+        appRoot,
+        generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
+      );
+      await runLocalSupabaseEnv(minikubeRoot);
+      await runSupabaseSql(
+        minikubeRoot,
+        'grant insert, delete on table public.profiles to authenticated;',
+      );
+
+      const failure = await expectGeneratedStatusFailure(minikubeRoot);
+      expect(failure).toContain('profile schema: drift detected');
+    } finally {
+      await cleanupIntegrationProject(appRoot, minikubeRoot);
+    }
+  });
+
   integrationTest('rejects public.users at generation time', () => {
     expect(() =>
       generateInfrastructure(createManifest({ table: 'users', fields: ['email'] })),
@@ -240,6 +363,64 @@ async function expectLocalSupabaseEnvFailure(minikubeRoot: string): Promise<stri
   }
 
   throw new Error('Expected local Supabase bootstrap to fail');
+}
+
+async function expectGeneratedStatusFailure(minikubeRoot: string): Promise<string> {
+  const fakeBin = path.join(minikubeRoot, 'fake-bin');
+  const fakeKubectl = path.join(fakeBin, 'kubectl');
+  await mkdir(fakeBin, { recursive: true });
+  await writeFile(
+    fakeKubectl,
+    `#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "\${1:-}" == "config" && "\${2:-}" == "current-context" ]]; then
+  echo fake-context
+  exit 0
+fi
+
+if [[ "\${1:-}" == "cluster-info" ]]; then
+  echo "Kubernetes control plane is running"
+  exit 0
+fi
+
+if [[ "\${1:-}" == "get" && "\${2:-}" == "namespace" ]]; then
+  exit 0
+fi
+
+if [[ "\${1:-}" == "get" && "\${2:-}" == "all" ]]; then
+  exit 0
+fi
+
+if [[ "\${1:-}" == "-n" && "\${3:-}" == "get" && "\${4:-}" == "configmap" ]]; then
+  exit 0
+fi
+
+if [[ "\${1:-}" == "-n" && "\${3:-}" == "get" && "\${4:-}" == "secret" ]]; then
+  exit 1
+fi
+
+exit 0
+`,
+    'utf8',
+  );
+  await chmod(fakeKubectl, 0o755);
+
+  try {
+    await execFile(path.join(minikubeRoot, 'scripts/status.sh'), {
+      cwd: minikubeRoot,
+      env: {
+        ...process.env,
+        PATH: `${fakeBin}:${process.env.PATH ?? ''}`,
+        SUPABASE_PROJECT_DIR: minikubeRoot,
+      },
+    });
+  } catch (error) {
+    const failure = error as { stdout?: string; stderr?: string };
+    return `${failure.stdout ?? ''}\n${failure.stderr ?? ''}`;
+  }
+
+  throw new Error('Expected generated status script to fail');
 }
 
 async function runSupabaseSql(minikubeRoot: string, sql: string): Promise<void> {

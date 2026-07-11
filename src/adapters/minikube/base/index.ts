@@ -1307,6 +1307,18 @@ begin
     raise exception 'own-profile UPDATE policy is missing or has unsafe definition';
   end if;
 
+  if exists (
+    select 1
+    from pg_policy p
+    join pg_class c on c.oid = p.polrelid
+    join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public'
+      and c.relname = profile_table
+      and p.polname not in ('${selectPolicy}', '${updatePolicy}')
+  ) then
+    raise exception 'unexpected profile table RLS policy exists';
+  end if;
+
   if has_table_privilege('anon', format('public.%I', profile_table), 'SELECT')
     or has_table_privilege('anon', format('public.%I', profile_table), 'INSERT')
     or has_table_privilege('anon', format('public.%I', profile_table), 'UPDATE')
@@ -1316,6 +1328,11 @@ begin
 
   if not has_table_privilege('authenticated', format('public.%I', profile_table), 'SELECT') then
     raise exception 'authenticated role must have profile table SELECT privilege';
+  end if;
+
+  if has_table_privilege('authenticated', format('public.%I', profile_table), 'INSERT')
+    or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then
+    raise exception 'authenticated role must not have profile table INSERT or DELETE privilege';
   end if;
 
   foreach expected_column in array ${updateGrantArray} loop
@@ -1334,7 +1351,7 @@ begin
     ) and has_column_privilege('authenticated', format('public.%I', profile_table), expected_column, 'UPDATE') then
       raise exception 'authenticated role must not have UPDATE privilege on protected profile column %', expected_column;
     end if;
-  end if;
+  end loop;
 
 ${triggerCheck}
 

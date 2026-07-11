@@ -224,6 +224,15 @@ begin
     where c.conrelid = 'public.${escapeSqlLiteral(profileModel.table)}'::regclass
       and c.contype = 'f'
       and c.confrelid = 'auth.users'::regclass
+      and c.conkey && array[
+        (
+          select a.attnum
+          from pg_attribute a
+          where a.attrelid = 'public.${escapeSqlLiteral(profileModel.table)}'::regclass
+            and a.attname = 'id'
+            and not a.attisdropped
+        )
+      ]::smallint[]
       and (
         c.confdeltype <> 'c'
         or c.conkey <> array[
@@ -256,6 +265,24 @@ begin
       and c.confrelid = 'auth.users'::regclass
       and c.contype = 'f'
       and c.confdeltype = 'c'
+      and c.conkey = array[
+        (
+          select a.attnum
+          from pg_attribute a
+          where a.attrelid = 'public.${escapeSqlLiteral(profileModel.table)}'::regclass
+            and a.attname = 'id'
+            and not a.attisdropped
+        )
+      ]::smallint[]
+      and c.confkey = array[
+        (
+          select a.attnum
+          from pg_attribute a
+          where a.attrelid = 'auth.users'::regclass
+            and a.attname = 'id'
+            and not a.attisdropped
+        )
+      ]::smallint[]
   ) then
     alter table public.${table}
       add constraint ${quoteIdentifier(`${profileModel.table}_id_auth_users_fkey`)}
