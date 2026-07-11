@@ -21,69 +21,88 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
+          def keep_head_side(source: str) -> str:
+              lines = source.splitlines(keepends=True)
+              result: list[str] = []
+              index = 0
+              while index < len(lines):
+                  if not lines[index].lstrip().startswith('<<<<<<< '):
+                      result.append(lines[index])
+                      index += 1
+                      continue
+
+                  index += 1
+                  head: list[str] = []
+                  while index < len(lines) and not lines[index].lstrip().startswith('======='):
+                      head.append(lines[index])
+                      index += 1
+                  if index >= len(lines):
+                      raise SystemExit('Unterminated merge conflict before separator')
+
+                  index += 1
+                  while index < len(lines) and not lines[index].lstrip().startswith('>>>>>>> '):
+                      index += 1
+                  if index >= len(lines):
+                      raise SystemExit('Unterminated merge conflict after separator')
+
+                  result.extend(head)
+                  index += 1
+              return ''.join(result)
+
           base_path = Path('src/adapters/minikube/base/index.ts')
-          base = base_path.read_text(encoding='utf-8')
+          base = keep_head_side(base_path.read_text(encoding='utf-8'))
 
-          while '<<<<<<< HEAD\n' in base:
-              before, rest = base.split('<<<<<<< HEAD\n', 1)
-              head, rest = rest.split('=======\n', 1)
-              _, after = rest.split('>>>>>>> 9c227881563984ef03b908fbc011173ba4c5f369\n', 1)
-              base = before + head + after
+          anon_update = "or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')\n    or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE')"
+          anon_references = "or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')\n    or has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')\n    or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE')"
+          if anon_update not in base:
+              raise SystemExit('Expected anon UPDATE/DELETE privilege sequence not found')
+          base = base.replace(anon_update, anon_references, 1)
 
-          anon_old = """  if has_any_column_privilege('anon', format('public.%I', profile_table), 'SELECT')
-            or has_any_column_privilege('anon', format('public.%I', profile_table), 'INSERT')
-            or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')
-            or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE') then
-          """
-          anon_new = """  if has_any_column_privilege('anon', format('public.%I', profile_table), 'SELECT')
-            or has_any_column_privilege('anon', format('public.%I', profile_table), 'INSERT')
-            or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')
-            or has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')
-            or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE') then
-          """
-          if anon_old not in base:
-              raise SystemExit('Expected anon privilege block not found')
-          base = base.replace(anon_old, anon_new, 1)
-
-          auth_old = """  if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')
-            or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then
-            raise exception 'authenticated role must not have profile table INSERT or DELETE privilege';
-          """
-          auth_new = """  if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')
-            or has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')
-            or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then
-            raise exception 'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege';
-          """
-          if auth_old not in base:
-              raise SystemExit('Expected authenticated privilege block not found')
-          base = base.replace(auth_old, auth_new, 1)
+          auth_insert = "if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')\n    or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then"
+          auth_references = "if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')\n    or has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')\n    or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then"
+          if auth_insert not in base:
+              raise SystemExit('Expected authenticated INSERT/DELETE privilege sequence not found')
+          base = base.replace(auth_insert, auth_references, 1)
+          base = base.replace(
+              'authenticated role must not have profile table INSERT or DELETE privilege',
+              'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
+              1,
+          )
           base_path.write_text(base, encoding='utf-8')
 
           unit_path = Path('src/adapters/minikube/base/index.test.ts')
           unit = unit_path.read_text(encoding='utf-8')
-          anon_update = """    expect(status).toContain(
-              "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
-            );
+          anon_assertion = """    expect(status).toContain(
+            "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
+          );
           """
-          anon_refs = anon_update + """    expect(status).toContain(
-              "has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')",
-            );
-          """
-          if anon_update not in unit:
+          if anon_assertion not in unit:
               raise SystemExit('Expected anon UPDATE assertion not found')
-          unit = unit.replace(anon_update, anon_refs, 1)
+          unit = unit.replace(
+              anon_assertion,
+              anon_assertion
+              + """    expect(status).toContain(
+            "has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')",
+          );
+          """,
+              1,
+          )
 
-          auth_insert = """    expect(status).toContain(
-              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
-            );
+          auth_assertion = """    expect(status).toContain(
+            "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
+          );
           """
-          auth_refs = auth_insert + """    expect(status).toContain(
-              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')",
-            );
-          """
-          if auth_insert not in unit:
+          if auth_assertion not in unit:
               raise SystemExit('Expected authenticated INSERT assertion not found')
-          unit = unit.replace(auth_insert, auth_refs, 1)
+          unit = unit.replace(
+              auth_assertion,
+              auth_assertion
+              + """    expect(status).toContain(
+            "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')",
+          );
+          """,
+              1,
+          )
           unit = unit.replace(
               'authenticated role must not have profile table INSERT or DELETE privilege',
               'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
