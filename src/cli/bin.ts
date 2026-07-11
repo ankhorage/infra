@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
-import type { InfraCommandContext, InfraCommandRunResult } from './commandContext.js';
-import { createDefaultCommandContext } from './commandContext.js';
+import type { InfraCommandContext, InfraCommandRunResult } from '../commandContext.js';
+import { createDefaultCommandContext } from '../commandContext.js';
 import {
   findInfraCommandByStandaloneName,
   type InfraCommandServices,
@@ -9,7 +9,7 @@ import {
   renderUnknownCommand,
   runInfraCommand,
   type RunInfraCommandImpl,
-} from './commands.js';
+} from '../commands.js';
 
 export interface InfraCliOptions {
   readonly context?: InfraCommandContext;

@@ -6,9 +6,9 @@ import {
 } from '@ankhorage/ankh';
 import { describe, expect, test } from 'bun:test';
 
-import { runCli } from './cli.js';
-import { createInfraRuntimeProvider } from './cli/index.js';
-import { createCapturedCommandContext } from './testSupport.js';
+import { createCapturedCommandContext } from '../testSupport.js';
+import { runCli } from './bin.js';
+import { createInfraRuntimeProvider } from './index.js';
 
 describe('standalone cli and provider-backed dispatch', () => {
   test('prints help and version for the standalone CLI', async () => {

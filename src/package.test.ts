@@ -14,7 +14,7 @@ describe('package metadata', () => {
     expect(packageJson.name).toBe('@ankhorage/infra');
     expect(packageJson.type).toBe('module');
     expect(packageJson.bin).toEqual({
-      'ankhorage-infra': './dist/cli.js',
+      'ankhorage-infra': './dist/cli/bin.js',
     });
     expect(packageJson.ankh).toEqual(expectedAnkhMetadata);
     expect(JSON.parse(JSON.stringify(expectedAnkhMetadata))).toEqual(expectedAnkhMetadata);
