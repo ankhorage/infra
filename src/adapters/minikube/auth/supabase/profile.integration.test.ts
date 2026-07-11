@@ -371,38 +371,38 @@ $$;`,
   );
 
   integrationTest(
-  'status reports column-scoped references privilege drift',
-  async () => {
-    const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+    'status reports column-scoped references privilege drift',
+    async () => {
+      const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
 
-    try {
-      await writeGeneratedFiles(
-        appRoot,
-        generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
-      );
-      await runLocalSupabaseEnv(minikubeRoot);
-      await runSupabaseSql(
-        minikubeRoot,
-        'grant references (email) on table public.profiles to anon;',
-      );
+      try {
+        await writeGeneratedFiles(
+          appRoot,
+          generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
+        );
+        await runLocalSupabaseEnv(minikubeRoot);
+        await runSupabaseSql(
+          minikubeRoot,
+          'grant references (email) on table public.profiles to anon;',
+        );
 
-      const anonFailure = await expectGeneratedStatusFailure(minikubeRoot);
-      expect(anonFailure).toContain('profile schema: drift detected');
+        const anonFailure = await expectGeneratedStatusFailure(minikubeRoot);
+        expect(anonFailure).toContain('profile schema: drift detected');
 
-      await runSupabaseSql(
-        minikubeRoot,
-        `revoke references (email) on table public.profiles from anon;
+        await runSupabaseSql(
+          minikubeRoot,
+          `revoke references (email) on table public.profiles from anon;
          grant references (email) on table public.profiles to authenticated;`,
-      );
+        );
 
-      const authenticatedFailure = await expectGeneratedStatusFailure(minikubeRoot);
-      expect(authenticatedFailure).toContain('profile schema: drift detected');
-    } finally {
-      await cleanupIntegrationProject(appRoot, minikubeRoot);
-    }
-  },
-  INTEGRATION_TIMEOUT_MS,
-);
+        const authenticatedFailure = await expectGeneratedStatusFailure(minikubeRoot);
+        expect(authenticatedFailure).toContain('profile schema: drift detected');
+      } finally {
+        await cleanupIntegrationProject(appRoot, minikubeRoot);
+      }
+    },
+    INTEGRATION_TIMEOUT_MS,
+  );
 
   integrationTest(
     'status reports custom-column update privilege drift',
