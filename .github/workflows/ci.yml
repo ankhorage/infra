@@ -31,5 +31,5 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile >/dev/null
 
-      - name: Run moved CLI test
-        run: bun test src/cli/cli.test.ts
+      - name: Run complete tests
+        run: bun test src
