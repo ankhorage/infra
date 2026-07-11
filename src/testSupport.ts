@@ -101,12 +101,6 @@ export function createAppManifest(
         defaultLocale: 'en',
         locales: ['en'],
       },
-      authFlow: {
-        signInRoute: '/sign-in',
-        signOutRoute: '/sign-out',
-        postSignInRoute: '/',
-        unauthorizedRoute: '/sign-in',
-      },
     },
   };
 }
