@@ -27,6 +27,8 @@
     "expo",
     "react-native",
     "supabase",
+    "oauth",
+    "gotrue",
     "vault",
     "secrets",
     "secret-store",
@@ -37,6 +39,7 @@
   ],
   "dependencies": {
     "@ankhorage/contracts": "^2.1.0",
+    "@ankhorage/supabase-auth": "^0.4.0",
     "@ankhorage/supabase-vault": "^0.1.0"
   },
   "files": [
