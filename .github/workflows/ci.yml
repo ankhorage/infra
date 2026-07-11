@@ -24,7 +24,7 @@ jobs:
       - name: Format changed sources and restore CI
         run: |
           bun install --frozen-lockfile
-          bunx prettier --write \
+          bun x ankhorage-prettier --write \
             src/adapters/minikube/base/index.ts \
             src/adapters/minikube/base/index.test.ts \
             src/adapters/minikube/auth/supabase/profile.integration.test.ts
