@@ -49,73 +49,83 @@ jobs:
                   index += 1
               return ''.join(result)
 
+          def insert_after_line(lines: list[str], needle: str, inserted_line: str) -> None:
+              for index, line in enumerate(lines):
+                  if needle in line:
+                      if index + 1 < len(lines) and inserted_line.strip() in lines[index + 1]:
+                          return
+                      lines.insert(index + 1, inserted_line)
+                      return
+              raise SystemExit(f'Expected line not found: {needle}')
+
           base_path = Path('src/adapters/minikube/base/index.ts')
           base = keep_head_side(base_path.read_text(encoding='utf-8'))
-
-          anon_update = "or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')\n    or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE')"
-          anon_references = "or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')\n    or has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')\n    or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE')"
-          if anon_update not in base:
-              raise SystemExit('Expected anon UPDATE/DELETE privilege sequence not found')
-          base = base.replace(anon_update, anon_references, 1)
-
-          auth_insert = "if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')\n    or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then"
-          auth_references = "if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')\n    or has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')\n    or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then"
-          if auth_insert not in base:
-              raise SystemExit('Expected authenticated INSERT/DELETE privilege sequence not found')
-          base = base.replace(auth_insert, auth_references, 1)
-          base = base.replace(
+          base_lines = base.splitlines(keepends=True)
+          insert_after_line(
+              base_lines,
+              "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
+              "    or has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')\n",
+          )
+          insert_after_line(
+              base_lines,
+              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
+              "    or has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')\n",
+          )
+          base = ''.join(base_lines).replace(
               'authenticated role must not have profile table INSERT or DELETE privilege',
               'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
-              1,
           )
           base_path.write_text(base, encoding='utf-8')
 
           unit_path = Path('src/adapters/minikube/base/index.test.ts')
-          unit = unit_path.read_text(encoding='utf-8')
-          anon_assertion = """    expect(status).toContain(
-            "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
-          );
-          """
-          if anon_assertion not in unit:
-              raise SystemExit('Expected anon UPDATE assertion not found')
-          unit = unit.replace(
-              anon_assertion,
-              anon_assertion
-              + """    expect(status).toContain(
-            "has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')",
-          );
-          """,
-              1,
-          )
+          unit_lines = unit_path.read_text(encoding='utf-8').splitlines(keepends=True)
 
-          auth_assertion = """    expect(status).toContain(
-            "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
-          );
-          """
-          if auth_assertion not in unit:
-              raise SystemExit('Expected authenticated INSERT assertion not found')
-          unit = unit.replace(
-              auth_assertion,
-              auth_assertion
-              + """    expect(status).toContain(
-            "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')",
-          );
-          """,
-              1,
+          def insert_expectation_after(needle: str, privilege_line: str) -> None:
+              for index, line in enumerate(unit_lines):
+                  if needle not in line:
+                      continue
+                  closing = index + 1
+                  while closing < len(unit_lines) and unit_lines[closing].strip() != ');':
+                      closing += 1
+                  if closing >= len(unit_lines):
+                      raise SystemExit(f'Closing assertion not found for {needle}')
+                  if closing + 2 < len(unit_lines) and privilege_line in unit_lines[closing + 2]:
+                      return
+                  unit_lines[closing + 1:closing + 1] = [
+                      '    expect(status).toContain(\n',
+                      f'      "{privilege_line}",\n',
+                      '    );\n',
+                  ]
+                  return
+              raise SystemExit(f'Expected assertion not found: {needle}')
+
+          insert_expectation_after(
+              "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
+              "has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')",
           )
-          unit = unit.replace(
+          insert_expectation_after(
+              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
+              "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')",
+          )
+          unit = ''.join(unit_lines).replace(
               'authenticated role must not have profile table INSERT or DELETE privilege',
               'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
-              1,
           )
           unit_path.write_text(unit, encoding='utf-8')
 
           integration_path = Path('src/adapters/minikube/auth/supabase/profile.integration.test.ts')
           integration = integration_path.read_text(encoding='utf-8')
-          insertion_point = """  integrationTest(
-            'status reports custom-column update privilege drift',
-          """
-          new_test = """  integrationTest(
+          test_name = 'status reports column-scoped references privilege drift'
+          if test_name not in integration:
+              marker = "'status reports custom-column update privilege drift'"
+              marker_position = integration.find(marker)
+              if marker_position < 0:
+                  raise SystemExit('Expected integration insertion point not found')
+              insertion_position = integration.rfind('  integrationTest(', 0, marker_position)
+              if insertion_position < 0:
+                  raise SystemExit('Expected integrationTest block start not found')
+
+              new_test = """  integrationTest(
             'status reports column-scoped references privilege drift',
             async () => {
               const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
@@ -150,10 +160,8 @@ jobs:
           );
 
           """
-          if insertion_point not in integration:
-              raise SystemExit('Expected integration insertion point not found')
-          integration = integration.replace(insertion_point, new_test + insertion_point, 1)
-          integration_path.write_text(integration, encoding='utf-8')
+              integration = integration[:insertion_position] + new_test + integration[insertion_position:]
+              integration_path.write_text(integration, encoding='utf-8')
           PY
 
           if grep -RInE '^(<<<<<<<|=======|>>>>>>>)' --exclude-dir=.git .; then
