@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.3.7
+
+### Patch Changes
+
+- 1f86a8e: Finalize the generated API handler promise normalization so the package passes CI and generated apps remain compatible with `@typescript-eslint/require-await`.
+
 ## 0.3.6
 
 ### Patch Changes
