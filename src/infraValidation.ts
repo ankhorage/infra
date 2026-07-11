@@ -55,7 +55,7 @@ export function validateInfraSupport(manifest: InfraManifestInput): readonly str
     );
   }
 
-  const authzEngine = manifest.auth?.authorization.engine;
+  const authzEngine = manifest.auth?.authorization?.engine;
   if (authzEngine !== undefined && !isSupported(authzEngine, AUTHZ_ENGINES)) {
     warnings.push(
       warningForUnsupportedValue({
