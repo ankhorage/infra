@@ -7,10 +7,10 @@ import { generateCerbosAuthzArtifacts } from './cerbos';
 export function generateAuthorizationArtifacts(args: {
   manifest: InfraManifestInput;
   namespace: string;
-  appManifest?: Pick<AppManifest, 'metadata' | 'navigator' | 'screens' | 'settings'>;
+  appManifest?: Pick<AppManifest, 'infra' | 'metadata' | 'navigator' | 'screens'>;
 }): MinikubeAdapterArtifacts {
   const { manifest, namespace, appManifest } = args;
-  const engine = manifest.auth?.authorization.engine;
+  const engine = manifest.auth?.authorization?.engine;
 
   if (!engine) {
     return emptyMinikubeArtifacts();
