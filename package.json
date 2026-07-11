@@ -33,7 +33,7 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/contracts": "^2.0.0"
+    "@ankhorage/contracts": "^2.1.0"
   },
   "files": [
     "dist",
