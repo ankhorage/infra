@@ -59,10 +59,7 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
       countOccurrences(script, 'supabase --workdir "${SUPABASE_PROJECT_DIR}" start >/dev/null'),
     ).toBe(2);
     expect(
-      countOccurrences(
-        script,
-        'supabase --workdir "${SUPABASE_PROJECT_DIR}" stop --no-backup',
-      ),
+      countOccurrences(script, 'supabase --workdir "${SUPABASE_PROJECT_DIR}" stop --no-backup'),
     ).toBe(1);
   });
 
@@ -94,11 +91,7 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
       'infra/minikube/scripts/supabase-local-env.sh',
       overrides,
     );
-    const status = getGeneratedFileContent(
-      'chess',
-      'infra/minikube/scripts/status.sh',
-      overrides,
-    );
+    const status = getGeneratedFileContent('chess', 'infra/minikube/scripts/status.sh', overrides);
 
     expect(script).toContain('SUPABASE_PROFILE_ENABLED="true"');
     expect(script).toContain(

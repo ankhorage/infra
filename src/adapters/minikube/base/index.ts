@@ -2,8 +2,8 @@ import type { GeneratedInfrastructureFile } from '../../../types';
 import type { InfraManifestInput } from '../../../types';
 import {
   MANAGED_PROFILE_COLUMNS,
-  resolveSupabaseProfileModel,
   type ResolvedProfileModel,
+  resolveSupabaseProfileModel,
 } from '../auth/supabase/profile';
 
 interface SupabaseLocalPorts {
@@ -1210,9 +1210,7 @@ function getStatusScript(args: {
   profileModel: ResolvedProfileModel;
 }): string {
   const { defaultNamespace, supabaseLocalEnabled, profileModel } = args;
-  const profileStatusSql = profileModel.enabled
-    ? getSupabaseProfileChecksumSql(profileModel)
-    : '';
+  const profileStatusSql = profileModel.enabled ? getSupabaseProfileChecksumSql(profileModel) : '';
   const profileVerificationSql = profileModel.enabled
     ? getSupabaseProfileVerificationSql(profileModel)
     : '';
@@ -1449,9 +1447,7 @@ function getSupabaseLocalEnvScript(args: {
   profileModel: ResolvedProfileModel;
 }): string {
   const { supabaseLocalPorts, profileModel } = args;
-  const profileStatusSql = profileModel.enabled
-    ? getSupabaseProfileChecksumSql(profileModel)
-    : '';
+  const profileStatusSql = profileModel.enabled ? getSupabaseProfileChecksumSql(profileModel) : '';
   const profileVerificationSql = profileModel.enabled
     ? getSupabaseProfileVerificationSql(profileModel)
     : '';

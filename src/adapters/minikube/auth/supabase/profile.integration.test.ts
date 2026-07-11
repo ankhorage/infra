@@ -1,8 +1,8 @@
+import { execFile as execFileCallback } from 'node:child_process';
 import { chmod, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
-import { execFile as execFileCallback } from 'node:child_process';
 
 import { describe, expect, test } from 'bun:test';
 
@@ -102,14 +102,7 @@ async function runLocalSupabaseEnv(minikubeRoot: string): Promise<void> {
 }
 
 async function runSupabaseSql(minikubeRoot: string, sql: string): Promise<void> {
-  await execFile('supabase', [
-    '--workdir',
-    minikubeRoot,
-    'db',
-    'query',
-    '--local',
-    sql,
-  ]);
+  await execFile('supabase', ['--workdir', minikubeRoot, 'db', 'query', '--local', sql]);
 }
 
 function createManifest(fields: readonly string[]): InfraManifestInput {
