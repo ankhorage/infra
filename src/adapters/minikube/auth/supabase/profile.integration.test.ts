@@ -183,9 +183,9 @@ $$;`,
   });
 
   integrationTest('rejects public.users at generation time', async () => {
-    expect(() => generateInfrastructure(createManifest({ table: 'users', fields: ['email'] }))).toThrow(
-      'Invalid Supabase profile table identifier "users"',
-    );
+    expect(() =>
+      generateInfrastructure(createManifest({ table: 'users', fields: ['email'] })),
+    ).toThrow('Invalid Supabase profile table identifier "users"');
   });
 });
 
@@ -254,11 +254,17 @@ async function runSupabaseSql(minikubeRoot: string, sql: string): Promise<void> 
 function readStatusEnv(source: string, key: string): string {
   const line = source
     .split('\n')
-    .find((entry) => entry === `${key}=` || entry.startsWith(`${key}=`) || entry.startsWith(`export ${key}=`));
+    .find(
+      (entry) =>
+        entry === `${key}=` || entry.startsWith(`${key}=`) || entry.startsWith(`export ${key}=`),
+    );
   if (!line) {
     throw new Error(`Missing ${key} from supabase status output`);
   }
-  return line.replace(/^export /, '').slice(`${key}=`.length).replace(/^"|"$/g, '');
+  return line
+    .replace(/^export /, '')
+    .slice(`${key}=`.length)
+    .replace(/^"|"$/g, '');
 }
 
 function createManifest(args: {
