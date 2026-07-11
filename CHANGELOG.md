@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 13d1a02: Publish Infra with `@ankhorage/contracts` 2.0.0 so downstream consumers use the optional authorization contract consistently.
+- 13d1a02: Publish Infra against `@ankhorage/contracts` 2.0.0 so downstream consumers use the optional authorization contract consistently.
 
 ## 0.3.3
 
