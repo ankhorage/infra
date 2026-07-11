@@ -1319,9 +1319,15 @@ begin
     raise exception 'unexpected profile table RLS policy exists';
   end if;
 
+<<<<<<< HEAD
   if has_any_column_privilege('anon', format('public.%I', profile_table), 'SELECT')
     or has_any_column_privilege('anon', format('public.%I', profile_table), 'INSERT')
     or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')
+=======
+  if has_table_privilege('anon', format('public.%I', profile_table), 'SELECT')
+    or has_table_privilege('anon', format('public.%I', profile_table), 'INSERT')
+    or has_table_privilege('anon', format('public.%I', profile_table), 'UPDATE')
+>>>>>>> 9c227881563984ef03b908fbc011173ba4c5f369
     or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE') then
     raise exception 'anon must not have profile table privileges';
   end if;
@@ -1330,7 +1336,11 @@ begin
     raise exception 'authenticated role must have profile table SELECT privilege';
   end if;
 
+<<<<<<< HEAD
   if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')
+=======
+  if has_table_privilege('authenticated', format('public.%I', profile_table), 'INSERT')
+>>>>>>> 9c227881563984ef03b908fbc011173ba4c5f369
     or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then
     raise exception 'authenticated role must not have profile table INSERT or DELETE privilege';
   end if;
