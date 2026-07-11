@@ -8,6 +8,10 @@ import type {
 import { generateAuthProviderArtifacts } from './auth';
 import { generateAuthorizationArtifacts } from './authz';
 import { generateMinikubeBaseArtifacts } from './base';
+import {
+  generateSecretStoreArtifacts,
+  resolveSecretStoreProvider,
+} from './secrets';
 import { generateStorageArtifacts } from './storage';
 
 const DEFAULT_NAMESPACE = 'ankh-app';
@@ -30,6 +34,7 @@ export function generateMinikubeInfra(
 
   const namespace = resolveNamespace(manifest, options);
 
+  const secretStoreArtifacts = generateSecretStoreArtifacts({ manifest, namespace });
   const authArtifacts = generateAuthProviderArtifacts({ manifest, namespace });
   const authzArtifacts = generateAuthorizationArtifacts({
     manifest,
@@ -43,11 +48,13 @@ export function generateMinikubeInfra(
   });
 
   const extraResources = unique([
+    ...secretStoreArtifacts.resources,
     ...authArtifacts.resources,
     ...authzArtifacts.resources,
     ...storageArtifacts.resources,
   ]);
   const extraEnvEntries = unique([
+    ...secretStoreArtifacts.envEntries,
     ...authArtifacts.envEntries,
     ...authzArtifacts.envEntries,
     ...storageArtifacts.envEntries,
@@ -62,6 +69,7 @@ export function generateMinikubeInfra(
 
   const warnings = unique([
     ...collectWarnings(manifest),
+    ...secretStoreArtifacts.warnings,
     ...authArtifacts.warnings,
     ...authzArtifacts.warnings,
     ...storageArtifacts.warnings,
@@ -71,6 +79,7 @@ export function generateMinikubeInfra(
   return {
     files: [
       ...baseFiles,
+      ...secretStoreArtifacts.files,
       ...authArtifacts.files,
       ...authzArtifacts.files,
       ...storageArtifacts.files,
@@ -88,6 +97,8 @@ export function generateMinikubeInfra(
 function collectProviders(manifest: InfraManifestInput): string[] {
   const providers = new Set<string>();
 
+  const secretStoreProvider = resolveSecretStoreProvider(manifest);
+  if (secretStoreProvider) providers.add(secretStoreProvider);
   if (manifest.auth?.provider) providers.add(manifest.auth.provider);
   if (manifest.auth?.authorization?.engine) {
     providers.add(manifest.auth.authorization.engine);
