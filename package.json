@@ -27,13 +27,17 @@
     "expo",
     "react-native",
     "supabase",
+    "vault",
+    "secrets",
+    "secret-store",
     "postgres",
     "kubernetes",
     "minikube",
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/contracts": "^2.0.0"
+    "@ankhorage/contracts": "^2.1.0",
+    "@ankhorage/supabase-vault": "^0.1.0"
   },
   "files": [
     "dist",
