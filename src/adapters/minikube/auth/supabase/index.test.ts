@@ -101,6 +101,59 @@ describe('generateSupabaseAuthArtifacts profile tables', () => {
     expect(artifacts.files.some((file) => file.path.includes('supabase/migrations'))).toBe(false);
   });
 
+  test('preserves an explicitly empty profile field list', () => {
+    const artifacts = generateSupabaseAuthArtifacts({
+      namespace: 'scan-app',
+      manifest: createManifest({
+        profile: {
+          fields: [],
+          table: 'profiles',
+        },
+      }),
+    });
+
+    const reconciliation = artifacts.files.find(
+      (file) => file.path === 'infra/minikube/supabase/generated/auth_profiles.sql',
+    );
+
+    expect(reconciliation?.content).not.toContain('add column if not exists "email"');
+    expect(reconciliation?.content).not.toContain('grant update (');
+    expect(reconciliation?.content).toContain(
+      'alter table public."profiles" drop column if exists "email"',
+    );
+    expect(reconciliation?.content).toContain(
+      'alter table public."profiles" drop column if exists "first_name"',
+    );
+  });
+
+  test('rejects unsupported configured profile fields', () => {
+    expect(() =>
+      generateSupabaseAuthArtifacts({
+        namespace: 'scan-app',
+        manifest: createManifest({
+          profile: {
+            fields: ['email', 'bio'],
+            table: 'profiles',
+          },
+        }),
+      }),
+    ).toThrow('Unsupported Supabase profile field "bio"');
+  });
+
+  test('rejects blank configured profile fields', () => {
+    expect(() =>
+      generateSupabaseAuthArtifacts({
+        namespace: 'scan-app',
+        manifest: createManifest({
+          profile: {
+            fields: ['email', '  '],
+            table: 'profiles',
+          },
+        }),
+      }),
+    ).toThrow('Profile fields must be non-empty');
+  });
+
   test('uses a stable desired-state hash and canonical managed column ordering', () => {
     const first = generateSupabaseAuthArtifacts({
       namespace: 'scan-app',

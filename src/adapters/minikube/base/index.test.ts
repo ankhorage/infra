@@ -113,6 +113,9 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(status).toContain(
       'authenticated role must not have profile table INSERT or DELETE privilege',
     );
+    expect(status).toContain(
+      'authenticated role has unexpected UPDATE privilege on profile column',
+    );
     expect(status).toContain('generated trigger function execute privilege must be revoked');
   });
 });
