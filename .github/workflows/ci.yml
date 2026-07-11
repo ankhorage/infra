@@ -21,13 +21,10 @@ jobs:
         with:
           bun-version: '1.3.13'
 
-      - name: Format changed sources and restore CI
+      - name: Format repository and restore CI
         run: |
           bun install --frozen-lockfile
-          bun x ankhorage-prettier --write \
-            src/adapters/minikube/base/index.ts \
-            src/adapters/minikube/base/index.test.ts \
-            src/adapters/minikube/auth/supabase/profile.integration.test.ts
+          bun run format
 
           if grep -RInE '^(<<<<<<<|=======|>>>>>>>)' --exclude-dir=.git .; then
             echo 'Unresolved merge conflict markers remain.' >&2
@@ -39,10 +36,6 @@ jobs:
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add \
-            src/adapters/minikube/base/index.ts \
-            src/adapters/minikube/base/index.test.ts \
-            src/adapters/minikube/auth/supabase/profile.integration.test.ts \
-            .github/workflows/ci.yml
+          git add -A
           git commit -m 'style: format final Phase 0 changes'
           git push origin HEAD:'#15/phase0'
