@@ -343,7 +343,6 @@ $$;`,
   );
 
   integrationTest(
-<<<<<<< HEAD
     'status reports column-scoped privilege drift',
     async () => {
       const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
