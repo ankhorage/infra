@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.3.3
+
+### Patch Changes
+
+- 77be403: Make generated local Supabase profile schema deterministic by separating immutable migrations from generated reconciliation, applying profile desired state during local startup, and verifying the live database schema.
+
 ## 0.3.2
 
 ### Patch Changes
