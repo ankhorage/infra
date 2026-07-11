@@ -182,7 +182,7 @@ $$;`,
     }
   });
 
-  integrationTest('rejects public.users at generation time', async () => {
+  integrationTest('rejects public.users at generation time', () => {
     expect(() =>
       generateInfrastructure(createManifest({ table: 'users', fields: ['email'] })),
     ).toThrow('Invalid Supabase profile table identifier "users"');
