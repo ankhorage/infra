@@ -109,6 +109,10 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(status).toContain('reserved conflicting identity table public.users exists');
     expect(status).toContain('stale managed profile column');
     expect(status).toContain('own-profile SELECT policy is missing or has unsafe definition');
+    expect(status).toContain('unexpected profile table RLS policy exists');
+    expect(status).toContain(
+      'authenticated role must not have profile table INSERT or DELETE privilege',
+    );
     expect(status).toContain('generated trigger function execute privilege must be revoked');
   });
 });
