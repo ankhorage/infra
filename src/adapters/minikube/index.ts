@@ -89,7 +89,9 @@ function collectProviders(manifest: InfraManifestInput): string[] {
   const providers = new Set<string>();
 
   if (manifest.auth?.provider) providers.add(manifest.auth.provider);
-  if (manifest.auth?.authorization.engine) providers.add(manifest.auth.authorization.engine);
+  if (manifest.auth?.authorization?.engine) {
+    providers.add(manifest.auth.authorization.engine);
+  }
   if (manifest.database?.provider) providers.add(manifest.database.provider);
   if (manifest.storage?.provider) providers.add(manifest.storage.provider);
   if (manifest.state?.provider) providers.add(manifest.state.provider);
