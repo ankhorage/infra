@@ -50,17 +50,80 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(script).toContain(
       'Supabase local start failed. Stopping stale local stack and retrying once...',
     );
-    expect(script).toContain('supabase stop --no-backup >/dev/null 2>&1 || true');
+    expect(script).toContain(
+      'supabase --workdir "${SUPABASE_PROJECT_DIR}" stop --no-backup >/dev/null 2>&1 || true',
+    );
     expect(script).toContain('Supabase local start failed after retry.');
     expect(script).toContain('start_supabase_local_stack');
-    expect(countOccurrences(script, 'supabase start >/dev/null')).toBe(2);
-    expect(countOccurrences(script, 'supabase stop --no-backup')).toBe(1);
+    expect(
+      countOccurrences(script, 'supabase --workdir "${SUPABASE_PROJECT_DIR}" start >/dev/null'),
+    ).toBe(2);
+    expect(
+      countOccurrences(
+        script,
+        'supabase --workdir "${SUPABASE_PROJECT_DIR}" stop --no-backup',
+      ),
+    ).toBe(1);
+  });
+
+  test('generates canonical Supabase workdir and required CLI capability checks', () => {
+    const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
+
+    expect(script).toContain('SUPABASE_PROJECT_DIR="${SUPABASE_PROJECT_DIR:-${ROOT_DIR}}"');
+    expect(script).toContain('supabase CLI >= 2.106.0 is required');
+    expect(script).toContain('supabase CLI does not support required global --workdir flag');
+    expect(script).toContain('supabase CLI does not support required migration up --local command');
+    expect(script).toContain(
+      'supabase CLI does not support required db query --local --file command',
+    );
+    expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" init --yes');
+    expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" migration up --local');
+  });
+
+  test('generates profile reconciliation and live verification flow when profile table is configured', () => {
+    const overrides = {
+      auth: {
+        profile: {
+          table: 'profiles',
+          fields: ['email', 'displayName'],
+        },
+      },
+    } satisfies Partial<InfraManifestInput>;
+    const script = getGeneratedFileContent(
+      'chess',
+      'infra/minikube/scripts/supabase-local-env.sh',
+      overrides,
+    );
+    const status = getGeneratedFileContent(
+      'chess',
+      'infra/minikube/scripts/status.sh',
+      overrides,
+    );
+
+    expect(script).toContain('SUPABASE_PROFILE_ENABLED="true"');
+    expect(script).toContain(
+      'SUPABASE_PROFILE_RECONCILE_FILE="${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"',
+    );
+    expect(script).toContain('Generated profile reconciliation');
+    expect(script).toContain('SQL file: ${sql_file}');
+    expect(script).toContain('Supabase project workdir: ${SUPABASE_PROJECT_DIR}');
+    expect(script).toContain('Exit status: ${status}');
+    expect(script).toContain('ankhorage_internal.generated_schema_state');
+    expect(status).toContain('- immutable migrations: applied');
+    expect(status).toContain('- profile reconciliation: applied, checksum matches');
+    expect(status).toContain('- profile schema: verified');
+    expect(status).toContain('reserved conflicting identity table public.users exists');
+    expect(status).toContain('stale managed profile column');
   });
 });
 
-function getGeneratedFileContent(namespace: string, filePath: string): string {
+function getGeneratedFileContent(
+  namespace: string,
+  filePath: string,
+  overrides: Partial<InfraManifestInput> = {},
+): string {
   const artifact = generateMinikubeBaseArtifacts({
-    manifest: createInfraManifest(),
+    manifest: createInfraManifest(overrides),
     namespace,
     extraResources: [],
     extraEnvEntries: [],
@@ -77,7 +140,7 @@ function countOccurrences(source: string, needle: string): number {
   return source.split(needle).length - 1;
 }
 
-function createInfraManifest(): InfraManifestInput {
+function createInfraManifest(overrides: Partial<InfraManifestInput> = {}): InfraManifestInput {
   return {
     deployment: {
       target: 'minikube',
@@ -99,5 +162,15 @@ function createInfraManifest(): InfraManifestInput {
       cdn: false,
     },
     plugins: [],
+    ...overrides,
+    auth: {
+      scope: 'global',
+      provider: 'supabase',
+      authorization: {
+        kind: 'RBAC',
+        engine: 'native',
+      },
+      ...overrides.auth,
+    },
   };
 }

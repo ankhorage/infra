@@ -1,5 +1,10 @@
 import type { InfraManifestInput } from '../../../../types';
 import type { MinikubeAdapterArtifacts } from '../../contracts';
+import {
+  getSupabaseProfileReconciliation,
+  resolveSupabaseProfileModel,
+  type ResolvedProfileModel,
+} from './profile';
 
 export function generateSupabaseAuthArtifacts(args: {
   manifest: InfraManifestInput;
@@ -10,12 +15,12 @@ export function generateSupabaseAuthArtifacts(args: {
   const root = 'infra/minikube/k8s/auth/supabase';
   const resourceRoot = 'auth/supabase';
   const docsRoot = 'infra/minikube/auth';
-  const migrationRoot = 'infra/minikube/supabase/migrations';
+  const generatedRoot = 'infra/minikube/supabase/generated';
   const scope = manifest.auth?.scope ?? 'global';
   const authzEngine = manifest.auth?.authorization.engine ?? 'native';
   const authzKind = manifest.auth?.authorization.kind ?? 'RBAC';
   const authFieldModel = resolveAuthFieldModel(manifest);
-  const profileModel = resolveProfileModel(manifest);
+  const profileModel = resolveSupabaseProfileModel(manifest);
 
   const warnings: string[] = [];
   if (scope !== 'global') {
@@ -55,8 +60,8 @@ export function generateSupabaseAuthArtifacts(args: {
       ...(profileModel.enabled
         ? [
             {
-              path: `${migrationRoot}/0001_auth_profiles.sql`,
-              content: getSupabaseProfileMigration(profileModel),
+              path: `${generatedRoot}/auth_profiles.sql`,
+              content: getSupabaseProfileReconciliation(profileModel),
             },
           ]
         : []),
@@ -175,12 +180,12 @@ function getSupabaseRuntimeWiringGuide(profileModel: ResolvedProfileModel) {
 Identity remains provider-owned in \`auth.users\`. App-facing profile data is generated in
 \`public.${profileModel.table}\` and linked through \`${profileModel.table}.id -> auth.users.id\`.
 
-The generated migration:
+The generated profile reconciliation:
 
 - creates the profile table
 - enables row-level security
 - allows signed-in users to read and update their own profile row
-- protects the generated \`role\` column from self-service profile updates
+- drops stale Ankhorage-managed profile columns that are no longer configured
 - creates a trigger for new auth users when \`AUTH_PROFILE_CREATE_STRATEGY=trigger\`
 `
     : '';
@@ -250,33 +255,12 @@ const DEFAULT_SIGN_IN_IDENTIFIERS = ['email'];
 const DEFAULT_SIGN_UP_REQUIRED_FIELDS = ['email', 'password'];
 const DEFAULT_SIGN_UP_OPTIONAL_FIELDS = ['firstName', 'lastName'];
 const DEFAULT_SIGN_UP_POLICY = 'autoSignIn';
-const DEFAULT_PROFILE_FIELDS = ['email', 'firstName', 'lastName'];
-const DEFAULT_PROFILE_PRIMARY_KEY = 'authUserId';
-const DEFAULT_PROFILE_CREATE_STRATEGY = 'trigger';
-const DEFAULT_PROFILE_UPDATE_STRATEGY = 'api';
-
 interface ResolvedAuthFieldModel {
   signInIdentifiersCsv: string;
   signUpRequiredFieldsCsv: string;
   signUpOptionalFieldsCsv: string;
   signUpPolicy: string;
   profileFieldsCsv: string;
-}
-
-interface ProfileColumnSpec {
-  readonly field: string;
-  readonly column: string;
-  readonly sqlType: string;
-  readonly fromNewUser: string;
-}
-
-interface ResolvedProfileModel {
-  readonly enabled: boolean;
-  readonly table: string;
-  readonly primaryKey: string;
-  readonly createStrategy: string;
-  readonly updateStrategy: string;
-  readonly columns: readonly ProfileColumnSpec[];
 }
 
 function resolveAuthFieldModel(manifest: InfraManifestInput): ResolvedAuthFieldModel {
@@ -293,7 +277,11 @@ function resolveAuthFieldModel(manifest: InfraManifestInput): ResolvedAuthFieldM
     DEFAULT_SIGN_UP_OPTIONAL_FIELDS,
   ).filter((field) => !signUpRequiredFields.includes(field));
   const signUpPolicy = manifest.auth?.signUp?.signUpPolicy ?? DEFAULT_SIGN_UP_POLICY;
-  const profileFields = normalizeFieldList(manifest.auth?.profile?.fields, DEFAULT_PROFILE_FIELDS);
+  const profileFields = normalizeFieldList(manifest.auth?.profile?.fields, [
+    'email',
+    'firstName',
+    'lastName',
+  ]);
 
   return {
     signInIdentifiersCsv: signInIdentifiers.join(','),
@@ -302,164 +290,6 @@ function resolveAuthFieldModel(manifest: InfraManifestInput): ResolvedAuthFieldM
     signUpPolicy,
     profileFieldsCsv: profileFields.join(','),
   };
-}
-
-function resolveProfileModel(manifest: InfraManifestInput): ResolvedProfileModel {
-  const table = normalizeIdentifier(manifest.auth?.profile?.table ?? '');
-  const fields = normalizeFieldList(manifest.auth?.profile?.fields, DEFAULT_PROFILE_FIELDS);
-
-  return {
-    enabled: table.length > 0,
-    table,
-    primaryKey: manifest.auth?.profile?.primaryKey ?? DEFAULT_PROFILE_PRIMARY_KEY,
-    createStrategy: manifest.auth?.profile?.createStrategy ?? DEFAULT_PROFILE_CREATE_STRATEGY,
-    updateStrategy: manifest.auth?.profile?.updateStrategy ?? DEFAULT_PROFILE_UPDATE_STRATEGY,
-    columns: resolveProfileColumns(fields),
-  };
-}
-
-function getSupabaseProfileMigration(profileModel: ResolvedProfileModel): string {
-  const table = quoteIdentifier(profileModel.table);
-  const functionName = quoteIdentifier(`handle_new_${profileModel.table}_user`);
-  const triggerName = quoteIdentifier(`on_auth_user_created_${profileModel.table}`);
-  const columnDefinitions = profileModel.columns
-    .map((column) => `  ${quoteIdentifier(column.column)} ${column.sqlType}`)
-    .join(',\n');
-  const insertColumns = ['id', ...profileModel.columns.map((column) => column.column)]
-    .map(quoteIdentifier)
-    .join(', ');
-  const insertValues = ['new.id', ...profileModel.columns.map((column) => column.fromNewUser)].join(
-    ', ',
-  );
-  const updateAssignments = profileModel.columns
-    .filter((column) => column.field === 'email')
-    .map(
-      (column) => `${quoteIdentifier(column.column)} = excluded.${quoteIdentifier(column.column)}`,
-    );
-  const conflictUpdate = [...updateAssignments, 'updated_at = now()'].join(',\n    ');
-  const updateGrantColumns = profileModel.columns.map((column) => quoteIdentifier(column.column));
-  const updateGrantSql =
-    updateGrantColumns.length > 0
-      ? `grant update (${updateGrantColumns.join(', ')}) on table public.${table} to authenticated;\n`
-      : '';
-  const triggerSql =
-    profileModel.createStrategy === 'trigger'
-      ? `
-create or replace function public.${functionName}()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  insert into public.${table} (${insertColumns})
-  values (${insertValues})
-  on conflict (id) do update set
-    ${conflictUpdate};
-
-  return new;
-end;
-$$;
-
-drop trigger if exists ${triggerName} on auth.users;
-create trigger ${triggerName}
-  after insert on auth.users
-  for each row execute function public.${functionName}();
-`
-      : '';
-
-  return `-- Generated by @ankhorage/infra from manifest.infra.auth.profile.
--- Supabase Auth owns identity in auth.users. App-facing profile data lives in public.${profileModel.table}.
-
-create table if not exists public.${table} (
-  id uuid primary key references auth.users(id) on delete cascade${
-    columnDefinitions ? `,\n${columnDefinitions}` : ''
-  },
-  role text not null default 'user',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-alter table public.${table} enable row level security;
-
-revoke all on table public.${table} from anon, authenticated;
-grant select on table public.${table} to authenticated;
-${updateGrantSql}
-create policy ${quoteIdentifier(`${profileModel.table}_select_own`)}
-  on public.${table}
-  for select
-  using (auth.uid() = id);
-
-create policy ${quoteIdentifier(`${profileModel.table}_update_own`)}
-  on public.${table}
-  for update
-  using (auth.uid() = id)
-  with check (auth.uid() = id);
-${triggerSql}`;
-}
-
-function resolveProfileColumns(fields: readonly string[]): ProfileColumnSpec[] {
-  const columns = new Map<string, ProfileColumnSpec>();
-
-  for (const field of fields) {
-    const column = mapProfileFieldToColumn(field);
-    if (!column || columns.has(column.column)) {
-      continue;
-    }
-    columns.set(column.column, column);
-  }
-
-  return [...columns.values()];
-}
-
-function mapProfileFieldToColumn(field: string): ProfileColumnSpec | null {
-  switch (field) {
-    case 'email':
-      return { field, column: 'email', sqlType: 'text', fromNewUser: 'new.email' };
-    case 'displayName':
-      return {
-        field,
-        column: 'display_name',
-        sqlType: 'text',
-        fromNewUser:
-          "coalesce(new.raw_user_meta_data->>'displayName', new.raw_user_meta_data->>'display_name', split_part(new.email, '@', 1))",
-      };
-    case 'firstName':
-      return {
-        field,
-        column: 'first_name',
-        sqlType: 'text',
-        fromNewUser:
-          "coalesce(new.raw_user_meta_data->>'firstName', new.raw_user_meta_data->>'first_name')",
-      };
-    case 'lastName':
-      return {
-        field,
-        column: 'last_name',
-        sqlType: 'text',
-        fromNewUser:
-          "coalesce(new.raw_user_meta_data->>'lastName', new.raw_user_meta_data->>'last_name')",
-      };
-    case 'avatarUrl':
-      return {
-        field,
-        column: 'avatar_url',
-        sqlType: 'text',
-        fromNewUser:
-          "coalesce(new.raw_user_meta_data->>'avatarUrl', new.raw_user_meta_data->>'avatar_url')",
-      };
-    case 'username':
-      return {
-        field,
-        column: 'username',
-        sqlType: 'text',
-        fromNewUser: "new.raw_user_meta_data->>'username'",
-      };
-    case 'phone':
-      return { field, column: 'phone', sqlType: 'text', fromNewUser: 'new.phone' };
-    default:
-      return null;
-  }
 }
 
 function normalizeFieldList(
@@ -482,23 +312,6 @@ function normalizeFieldList(
   }
 
   return [...fallback];
-}
-
-function normalizeIdentifier(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) return '';
-
-  if (!/^[a-z_][a-z0-9_]*$/.test(trimmed)) {
-    throw new Error(
-      `Invalid Supabase profile table identifier "${trimmed}". Use snake_case letters, numbers, and underscores.`,
-    );
-  }
-
-  return trimmed;
-}
-
-function quoteIdentifier(value: string): string {
-  return `"${value.replaceAll('"', '""')}"`;
 }
 
 function escapeYamlDoubleQuoted(value: string): string {
