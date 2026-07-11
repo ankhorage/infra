@@ -8,11 +8,11 @@ import { describe, expect, test } from 'bun:test';
 import { createInfraSecretStoreAdapter } from './secretStore';
 
 class FakeSupabaseVaultClient implements SupabaseVaultSqlClient {
-  async query<TRow extends Record<string, unknown>>(): Promise<SupabaseVaultQueryResult<TRow>> {
-    return { rows: [] };
+  query<TRow extends Record<string, unknown>>(): Promise<SupabaseVaultQueryResult<TRow>> {
+    return Promise.resolve({ rows: [] });
   }
 
-  async transaction<TResult>(
+  transaction<TResult>(
     operation: (executor: SupabaseVaultSqlExecutor) => Promise<TResult>,
   ): Promise<TResult> {
     return operation(this);
