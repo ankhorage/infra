@@ -8,6 +8,13 @@ import type {
 
 export type { ApiInfrastructureArtifacts } from './apiArtifacts';
 export { generateApiInfrastructureArtifacts } from './apiArtifacts';
+export {
+  resolveSupabaseOAuthRuntimeEnvironment,
+} from './secretRuntime';
+export type {
+  ResolvedOAuthProviderStatus,
+  SupabaseOAuthRuntimeEnvironment,
+} from './secretRuntime';
 export type {
   GeneratedFile,
   GeneratedInfrastructureFile,
