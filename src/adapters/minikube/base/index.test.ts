@@ -111,6 +111,18 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(status).toContain('own-profile SELECT policy is missing or has unsafe definition');
     expect(status).toContain('unexpected profile table RLS policy exists');
     expect(status).toContain(
+      "has_any_column_privilege('anon', format('public.%I', profile_table), 'SELECT')",
+    );
+    expect(status).toContain(
+      "has_any_column_privilege('anon', format('public.%I', profile_table), 'INSERT')",
+    );
+    expect(status).toContain(
+      "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
+    );
+    expect(status).toContain(
+      "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
+    );
+    expect(status).toContain(
       'authenticated role must not have profile table INSERT or DELETE privilege',
     );
     expect(status).toContain(

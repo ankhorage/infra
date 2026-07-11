@@ -343,6 +343,34 @@ $$;`,
   );
 
   integrationTest(
+    'status reports column-scoped privilege drift',
+    async () => {
+      const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+      try {
+        await writeGeneratedFiles(
+          appRoot,
+          generateInfrastructure(createManifest({ fields: ['email'] }), { namespaceHint }).files,
+        );
+        await runLocalSupabaseEnv(minikubeRoot);
+        await runSupabaseSql(
+          minikubeRoot,
+          `grant select (email), insert (email), update (email)
+             on table public.profiles to anon;
+           grant insert (email)
+             on table public.profiles to authenticated;`,
+        );
+
+        const failure = await expectGeneratedStatusFailure(minikubeRoot);
+        expect(failure).toContain('profile schema: drift detected');
+      } finally {
+        await cleanupIntegrationProject(appRoot, minikubeRoot);
+      }
+    },
+    INTEGRATION_TIMEOUT_MS,
+  );
+
+  integrationTest(
     'status reports custom-column update privilege drift',
     async () => {
       const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
