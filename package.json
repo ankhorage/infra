@@ -1,7 +1,7 @@
 {
   "name": "@ankhorage/infra",
   "type": "module",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Project-aware infrastructure generation library and executable Ankh provider for Ankhorage.",
   "homepage": "https://github.com/ankhorage/infra#readme",
   "bugs": {
@@ -50,9 +50,9 @@
       "default": "./dist/index.js"
     },
     "./cli": {
-      "types": "./dist/cli/index.d.ts",
-      "import": "./dist/cli/index.js",
-      "default": "./dist/cli/index.js"
+      "types": "./dist/cli/bin.d.ts",
+      "import": "./dist/cli/bin.js",
+      "default": "./dist/cli/bin.js"
     },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
