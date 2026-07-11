@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.3.0",
+      "value": "v0.3.2",
       "color": "cb3837"
     },
     {
@@ -72,7 +72,7 @@
       "title": "Provider and CLI surface",
       "description": "Provider and CLI surface\n\n`@ankhorage/infra` owns infra command behavior.\n\nThe same shared command implementation backs both:\n\n- `ankh infra ...`\n- `bunx @ankhorage/infra ...`\n\nCurrent command surface:\n\n- `validate`\n- `generate`\n- `status`\n- `up`\n- `down`\n\n`status` runs the generated live runtime status script for a project.\n\nProject resolution is project-aware:\n\n- pass `[project]`, or\n- omit it when cwd is already inside `apps/<project>`",
       "language": "ts",
-      "code": "import { runCli } from './cli.js';\n\nawait runCli(['--help']);",
+      "code": "import { runCli } from './cli/bin.js';\n\nawait runCli(['--help']);",
       "sourcePath": "src/readme-usage.ts"
     }
   ],
@@ -98,8 +98,23 @@
     {
       "path": "src/adapters/minikube/auth/supabase/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/adapters/minikube/contracts.ts", "src/types.ts"],
+      "dependencies": [
+        "src/adapters/minikube/auth/supabase/profile.ts",
+        "src/adapters/minikube/contracts.ts",
+        "src/types.ts"
+      ],
       "exports": ["generateSupabaseAuthArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/auth/supabase/profile.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types.ts"],
+      "exports": [
+        "getSupabaseProfileReconciliation",
+        "MANAGED_PROFILE_COLUMNS",
+        "ResolvedProfileModel",
+        "resolveSupabaseProfileModel"
+      ]
     },
     {
       "path": "src/adapters/minikube/authz/cerbos/index.ts",
@@ -120,7 +135,7 @@
     {
       "path": "src/adapters/minikube/base/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
+      "dependencies": ["src/adapters/minikube/auth/supabase/profile.ts", "src/types.ts"],
       "exports": ["generateMinikubeBaseArtifacts"]
     },
     {
@@ -165,7 +180,7 @@
       "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
     },
     {
-      "path": "src/cli.ts",
+      "path": "src/cli/bin.ts",
       "isEntrypoint": false,
       "dependencies": ["src/commandContext.ts", "src/commands.ts"],
       "exports": ["InfraCliOptions", "runCli"]
@@ -836,7 +851,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 4,
+        "line": 9,
         "column": 1
       }
     },
@@ -845,7 +860,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 86,
+        "line": 91,
         "column": 1
       }
     },
@@ -854,7 +869,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 118,
+        "line": 123,
         "column": 1
       }
     },
@@ -863,7 +878,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 135,
+        "line": 140,
         "column": 1
       }
     },
@@ -872,7 +887,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 170,
+        "line": 175,
         "column": 1
       }
     },
@@ -881,43 +896,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 282,
-        "column": 1
-      }
-    },
-    {
-      "name": "resolveProfileModel",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 307,
-        "column": 1
-      }
-    },
-    {
-      "name": "getSupabaseProfileMigration",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 321,
-        "column": 1
-      }
-    },
-    {
-      "name": "resolveProfileColumns",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 401,
-        "column": 1
-      }
-    },
-    {
-      "name": "mapProfileFieldToColumn",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 415,
+        "line": 266,
         "column": 1
       }
     },
@@ -926,25 +905,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 465,
-        "column": 1
-      }
-    },
-    {
-      "name": "normalizeIdentifier",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 487,
-        "column": 1
-      }
-    },
-    {
-      "name": "quoteIdentifier",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 500,
+        "line": 295,
         "column": 1
       }
     },
@@ -953,7 +914,97 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 504,
+        "line": 317,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveSupabaseProfileModel",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 40,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseProfileReconciliation",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 69,
+        "column": 1
+      }
+    },
+    {
+      "name": "mapProfileFieldToColumn",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 379,
+        "column": 1
+      }
+    },
+    {
+      "name": "quoteIdentifier",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 429,
+        "column": 1
+      }
+    },
+    {
+      "name": "getProfileDesiredStateHash",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 433,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProfileColumns",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 458,
+        "column": 1
+      }
+    },
+    {
+      "name": "normalizeFieldList",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 482,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupportedProfileFields",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 501,
+        "column": 1
+      }
+    },
+    {
+      "name": "normalizeIdentifier",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 505,
+        "column": 1
+      }
+    },
+    {
+      "name": "escapeSqlLiteral",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 524,
         "column": 1
       }
     },
@@ -1151,7 +1202,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 25,
+        "line": 30,
         "column": 1
       }
     },
@@ -1160,7 +1211,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 136,
+        "line": 158,
         "column": 1
       }
     },
@@ -1169,7 +1220,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 327,
+        "line": 355,
         "column": 1
       }
     },
@@ -1178,7 +1229,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 385,
+        "line": 415,
         "column": 1
       }
     },
@@ -1187,7 +1238,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 395,
+        "line": 425,
         "column": 1
       }
     },
@@ -1196,7 +1247,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 436,
+        "line": 466,
         "column": 1
       }
     },
@@ -1205,7 +1256,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 471,
+        "line": 501,
         "column": 1
       }
     },
@@ -1214,7 +1265,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 486,
+        "line": 516,
         "column": 1
       }
     },
@@ -1223,7 +1274,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 490,
+        "line": 520,
         "column": 1
       }
     },
@@ -1232,7 +1283,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 507,
+        "line": 537,
         "column": 1
       }
     },
@@ -1241,7 +1292,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 561,
+        "line": 591,
         "column": 1
       }
     },
@@ -1250,7 +1301,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 580,
+        "line": 610,
         "column": 1
       }
     },
@@ -1259,7 +1310,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 821,
+        "line": 860,
         "column": 1
       }
     },
@@ -1268,7 +1319,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 898,
+        "line": 937,
         "column": 1
       }
     },
@@ -1277,7 +1328,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 922,
+        "line": 961,
         "column": 1
       }
     },
@@ -1286,7 +1337,34 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 963,
+        "line": 1002,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseProfileChecksumSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1022,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseProfileDisabledGuardSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1052,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseProfileVerificationSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1067,
         "column": 1
       }
     },
@@ -1295,7 +1373,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 983,
+        "line": 1407,
         "column": 1
       }
     },
@@ -1304,7 +1382,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1074,
+        "line": 1707,
         "column": 1
       }
     },
@@ -1313,7 +1391,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1444,
+        "line": 2262,
         "column": 1
       }
     },
@@ -1322,7 +1400,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1448,
+        "line": 2266,
         "column": 1
       }
     },
@@ -1331,7 +1409,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1464,
+        "line": 2282,
         "column": 1
       }
     },
@@ -1340,7 +1418,25 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1469,
+        "line": 2287,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSqlTextArray",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 2298,
+        "column": 1
+      }
+    },
+    {
+      "name": "escapeSqlLiteral",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 2302,
         "column": 1
       }
     },
@@ -1753,7 +1849,7 @@
       "name": "runCli",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/cli.ts",
+        "filePath": "src/cli/bin.ts",
         "line": 20,
         "column": 1
       }
@@ -1762,7 +1858,7 @@
       "name": "isHelpToken",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/cli.ts",
+        "filePath": "src/cli/bin.ts",
         "line": 56,
         "column": 1
       }
@@ -1771,7 +1867,7 @@
       "name": "isVersionToken",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/cli.ts",
+        "filePath": "src/cli/bin.ts",
         "line": 60,
         "column": 1
       }
@@ -2330,7 +2426,7 @@
     {
       "kind": "bin",
       "name": "ankhorage-infra",
-      "sourcePath": "src/cli.ts",
+      "sourcePath": "src/cli/bin.ts",
       "symbolName": "runCli",
       "description": null,
       "isReadme": false
@@ -2366,16 +2462,6 @@
         "fromPath": "src/apis.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromPath": "src/cli.ts",
-        "toPath": "src/commandContext.ts",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromPath": "src/cli.ts",
-        "toPath": "src/commands.ts",
-        "sourcePath": "src/cli.ts"
       },
       {
         "fromPath": "src/commandContext.ts",
@@ -2449,7 +2535,7 @@
       },
       {
         "fromPath": "src/readme-usage.ts",
-        "toPath": "src/cli.ts",
+        "toPath": "src/cli/bin.ts",
         "sourcePath": "src/readme-usage.ts"
       },
       {
@@ -2461,6 +2547,16 @@
         "fromPath": "src/testSupport.ts",
         "toPath": "src/commandContext.ts",
         "sourcePath": "src/testSupport.ts"
+      },
+      {
+        "fromPath": "src/cli/bin.ts",
+        "toPath": "src/commandContext.ts",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromPath": "src/cli/bin.ts",
+        "toPath": "src/commands.ts",
+        "sourcePath": "src/cli/bin.ts"
       },
       {
         "fromPath": "src/cli/index.ts",
@@ -2548,6 +2644,11 @@
         "sourcePath": "src/adapters/minikube/base/index.ts"
       },
       {
+        "fromPath": "src/adapters/minikube/base/index.ts",
+        "toPath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
         "fromPath": "src/adapters/minikube/storage/index.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/adapters/minikube/storage/index.ts"
@@ -2571,6 +2672,16 @@
         "fromPath": "src/adapters/minikube/auth/supabase/index.ts",
         "toPath": "src/adapters/minikube/contracts.ts",
         "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/supabase/index.ts",
+        "toPath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
         "fromPath": "src/adapters/minikube/authz/cerbos/index.ts",
@@ -2798,66 +2909,6 @@
         "toSymbol": "hashHex",
         "callExpression": "hashHex",
         "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "createDefaultCommandContext",
-        "callExpression": "createDefaultCommandContext",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "isHelpToken",
-        "callExpression": "isHelpToken",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "writeStdout",
-        "callExpression": "context.writeStdout",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "renderRootHelp",
-        "callExpression": "renderRootHelp",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "isVersionToken",
-        "callExpression": "isVersionToken",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "findInfraCommandByStandaloneName",
-        "callExpression": "findInfraCommandByStandaloneName",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "writeStderr",
-        "callExpression": "context.writeStderr",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "renderUnknownCommand",
-        "callExpression": "renderUnknownCommand",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "runCommand",
-        "callExpression": "runCommand",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "src/cli.ts",
-        "toSymbol": "runCli",
-        "callExpression": "runCli",
-        "sourcePath": "src/cli.ts"
       },
       {
         "fromSymbol": "runInfraCommand",
@@ -3358,6 +3409,66 @@
         "sourcePath": "src/testSupport.ts"
       },
       {
+        "fromSymbol": "runCli",
+        "toSymbol": "createDefaultCommandContext",
+        "callExpression": "createDefaultCommandContext",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "isHelpToken",
+        "callExpression": "isHelpToken",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "writeStdout",
+        "callExpression": "context.writeStdout",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "renderRootHelp",
+        "callExpression": "renderRootHelp",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "isVersionToken",
+        "callExpression": "isVersionToken",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "findInfraCommandByStandaloneName",
+        "callExpression": "findInfraCommandByStandaloneName",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "writeStderr",
+        "callExpression": "context.writeStderr",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "renderUnknownCommand",
+        "callExpression": "renderUnknownCommand",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "runCommand",
+        "callExpression": "runCommand",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "src/cli/bin.ts",
+        "toSymbol": "runCli",
+        "callExpression": "runCli",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
         "fromSymbol": "createInfraRuntimeProvider",
         "toSymbol": "createProviderCommandDescriptors",
         "callExpression": "createProviderCommandDescriptors",
@@ -3479,6 +3590,12 @@
       },
       {
         "fromSymbol": "generateMinikubeBaseArtifacts",
+        "toSymbol": "resolveSupabaseProfileModel",
+        "callExpression": "resolveSupabaseProfileModel",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeBaseArtifacts",
         "toSymbol": "getReadmeMarkdown",
         "callExpression": "getReadmeMarkdown",
         "sourcePath": "src/adapters/minikube/base/index.ts"
@@ -3574,6 +3691,60 @@
         "sourcePath": "src/adapters/minikube/base/index.ts"
       },
       {
+        "fromSymbol": "getSupabaseProfileChecksumSql",
+        "toSymbol": "escapeSqlLiteral",
+        "callExpression": "escapeSqlLiteral",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseProfileVerificationSql",
+        "toSymbol": "getSqlTextArray",
+        "callExpression": "getSqlTextArray",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseProfileVerificationSql",
+        "toSymbol": "escapeSqlLiteral",
+        "callExpression": "escapeSqlLiteral",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getStatusScript",
+        "toSymbol": "getSupabaseProfileChecksumSql",
+        "callExpression": "getSupabaseProfileChecksumSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getStatusScript",
+        "toSymbol": "getSupabaseProfileVerificationSql",
+        "callExpression": "getSupabaseProfileVerificationSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getStatusScript",
+        "toSymbol": "getSupabaseProfileDisabledGuardSql",
+        "callExpression": "getSupabaseProfileDisabledGuardSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseLocalEnvScript",
+        "toSymbol": "getSupabaseProfileChecksumSql",
+        "callExpression": "getSupabaseProfileChecksumSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseLocalEnvScript",
+        "toSymbol": "getSupabaseProfileVerificationSql",
+        "callExpression": "getSupabaseProfileVerificationSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseLocalEnvScript",
+        "toSymbol": "getSupabaseProfileDisabledGuardSql",
+        "callExpression": "getSupabaseProfileDisabledGuardSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
         "fromSymbol": "resolveSupabaseLocalPorts",
         "toSymbol": "resolveSupabaseLocalPortBucket",
         "callExpression": "resolveSupabaseLocalPortBucket",
@@ -3583,6 +3754,12 @@
         "fromSymbol": "resolveSupabaseLocalPortBucket",
         "toSymbol": "hashProjectId",
         "callExpression": "hashProjectId",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "src/adapters/minikube/base/index.ts",
+        "toSymbol": "escapeSqlLiteral",
+        "callExpression": "escapeSqlLiteral",
         "sourcePath": "src/adapters/minikube/base/index.ts"
       },
       {
@@ -3611,8 +3788,8 @@
       },
       {
         "fromSymbol": "generateSupabaseAuthArtifacts",
-        "toSymbol": "resolveProfileModel",
-        "callExpression": "resolveProfileModel",
+        "toSymbol": "resolveSupabaseProfileModel",
+        "callExpression": "resolveSupabaseProfileModel",
         "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
       },
       {
@@ -3635,8 +3812,8 @@
       },
       {
         "fromSymbol": "generateSupabaseAuthArtifacts",
-        "toSymbol": "getSupabaseProfileMigration",
-        "callExpression": "getSupabaseProfileMigration",
+        "toSymbol": "getSupabaseProfileReconciliation",
+        "callExpression": "getSupabaseProfileReconciliation",
         "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
       },
       {
@@ -3664,40 +3841,64 @@
         "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
       },
       {
-        "fromSymbol": "resolveProfileModel",
+        "fromSymbol": "resolveSupabaseProfileModel",
         "toSymbol": "normalizeIdentifier",
         "callExpression": "normalizeIdentifier",
-        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
-        "fromSymbol": "resolveProfileModel",
+        "fromSymbol": "resolveSupabaseProfileModel",
         "toSymbol": "normalizeFieldList",
         "callExpression": "normalizeFieldList",
-        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
-        "fromSymbol": "resolveProfileModel",
+        "fromSymbol": "resolveSupabaseProfileModel",
         "toSymbol": "resolveProfileColumns",
         "callExpression": "resolveProfileColumns",
-        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
-        "fromSymbol": "getSupabaseProfileMigration",
-        "toSymbol": "quoteIdentifier",
-        "callExpression": "quoteIdentifier",
-        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+        "fromSymbol": "resolveSupabaseProfileModel",
+        "toSymbol": "getProfileDesiredStateHash",
+        "callExpression": "getProfileDesiredStateHash",
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
-        "fromSymbol": "src/adapters/minikube/auth/supabase/index.ts",
+        "fromSymbol": "getSupabaseProfileReconciliation",
         "toSymbol": "quoteIdentifier",
         "callExpression": "quoteIdentifier",
-        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
+      },
+      {
+        "fromSymbol": "src/adapters/minikube/auth/supabase/profile.ts",
+        "toSymbol": "quoteIdentifier",
+        "callExpression": "quoteIdentifier",
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseProfileReconciliation",
+        "toSymbol": "escapeSqlLiteral",
+        "callExpression": "escapeSqlLiteral",
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
+      },
+      {
+        "fromSymbol": "getProfileDesiredStateHash",
+        "toSymbol": "createHash",
+        "callExpression": "createHash",
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
         "fromSymbol": "resolveProfileColumns",
         "toSymbol": "mapProfileFieldToColumn",
         "callExpression": "mapProfileFieldToColumn",
-        "sourcePath": "src/adapters/minikube/auth/supabase/index.ts"
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
+      },
+      {
+        "fromSymbol": "resolveProfileColumns",
+        "toSymbol": "getSupportedProfileFields",
+        "callExpression": "getSupportedProfileFields",
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
         "fromSymbol": "generateCerbosAuthzArtifacts",

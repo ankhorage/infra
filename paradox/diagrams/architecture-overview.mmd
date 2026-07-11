@@ -11,8 +11,12 @@ graph TD
   module_src_adapters_minikube_auth_index_ts --> module_src_types_ts
   module_src_adapters_minikube_auth_supabase_index_ts["src/adapters/minikube/auth/supabase/index.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_supabase_index_ts --> module_src_adapters_minikube_auth_supabase_profile_ts
   module_src_adapters_minikube_auth_supabase_index_ts --> module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_supabase_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_auth_supabase_profile_ts["src/adapters/minikube/auth/supabase/profile.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_auth_supabase_profile_ts
+  module_src_adapters_minikube_auth_supabase_profile_ts --> module_src_types_ts
   module_src_adapters_minikube_authz_cerbos_index_ts["src/adapters/minikube/authz/cerbos/index.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_authz_cerbos_index_ts
   module_src_adapters_minikube_authz_cerbos_index_ts --> module_src_adapters_minikube_contracts_ts
@@ -24,6 +28,7 @@ graph TD
   module_src_adapters_minikube_authz_index_ts --> module_src_types_ts
   module_src_adapters_minikube_base_index_ts["src/adapters/minikube/base/index.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_base_index_ts
+  module_src_adapters_minikube_base_index_ts --> module_src_adapters_minikube_auth_supabase_profile_ts
   module_src_adapters_minikube_base_index_ts --> module_src_types_ts
   module_src_adapters_minikube_contracts_ts["src/adapters/minikube/contracts.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_contracts_ts
@@ -47,10 +52,10 @@ graph TD
   module_src_apis_ts["src/apis.ts"]
   package__ankhorage_infra -.-> module_src_apis_ts
   module_src_apis_ts --> module_src_types_ts
-  module_src_cli_ts["src/cli.ts"]
-  package__ankhorage_infra -.-> module_src_cli_ts
-  module_src_cli_ts --> module_src_commandContext_ts
-  module_src_cli_ts --> module_src_commands_ts
+  module_src_cli_bin_ts["src/cli/bin.ts"]
+  package__ankhorage_infra -.-> module_src_cli_bin_ts
+  module_src_cli_bin_ts --> module_src_commandContext_ts
+  module_src_cli_bin_ts --> module_src_commands_ts
   module_src_cli_index_ts["src/cli/index.ts"]
   package__ankhorage_infra -.-> module_src_cli_index_ts
   module_src_cli_index_ts --> module_src_commands_ts

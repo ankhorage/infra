@@ -257,9 +257,20 @@ describe('generateInfrastructure', () => {
     );
     expect(supabaseLocalEnvScript?.executable).toBe(true);
     expect(supabaseLocalEnvScript?.content).toContain('supabase status -o env');
-    expect(supabaseLocalEnvScript?.content).toContain('supabase init --yes');
-    expect(supabaseLocalEnvScript?.content).toContain('supabase start');
+    expect(supabaseLocalEnvScript?.content).toContain(
+      'supabase --workdir "${SUPABASE_PROJECT_DIR}" init --yes',
+    );
+    expect(supabaseLocalEnvScript?.content).toContain(
+      'supabase --workdir "${SUPABASE_PROJECT_DIR}" start',
+    );
+    expect(supabaseLocalEnvScript?.content).toContain(
+      'supabase --workdir "${SUPABASE_PROJECT_DIR}" migration up --local',
+    );
     expect(supabaseLocalEnvScript?.content).toContain('SUPABASE_PROJECT_DIR');
+    expect(supabaseLocalEnvScript?.content).toContain(
+      'SUPABASE_PROJECT_DIR="${SUPABASE_PROJECT_DIR:-${ROOT_DIR}}"',
+    );
+    expect(supabaseLocalEnvScript?.content).toContain('supabase CLI >= 2.106.0 is required');
     expect(supabaseLocalEnvScript?.content).toContain('SUPABASE_LOCAL_ANALYTICS_PORT');
     expect(supabaseLocalEnvScript?.content).toContain('export SUPABASE_LOCAL_ANALYTICS_PORT');
     expect(supabaseLocalEnvScript?.content).toContain(
