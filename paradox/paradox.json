@@ -112,9 +112,6 @@
       "exports": [
         "getSupabaseProfileReconciliation",
         "MANAGED_PROFILE_COLUMNS",
-        "mapProfileFieldToColumn",
-        "ProfileColumnSpec",
-        "quoteIdentifier",
         "ResolvedProfileModel",
         "resolveSupabaseProfileModel"
       ]
@@ -944,7 +941,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 234,
+        "line": 352,
         "column": 1
       }
     },
@@ -953,7 +950,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 284,
+        "line": 402,
         "column": 1
       }
     },
@@ -962,7 +959,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 288,
+        "line": 406,
         "column": 1
       }
     },
@@ -971,7 +968,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 313,
+        "line": 431,
         "column": 1
       }
     },
@@ -980,7 +977,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 331,
+        "line": 449,
         "column": 1
       }
     },
@@ -989,7 +986,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 353,
+        "line": 471,
         "column": 1
       }
     },
@@ -998,7 +995,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 366,
+        "line": 490,
         "column": 1
       }
     },
@@ -1345,11 +1342,20 @@
       }
     },
     {
+      "name": "getSupabaseProfileDisabledGuardSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/base/index.ts",
+        "line": 1052,
+        "column": 1
+      }
+    },
+    {
       "name": "getSupabaseProfileVerificationSql",
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1047,
+        "line": 1067,
         "column": 1
       }
     },
@@ -1358,7 +1364,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1207,
+        "line": 1376,
         "column": 1
       }
     },
@@ -1367,7 +1373,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1445,
+        "line": 1676,
         "column": 1
       }
     },
@@ -1376,7 +1382,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1947,
+        "line": 2231,
         "column": 1
       }
     },
@@ -1385,7 +1391,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1951,
+        "line": 2235,
         "column": 1
       }
     },
@@ -1394,7 +1400,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1967,
+        "line": 2251,
         "column": 1
       }
     },
@@ -1403,7 +1409,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1972,
+        "line": 2256,
         "column": 1
       }
     },
@@ -1412,7 +1418,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1983,
+        "line": 2267,
         "column": 1
       }
     },
@@ -1421,7 +1427,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1987,
+        "line": 2271,
         "column": 1
       }
     },
@@ -3706,6 +3712,12 @@
         "sourcePath": "src/adapters/minikube/base/index.ts"
       },
       {
+        "fromSymbol": "getStatusScript",
+        "toSymbol": "getSupabaseProfileDisabledGuardSql",
+        "callExpression": "getSupabaseProfileDisabledGuardSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
         "fromSymbol": "getSupabaseLocalEnvScript",
         "toSymbol": "getSupabaseProfileChecksumSql",
         "callExpression": "getSupabaseProfileChecksumSql",
@@ -3715,6 +3727,12 @@
         "fromSymbol": "getSupabaseLocalEnvScript",
         "toSymbol": "getSupabaseProfileVerificationSql",
         "callExpression": "getSupabaseProfileVerificationSql",
+        "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseLocalEnvScript",
+        "toSymbol": "getSupabaseProfileDisabledGuardSql",
+        "callExpression": "getSupabaseProfileDisabledGuardSql",
         "sourcePath": "src/adapters/minikube/base/index.ts"
       },
       {
