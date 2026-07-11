@@ -852,7 +852,7 @@
         {
           "name": "target",
           "kind": "property",
-          "type": "import(\"/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+          "type": "import(\"/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
           "required": true,
           "description": null
         }
@@ -1338,7 +1338,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 158,
+        "line": 163,
         "column": 1
       }
     },
@@ -1347,7 +1347,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 355,
+        "line": 360,
         "column": 1
       }
     },
@@ -1356,7 +1356,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 415,
+        "line": 420,
         "column": 1
       }
     },
@@ -1365,7 +1365,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 425,
+        "line": 430,
         "column": 1
       }
     },
@@ -1374,7 +1374,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 466,
+        "line": 474,
         "column": 1
       }
     },
@@ -1383,7 +1383,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 501,
+        "line": 509,
         "column": 1
       }
     },
@@ -1392,7 +1392,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 516,
+        "line": 524,
         "column": 1
       }
     },
@@ -1401,7 +1401,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 520,
+        "line": 528,
         "column": 1
       }
     },
@@ -1410,7 +1410,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 537,
+        "line": 545,
         "column": 1
       }
     },
@@ -1419,7 +1419,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 591,
+        "line": 599,
         "column": 1
       }
     },
@@ -1428,7 +1428,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 610,
+        "line": 618,
         "column": 1
       }
     },
@@ -1437,7 +1437,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 860,
+        "line": 868,
         "column": 1
       }
     },
@@ -1446,7 +1446,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 937,
+        "line": 945,
         "column": 1
       }
     },
@@ -1455,7 +1455,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 961,
+        "line": 969,
         "column": 1
       }
     },
@@ -1464,7 +1464,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1002,
+        "line": 1010,
         "column": 1
       }
     },
@@ -1473,7 +1473,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1022,
+        "line": 1030,
         "column": 1
       }
     },
@@ -1482,7 +1482,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1052,
+        "line": 1060,
         "column": 1
       }
     },
@@ -1491,7 +1491,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1067,
+        "line": 1075,
         "column": 1
       }
     },
@@ -1500,7 +1500,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1407,
+        "line": 1415,
         "column": 1
       }
     },
@@ -1509,7 +1509,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1707,
+        "line": 1715,
         "column": 1
       }
     },
@@ -1518,7 +1518,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2262,
+        "line": 2270,
         "column": 1
       }
     },
@@ -1527,7 +1527,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2266,
+        "line": 2274,
         "column": 1
       }
     },
@@ -1536,7 +1536,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2282,
+        "line": 2290,
         "column": 1
       }
     },
@@ -1545,7 +1545,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2287,
+        "line": 2295,
         "column": 1
       }
     },
@@ -1554,7 +1554,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2298,
+        "line": 2306,
         "column": 1
       }
     },
@@ -1563,7 +1563,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2302,
+        "line": 2310,
         "column": 1
       }
     },
@@ -4456,11 +4456,6 @@
       {
         "fromSymbol": "InfrastructureGenerationMeta",
         "toType": "DeploymentTarget",
-        "sourcePath": "src/types.ts"
-      },
-      {
-        "fromSymbol": "InfrastructureGenerationMeta",
-        "toType": "Users",
         "sourcePath": "src/types.ts"
       },
       {

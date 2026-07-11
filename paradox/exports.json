@@ -480,7 +480,7 @@
       {
         "name": "target",
         "kind": "property",
-        "type": "import(\"/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+        "type": "import(\"/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
         "required": true,
         "description": null
       }

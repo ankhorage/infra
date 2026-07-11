@@ -174,10 +174,10 @@ Source: `src/types.ts:18:1`
 
 ### Members
 
-| Name      | Kind     | Type                                                                                                     | Required | Description |
-| --------- | -------- | -------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| providers | property | `readonly string[]`                                                                                      | yes      |             |
-| target    | property | `import("/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
+| Name      | Kind     | Type                                                                                                    | Required | Description |
+| --------- | -------- | ------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| providers | property | `readonly string[]`                                                                                     | yes      |             |
+| target    | property | `import("/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
 
 ## InfrastructureGenerationOptions
 
