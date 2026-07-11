@@ -415,7 +415,7 @@
       {
         "name": "appManifest",
         "kind": "property",
-        "type": "Pick<AppManifest, \"data\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+        "type": "Pick<AppManifest, \"data\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
         "required": false,
         "description": null
       },

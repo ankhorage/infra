@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.3.2",
+      "value": "v0.3.4",
       "color": "cb3837"
     },
     {
@@ -751,7 +751,7 @@
         {
           "name": "appManifest",
           "kind": "property",
-          "type": "Pick<AppManifest, \"data\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+          "type": "Pick<AppManifest, \"data\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
           "required": false,
           "description": null
         },
@@ -1013,7 +1013,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 6,
+        "line": 7,
         "column": 1
       }
     },
@@ -1022,7 +1022,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 47,
+        "line": 48,
         "column": 1
       }
     },
@@ -1031,7 +1031,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 64,
+        "line": 65,
         "column": 1
       }
     },
@@ -1040,7 +1040,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 85,
+        "line": 86,
         "column": 1
       }
     },
@@ -1049,7 +1049,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 126,
+        "line": 127,
         "column": 1
       }
     },
@@ -1058,7 +1058,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 173,
+        "line": 174,
         "column": 1
       }
     },
@@ -1067,7 +1067,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 198,
+        "line": 199,
         "column": 1
       }
     },
@@ -1076,7 +1076,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 210,
+        "line": 211,
         "column": 1
       }
     },
@@ -1085,7 +1085,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 242,
+        "line": 243,
         "column": 1
       }
     },
@@ -1094,7 +1094,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 274,
+        "line": 275,
         "column": 1
       }
     },
@@ -1103,7 +1103,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 292,
+        "line": 293,
         "column": 1
       }
     },
@@ -1112,7 +1112,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 296,
+        "line": 297,
         "column": 1
       }
     },
@@ -1121,7 +1121,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 305,
+        "line": 306,
         "column": 1
       }
     },
@@ -1130,7 +1130,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 375,
+        "line": 377,
         "column": 1
       }
     },
@@ -1139,7 +1139,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 378,
+        "line": 380,
         "column": 9
       }
     },
@@ -1148,7 +1148,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 398,
+        "line": 400,
         "column": 1
       }
     },
@@ -1157,7 +1157,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 402,
+        "line": 404,
         "column": 1
       }
     },
@@ -1166,7 +1166,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 440,
+        "line": 442,
         "column": 1
       }
     },
@@ -1175,7 +1175,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 447,
+        "line": 449,
         "column": 1
       }
     },
@@ -1184,7 +1184,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/authz/cerbos/index.ts",
-        "line": 451,
+        "line": 453,
         "column": 1
       }
     },
@@ -1472,7 +1472,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 100,
+        "line": 102,
         "column": 1
       }
     },
@@ -1481,7 +1481,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 114,
+        "line": 116,
         "column": 1
       }
     },
@@ -1490,7 +1490,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 130,
+        "line": 132,
         "column": 1
       }
     },
@@ -1499,7 +1499,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 147,
+        "line": 149,
         "column": 1
       }
     },
@@ -2129,7 +2129,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 100,
+        "line": 94,
         "column": 1
       }
     },
@@ -2138,7 +2138,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 128,
+        "line": 122,
         "column": 1
       }
     },
@@ -2147,7 +2147,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 146,
+        "line": 140,
         "column": 1
       }
     },
@@ -2156,7 +2156,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 156,
+        "line": 150,
         "column": 1
       }
     },
@@ -2165,7 +2165,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 174,
+        "line": 168,
         "column": 1
       }
     },
@@ -2174,7 +2174,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 190,
+        "line": 184,
         "column": 1
       }
     },
@@ -2183,7 +2183,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 202,
+        "line": 196,
         "column": 1
       }
     },
@@ -2192,7 +2192,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 206,
+        "line": 200,
         "column": 1
       }
     },
@@ -2201,7 +2201,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 215,
+        "line": 209,
         "column": 1
       }
     },
@@ -2210,16 +2210,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 224,
-        "column": 1
-      }
-    },
-    {
-      "name": "isAuthFlowConfig",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 233,
+        "line": 217,
         "column": 1
       }
     },
@@ -2228,7 +2219,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 246,
+        "line": 226,
         "column": 1
       }
     },
@@ -2237,7 +2228,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 250,
+        "line": 230,
         "column": 1
       }
     },
@@ -2246,7 +2237,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 259,
+        "line": 239,
         "column": 1
       }
     },
@@ -2255,7 +2246,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 268,
+        "line": 248,
         "column": 1
       }
     },
@@ -3253,19 +3244,7 @@
         "sourcePath": "src/project.ts"
       },
       {
-        "fromSymbol": "isSettingsRecord",
-        "toSymbol": "isAuthFlowConfig",
-        "callExpression": "isAuthFlowConfig",
-        "sourcePath": "src/project.ts"
-      },
-      {
         "fromSymbol": "isLocalizationRecord",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isAuthFlowConfig",
         "toSymbol": "isRecord",
         "callExpression": "isRecord",
         "sourcePath": "src/project.ts"
@@ -4012,6 +3991,12 @@
         "fromSymbol": "buildCerbosPolicyIntent",
         "toSymbol": "flattenNavigatorRoutes",
         "callExpression": "flattenNavigatorRoutes",
+        "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromSymbol": "buildCerbosPolicyIntent",
+        "toSymbol": "resolveAuthFlow",
+        "callExpression": "resolveAuthFlow",
         "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
       },
       {

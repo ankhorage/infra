@@ -312,9 +312,9 @@ function buildCerbosPolicyIntent(args: {
 
   const routes = appManifest?.navigator ? flattenNavigatorRoutes(appManifest.navigator) : [];
   const flow = resolveAuthFlow(appManifest?.infra.auth?.flow);
-  const signInRoute = flow.signInRoute;
-  const signUpRoute = flow.signUpRoute;
-  const unauthorizedRoute = flow.unauthorizedRoute;
+  const { signInRoute } = flow;
+  const { signUpRoute } = flow;
+  const { unauthorizedRoute } = flow;
 
   const publicRouteSet = new Set<string>();
   const protectedRouteSet = new Set<string>();

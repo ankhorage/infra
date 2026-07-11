@@ -150,10 +150,10 @@ Source: `src/types.ts:30:1`
 
 ### Members
 
-| Name          | Kind     | Type                                                                                             | Required | Description |
-| ------------- | -------- | ------------------------------------------------------------------------------------------------ | -------- | ----------- |
-| appManifest   | property | `Pick<AppManifest, "data" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
-| namespaceHint | property | `string \| undefined`                                                                            | no       |             |
+| Name          | Kind     | Type                                                                                                        | Required | Description |
+| ------------- | -------- | ----------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| appManifest   | property | `Pick<AppManifest, "data" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
+| namespaceHint | property | `string \| undefined`                                                                                       | no       |             |
 
 ## InfrastructureGenerationResult
 

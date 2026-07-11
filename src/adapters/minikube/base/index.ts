@@ -44,7 +44,7 @@ export function generateMinikubeBaseArtifacts(args: {
 
   const authScope = manifest.auth?.scope ?? 'none';
   const authProvider = manifest.auth?.provider ?? 'none';
-  const authzEngine = manifest.auth?.authorization.engine ?? 'none';
+  const authzEngine = manifest.auth?.authorization?.engine ?? 'none';
   const databaseProvider = manifest.database?.provider ?? 'none';
   const storageMetadata = resolveAppInfraStorageMetadata(manifest);
   const profileModel = resolveSupabaseProfileModel(manifest);

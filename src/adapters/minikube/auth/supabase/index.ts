@@ -17,8 +17,8 @@ export function generateSupabaseAuthArtifacts(args: {
   const docsRoot = 'infra/minikube/auth';
   const generatedRoot = 'infra/minikube/supabase/generated';
   const scope = manifest.auth?.scope ?? 'global';
-  const authzEngine = manifest.auth?.authorization.engine ?? 'native';
-  const authzKind = manifest.auth?.authorization.kind ?? 'RBAC';
+  const authzEngine = manifest.auth?.authorization?.engine ?? 'native';
+  const authzKind = manifest.auth?.authorization?.kind ?? 'RBAC';
   const authFieldModel = resolveAuthFieldModel(manifest);
   const profileModel = resolveSupabaseProfileModel(manifest);
 
