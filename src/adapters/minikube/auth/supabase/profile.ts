@@ -108,7 +108,7 @@ create or replace function public.${functionName}()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, auth, pg_temp
+set search_path = pg_catalog, pg_temp
 as $$
 begin
   insert into public.${table} (${insertColumns})
@@ -143,9 +143,33 @@ create schema if not exists ankhorage_internal;
 
 create table if not exists ankhorage_internal.generated_schema_state (
   artifact_key text primary key,
+  table_name text,
   content_hash text not null,
   applied_at timestamptz not null
 );
+
+alter table ankhorage_internal.generated_schema_state
+  add column if not exists table_name text;
+
+do $$
+declare
+  previous_table_name text;
+  has_previous_state boolean;
+begin
+  select table_name, true
+    into previous_table_name, has_previous_state
+    from ankhorage_internal.generated_schema_state
+    where artifact_key = '${PROFILE_ARTIFACT_KEY}';
+
+  if has_previous_state and previous_table_name is null then
+    raise exception 'existing auth.profile generated state is missing table identity; reset local Supabase or add an explicit cleanup migration before applying generated profile reconciliation';
+  end if;
+
+  if has_previous_state and previous_table_name <> '${escapeSqlLiteral(profileModel.table)}' then
+    raise exception 'profile.table changed from % to %; reset local Supabase or add an explicit cleanup migration before applying generated profile reconciliation', previous_table_name, '${escapeSqlLiteral(profileModel.table)}';
+  end if;
+end;
+$$;
 
 create table if not exists public.${table} (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -162,6 +186,24 @@ ${dropStaleManagedColumnSql}
 
 do $$
 begin
+  if exists (
+    select 1
+    from pg_constraint c
+    where c.conrelid = 'public.${escapeSqlLiteral(profileModel.table)}'::regclass
+      and c.contype = 'p'
+      and c.conkey <> array[
+        (
+          select a.attnum
+          from pg_attribute a
+          where a.attrelid = 'public.${escapeSqlLiteral(profileModel.table)}'::regclass
+            and a.attname = 'id'
+            and not a.attisdropped
+        )
+      ]::smallint[]
+  ) then
+    raise exception 'profile table public.${escapeSqlLiteral(profileModel.table)} has a primary key that is not exactly id';
+  end if;
+
   if not exists (
     select 1
     from pg_constraint
@@ -176,6 +218,37 @@ $$;
 
 do $$
 begin
+  if exists (
+    select 1
+    from pg_constraint c
+    where c.conrelid = 'public.${escapeSqlLiteral(profileModel.table)}'::regclass
+      and c.contype = 'f'
+      and c.confrelid = 'auth.users'::regclass
+      and (
+        c.confdeltype <> 'c'
+        or c.conkey <> array[
+          (
+            select a.attnum
+            from pg_attribute a
+            where a.attrelid = 'public.${escapeSqlLiteral(profileModel.table)}'::regclass
+              and a.attname = 'id'
+              and not a.attisdropped
+          )
+        ]::smallint[]
+        or c.confkey <> array[
+          (
+            select a.attnum
+            from pg_attribute a
+            where a.attrelid = 'auth.users'::regclass
+              and a.attname = 'id'
+              and not a.attisdropped
+          )
+        ]::smallint[]
+      )
+  ) then
+    raise exception 'profile table public.${escapeSqlLiteral(profileModel.table)} has an auth.users foreign key that is not exactly id -> auth.users(id) on delete cascade';
+  end if;
+
   if not exists (
     select 1
     from pg_constraint c
@@ -187,6 +260,48 @@ begin
     alter table public.${table}
       add constraint ${quoteIdentifier(`${profileModel.table}_id_auth_users_fkey`)}
       foreign key (id) references auth.users(id) on delete cascade;
+  end if;
+end;
+$$;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from information_schema.columns c
+    where c.table_schema = 'public'
+      and c.table_name = '${escapeSqlLiteral(profileModel.table)}'
+      and c.column_name = 'id'
+      and c.udt_name = 'uuid'
+      and c.is_nullable = 'NO'
+  ) then
+    raise exception 'profile id column must be uuid not null';
+  end if;
+
+  if not exists (
+    select 1
+    from information_schema.columns c
+    where c.table_schema = 'public'
+      and c.table_name = '${escapeSqlLiteral(profileModel.table)}'
+      and c.column_name = 'created_at'
+      and c.data_type = 'timestamp with time zone'
+      and c.is_nullable = 'NO'
+      and c.column_default = 'now()'
+  ) then
+    raise exception 'profile created_at column must be timestamptz not null default now()';
+  end if;
+
+  if not exists (
+    select 1
+    from information_schema.columns c
+    where c.table_schema = 'public'
+      and c.table_name = '${escapeSqlLiteral(profileModel.table)}'
+      and c.column_name = 'updated_at'
+      and c.data_type = 'timestamp with time zone'
+      and c.is_nullable = 'NO'
+      and c.column_default = 'now()'
+  ) then
+    raise exception 'profile updated_at column must be timestamptz not null default now()';
   end if;
 end;
 $$;
@@ -214,16 +329,19 @@ create policy ${quoteIdentifier(`${profileModel.table}_update_own`)}
 ${triggerSql}
 insert into ankhorage_internal.generated_schema_state (
   artifact_key,
+  table_name,
   content_hash,
   applied_at
 )
 values (
   '${PROFILE_ARTIFACT_KEY}',
+  '${escapeSqlLiteral(profileModel.table)}',
   '${profileModel.desiredStateHash}',
   now()
 )
 on conflict (artifact_key)
 do update set
+  table_name = excluded.table_name,
   content_hash = excluded.content_hash,
   applied_at = excluded.applied_at;
 
@@ -353,6 +471,12 @@ function normalizeFieldList(
 function normalizeIdentifier(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return '';
+
+  if (trimmed === 'users') {
+    throw new Error(
+      'Invalid Supabase profile table identifier "users". public.users is reserved for identity conflict detection; use a dedicated profile table such as "profiles".',
+    );
+  }
 
   if (!/^[a-z_][a-z0-9_]*$/.test(trimmed)) {
     throw new Error(

@@ -1023,18 +1023,23 @@ function getSupabaseProfileChecksumSql(profileModel: ResolvedProfileModel): stri
   return `do $$
 declare
   actual_hash text;
+  actual_table_name text;
 begin
   if to_regclass('ankhorage_internal.generated_schema_state') is null then
     raise exception 'missing ankhorage_internal.generated_schema_state';
   end if;
 
-  select content_hash
-    into actual_hash
+  select content_hash, table_name
+    into actual_hash, actual_table_name
     from ankhorage_internal.generated_schema_state
     where artifact_key = 'auth.profile';
 
   if actual_hash is null then
     raise exception 'missing generated schema state for auth.profile';
+  end if;
+
+  if actual_table_name <> '${escapeSqlLiteral(profileModel.table)}' then
+    raise exception 'generated schema state table mismatch for auth.profile: expected %, found %', '${escapeSqlLiteral(profileModel.table)}', actual_table_name;
   end if;
 
   if actual_hash <> '${escapeSqlLiteral(profileModel.desiredStateHash)}' then
@@ -1044,10 +1049,27 @@ end;
 $$;`;
 }
 
+function getSupabaseProfileDisabledGuardSql(): string {
+  return `do $$
+begin
+  if to_regclass('ankhorage_internal.generated_schema_state') is not null
+    and exists (
+      select 1
+      from ankhorage_internal.generated_schema_state
+      where artifact_key = 'auth.profile'
+    ) then
+    raise exception 'manifest auth.profile.table was removed but local generated auth.profile state still exists; reset local Supabase or add an explicit cleanup migration';
+  end if;
+end;
+$$;`;
+}
+
 function getSupabaseProfileVerificationSql(profileModel: ResolvedProfileModel): string {
   const configuredColumns = profileModel.columns.map((column) => column.column);
   const configuredArray = getSqlTextArray(configuredColumns);
   const managedArray = getSqlTextArray(MANAGED_PROFILE_COLUMNS);
+  const updateGrantArray = getSqlTextArray(configuredColumns);
+  const protectedUpdateColumnsArray = getSqlTextArray(['id', 'created_at', 'updated_at', 'role']);
   const table = escapeSqlLiteral(profileModel.table);
   const selectPolicy = escapeSqlLiteral(`${profileModel.table}_select_own`);
   const updatePolicy = escapeSqlLiteral(`${profileModel.table}_update_own`);
@@ -1066,6 +1088,10 @@ function getSupabaseProfileVerificationSql(profileModel: ResolvedProfileModel): 
       and rel.relname = 'users'
       and t.tgname = '${triggerName}'
       and not t.tgisinternal
+      and t.tgenabled = 'O'
+      and (t.tgtype::integer & 1) = 1
+      and (t.tgtype::integer & 4) = 4
+      and (t.tgtype::integer & (2 | 8 | 16 | 32)) = 0
       and fn_ns.nspname = 'public'
       and fn.proname = '${functionName}'
   ) then
@@ -1106,27 +1132,86 @@ begin
   if not exists (
     select 1
     from pg_constraint c
-    join pg_attribute a on a.attrelid = c.conrelid and a.attnum = any(c.conkey)
     where c.conrelid = format('public.%I', profile_table)::regclass
       and c.contype = 'p'
-      and a.attname = 'id'
+      and c.conkey = array[
+        (
+          select a.attnum
+          from pg_attribute a
+          where a.attrelid = format('public.%I', profile_table)::regclass
+            and a.attname = 'id'
+            and not a.attisdropped
+        )
+      ]::smallint[]
   ) then
-    raise exception 'profile id primary key is missing';
+    raise exception 'profile table primary key must be exactly id';
   end if;
 
   if not exists (
     select 1
     from pg_constraint c
-    join pg_attribute local_a on local_a.attrelid = c.conrelid and local_a.attnum = any(c.conkey)
-    join pg_attribute foreign_a on foreign_a.attrelid = c.confrelid and foreign_a.attnum = any(c.confkey)
     where c.conrelid = format('public.%I', profile_table)::regclass
       and c.confrelid = 'auth.users'::regclass
       and c.contype = 'f'
       and c.confdeltype = 'c'
-      and local_a.attname = 'id'
-      and foreign_a.attname = 'id'
+      and c.conkey = array[
+        (
+          select a.attnum
+          from pg_attribute a
+          where a.attrelid = format('public.%I', profile_table)::regclass
+            and a.attname = 'id'
+            and not a.attisdropped
+        )
+      ]::smallint[]
+      and c.confkey = array[
+        (
+          select a.attnum
+          from pg_attribute a
+          where a.attrelid = 'auth.users'::regclass
+            and a.attname = 'id'
+            and not a.attisdropped
+        )
+      ]::smallint[]
   ) then
     raise exception 'profile id must reference auth.users(id) with cascade delete';
+  end if;
+
+  if not exists (
+    select 1
+    from information_schema.columns c
+    where c.table_schema = 'public'
+      and c.table_name = profile_table
+      and c.column_name = 'id'
+      and c.udt_name = 'uuid'
+      and c.is_nullable = 'NO'
+  ) then
+    raise exception 'profile id column must be uuid not null';
+  end if;
+
+  if not exists (
+    select 1
+    from information_schema.columns c
+    where c.table_schema = 'public'
+      and c.table_name = profile_table
+      and c.column_name = 'created_at'
+      and c.data_type = 'timestamp with time zone'
+      and c.is_nullable = 'NO'
+      and c.column_default = 'now()'
+  ) then
+    raise exception 'profile created_at column must be timestamptz not null default now()';
+  end if;
+
+  if not exists (
+    select 1
+    from information_schema.columns c
+    where c.table_schema = 'public'
+      and c.table_name = profile_table
+      and c.column_name = 'updated_at'
+      and c.data_type = 'timestamp with time zone'
+      and c.is_nullable = 'NO'
+      and c.column_default = 'now()'
+  ) then
+    raise exception 'profile updated_at column must be timestamptz not null default now()';
   end if;
 
   foreach expected_column in array configured_columns loop
@@ -1177,29 +1262,113 @@ begin
 
   if not exists (
     select 1
-    from pg_policies
-    where schemaname = 'public'
-      and tablename = profile_table
-      and policyname = '${selectPolicy}'
-      and cmd = 'SELECT'
-      and 'authenticated' = any(roles)
+    from pg_policy p
+    join pg_class c on c.oid = p.polrelid
+    join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public'
+      and c.relname = profile_table
+      and p.polname = '${selectPolicy}'
+      and p.polcmd = 'r'
+      and p.polroles = array['authenticated'::regrole]::oid[]
+      and regexp_replace(lower(pg_get_expr(p.polqual, p.polrelid)), '[[:space:]()]', '', 'g') in (
+        'auth.uid=id',
+        'auth.uid=' || profile_table || '.id',
+        'selectauth.uidasuid=id',
+        'selectauth.uidasuid=' || profile_table || '.id'
+      )
+      and p.polwithcheck is null
   ) then
-    raise exception 'own-profile SELECT policy is missing';
+    raise exception 'own-profile SELECT policy is missing or has unsafe definition';
   end if;
 
   if not exists (
     select 1
-    from pg_policies
-    where schemaname = 'public'
-      and tablename = profile_table
-      and policyname = '${updatePolicy}'
-      and cmd = 'UPDATE'
-      and 'authenticated' = any(roles)
+    from pg_policy p
+    join pg_class c on c.oid = p.polrelid
+    join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public'
+      and c.relname = profile_table
+      and p.polname = '${updatePolicy}'
+      and p.polcmd = 'w'
+      and p.polroles = array['authenticated'::regrole]::oid[]
+      and regexp_replace(lower(pg_get_expr(p.polqual, p.polrelid)), '[[:space:]()]', '', 'g') in (
+        'auth.uid=id',
+        'auth.uid=' || profile_table || '.id',
+        'selectauth.uidasuid=id',
+        'selectauth.uidasuid=' || profile_table || '.id'
+      )
+      and regexp_replace(lower(pg_get_expr(p.polwithcheck, p.polrelid)), '[[:space:]()]', '', 'g') in (
+        'auth.uid=id',
+        'auth.uid=' || profile_table || '.id',
+        'selectauth.uidasuid=id',
+        'selectauth.uidasuid=' || profile_table || '.id'
+      )
   ) then
-    raise exception 'own-profile UPDATE policy is missing';
+    raise exception 'own-profile UPDATE policy is missing or has unsafe definition';
+  end if;
+
+  if has_table_privilege('anon', format('public.%I', profile_table), 'SELECT')
+    or has_table_privilege('anon', format('public.%I', profile_table), 'INSERT')
+    or has_table_privilege('anon', format('public.%I', profile_table), 'UPDATE')
+    or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE') then
+    raise exception 'anon must not have profile table privileges';
+  end if;
+
+  if not has_table_privilege('authenticated', format('public.%I', profile_table), 'SELECT') then
+    raise exception 'authenticated role must have profile table SELECT privilege';
+  end if;
+
+  foreach expected_column in array ${updateGrantArray} loop
+    if not has_column_privilege('authenticated', format('public.%I', profile_table), expected_column, 'UPDATE') then
+      raise exception 'authenticated role is missing UPDATE privilege on configured profile column %', expected_column;
+    end if;
+  end loop;
+
+  foreach expected_column in array ${protectedUpdateColumnsArray} loop
+    if exists (
+      select 1
+      from information_schema.columns c
+      where c.table_schema = 'public'
+        and c.table_name = profile_table
+        and c.column_name = expected_column
+    ) and has_column_privilege('authenticated', format('public.%I', profile_table), expected_column, 'UPDATE') then
+      raise exception 'authenticated role must not have UPDATE privilege on protected profile column %', expected_column;
+    end if;
   end if;
 
 ${triggerCheck}
+
+  if '${profileModel.createStrategy}' = 'trigger' then
+    if not exists (
+      select 1
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'public'
+        and p.proname = '${functionName}'
+        and p.prosecdef
+        and p.prorettype = 'trigger'::regtype
+        and p.proconfig @> array['search_path=pg_catalog, pg_temp']
+    ) then
+      raise exception 'generated trigger function is missing required SECURITY DEFINER properties';
+    end if;
+
+    if exists (
+      select 1
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) acl
+      where n.nspname = 'public'
+        and p.proname = '${functionName}'
+        and acl.privilege_type = 'EXECUTE'
+        and (
+          acl.grantee = 0
+          or acl.grantee = 'anon'::regrole
+          or acl.grantee = 'authenticated'::regrole
+        )
+    ) then
+      raise exception 'generated trigger function execute privilege must be revoked from PUBLIC, anon, and authenticated';
+    end if;
+  end if;
 end;
 $$;`;
 }
@@ -1355,12 +1524,30 @@ require_supabase_cli_capabilities() {
     return 1
   fi
 
-  local db_query_help
-  db_query_help="$(supabase db query --help 2>/dev/null)"
-  if ! printf '%s\\n' "\${db_query_help}" | grep -Fq -- "--local" || ! printf '%s\\n' "\${db_query_help}" | grep -Fq -- "--file"; then
-    echo "supabase CLI does not support required db query --local --file command."
+  if ! command -v psql >/dev/null 2>&1; then
+    echo "psql is required for local schema status checks."
     return 1
   fi
+}
+
+read_env_value() {
+  local source="$1"
+  local key="$2"
+  local line
+  line="$(printf '%s\\n' "\${source}" | awk -v key="\${key}" '
+    $0 ~ "^(export[[:space:]]+)?" key "=" {print}
+  ' | tail -n1)"
+
+  if [[ -z "\${line}" ]]; then
+    echo ""
+    return
+  fi
+
+  line="\${line#export }"
+  line="\${line#\${key}=}"
+  line="\${line%\\"}"
+  line="\${line#\\"}"
+  printf '%s' "\${line}"
 }
 
 run_supabase_sql() {
@@ -1370,7 +1557,7 @@ run_supabase_sql() {
   tmp_file="$(mktemp)"
   printf '%s\\n' "\${sql}" > "\${tmp_file}"
 
-  if supabase --workdir "\${SUPABASE_PROJECT_DIR}" db query --local --file "\${tmp_file}" >/dev/null; then
+  if psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${tmp_file}" >/dev/null; then
     rm -f "\${tmp_file}"
     return 0
   fi
@@ -1380,6 +1567,35 @@ run_supabase_sql() {
   return 1
 }
 
+check_immutable_migrations_applied() {
+  local migrations_dir="\${SUPABASE_PROJECT_DIR}/supabase/migrations"
+  local applied_versions
+  applied_versions="$(psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -Atc "select version from supabase_migrations.schema_migrations" 2>/dev/null || true)"
+
+  if [[ -z "\${applied_versions}" ]]; then
+    applied_versions=""
+  fi
+
+  if [[ ! -d "\${migrations_dir}" ]]; then
+    return 0
+  fi
+
+  local file
+  local version
+  local pending=0
+  for file in "\${migrations_dir}"/*.sql; do
+    [[ -e "\${file}" ]] || continue
+    version="$(basename "\${file}")"
+    version="\${version%%_*}"
+    if ! printf '%s\\n' "\${applied_versions}" | grep -Fxq "\${version}"; then
+      echo "- immutable migrations: pending \${file}"
+      pending=1
+    fi
+  done
+
+  return "\${pending}"
+}
+
 if [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "true" ]]; then
   echo
   echo "Local Supabase database checks:"
@@ -1387,10 +1603,15 @@ if [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "tru
 
   if require_supabase_cli_capabilities; then
     if supabase --workdir "\${SUPABASE_PROJECT_DIR}" status >/dev/null 2>&1; then
-      if supabase --workdir "\${SUPABASE_PROJECT_DIR}" migration list --local >/dev/null 2>&1; then
+      STATUS_ENV="$(supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env)"
+      SUPABASE_DB_URL="$(read_env_value "\${STATUS_ENV}" DB_URL)"
+      if [[ -z "\${SUPABASE_DB_URL}" ]]; then
+        echo "- immutable migrations: status unavailable (DB_URL missing from supabase status)"
+        status_failed=1
+      elif check_immutable_migrations_applied; then
         echo "- immutable migrations: applied"
       else
-        echo "- immutable migrations: status unavailable"
+        echo "- immutable migrations: pending"
         status_failed=1
       fi
 
@@ -1424,8 +1645,18 @@ SQL
           status_failed=1
         fi
       else
-        echo "- profile reconciliation: skipped (no profile table configured)"
-        echo "- profile schema: skipped (no profile table configured)"
+        PROFILE_DISABLED_SQL=$(cat <<'SQL'
+${getSupabaseProfileDisabledGuardSql()}
+SQL
+)
+        if run_supabase_sql "\${PROFILE_DISABLED_SQL}" "profile disabled-state"; then
+          echo "- profile reconciliation: skipped (no profile table configured)"
+          echo "- profile schema: skipped (no profile table configured)"
+        else
+          echo "- profile reconciliation: stale generated state exists for removed profile table"
+          echo "- profile schema: not verified"
+          status_failed=1
+        fi
       fi
     else
       echo "- local Supabase stack: not running or not reachable from \${SUPABASE_PROJECT_DIR}"
@@ -1537,11 +1768,8 @@ require_supabase_cli_capabilities() {
     exit 1
   fi
 
-  local db_query_help
-  db_query_help="$(supabase db query --help 2>/dev/null)"
-  if ! printf '%s\\n' "\${db_query_help}" | grep -Fq -- "--local" || ! printf '%s\\n' "\${db_query_help}" | grep -Fq -- "--file"; then
-    echo "supabase CLI does not support required db query --local --file command."
-    echo "Upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
+  if ! command -v psql >/dev/null 2>&1; then
+    echo "psql is required but not installed."
     exit 1
   fi
 }
@@ -1570,6 +1798,15 @@ run_checked_command() {
     echo "Exit status: \${status}"
     exit "\${status}"
   fi
+}
+
+run_checked_sql_file() {
+  local label="$1"
+  local sql_file="$2"
+  run_checked_command \
+    "\${label}" \
+    "\${sql_file}" \
+    psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${sql_file}"
 }
 
 require_supabase_cli_capabilities
@@ -1784,6 +2021,54 @@ STATUS_ENV="$(
   supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env 2>/dev/null || true
 )"
 
+read_env_value() {
+  local key="$1"
+  local line
+  line="$(printf '%s\\n' "\${STATUS_ENV}" | awk -v key="\${key}" '
+    $0 ~ "^(export[[:space:]]+)?" key "=" {print}
+  ' | tail -n1)"
+
+  if [[ -z "\${line}" ]]; then
+    echo ""
+    return
+  fi
+
+  line="\${line#export }"
+  line="\${line#\${key}=}"
+  line="\${line%\\"}"
+  line="\${line#\\"}"
+  printf '%s' "\${line}"
+}
+
+check_immutable_migrations_applied() {
+  local migrations_dir="\${SUPABASE_PROJECT_DIR}/supabase/migrations"
+  local applied_versions
+  applied_versions="$(psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -Atc "select version from supabase_migrations.schema_migrations" 2>/dev/null || true)"
+
+  if [[ -z "\${applied_versions}" ]]; then
+    applied_versions=""
+  fi
+
+  if [[ ! -d "\${migrations_dir}" ]]; then
+    return 0
+  fi
+
+  local file
+  local version
+  local pending=0
+  for file in "\${migrations_dir}"/*.sql; do
+    [[ -e "\${file}" ]] || continue
+    version="$(basename "\${file}")"
+    version="\${version%%_*}"
+    if ! printf '%s\\n' "\${applied_versions}" | grep -Fxq "\${version}"; then
+      echo "Pending immutable Supabase migration: \${file}"
+      pending=1
+    fi
+  done
+
+  return "\${pending}"
+}
+
 start_supabase_local_stack() {
   if supabase --workdir "\${SUPABASE_PROJECT_DIR}" start >/dev/null; then
     return 0
@@ -1804,6 +2089,13 @@ if [[ -z "\${STATUS_ENV}" ]]; then
   assert_supabase_local_ports_available
   echo "Supabase local stack not detected. Starting with 'supabase start'..."
   start_supabase_local_stack
+  STATUS_ENV="$(supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env)"
+fi
+
+SUPABASE_DB_URL="$(read_env_value DB_URL)"
+if [[ -z "\${SUPABASE_DB_URL}" ]]; then
+  echo "Unable to read DB_URL from 'supabase status -o env'."
+  exit 1
 fi
 
 echo "Applying pending immutable Supabase migrations..."
@@ -1812,6 +2104,11 @@ run_checked_command \
   "" \
   supabase --workdir "\${SUPABASE_PROJECT_DIR}" migration up --local
 
+if ! check_immutable_migrations_applied; then
+  echo "Immutable Supabase migration application did not apply every local migration."
+  exit 1
+fi
+
 if [[ "\${SUPABASE_PROFILE_ENABLED}" == "true" ]]; then
   if [[ ! -f "\${SUPABASE_PROFILE_RECONCILE_FILE}" ]]; then
     echo "Generated profile reconciliation file is missing: \${SUPABASE_PROFILE_RECONCILE_FILE}"
@@ -1819,10 +2116,9 @@ if [[ "\${SUPABASE_PROFILE_ENABLED}" == "true" ]]; then
   fi
 
   echo "Applying generated profile reconciliation..."
-  run_checked_command \
+  run_checked_sql_file \
     "Generated profile reconciliation" \
-    "\${SUPABASE_PROFILE_RECONCILE_FILE}" \
-    supabase --workdir "\${SUPABASE_PROJECT_DIR}" db query --local --file "\${SUPABASE_PROFILE_RECONCILE_FILE}"
+    "\${SUPABASE_PROFILE_RECONCILE_FILE}"
 
   PROFILE_STATUS_SQL=$(cat <<'SQL'
 ${profileStatusSql}
@@ -1838,39 +2134,27 @@ SQL
   printf '%s\\n' "\${PROFILE_STATUS_SQL}" > "\${PROFILE_STATUS_FILE}"
   printf '%s\\n' "\${PROFILE_VERIFY_SQL}" > "\${PROFILE_VERIFY_FILE}"
 
-  run_checked_command \
+  run_checked_sql_file \
     "Generated profile reconciliation checksum verification" \
-    "\${PROFILE_STATUS_FILE}" \
-    supabase --workdir "\${SUPABASE_PROJECT_DIR}" db query --local --file "\${PROFILE_STATUS_FILE}"
-  run_checked_command \
+    "\${PROFILE_STATUS_FILE}"
+  run_checked_sql_file \
     "Generated profile schema verification" \
-    "\${PROFILE_VERIFY_FILE}" \
-    supabase --workdir "\${SUPABASE_PROJECT_DIR}" db query --local --file "\${PROFILE_VERIFY_FILE}"
+    "\${PROFILE_VERIFY_FILE}"
 
   rm -f "\${PROFILE_STATUS_FILE}" "\${PROFILE_VERIFY_FILE}"
   echo "Generated profile reconciliation applied and schema verified."
+else
+  PROFILE_DISABLED_FILE="$(mktemp)"
+  cat > "\${PROFILE_DISABLED_FILE}" <<'SQL'
+${getSupabaseProfileDisabledGuardSql()}
+SQL
+  run_checked_sql_file \
+    "Generated profile disabled-state verification" \
+    "\${PROFILE_DISABLED_FILE}"
+  rm -f "\${PROFILE_DISABLED_FILE}"
 fi
 
 STATUS_ENV="$(supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env)"
-
-read_env_value() {
-  local key="$1"
-  local line
-  line="$(printf '%s\\n' "\${STATUS_ENV}" | awk -v key="\${key}" '
-    $0 ~ "^(export[[:space:]]+)?" key "=" {print}
-  ' | tail -n1)"
-
-  if [[ -z "\${line}" ]]; then
-    echo ""
-    return
-  fi
-
-  line="\${line#export }"
-  line="\${line#\${key}=}"
-  line="\${line%\\"}"
-  line="\${line#\\"}"
-  printf '%s' "\${line}"
-}
 
 API_URL="$(read_env_value API_URL)"
 ANON_KEY="$(read_env_value ANON_KEY)"
