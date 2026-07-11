@@ -28,12 +28,15 @@
     "react-native",
     "supabase",
     "postgres",
+    "vault",
+    "secret-store",
     "kubernetes",
     "minikube",
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/contracts": "^2.1.0"
+    "@ankhorage/contracts": "^2.1.0",
+    "@ankhorage/supabase-vault": "^0.2.0"
   },
   "files": [
     "dist",
@@ -72,7 +75,8 @@
       "infra.generate",
       "infra.status",
       "infra.up",
-      "infra.down"
+      "infra.down",
+      "infra.secret-store"
     ]
   },
   "publishConfig": {

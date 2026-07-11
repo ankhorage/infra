@@ -46,12 +46,16 @@ export function generateMinikubeBaseArtifacts(args: {
   const authProvider = manifest.auth?.provider ?? 'none';
   const authzEngine = manifest.auth?.authorization?.engine ?? 'none';
   const databaseProvider = manifest.database?.provider ?? 'none';
+  const secretStoreProvider = manifest.secretStore?.provider ?? 'none';
   const storageMetadata = resolveAppInfraStorageMetadata(manifest);
   const profileModel = resolveSupabaseProfileModel(manifest);
   const monitoringEnabled = manifest.deployment?.monitoring === true;
   const domain = manifest.networking?.domain ?? '';
   const supabaseLocalEnabled =
-    authProvider === 'supabase' || databaseProvider === 'supabase' || storageMetadata !== null;
+    authProvider === 'supabase' ||
+    databaseProvider === 'supabase' ||
+    storageMetadata !== null ||
+    secretStoreProvider === 'supabase-vault';
 
   return [
     {
@@ -90,6 +94,7 @@ export function generateMinikubeBaseArtifacts(args: {
         authScope,
         authProvider,
         databaseProvider,
+        secretStoreProvider,
         storageMetadata,
         monitoringEnabled,
         domain,
@@ -427,6 +432,7 @@ function getAppConfigMap(args: {
   authScope: string;
   authProvider: string;
   databaseProvider: string;
+  secretStoreProvider: string;
   storageMetadata: AppInfraStorageMetadata | null;
   monitoringEnabled: boolean;
   domain: string;
@@ -436,6 +442,7 @@ function getAppConfigMap(args: {
     authScope,
     authProvider,
     databaseProvider,
+    secretStoreProvider,
     storageMetadata,
     monitoringEnabled,
     domain,
@@ -459,6 +466,7 @@ data:
   AUTH_SCOPE: "${authScope}"
   AUTH_PROVIDER: "${authProvider}"
   DATABASE_PROVIDER: "${databaseProvider}"
+  SECRET_STORE_PROVIDER: "${secretStoreProvider}"
 ${storageLines}  NETWORK_DOMAIN: "${domain}"
 `;
 }

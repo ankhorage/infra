@@ -6,6 +6,7 @@
       "name": "@ankhorage/infra",
       "dependencies": {
         "@ankhorage/contracts": "^2.1.0",
+        "@ankhorage/supabase-vault": "^0.2.0",
       },
       "devDependencies": {
         "@ankhorage/ankh": "^0.4.0",
@@ -28,6 +29,8 @@
     "@ankhorage/devtools": ["@ankhorage/devtools@1.0.6", "", { "dependencies": { "@eslint/js": "^10.0.1", "eslint": "^10.2.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.5", "eslint-plugin-simple-import-sort": "^12.1.1", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.12.2", "prettier": "^3.8.1", "typescript-eslint": "^8.24.0" }, "bin": { "ankhorage-eslint": "dist/eslint-cli.js", "ankhorage-knip": "dist/knip-cli.js", "ankhorage-prettier": "dist/prettier-cli.js" } }, "sha512-QXvpJ3uvr3xcl/smjv0yMimtGRCt/dPs0lVdHYMAXg06u1HsZmoKhRyxdFX8OXcCv9RnfPNheUkjAbOrs0eeaQ=="],
 
     "@ankhorage/paradox": ["@ankhorage/paradox@0.1.10", "", { "dependencies": { "ts-morph": "^24.0.0" }, "bin": { "paradox": "dist/cli.js" } }, "sha512-e86ltBY37+BYGpM8oUVF/7mQU/4dKAQJBiIPSHuZ72mRDcJeN0eScnJrCA5YeV+aK8iXrfD6qPbEkyNRcUIRzQ=="],
+
+    "@ankhorage/supabase-vault": ["@ankhorage/supabase-vault@0.2.1", "", { "dependencies": { "@ankhorage/contracts": "^2.1.0" } }, "sha512-WkAsYQUtSnSTPx3hA93LowWs3mBjY7sbKTe8yEolKlzpUhr4Y5rhcUZvDhk30uBgqwfkRTCHxKNEDraomlkj0g=="],
 
     "@babel/runtime": ["@babel/runtime@7.29.7", "", {}, "sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw=="],
 

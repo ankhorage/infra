@@ -8,7 +8,14 @@ describe('package metadata', () => {
     const expectedAnkhMetadata = {
       category: 'infra',
       provider: './dist/cli/index.js',
-      capabilities: ['infra.validate', 'infra.generate', 'infra.status', 'infra.up', 'infra.down'],
+      capabilities: [
+        'infra.validate',
+        'infra.generate',
+        'infra.status',
+        'infra.up',
+        'infra.down',
+        'infra.secret-store',
+      ],
     } as const satisfies AnkhPackageMetadata;
 
     expect(packageJson.name).toBe('@ankhorage/infra');

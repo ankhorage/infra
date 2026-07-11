@@ -13,6 +13,31 @@ Source: `src/apis.ts:11:1`
 | files    | property | `readonly GeneratedInfrastructureFile[]` | yes      |             |
 | warnings | property | `readonly string[]`                      | yes      |             |
 
+## createInfraSecretStoreAdapter
+
+Kind: `function`
+Module: `src/secretStore.ts`
+Source: `src/secretStore.ts:26:1`
+
+### Signatures
+
+- `(input: CreateInfraSecretStoreAdapterInput) => SecretStoreAdapter | null`
+  - input: `CreateInfraSecretStoreAdapterInput`
+  - returns: `SecretStoreAdapter | null`
+
+## CreateInfraSecretStoreAdapterInput
+
+Kind: `type`
+Module: `src/secretStore.ts`
+Source: `src/secretStore.ts:14:1`
+
+### Members
+
+| Name      | Kind     | Type                                      | Required | Description |
+| --------- | -------- | ----------------------------------------- | -------- | ----------- |
+| manifest  | property | `Pick<InfraManifestInput, "secretStore">` | yes      |             |
+| providers | property | `InfraSecretStoreProviders`               | yes      |             |
+
 ## generateApiInfrastructureArtifacts
 
 Kind: `function`
@@ -63,7 +88,7 @@ Source: `src/types.ts:12:1`
 
 Kind: `function`
 Module: `src/index.ts`
-Source: `src/index.ts:26:1`
+Source: `src/index.ts:31:1`
 
 ### Signatures
 
@@ -75,7 +100,7 @@ Source: `src/index.ts:26:1`
 
 Kind: `function`
 Module: `src/index.ts`
-Source: `src/index.ts:30:1`
+Source: `src/index.ts:35:1`
 
 ### Signatures
 
@@ -128,6 +153,18 @@ Source: `src/types.ts:58:1`
 Kind: `unknown`
 Module: `src/types.ts`
 Source: `src/types.ts:80:1`
+
+## InfraSecretStoreProviders
+
+Kind: `type`
+Module: `src/secretStore.ts`
+Source: `src/secretStore.ts:10:1`
+
+### Members
+
+| Name          | Kind     | Type                                       | Required | Description |
+| ------------- | -------- | ------------------------------------------ | -------- | ----------- |
+| supabaseVault | property | `SupabaseVaultAdapterOptions \| undefined` | no       |             |
 
 ## InfrastructureGenerationMeta
 

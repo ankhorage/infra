@@ -8,6 +8,11 @@ import type {
 
 export type { ApiInfrastructureArtifacts } from './apiArtifacts';
 export { generateApiInfrastructureArtifacts } from './apiArtifacts';
+export {
+  createInfraSecretStoreAdapter,
+  type CreateInfraSecretStoreAdapterInput,
+  type InfraSecretStoreProviders,
+} from './secretStore';
 export type {
   GeneratedFile,
   GeneratedInfrastructureFile,

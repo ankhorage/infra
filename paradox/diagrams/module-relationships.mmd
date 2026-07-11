@@ -8,6 +8,8 @@ graph LR
   module_src_adapters_minikube_base_index_ts["src/adapters/minikube/base/index.ts"]
   module_src_adapters_minikube_contracts_ts["src/adapters/minikube/contracts.ts"]
   module_src_adapters_minikube_index_ts["src/adapters/minikube/index.ts"]
+  module_src_adapters_minikube_secrets_index_ts["src/adapters/minikube/secrets/index.ts"]
+  module_src_adapters_minikube_secrets_supabase_vault_index_ts["src/adapters/minikube/secrets/supabase-vault/index.ts"]
   module_src_adapters_minikube_storage_index_ts["src/adapters/minikube/storage/index.ts"]
   module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
   module_src_apiArtifacts_ts["src/apiArtifacts.ts"]
@@ -23,6 +25,7 @@ graph LR
   module_src_project_ts["src/project.ts"]
   module_src_projectInfrastructure_ts["src/projectInfrastructure.ts"]
   module_src_runtime_ts["src/runtime.ts"]
+  module_src_secretStore_ts["src/secretStore.ts"]
   module_src_testSupport_ts["src/testSupport.ts"]
   module_src_types_ts["src/types.ts"]
   module_src_adapters_minikube_auth_index_ts --> module_src_adapters_minikube_auth_supabase_index_ts
@@ -43,9 +46,15 @@ graph LR
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_auth_index_ts
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_authz_index_ts
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_base_index_ts
+  module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_secrets_index_ts
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_storage_index_ts
   module_src_adapters_minikube_index_ts --> module_src_apiArtifacts_ts
   module_src_adapters_minikube_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_secrets_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_secrets_index_ts --> module_src_adapters_minikube_secrets_supabase_vault_index_ts
+  module_src_adapters_minikube_secrets_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_secrets_supabase_vault_index_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_secrets_supabase_vault_index_ts --> module_src_types_ts
   module_src_adapters_minikube_storage_index_ts --> module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_storage_index_ts --> module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_index_ts --> module_src_types_ts
@@ -70,4 +79,5 @@ graph LR
   module_src_projectInfrastructure_ts --> module_src_index_ts
   module_src_projectInfrastructure_ts --> module_src_infraValidation_ts
   module_src_runtime_ts --> module_src_commandContext_ts
+  module_src_secretStore_ts --> module_src_types_ts
   module_src_testSupport_ts --> module_src_commandContext_ts
