@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.3.6",
+      "value": "v0.3.7",
       "color": "cb3837"
     },
     {
@@ -151,11 +151,28 @@
         "src/adapters/minikube/auth/index.ts",
         "src/adapters/minikube/authz/index.ts",
         "src/adapters/minikube/base/index.ts",
+        "src/adapters/minikube/secrets/index.ts",
         "src/adapters/minikube/storage/index.ts",
         "src/apiArtifacts.ts",
         "src/types.ts"
       ],
       "exports": ["generateMinikubeInfra"]
+    },
+    {
+      "path": "src/adapters/minikube/secrets/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/adapters/minikube/contracts.ts",
+        "src/adapters/minikube/secrets/supabase-vault/index.ts",
+        "src/types.ts"
+      ],
+      "exports": ["generateSecretStoreArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/secrets/supabase-vault/index.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/adapters/minikube/contracts.ts", "src/types.ts"],
+      "exports": ["generateSupabaseVaultSecretStoreArtifacts", "SUPABASE_VAULT_MIGRATION_PATH"]
     },
     {
       "path": "src/adapters/minikube/storage/index.ts",
@@ -234,6 +251,8 @@
       "dependencies": ["src/adapters/minikube/index.ts", "src/types.ts"],
       "exports": [
         "ApiInfrastructureArtifacts",
+        "createInfraSecretStoreAdapter",
+        "CreateInfraSecretStoreAdapterInput",
         "generateApiInfrastructureArtifacts",
         "GeneratedFile",
         "GeneratedInfrastructureFile",
@@ -245,6 +264,7 @@
         "InfraGenerationOptions",
         "InfraGenerationResult",
         "InfraManifestInput",
+        "InfraSecretStoreProviders",
         "InfrastructureGenerationMeta",
         "InfrastructureGenerationOptions",
         "InfrastructureGenerationResult",
@@ -310,6 +330,16 @@
       ]
     },
     {
+      "path": "src/secretStore.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types.ts"],
+      "exports": [
+        "createInfraSecretStoreAdapter",
+        "CreateInfraSecretStoreAdapterInput",
+        "InfraSecretStoreProviders"
+      ]
+    },
+    {
       "path": "src/testSupport.ts",
       "isEntrypoint": false,
       "dependencies": ["src/commandContext.ts"],
@@ -368,6 +398,71 @@
           "name": "warnings",
           "kind": "property",
           "type": "readonly string[]",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "createInfraSecretStoreAdapter",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/secretStore.ts",
+      "sourceLocation": {
+        "filePath": "src/secretStore.ts",
+        "line": 26,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["CreateInfraSecretStoreAdapterInput"],
+      "signatures": [
+        {
+          "label": "(input: CreateInfraSecretStoreAdapterInput) => SecretStoreAdapter | null",
+          "parameters": [
+            {
+              "name": "input",
+              "type": "CreateInfraSecretStoreAdapterInput",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "SecretStoreAdapter | null",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "CreateInfraSecretStoreAdapterInput",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/secretStore.ts",
+      "sourceLocation": {
+        "filePath": "src/secretStore.ts",
+        "line": 14,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["InfraManifestInput", "InfraSecretStoreProviders"],
+      "signatures": [],
+      "members": [
+        {
+          "name": "manifest",
+          "kind": "property",
+          "type": "Pick<InfraManifestInput, \"secretStore\">",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "providers",
+          "kind": "property",
+          "type": "InfraSecretStoreProviders",
           "required": true,
           "description": null
         }
@@ -513,7 +608,7 @@
       "modulePath": "src/index.ts",
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 26,
+        "line": 31,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -545,7 +640,7 @@
       "modulePath": "src/index.ts",
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 30,
+        "line": 35,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -703,6 +798,32 @@
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "InfraSecretStoreProviders",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/secretStore.ts",
+      "sourceLocation": {
+        "filePath": "src/secretStore.ts",
+        "line": 10,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "supabaseVault",
+          "kind": "property",
+          "type": "SupabaseVaultAdapterOptions | undefined",
+          "required": false,
+          "description": null
+        }
+      ],
       "structuredRows": []
     },
     {
@@ -1460,7 +1581,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 15,
+        "line": 16,
         "column": 1
       }
     },
@@ -1469,7 +1590,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 88,
+        "line": 94,
         "column": 1
       }
     },
@@ -1478,7 +1599,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 102,
+        "line": 109,
         "column": 1
       }
     },
@@ -1487,7 +1608,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 116,
+        "line": 123,
         "column": 1
       }
     },
@@ -1496,7 +1617,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 132,
+        "line": 139,
         "column": 1
       }
     },
@@ -1505,7 +1626,43 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 149,
+        "line": 156,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSecretStoreArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/secrets/index.ts",
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSupabaseVaultSecretStoreArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/secrets/supabase-vault/index.ts",
+        "line": 12,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateOAuthSecretReferences",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/secrets/supabase-vault/index.ts",
+        "line": 38,
+        "column": 1
+      }
+    },
+    {
+      "name": "getRuntimeGuide",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/secrets/supabase-vault/index.ts",
+        "line": 56,
         "column": 1
       }
     },
@@ -2081,7 +2238,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 26,
+        "line": 31,
         "column": 1
       }
     },
@@ -2090,7 +2247,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 30,
+        "line": 35,
         "column": 1
       }
     },
@@ -2419,6 +2576,15 @@
       }
     },
     {
+      "name": "createInfraSecretStoreAdapter",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/secretStore.ts",
+        "line": 26,
+        "column": 1
+      }
+    },
+    {
       "name": "createCapturedCommandContext",
       "description": null,
       "sourceLocation": {
@@ -2452,6 +2618,14 @@
       "name": "ankhorage-infra",
       "sourcePath": "src/cli/bin.ts",
       "symbolName": "runCli",
+      "description": null,
+      "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "createInfraSecretStoreAdapter",
+      "sourcePath": "src/secretStore.ts",
+      "symbolName": "createInfraSecretStoreAdapter",
       "description": null,
       "isReadme": false
     },
@@ -2543,6 +2717,11 @@
         "sourcePath": "src/index.ts"
       },
       {
+        "fromPath": "src/index.ts",
+        "toPath": "src/secretStore.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
         "fromPath": "src/infraValidation.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/infraValidation.ts"
@@ -2571,6 +2750,11 @@
         "fromPath": "src/runtime.ts",
         "toPath": "src/commandContext.ts",
         "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromPath": "src/secretStore.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/secretStore.ts"
       },
       {
         "fromPath": "src/testSupport.ts",
@@ -2634,6 +2818,11 @@
       },
       {
         "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/adapters/minikube/secrets/index.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
         "toPath": "src/adapters/minikube/storage/index.ts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
@@ -2676,6 +2865,21 @@
         "fromPath": "src/adapters/minikube/base/index.ts",
         "toPath": "src/adapters/minikube/auth/supabase/profile.ts",
         "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/secrets/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/secrets/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/secrets/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/secrets/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/secrets/index.ts",
+        "toPath": "src/adapters/minikube/secrets/supabase-vault/index.ts",
+        "sourcePath": "src/adapters/minikube/secrets/index.ts"
       },
       {
         "fromPath": "src/adapters/minikube/storage/index.ts",
@@ -2721,6 +2925,16 @@
         "fromPath": "src/adapters/minikube/authz/cerbos/index.ts",
         "toPath": "src/adapters/minikube/contracts.ts",
         "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/secrets/supabase-vault/index.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/secrets/supabase-vault/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/secrets/supabase-vault/index.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/secrets/supabase-vault/index.ts"
       },
       {
         "fromPath": "src/adapters/minikube/storage/supabase/index.ts",
@@ -3438,6 +3652,12 @@
         "sourcePath": "src/runtime.ts"
       },
       {
+        "fromSymbol": "createInfraSecretStoreAdapter",
+        "toSymbol": "createSupabaseVaultAdapter",
+        "callExpression": "createSupabaseVaultAdapter",
+        "sourcePath": "src/secretStore.ts"
+      },
+      {
         "fromSymbol": "createWorkspaceFixture",
         "toSymbol": "createAppManifest",
         "callExpression": "createAppManifest",
@@ -3543,6 +3763,12 @@
         "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "generateStorageArtifacts",
         "callExpression": "generateStorageArtifacts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "generateSecretStoreArtifacts",
+        "callExpression": "generateSecretStoreArtifacts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -3796,6 +4022,18 @@
         "toSymbol": "escapeSqlLiteral",
         "callExpression": "escapeSqlLiteral",
         "sourcePath": "src/adapters/minikube/base/index.ts"
+      },
+      {
+        "fromSymbol": "generateSecretStoreArtifacts",
+        "toSymbol": "emptyMinikubeArtifacts",
+        "callExpression": "emptyMinikubeArtifacts",
+        "sourcePath": "src/adapters/minikube/secrets/index.ts"
+      },
+      {
+        "fromSymbol": "generateSecretStoreArtifacts",
+        "toSymbol": "generateSupabaseVaultSecretStoreArtifacts",
+        "callExpression": "generateSupabaseVaultSecretStoreArtifacts",
+        "sourcePath": "src/adapters/minikube/secrets/index.ts"
       },
       {
         "fromSymbol": "generateStorageArtifacts",
@@ -4098,6 +4336,18 @@
         "sourcePath": "src/adapters/minikube/authz/cerbos/index.ts"
       },
       {
+        "fromSymbol": "generateSupabaseVaultSecretStoreArtifacts",
+        "toSymbol": "validateOAuthSecretReferences",
+        "callExpression": "validateOAuthSecretReferences",
+        "sourcePath": "src/adapters/minikube/secrets/supabase-vault/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseVaultSecretStoreArtifacts",
+        "toSymbol": "getRuntimeGuide",
+        "callExpression": "getRuntimeGuide",
+        "sourcePath": "src/adapters/minikube/secrets/supabase-vault/index.ts"
+      },
+      {
         "fromSymbol": "generateSupabaseStorageArtifacts",
         "toSymbol": "getSupabaseStorageConfigMap",
         "callExpression": "getSupabaseStorageConfigMap",
@@ -4162,6 +4412,36 @@
         "fromSymbol": "generateApiInfrastructureArtifacts",
         "toType": "AppDataManifest",
         "sourcePath": "src/apiArtifacts.ts"
+      },
+      {
+        "fromSymbol": "createInfraSecretStoreAdapter",
+        "toType": "CreateInfraSecretStoreAdapterInput",
+        "sourcePath": "src/secretStore.ts"
+      },
+      {
+        "fromSymbol": "createInfraSecretStoreAdapter",
+        "toType": "SecretStoreAdapter",
+        "sourcePath": "src/secretStore.ts"
+      },
+      {
+        "fromSymbol": "CreateInfraSecretStoreAdapterInput",
+        "toType": "InfraManifestInput",
+        "sourcePath": "src/secretStore.ts"
+      },
+      {
+        "fromSymbol": "CreateInfraSecretStoreAdapterInput",
+        "toType": "InfraSecretStoreProviders",
+        "sourcePath": "src/secretStore.ts"
+      },
+      {
+        "fromSymbol": "CreateInfraSecretStoreAdapterInput",
+        "toType": "Pick",
+        "sourcePath": "src/secretStore.ts"
+      },
+      {
+        "fromSymbol": "InfraSecretStoreProviders",
+        "toType": "SupabaseVaultAdapterOptions",
+        "sourcePath": "src/secretStore.ts"
       },
       {
         "fromSymbol": "InfraGenerationInput",

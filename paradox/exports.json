@@ -33,6 +33,71 @@
     "structuredRows": []
   },
   {
+    "name": "createInfraSecretStoreAdapter",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/secretStore.ts",
+    "sourceLocation": {
+      "filePath": "src/secretStore.ts",
+      "line": 26,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["CreateInfraSecretStoreAdapterInput"],
+    "signatures": [
+      {
+        "label": "(input: CreateInfraSecretStoreAdapterInput) => SecretStoreAdapter | null",
+        "parameters": [
+          {
+            "name": "input",
+            "type": "CreateInfraSecretStoreAdapterInput",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "SecretStoreAdapter | null",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "CreateInfraSecretStoreAdapterInput",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/secretStore.ts",
+    "sourceLocation": {
+      "filePath": "src/secretStore.ts",
+      "line": 14,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["InfraManifestInput", "InfraSecretStoreProviders"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "manifest",
+        "kind": "property",
+        "type": "Pick<InfraManifestInput, \"secretStore\">",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "providers",
+        "kind": "property",
+        "type": "InfraSecretStoreProviders",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
     "name": "generateApiInfrastructureArtifacts",
     "description": null,
     "isReadme": false,
@@ -171,7 +236,7 @@
     "modulePath": "src/index.ts",
     "sourceLocation": {
       "filePath": "src/index.ts",
-      "line": 26,
+      "line": 31,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -203,7 +268,7 @@
     "modulePath": "src/index.ts",
     "sourceLocation": {
       "filePath": "src/index.ts",
-      "line": 30,
+      "line": 35,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -361,6 +426,32 @@
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraSecretStoreProviders",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/secretStore.ts",
+    "sourceLocation": {
+      "filePath": "src/secretStore.ts",
+      "line": 10,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "supabaseVault",
+        "kind": "property",
+        "type": "SupabaseVaultAdapterOptions | undefined",
+        "required": false,
+        "description": null
+      }
+    ],
     "structuredRows": []
   },
   {
