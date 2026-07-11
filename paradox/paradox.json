@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.3.1",
+      "value": "v0.3.2",
       "color": "cb3837"
     },
     {
@@ -72,7 +72,7 @@
       "title": "Provider and CLI surface",
       "description": "Provider and CLI surface\n\n`@ankhorage/infra` owns infra command behavior.\n\nThe same shared command implementation backs both:\n\n- `ankh infra ...`\n- `bunx @ankhorage/infra ...`\n\nCurrent command surface:\n\n- `validate`\n- `generate`\n- `status`\n- `up`\n- `down`\n\n`status` runs the generated live runtime status script for a project.\n\nProject resolution is project-aware:\n\n- pass `[project]`, or\n- omit it when cwd is already inside `apps/<project>`",
       "language": "ts",
-      "code": "import { runCli } from './cli.js';\n\nawait runCli(['--help']);",
+      "code": "import { runCli } from './cli/bin.js';\n\nawait runCli(['--help']);",
       "sourcePath": "src/readme-usage.ts"
     }
   ],
@@ -180,7 +180,7 @@
       "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
     },
     {
-      "path": "src/cli.ts",
+      "path": "src/cli/bin.ts",
       "isEntrypoint": false,
       "dependencies": ["src/commandContext.ts", "src/commands.ts"],
       "exports": ["InfraCliOptions", "runCli"]
@@ -1373,7 +1373,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1405,
+        "line": 1407,
         "column": 1
       }
     },
@@ -1382,7 +1382,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1705,
+        "line": 1707,
         "column": 1
       }
     },
@@ -1391,7 +1391,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2260,
+        "line": 2262,
         "column": 1
       }
     },
@@ -1400,7 +1400,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2264,
+        "line": 2266,
         "column": 1
       }
     },
@@ -1409,7 +1409,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2280,
+        "line": 2282,
         "column": 1
       }
     },
@@ -1418,7 +1418,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2285,
+        "line": 2287,
         "column": 1
       }
     },
@@ -1427,7 +1427,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2296,
+        "line": 2298,
         "column": 1
       }
     },
@@ -1436,7 +1436,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2300,
+        "line": 2302,
         "column": 1
       }
     },
@@ -1849,7 +1849,7 @@
       "name": "runCli",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/cli.ts",
+        "filePath": "src/cli/bin.ts",
         "line": 20,
         "column": 1
       }
@@ -1858,7 +1858,7 @@
       "name": "isHelpToken",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/cli.ts",
+        "filePath": "src/cli/bin.ts",
         "line": 56,
         "column": 1
       }
@@ -1867,7 +1867,7 @@
       "name": "isVersionToken",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/cli.ts",
+        "filePath": "src/cli/bin.ts",
         "line": 60,
         "column": 1
       }
@@ -2426,7 +2426,7 @@
     {
       "kind": "bin",
       "name": "ankhorage-infra",
-      "sourcePath": "src/cli.ts",
+      "sourcePath": "src/cli/bin.ts",
       "symbolName": "runCli",
       "description": null,
       "isReadme": false
@@ -2462,16 +2462,6 @@
         "fromPath": "src/apis.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromPath": "src/cli.ts",
-        "toPath": "src/commandContext.ts",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromPath": "src/cli.ts",
-        "toPath": "src/commands.ts",
-        "sourcePath": "src/cli.ts"
       },
       {
         "fromPath": "src/commandContext.ts",
@@ -2545,7 +2535,7 @@
       },
       {
         "fromPath": "src/readme-usage.ts",
-        "toPath": "src/cli.ts",
+        "toPath": "src/cli/bin.ts",
         "sourcePath": "src/readme-usage.ts"
       },
       {
@@ -2557,6 +2547,16 @@
         "fromPath": "src/testSupport.ts",
         "toPath": "src/commandContext.ts",
         "sourcePath": "src/testSupport.ts"
+      },
+      {
+        "fromPath": "src/cli/bin.ts",
+        "toPath": "src/commandContext.ts",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromPath": "src/cli/bin.ts",
+        "toPath": "src/commands.ts",
+        "sourcePath": "src/cli/bin.ts"
       },
       {
         "fromPath": "src/cli/index.ts",
@@ -2909,66 +2909,6 @@
         "toSymbol": "hashHex",
         "callExpression": "hashHex",
         "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "createDefaultCommandContext",
-        "callExpression": "createDefaultCommandContext",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "isHelpToken",
-        "callExpression": "isHelpToken",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "writeStdout",
-        "callExpression": "context.writeStdout",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "renderRootHelp",
-        "callExpression": "renderRootHelp",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "isVersionToken",
-        "callExpression": "isVersionToken",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "findInfraCommandByStandaloneName",
-        "callExpression": "findInfraCommandByStandaloneName",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "writeStderr",
-        "callExpression": "context.writeStderr",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "renderUnknownCommand",
-        "callExpression": "renderUnknownCommand",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "runCli",
-        "toSymbol": "runCommand",
-        "callExpression": "runCommand",
-        "sourcePath": "src/cli.ts"
-      },
-      {
-        "fromSymbol": "src/cli.ts",
-        "toSymbol": "runCli",
-        "callExpression": "runCli",
-        "sourcePath": "src/cli.ts"
       },
       {
         "fromSymbol": "runInfraCommand",
@@ -3467,6 +3407,66 @@
         "toSymbol": "createAppManifest",
         "callExpression": "createAppManifest",
         "sourcePath": "src/testSupport.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "createDefaultCommandContext",
+        "callExpression": "createDefaultCommandContext",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "isHelpToken",
+        "callExpression": "isHelpToken",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "writeStdout",
+        "callExpression": "context.writeStdout",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "renderRootHelp",
+        "callExpression": "renderRootHelp",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "isVersionToken",
+        "callExpression": "isVersionToken",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "findInfraCommandByStandaloneName",
+        "callExpression": "findInfraCommandByStandaloneName",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "writeStderr",
+        "callExpression": "context.writeStderr",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "renderUnknownCommand",
+        "callExpression": "renderUnknownCommand",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "runCli",
+        "toSymbol": "runCommand",
+        "callExpression": "runCommand",
+        "sourcePath": "src/cli/bin.ts"
+      },
+      {
+        "fromSymbol": "src/cli/bin.ts",
+        "toSymbol": "runCli",
+        "callExpression": "runCli",
+        "sourcePath": "src/cli/bin.ts"
       },
       {
         "fromSymbol": "createInfraRuntimeProvider",

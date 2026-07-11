@@ -11,7 +11,7 @@ graph LR
   module_src_adapters_minikube_storage_index_ts["src/adapters/minikube/storage/index.ts"]
   module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
   module_src_apis_ts["src/apis.ts"]
-  module_src_cli_ts["src/cli.ts"]
+  module_src_cli_bin_ts["src/cli/bin.ts"]
   module_src_cli_index_ts["src/cli/index.ts"]
   module_src_commandContext_ts["src/commandContext.ts"]
   module_src_commands_ts["src/commands.ts"]
@@ -50,8 +50,8 @@ graph LR
   module_src_adapters_minikube_storage_index_ts --> module_src_types_ts
   module_src_adapters_minikube_storage_supabase_index_ts --> module_src_adapters_minikube_contracts_ts
   module_src_apis_ts --> module_src_types_ts
-  module_src_cli_ts --> module_src_commandContext_ts
-  module_src_cli_ts --> module_src_commands_ts
+  module_src_cli_bin_ts --> module_src_commandContext_ts
+  module_src_cli_bin_ts --> module_src_commands_ts
   module_src_cli_index_ts --> module_src_commands_ts
   module_src_cli_index_ts --> module_src_packageMetadata_ts
   module_src_commandContext_ts --> module_src_packageMetadata_ts
