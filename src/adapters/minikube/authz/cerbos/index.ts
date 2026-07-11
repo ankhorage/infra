@@ -311,7 +311,7 @@ function buildCerbosPolicyIntent(args: {
   const authScope = manifest.auth?.scope ?? 'none';
 
   const routes = appManifest?.navigator ? flattenNavigatorRoutes(appManifest.navigator) : [];
-  const flow = resolveAuthFlow(appManifest?.infra.auth?.flow);
+  const flow = resolveAuthFlow(appManifest?.infra?.auth?.flow);
   const { signInRoute } = flow;
   const { signUpRoute } = flow;
   const { unauthorizedRoute } = flow;
