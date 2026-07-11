@@ -1,4 +1,4 @@
-import { runCli } from './cli.js';
+import { runCli } from './cli/bin.js';
 
 /***
  * Provider and CLI surface
