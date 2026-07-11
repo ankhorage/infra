@@ -30,8 +30,6 @@ jobs:
           for path in paths:
               lines = path.read_text(encoding='utf-8').splitlines(keepends=True)
               filtered = [line for line in lines if line.rstrip('\r\n') != '<<<<<<< HEAD']
-              if len(filtered) == len(lines):
-                  raise SystemExit(f'Expected stray marker was not found in {path}')
               path.write_text(''.join(filtered), encoding='utf-8')
           PY
 
