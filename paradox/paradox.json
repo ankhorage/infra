@@ -977,7 +977,16 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 476,
+        "line": 482,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupportedProfileFields",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
+        "line": 501,
         "column": 1
       }
     },
@@ -986,7 +995,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 498,
+        "line": 505,
         "column": 1
       }
     },
@@ -995,7 +1004,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
-        "line": 517,
+        "line": 524,
         "column": 1
       }
     },
@@ -1364,7 +1373,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1393,
+        "line": 1405,
         "column": 1
       }
     },
@@ -1373,7 +1382,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1693,
+        "line": 1705,
         "column": 1
       }
     },
@@ -1382,7 +1391,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2248,
+        "line": 2260,
         "column": 1
       }
     },
@@ -1391,7 +1400,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2252,
+        "line": 2264,
         "column": 1
       }
     },
@@ -1400,7 +1409,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2268,
+        "line": 2280,
         "column": 1
       }
     },
@@ -1409,7 +1418,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2273,
+        "line": 2285,
         "column": 1
       }
     },
@@ -1418,7 +1427,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2284,
+        "line": 2296,
         "column": 1
       }
     },
@@ -1427,7 +1436,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2288,
+        "line": 2300,
         "column": 1
       }
     },
@@ -3883,6 +3892,12 @@
         "fromSymbol": "resolveProfileColumns",
         "toSymbol": "mapProfileFieldToColumn",
         "callExpression": "mapProfileFieldToColumn",
+        "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
+      },
+      {
+        "fromSymbol": "resolveProfileColumns",
+        "toSymbol": "getSupportedProfileFields",
+        "callExpression": "getSupportedProfileFields",
         "sourcePath": "src/adapters/minikube/auth/supabase/profile.ts"
       },
       {
