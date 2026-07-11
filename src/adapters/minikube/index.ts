@@ -8,6 +8,7 @@ import type {
 import { generateAuthProviderArtifacts } from './auth';
 import { generateAuthorizationArtifacts } from './authz';
 import { generateMinikubeBaseArtifacts } from './base';
+import { generateSecretStoreArtifacts } from './secrets';
 import { generateStorageArtifacts } from './storage';
 
 const DEFAULT_NAMESPACE = 'ankh-app';
@@ -37,6 +38,7 @@ export function generateMinikubeInfra(
     appManifest: options.appManifest,
   });
   const storageArtifacts = generateStorageArtifacts({ manifest, namespace });
+  const secretStoreArtifacts = generateSecretStoreArtifacts({ manifest, namespace });
   const apiArtifacts = generateApiInfrastructureArtifacts({
     data: options.appManifest?.data,
     databaseProvider: manifest.database?.provider,
@@ -46,11 +48,13 @@ export function generateMinikubeInfra(
     ...authArtifacts.resources,
     ...authzArtifacts.resources,
     ...storageArtifacts.resources,
+    ...secretStoreArtifacts.resources,
   ]);
   const extraEnvEntries = unique([
     ...authArtifacts.envEntries,
     ...authzArtifacts.envEntries,
     ...storageArtifacts.envEntries,
+    ...secretStoreArtifacts.envEntries,
   ]);
 
   const baseFiles = generateMinikubeBaseArtifacts({
@@ -65,6 +69,7 @@ export function generateMinikubeInfra(
     ...authArtifacts.warnings,
     ...authzArtifacts.warnings,
     ...storageArtifacts.warnings,
+    ...secretStoreArtifacts.warnings,
     ...apiArtifacts.warnings,
   ]);
 
@@ -74,6 +79,7 @@ export function generateMinikubeInfra(
       ...authArtifacts.files,
       ...authzArtifacts.files,
       ...storageArtifacts.files,
+      ...secretStoreArtifacts.files,
       ...apiArtifacts.files,
     ],
     warnings,
@@ -94,6 +100,7 @@ function collectProviders(manifest: InfraManifestInput): string[] {
   }
   if (manifest.database?.provider) providers.add(manifest.database.provider);
   if (manifest.storage?.provider) providers.add(manifest.storage.provider);
+  if (manifest.secretStore?.provider) providers.add(manifest.secretStore.provider);
   if (manifest.state?.provider) providers.add(manifest.state.provider);
 
   return [...providers].sort();
