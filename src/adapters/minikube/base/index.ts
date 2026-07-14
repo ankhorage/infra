@@ -30,17 +30,18 @@ const SUPABASE_LOCAL_PORT_REFERENCE_PROJECT = 'my-app';
 export function generateMinikubeBaseArtifacts(args: {
   manifest: InfraManifestInput;
   namespace: string;
+  supabaseProjectId: string | null;
   extraResources: string[];
   extraEnvEntries: string[];
 }): GeneratedInfrastructureFile[] {
-  const { manifest, namespace, extraResources, extraEnvEntries } = args;
+  const { manifest, namespace, supabaseProjectId, extraResources, extraEnvEntries } = args;
 
   const root = 'infra/minikube';
   const k8sRoot = `${root}/k8s`;
   const scriptsRoot = `${root}/scripts`;
   const appImageRoot = `${root}/app-image`;
   const defaultAppImage = getDefaultAppImage(namespace);
-  const supabaseLocalPorts = resolveSupabaseLocalPorts(namespace);
+  const supabaseLocalPorts = resolveSupabaseLocalPorts(supabaseProjectId ?? namespace);
 
   const authScope = manifest.auth?.scope ?? 'none';
   const authProvider = manifest.auth?.provider ?? 'none';
@@ -68,6 +69,7 @@ export function generateMinikubeBaseArtifacts(args: {
         authzEngine,
         extraResources,
         supabaseLocalPorts,
+        supabaseProjectId,
         supabaseLocalEnabled,
         profileModel,
       }),
@@ -140,6 +142,7 @@ export function generateMinikubeBaseArtifacts(args: {
       path: `${scriptsRoot}/status.sh`,
       content: getStatusScript({
         defaultNamespace: namespace,
+        supabaseProjectId,
         supabaseLocalEnabled,
         profileModel,
       }),
@@ -148,6 +151,7 @@ export function generateMinikubeBaseArtifacts(args: {
     {
       path: `${scriptsRoot}/supabase-local-env.sh`,
       content: getSupabaseLocalEnvScript({
+        supabaseProjectId,
         supabaseLocalPorts,
         profileModel,
       }),
@@ -168,6 +172,7 @@ function getReadmeMarkdown(args: {
   authzEngine: string;
   extraResources: string[];
   supabaseLocalPorts: SupabaseLocalPorts;
+  supabaseProjectId: string | null;
   supabaseLocalEnabled: boolean;
   profileModel: ResolvedProfileModel;
 }): string {
@@ -179,6 +184,7 @@ function getReadmeMarkdown(args: {
     authzEngine,
     extraResources,
     supabaseLocalPorts,
+    supabaseProjectId,
     supabaseLocalEnabled,
     profileModel,
   } = args;
@@ -245,6 +251,7 @@ ${resourceLines}
 ## Runtime Conventions
 
 - Namespace: \`${namespace}\`
+- Supabase local project identity: \`${supabaseProjectId ?? 'unused'}\`
 - Monitoring requested: \`${monitoringEnabled ? 'true' : 'false'}\`
 - Auth provider: \`${authProvider}\`
 - Authorization engine: \`${authzEngine}\`
@@ -332,6 +339,7 @@ Build flow:
 
 - \`./scripts/up.sh\` calls \`./scripts/build-app-image.sh\` when \`APP_BUILD_ENABLED=true\`.
 - Supabase local project root: \`infra/minikube\`${supabaseLocalEnabled ? '' : ' (unused unless Supabase-backed auth/database/storage is enabled)'}.
+- Supabase local project identity: \`${supabaseProjectId ?? 'unused'}\`; existing local configs with another \`project_id\` must be destroyed and recreated manually.
 - Immutable migrations live in \`supabase/migrations/\` and are applied with \`supabase migration up --local\`.
 ${profileModel.enabled ? '- Generated profile desired-state reconciliation lives in `supabase/generated/auth_profiles.sql` and records checksum state in `ankhorage_internal.generated_schema_state`.\n' : ''}- \`./scripts/supabase-local-env.sh\` can populate Supabase keys in \`.env\` from local \`supabase status -o env\`.
 - \`./scripts/supabase-local-env.sh\` writes \`EXPO_PUBLIC_SUPABASE_URL\` + \`EXPO_PUBLIC_SUPABASE_ANON_KEY\` into \`$APP_SOURCE_DIR/.env.local\` (e.g. \`apps/card/.env.local\`) for local app runs.
@@ -1414,10 +1422,11 @@ $$;`;
 
 function getStatusScript(args: {
   defaultNamespace: string;
+  supabaseProjectId: string | null;
   supabaseLocalEnabled: boolean;
   profileModel: ResolvedProfileModel;
 }): string {
-  const { defaultNamespace, supabaseLocalEnabled, profileModel } = args;
+  const { defaultNamespace, supabaseProjectId, supabaseLocalEnabled, profileModel } = args;
   const profileStatusSql = profileModel.enabled ? getSupabaseProfileChecksumSql(profileModel) : '';
   const profileVerificationSql = profileModel.enabled
     ? getSupabaseProfileVerificationSql(profileModel)
@@ -1441,8 +1450,10 @@ AUTH_RUNTIME_MODE="\${AUTH_RUNTIME_MODE:-local}"
 SUPABASE_LOCAL_ENABLED="\${SUPABASE_LOCAL_ENABLED:-${supabaseLocalEnabled ? 'true' : 'false'}}"
 SUPABASE_SECRET_SYNC_ENABLED="\${SUPABASE_SECRET_SYNC_ENABLED:-true}"
 SUPABASE_PROJECT_DIR="\${SUPABASE_PROJECT_DIR:-\${ROOT_DIR}}"
+EXPECTED_SUPABASE_PROJECT_ID="${supabaseProjectId ?? ''}"
 SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
 SUPABASE_PROFILE_RECONCILE_FILE="\${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"
+export EXPECTED_SUPABASE_PROJECT_ID
 
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "kubectl is required but not installed."
@@ -1606,6 +1617,61 @@ run_supabase_sql() {
   return 1
 }
 
+validate_supabase_project_identity() {
+  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
+
+  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
+    return 0
+  fi
+
+  if [[ ! -f "\${config_file}" ]]; then
+    echo "- local Supabase project identity: config missing at \${config_file}"
+    return 1
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "- local Supabase project identity: python3 is required to read \${config_file}"
+    return 1
+  fi
+
+  python3 - "\${config_file}" <<'PY'
+import os
+import re
+import sys
+
+
+def read_top_level_project_id(config_path):
+    key_re = re.compile(r'^\\s*project_id\\s*=\\s*(.*?)\\s*(?:#.*)?$')
+    section_re = re.compile(r'^\\s*\\[[^\\]]+\\]\\s*$')
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if section_re.match(line):
+                return None
+            match = key_re.match(line)
+            if not match:
+                continue
+            raw = match.group(1).strip()
+            quoted = re.match(r'^["\\']([^"\\']*)["\\']$', raw)
+            return quoted.group(1) if quoted else raw
+
+    return None
+
+
+expected = os.environ['EXPECTED_SUPABASE_PROJECT_ID']
+actual = read_top_level_project_id(sys.argv[1])
+
+if actual == expected:
+    raise SystemExit(0)
+
+found = 'missing' if actual is None else f'"{actual}"'
+print('Supabase project identity mismatch.', file=sys.stderr)
+print(f'Expected "{expected}", found {found}.', file=sys.stderr)
+print('Destroy the invalid local stack and run Infra Up again.', file=sys.stderr)
+raise SystemExit(1)
+PY
+}
+
 check_immutable_migrations_applied() {
   local migrations_dir="\${SUPABASE_PROJECT_DIR}/supabase/migrations"
   local applied_versions
@@ -1641,7 +1707,9 @@ if [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "tru
   status_failed=0
 
   if require_supabase_cli_capabilities; then
-    if supabase --workdir "\${SUPABASE_PROJECT_DIR}" status >/dev/null 2>&1; then
+    if ! validate_supabase_project_identity; then
+      status_failed=1
+    elif supabase --workdir "\${SUPABASE_PROJECT_DIR}" status >/dev/null 2>&1; then
       STATUS_ENV="$(supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env)"
       SUPABASE_DB_URL="$(read_env_value "\${STATUS_ENV}" DB_URL)"
       if [[ -z "\${SUPABASE_DB_URL}" ]]; then
@@ -1713,10 +1781,11 @@ fi
 }
 
 function getSupabaseLocalEnvScript(args: {
+  supabaseProjectId: string | null;
   supabaseLocalPorts: SupabaseLocalPorts;
   profileModel: ResolvedProfileModel;
 }): string {
-  const { supabaseLocalPorts, profileModel } = args;
+  const { supabaseProjectId, supabaseLocalPorts, profileModel } = args;
   const profileStatusSql = profileModel.enabled ? getSupabaseProfileChecksumSql(profileModel) : '';
   const profileVerificationSql = profileModel.enabled
     ? getSupabaseProfileVerificationSql(profileModel)
@@ -1739,9 +1808,11 @@ fi
 
 APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
 SUPABASE_PROJECT_DIR="\${SUPABASE_PROJECT_DIR:-\${ROOT_DIR}}"
+EXPECTED_SUPABASE_PROJECT_ID="${supabaseProjectId ?? ''}"
 APP_SUPABASE_ENV_FILE="\${APP_SUPABASE_ENV_FILE:-\${APP_SOURCE_DIR}/.env.local}"
 SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
 SUPABASE_PROFILE_RECONCILE_FILE="\${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"
+export EXPECTED_SUPABASE_PROJECT_ID
 
 SUPABASE_LOCAL_PORT_BASE="\${SUPABASE_LOCAL_PORT_BASE:-${supabaseLocalPorts.base}}"
 SUPABASE_LOCAL_SHADOW_PORT="\${SUPABASE_LOCAL_SHADOW_PORT:-\${SUPABASE_LOCAL_PORT_BASE}}"
@@ -1973,8 +2044,118 @@ if __name__ == "__main__":
 PY
 }
 
+write_supabase_project_identity_for_new_config() {
+  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
+
+  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
+    return 0
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "python3 is required to write Supabase project_id in \${config_file}."
+    exit 1
+  fi
+
+  python3 - "\${config_file}" <<'PY'
+import os
+import re
+import sys
+
+
+def write_top_level_project_id(config_path, expected):
+    key_re = re.compile(r'^(\\s*)project_id\\s*=\\s*(.*?)(\\s*(#.*)?)?$')
+    section_re = re.compile(r'^\\s*\\[[^\\]]+\\]\\s*$')
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    section_start = len(lines)
+    for i, line in enumerate(lines):
+        if section_re.match(line):
+            section_start = i
+            break
+
+    for i in range(section_start):
+        match = key_re.match(lines[i])
+        if not match:
+            continue
+        indent = match.group(1) or ''
+        trailing = (match.group(3) or '').rstrip('\\n')
+        lines[i] = f'{indent}project_id = "{expected}"{trailing}\\n'
+        break
+    else:
+        insert_at = section_start
+        lines.insert(insert_at, f'project_id = "{expected}"\\n')
+
+    with open(config_path, 'w', encoding='utf-8') as f:
+        f.writelines(lines)
+
+
+write_top_level_project_id(sys.argv[1], os.environ['EXPECTED_SUPABASE_PROJECT_ID'])
+PY
+}
+
+validate_supabase_project_identity() {
+  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
+
+  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
+    return 0
+  fi
+
+  if [[ ! -f "\${config_file}" ]]; then
+    echo "Supabase project identity mismatch."
+    printf 'Expected "%s", found missing.\n' "\${EXPECTED_SUPABASE_PROJECT_ID}"
+    echo "The existing local Supabase project belongs to a different identity."
+    echo "Destroy the invalid local stack and its project-owned resources, then run Infra Up again."
+    exit 1
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "python3 is required to read Supabase project_id in \${config_file}."
+    exit 1
+  fi
+
+  python3 - "\${config_file}" <<'PY'
+import os
+import re
+import sys
+
+
+def read_top_level_project_id(config_path):
+    key_re = re.compile(r'^\\s*project_id\\s*=\\s*(.*?)\\s*(?:#.*)?$')
+    section_re = re.compile(r'^\\s*\\[[^\\]]+\\]\\s*$')
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if section_re.match(line):
+                return None
+            match = key_re.match(line)
+            if not match:
+                continue
+            raw = match.group(1).strip()
+            quoted = re.match(r'^["\\']([^"\\']*)["\\']$', raw)
+            return quoted.group(1) if quoted else raw
+
+    return None
+
+
+expected = os.environ['EXPECTED_SUPABASE_PROJECT_ID']
+actual = read_top_level_project_id(sys.argv[1])
+
+if actual == expected:
+    raise SystemExit(0)
+
+found = 'missing' if actual is None else f'"{actual}"'
+print('Supabase project identity mismatch.', file=sys.stderr)
+print(f'Expected "{expected}", found {found}.', file=sys.stderr)
+print('The existing local Supabase project belongs to a different identity.', file=sys.stderr)
+print('Destroy the invalid local stack and its project-owned resources, then run Infra Up again.', file=sys.stderr)
+raise SystemExit(1)
+PY
+}
+
 assert_supabase_local_ports_available() {
-  local project_label="\${ANKH_NAMESPACE:-$(basename "\${APP_SOURCE_DIR}")}"
+  local project_label="\${EXPECTED_SUPABASE_PROJECT_ID:-$(basename "\${APP_SOURCE_DIR}")}"
 
   ANKH_PROJECT_LABEL="\${project_label}" python3 - <<'PY'
 import os
@@ -2052,8 +2233,10 @@ PY
 if [[ ! -f "\${SUPABASE_PROJECT_DIR}/supabase/config.toml" ]]; then
   echo "No supabase/config.toml found in \${SUPABASE_PROJECT_DIR}. Initializing Supabase project..."
   supabase --workdir "\${SUPABASE_PROJECT_DIR}" init --yes >/dev/null
+  write_supabase_project_identity_for_new_config
 fi
 
+validate_supabase_project_identity
 configure_supabase_local_ports
 
 STATUS_ENV="$(
@@ -2125,6 +2308,7 @@ start_supabase_local_stack() {
 }
 
 if [[ -z "\${STATUS_ENV}" ]]; then
+  validate_supabase_project_identity
   assert_supabase_local_ports_available
   echo "Supabase local stack not detected. Starting with 'supabase start'..."
   start_supabase_local_stack
@@ -2138,6 +2322,7 @@ if [[ -z "\${SUPABASE_DB_URL}" ]]; then
 fi
 
 echo "Applying pending immutable Supabase migrations..."
+validate_supabase_project_identity
 run_checked_command \
   "Immutable Supabase migration application" \
   "" \

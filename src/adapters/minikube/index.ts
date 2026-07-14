@@ -12,6 +12,7 @@ import { generateSecretStoreArtifacts } from './secrets';
 import { generateStorageArtifacts } from './storage';
 
 const DEFAULT_NAMESPACE = 'ankh-app';
+const CANONICAL_PROJECT_SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 
 export function generateMinikubeInfra(
   manifest: InfraManifestInput,
@@ -30,6 +31,9 @@ export function generateMinikubeInfra(
   }
 
   const namespace = resolveNamespace(manifest, options);
+  const supabaseProjectId = isSupabaseLocalEnabled(manifest)
+    ? validateCanonicalProjectSlug(options.appManifest?.metadata.slug)
+    : null;
 
   const authArtifacts = generateAuthProviderArtifacts({ manifest, namespace });
   const authzArtifacts = generateAuthorizationArtifacts({
@@ -60,6 +64,7 @@ export function generateMinikubeInfra(
   const baseFiles = generateMinikubeBaseArtifacts({
     manifest,
     namespace,
+    supabaseProjectId,
     extraResources,
     extraEnvEntries,
   });
@@ -134,6 +139,38 @@ function collectWarnings(manifest: InfraManifestInput): string[] {
   }
 
   return warnings;
+}
+
+function isSupabaseLocalEnabled(manifest: InfraManifestInput): boolean {
+  const authProvider = manifest.auth?.provider;
+  const databaseProvider = manifest.database?.provider;
+  const storageProvider = manifest.storage?.provider;
+  const secretStoreProvider = manifest.secretStore?.provider;
+
+  return (
+    authProvider === 'supabase' ||
+    databaseProvider === 'supabase' ||
+    storageProvider === 'supabase' ||
+    (storageProvider === 'auto' &&
+      (authProvider === 'supabase' || databaseProvider === 'supabase')) ||
+    secretStoreProvider === 'supabase-vault'
+  );
+}
+
+function validateCanonicalProjectSlug(slug: string | undefined): string {
+  if (!slug) {
+    throw new Error(
+      'Cannot generate local Supabase infrastructure: appManifest.metadata.slug is required.',
+    );
+  }
+
+  if (slug.trim() !== slug || !CANONICAL_PROJECT_SLUG_RE.test(slug)) {
+    throw new Error(
+      'Cannot generate local Supabase infrastructure: appManifest.metadata.slug must be a canonical lowercase slug using only a-z, 0-9, and hyphens, without leading or trailing hyphens.',
+    );
+  }
+
+  return slug;
 }
 
 function resolveNamespace(
