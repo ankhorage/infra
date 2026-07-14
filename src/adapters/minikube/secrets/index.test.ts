@@ -1,3 +1,4 @@
+import type { AppManifest } from '@ankhorage/contracts';
 import { SUPABASE_VAULT_MIGRATION_SQL } from '@ankhorage/supabase-vault';
 import { describe, expect, test } from 'bun:test';
 
@@ -21,7 +22,9 @@ function createManifest(overrides: Partial<InfraManifestInput> = {}): InfraManif
 
 describe('minikube secret-store generation', () => {
   test('generates the released Supabase Vault migration through the existing lifecycle', () => {
-    const result = generateInfrastructure(createManifest());
+    const result = generateInfrastructure(createManifest(), {
+      appManifest: createAppManifest('vault-app'),
+    });
     const migration = result.files.find((file) => file.path === SUPABASE_VAULT_MIGRATION_PATH);
     const envExample = result.files.find((file) => file.path === 'infra/minikube/.env.example');
     const upScript = result.files.find((file) => file.path === 'infra/minikube/scripts/up.sh');
@@ -55,6 +58,7 @@ describe('minikube secret-store generation', () => {
             },
           },
         }),
+        { appManifest: createAppManifest('vault-app') },
       ),
     ).toThrow('does not define credentialsRef');
   });
@@ -81,6 +85,7 @@ describe('minikube secret-store generation', () => {
           },
         },
       }),
+      { appManifest: createAppManifest('vault-app') },
     );
 
     const serialized = JSON.stringify(result.files);
@@ -101,3 +106,34 @@ describe('minikube secret-store generation', () => {
     ).toThrow('Unsupported secret-store provider for minikube adapter');
   });
 });
+
+function createAppManifest(
+  slug: string,
+): Pick<AppManifest, 'metadata' | 'navigator' | 'screens' | 'settings'> {
+  return {
+    metadata: {
+      name: slug,
+      slug,
+      version: '1.0.0',
+      themeId: 'default',
+    },
+    navigator: {
+      type: 'stack',
+      routes: [],
+    },
+    screens: {},
+    settings: {
+      localization: {
+        defaultLocale: 'en',
+        locales: ['en'],
+      },
+      authFlow: {
+        signInRoute: '/sign-in',
+        signUpRoute: '/sign-up',
+        signOutRoute: '/sign-out',
+        unauthorizedRoute: '/sign-in',
+        postSignInRoute: '/',
+      },
+    },
+  };
+}

@@ -45,7 +45,7 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest);
+    const result = generateInfrastructure(manifest, { appManifest: createAppManifest('alpha') });
     const paths = result.files.map((f) => f.path);
 
     expect(result.meta.target).toBe('minikube');
@@ -147,8 +147,8 @@ describe('generateInfrastructure', () => {
     expect(envExample?.content).toContain('APP_SOURCE_DIR=');
     expect(envExample?.content).toContain('APP_WEB_EXPORT_DIR=.ankh/web-export');
     expect(envExample?.content).toContain('SUPABASE_PROJECT_DIR=');
-    expect(envExample?.content).toContain('SUPABASE_LOCAL_PORT_BASE=59120');
-    expect(envExample?.content).toContain('SUPABASE_LOCAL_ANALYTICS_PORT=59125');
+    expect(envExample?.content).toContain('SUPABASE_LOCAL_PORT_BASE=55540');
+    expect(envExample?.content).toContain('SUPABASE_LOCAL_ANALYTICS_PORT=55545');
     expect(envExample?.content).toContain('APP_IMAGE=ankh/alpha-local:dev');
     expect(envExample?.content).toContain('APP_IMAGE_SYNC_STRATEGY=docker-load');
     expect(envExample?.content).toContain('AUTH_RUNTIME_MODE=local');
@@ -168,7 +168,8 @@ describe('generateInfrastructure', () => {
 
     const minikubeReadme = result.files.find((f) => f.path === 'infra/minikube/README.md');
     expect(minikubeReadme?.content).toContain('SUPABASE_LOCAL_ANALYTICS_PORT');
-    expect(minikubeReadme?.content).toContain('59125');
+    expect(minikubeReadme?.content).toContain('55545');
+    expect(minikubeReadme?.content).toContain('Supabase local project identity: `alpha`');
     expect(minikubeReadme?.content).toContain('$APP_SOURCE_DIR/.env.local');
     expect(minikubeReadme?.content).toContain('apps/card/.env.local');
 
@@ -333,7 +334,10 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'shop' });
+    const result = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest('shop'),
+    });
 
     expect(result.warnings).toContain(
       'Storage buckets are configured but not created automatically yet. Ensure buckets exist in Supabase Storage: assets,uploads.',
@@ -380,7 +384,10 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'shop' });
+    const result = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest('shop'),
+    });
 
     expect(result.files.map((f) => f.path)).toContain(
       'infra/minikube/k8s/storage/supabase/app-runtime-storage.env.configmap.yaml',
@@ -425,7 +432,10 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'shop' });
+    const result = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest('shop'),
+    });
     expect(result.warnings).toContain(
       'Storage buckets are empty after normalization; no storage artifacts generated.',
     );
@@ -451,7 +461,10 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'shop' });
+    const result = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest('shop'),
+    });
     expect(result.warnings).toContain(
       'Storage buckets are empty after normalization; no storage artifacts generated.',
     );
@@ -473,7 +486,10 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'shop' });
+    const result = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest('shop'),
+    });
     expect(result.warnings).toContain(
       'Storage provider "auto" could not be resolved for minikube; no storage artifacts generated.',
     );
@@ -645,9 +661,98 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    expect(() => generateInfrastructure(manifest)).toThrow(
-      'Unsupported authorization engine for minikube adapter: opa',
+    expect(() =>
+      generateInfrastructure(manifest, { appManifest: createAppManifest('shop') }),
+    ).toThrow('Unsupported authorization engine for minikube adapter: opa');
+  });
+
+  test('requires canonical app slug for local Supabase infrastructure', () => {
+    const manifest: InfraManifestInput = {
+      deployment: {
+        target: 'minikube',
+        monitoring: false,
+      },
+      database: {
+        provider: 'supabase',
+        tier: 'dev',
+      },
+      plugins: [],
+    };
+
+    expect(() => generateInfrastructure(manifest, { namespaceHint: 'shop' })).toThrow(
+      'Cannot generate local Supabase infrastructure: appManifest.metadata.slug is required.',
     );
+    expect(() =>
+      generateInfrastructure(manifest, {
+        namespaceHint: 'shop',
+        appManifest: createAppManifest('Scanner App'),
+      }),
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
+
+    const fortyCharacterSlug = 'a'.repeat(40);
+    const fortyCharacterResult = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest(fortyCharacterSlug),
+    });
+    const fortyCharacterScript = fortyCharacterResult.files.find(
+      (f) => f.path === 'infra/minikube/scripts/supabase-local-env.sh',
+    );
+    expect(fortyCharacterScript?.content).toContain(
+      `EXPECTED_SUPABASE_PROJECT_ID="${fortyCharacterSlug}"`,
+    );
+
+    expect(() =>
+      generateInfrastructure(manifest, {
+        namespaceHint: 'shop',
+        appManifest: createAppManifest('a'.repeat(41)),
+      }),
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
+
+    expect(() =>
+      generateInfrastructure(manifest, {
+        namespaceHint: 'shop',
+        appManifest: createAppManifest('very-long-project-name-with-identical-prefix-alpha'),
+      }),
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
+    expect(() =>
+      generateInfrastructure(manifest, {
+        namespaceHint: 'shop',
+        appManifest: createAppManifest('very-long-project-name-with-identical-prefix-beta'),
+      }),
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
+  });
+
+  test('keeps Supabase project identity independent from domain-derived namespace', () => {
+    const manifest: InfraManifestInput = {
+      deployment: {
+        target: 'minikube',
+        monitoring: false,
+      },
+      database: {
+        provider: 'supabase',
+        tier: 'dev',
+      },
+      networking: {
+        domain: 'local.example.test',
+        cdn: false,
+      },
+      plugins: [],
+    };
+
+    const result = generateInfrastructure(manifest, {
+      namespaceHint: 'ignored',
+      appManifest: createAppManifest('scanner'),
+    });
+    const namespaceFile = result.files.find((f) => f.path === 'infra/minikube/k8s/namespace.yaml');
+    const envExample = result.files.find((f) => f.path === 'infra/minikube/.env.example');
+    const script = result.files.find(
+      (f) => f.path === 'infra/minikube/scripts/supabase-local-env.sh',
+    );
+
+    expect(namespaceFile?.content).toContain('name: local-example-test');
+    expect(envExample?.content).toContain('SUPABASE_LOCAL_PORT_BASE=64020');
+    expect(envExample?.content).not.toContain('SUPABASE_LOCAL_PORT_BASE=61550');
+    expect(script?.content).toContain('EXPECTED_SUPABASE_PROJECT_ID="scanner"');
   });
 
   test('uses namespace hint when domain is not provided', () => {
@@ -671,7 +776,10 @@ describe('generateInfrastructure', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'shop' });
+    const result = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest('shop'),
+    });
     const namespaceFile = result.files.find((f) => f.path === 'infra/minikube/k8s/namespace.yaml');
     const upScript = result.files.find((f) => f.path === 'infra/minikube/scripts/up.sh');
     const statusScript = result.files.find((f) => f.path === 'infra/minikube/scripts/status.sh');
@@ -688,3 +796,34 @@ describe('generateInfrastructure', () => {
     expect(statusScript?.content).toContain('- secret/supabase-auth-secrets: present');
   });
 });
+
+function createAppManifest(
+  slug: string,
+): Pick<AppManifest, 'metadata' | 'navigator' | 'screens' | 'settings'> {
+  return {
+    metadata: {
+      name: slug,
+      slug,
+      version: '1.0.0',
+      themeId: 'default',
+    },
+    navigator: {
+      type: 'stack',
+      routes: [],
+    },
+    screens: {},
+    settings: {
+      localization: {
+        defaultLocale: 'en',
+        locales: ['en'],
+      },
+      authFlow: {
+        signInRoute: '/sign-in',
+        signUpRoute: '/sign-up',
+        signOutRoute: '/sign-out',
+        unauthorizedRoute: '/sign-in',
+        postSignInRoute: '/',
+      },
+    },
+  };
+}

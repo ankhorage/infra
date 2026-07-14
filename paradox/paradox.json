@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.3.7",
+      "value": "v0.4.0",
       "color": "cb3837"
     },
     {
@@ -1338,7 +1338,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 163,
+        "line": 167,
         "column": 1
       }
     },
@@ -1347,7 +1347,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 360,
+        "line": 368,
         "column": 1
       }
     },
@@ -1356,7 +1356,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 420,
+        "line": 428,
         "column": 1
       }
     },
@@ -1365,7 +1365,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 430,
+        "line": 438,
         "column": 1
       }
     },
@@ -1374,7 +1374,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 474,
+        "line": 482,
         "column": 1
       }
     },
@@ -1383,7 +1383,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 509,
+        "line": 517,
         "column": 1
       }
     },
@@ -1392,7 +1392,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 524,
+        "line": 532,
         "column": 1
       }
     },
@@ -1401,7 +1401,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 528,
+        "line": 536,
         "column": 1
       }
     },
@@ -1410,7 +1410,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 545,
+        "line": 553,
         "column": 1
       }
     },
@@ -1419,7 +1419,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 599,
+        "line": 607,
         "column": 1
       }
     },
@@ -1428,7 +1428,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 618,
+        "line": 626,
         "column": 1
       }
     },
@@ -1437,7 +1437,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 868,
+        "line": 876,
         "column": 1
       }
     },
@@ -1446,7 +1446,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 945,
+        "line": 953,
         "column": 1
       }
     },
@@ -1455,7 +1455,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 969,
+        "line": 977,
         "column": 1
       }
     },
@@ -1464,7 +1464,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1010,
+        "line": 1018,
         "column": 1
       }
     },
@@ -1473,7 +1473,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1030,
+        "line": 1038,
         "column": 1
       }
     },
@@ -1482,7 +1482,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1060,
+        "line": 1068,
         "column": 1
       }
     },
@@ -1491,7 +1491,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1075,
+        "line": 1083,
         "column": 1
       }
     },
@@ -1500,7 +1500,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1415,
+        "line": 1423,
         "column": 1
       }
     },
@@ -1509,7 +1509,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1715,
+        "line": 1805,
         "column": 1
       }
     },
@@ -1518,7 +1518,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2270,
+        "line": 2486,
         "column": 1
       }
     },
@@ -1527,7 +1527,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2274,
+        "line": 2490,
         "column": 1
       }
     },
@@ -1536,7 +1536,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2290,
+        "line": 2506,
         "column": 1
       }
     },
@@ -1545,7 +1545,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2295,
+        "line": 2511,
         "column": 1
       }
     },
@@ -1554,7 +1554,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2306,
+        "line": 2522,
         "column": 1
       }
     },
@@ -1563,7 +1563,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2310,
+        "line": 2526,
         "column": 1
       }
     },
@@ -1581,7 +1581,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 16,
+        "line": 17,
         "column": 1
       }
     },
@@ -1590,7 +1590,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 94,
+        "line": 99,
         "column": 1
       }
     },
@@ -1599,7 +1599,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 109,
+        "line": 114,
         "column": 1
       }
     },
@@ -1608,7 +1608,25 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 123,
+        "line": 128,
+        "column": 1
+      }
+    },
+    {
+      "name": "isSupabaseLocalEnabled",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 144,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateCanonicalProjectSlug",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/index.ts",
+        "line": 160,
         "column": 1
       }
     },
@@ -1617,7 +1635,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 139,
+        "line": 176,
         "column": 1
       }
     },
@@ -1626,7 +1644,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 156,
+        "line": 193,
         "column": 1
       }
     },
@@ -3745,6 +3763,18 @@
         "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "resolveNamespace",
         "callExpression": "resolveNamespace",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "isSupabaseLocalEnabled",
+        "callExpression": "isSupabaseLocalEnabled",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "validateCanonicalProjectSlug",
+        "callExpression": "validateCanonicalProjectSlug",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
