@@ -99,6 +99,7 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
       'validate_supabase_project_identity\n  assert_supabase_local_ports_available',
     );
     expect(script).toContain('validate_supabase_project_identity\nrun_checked_command');
+    expect(script).not.toContain('basename "${APP_SOURCE_DIR}"');
     expect(script).not.toContain('_minikube');
 
     expect(status).toContain('EXPECTED_SUPABASE_PROJECT_ID="scanner"');
@@ -168,6 +169,22 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
   });
 
+  test('rejects empty Supabase project identity before Supabase CLI operations', () => {
+    const run = runGeneratedSupabaseScript({
+      projectId: 'plain',
+      supabaseProjectId: null,
+      existingConfig: null,
+    });
+
+    expect(run.status).not.toBe(0);
+    expect(run.combinedOutput).toContain(
+      'Cannot run local Supabase infrastructure: expected Supabase project identity is empty.',
+    );
+    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
+    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('init --yes');
+    expect(() => readFileSync(run.configPath, 'utf-8')).toThrow();
+  });
+
   test('requires python before Supabase init mutates the workdir', () => {
     const run = runGeneratedSupabaseScript({
       projectId: 'scanner',
@@ -208,8 +225,9 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
 
     expect(script).toContain('SUPABASE_PROJECT_DIR="${SUPABASE_PROJECT_DIR:-${ROOT_DIR}}"');
+    expect(script).toContain('require_expected_supabase_project_identity');
     expect(script).toContain(
-      'reject_supabase_project_id_override\nrequire_supabase_cli_capabilities',
+      'require_expected_supabase_project_identity\nreject_supabase_project_id_override\nrequire_supabase_cli_capabilities',
     );
     expect(script).toContain('supabase CLI >= 2.106.0 is required');
     expect(script).toContain('supabase CLI does not support required global --workdir flag');
@@ -283,6 +301,28 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     );
     expect(status).toContain('generated trigger function execute privilege must be revoked');
   });
+
+  test('does not reject SUPABASE_PROJECT_ID for non-Supabase status checks', () => {
+    const run = runGeneratedStatusScript({
+      manifest: {
+        deployment: {
+          target: 'minikube',
+          monitoring: false,
+        },
+        plugins: [],
+      },
+      supabaseProjectId: null,
+      env: {
+        SUPABASE_PROJECT_ID: 'ambient-project',
+      },
+    });
+
+    expect(run.status).toBe(0);
+    expect(run.combinedOutput).not.toContain(
+      'SUPABASE_PROJECT_ID must not be set for generated local Infra scripts.',
+    );
+    expect(run.kubectlLog).toContain('get all -n plain');
+  });
 });
 
 function getGeneratedFileContent(
@@ -347,6 +387,7 @@ function createInfraManifest(overrides: Partial<InfraManifestInput> = {}): Infra
 
 function runGeneratedSupabaseScript(args: {
   projectId: string;
+  supabaseProjectId?: string | null;
   existingConfig: string | null;
   env?: Record<string, string>;
   withoutPython?: boolean;
@@ -382,7 +423,7 @@ function runGeneratedSupabaseScript(args: {
     args.projectId,
     'infra/minikube/scripts/supabase-local-env.sh',
     {},
-    args.projectId,
+    args.supabaseProjectId === undefined ? args.projectId : args.supabaseProjectId,
   );
   writeFileSync(scriptPath, script);
   chmodSync(scriptPath, 0o755);
@@ -467,5 +508,91 @@ exit 0
     root,
     configPath,
     supabaseLogPath,
+  };
+}
+
+function runGeneratedStatusScript(args: {
+  manifest: InfraManifestInput;
+  supabaseProjectId: string | null;
+  env?: Record<string, string>;
+}): {
+  status: number | null;
+  combinedOutput: string;
+  kubectlLog: string;
+} {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'infra-status-'));
+  const root = join(tempRoot, 'infra', 'minikube');
+  const scriptsDir = join(root, 'scripts');
+  const binDir = join(tempRoot, 'bin');
+  const scriptPath = join(scriptsDir, 'status.sh');
+  const kubectlLogPath = join(tempRoot, 'kubectl.log');
+
+  mkdirSync(scriptsDir, { recursive: true });
+  mkdirSync(binDir, { recursive: true });
+  writeFileSync(join(root, '.env.example'), '');
+  writeFileSync(kubectlLogPath, '');
+
+  const artifact = generateMinikubeBaseArtifacts({
+    manifest: args.manifest,
+    namespace: 'plain',
+    supabaseProjectId: args.supabaseProjectId,
+    extraResources: [],
+    extraEnvEntries: [],
+  }).find((file) => file.path === 'infra/minikube/scripts/status.sh');
+
+  if (!artifact) {
+    throw new Error('Expected generated status.sh artifact');
+  }
+
+  writeFileSync(scriptPath, artifact.content);
+  chmodSync(scriptPath, 0o755);
+
+  const kubectlStubPath = join(binDir, 'kubectl');
+  writeFileSync(
+    kubectlStubPath,
+    `#!/bin/bash
+set -euo pipefail
+printf '%s\\n' "$*" >> "\${KUBECTL_STUB_LOG}"
+
+if [[ "\${1:-}" == "config" && "\${2:-}" == "current-context" ]]; then
+  echo "minikube"
+  exit 0
+fi
+
+if [[ "\${1:-}" == "cluster-info" ]]; then
+  echo "Kubernetes control plane is running"
+  exit 0
+fi
+
+if [[ "\${1:-}" == "get" && "\${2:-}" == "namespace" ]]; then
+  exit 0
+fi
+
+if [[ "\${1:-}" == "get" && "\${2:-}" == "all" ]]; then
+  echo "No resources found"
+  exit 0
+fi
+
+echo "unexpected kubectl call: $*" >&2
+exit 1
+`,
+  );
+  chmodSync(kubectlStubPath, 0o755);
+
+  const result = spawnSync('/bin/bash', [scriptPath], {
+    cwd: tempRoot,
+    env: {
+      ...process.env,
+      PATH: `${binDir}:${process.env.PATH ?? ''}`,
+      KUBECTL_STUB_LOG: kubectlLogPath,
+      ...args.env,
+    },
+    encoding: 'utf-8',
+  });
+
+  return {
+    status: result.status,
+    combinedOutput: `${result.stdout}${result.stderr}`,
+    kubectlLog: readFileSync(kubectlLogPath, 'utf-8'),
   };
 }

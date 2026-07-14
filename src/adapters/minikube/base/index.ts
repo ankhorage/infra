@@ -1465,10 +1465,6 @@ reject_supabase_project_id_override() {
   unset SUPABASE_PROJECT_ID
 }
 
-if ! reject_supabase_project_id_override; then
-  exit 1
-fi
-
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "kubectl is required but not installed."
   exit 1
@@ -1720,7 +1716,9 @@ if [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "tru
   echo "Local Supabase database checks:"
   status_failed=0
 
-  if require_supabase_cli_capabilities; then
+  if ! reject_supabase_project_id_override; then
+    status_failed=1
+  elif require_supabase_cli_capabilities; then
     if ! validate_supabase_project_identity; then
       status_failed=1
     elif supabase --workdir "\${SUPABASE_PROJECT_DIR}" status >/dev/null 2>&1; then
@@ -1838,6 +1836,14 @@ reject_supabase_project_id_override() {
   unset SUPABASE_PROJECT_ID
 }
 
+require_expected_supabase_project_identity() {
+  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
+    echo "Cannot run local Supabase infrastructure: expected Supabase project identity is empty."
+    echo "Regenerate Infra with appManifest.metadata.slug for Supabase-backed local services."
+    exit 1
+  fi
+}
+
 SUPABASE_LOCAL_PORT_BASE="\${SUPABASE_LOCAL_PORT_BASE:-${supabaseLocalPorts.base}}"
 SUPABASE_LOCAL_SHADOW_PORT="\${SUPABASE_LOCAL_SHADOW_PORT:-\${SUPABASE_LOCAL_PORT_BASE}}"
 SUPABASE_LOCAL_API_PORT="\${SUPABASE_LOCAL_API_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 1))}"
@@ -1948,6 +1954,7 @@ run_checked_sql_file() {
     psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${sql_file}"
 }
 
+require_expected_supabase_project_identity
 reject_supabase_project_id_override
 require_supabase_cli_capabilities
 
@@ -2065,9 +2072,7 @@ PY
 write_supabase_project_identity_for_new_config() {
   local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
 
-  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
-    return 0
-  fi
+  require_expected_supabase_project_identity
 
   if ! command -v python3 >/dev/null 2>&1; then
     echo "python3 is required to write Supabase project_id in \${config_file}."
@@ -2116,9 +2121,7 @@ PY
 validate_supabase_project_identity() {
   local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
 
-  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
-    return 0
-  fi
+  require_expected_supabase_project_identity
 
   if [[ ! -f "\${config_file}" ]]; then
     echo "Supabase project identity mismatch."
@@ -2173,7 +2176,7 @@ PY
 }
 
 assert_supabase_local_ports_available() {
-  local project_label="\${EXPECTED_SUPABASE_PROJECT_ID:-$(basename "\${APP_SOURCE_DIR}")}"
+  local project_label="\${EXPECTED_SUPABASE_PROJECT_ID}"
 
   ANKH_PROJECT_LABEL="\${project_label}" python3 - <<'PY'
 import os
