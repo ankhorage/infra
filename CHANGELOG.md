@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 0.4.1
+
+### Patch Changes
+
+- f48b53f: Preserve app-specific Supabase local project identity while keeping the canonical Minikube workdir.
+
 ## 0.4.0
 
 ### Minor Changes
