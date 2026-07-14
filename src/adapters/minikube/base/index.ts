@@ -1455,6 +1455,20 @@ SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
 SUPABASE_PROFILE_RECONCILE_FILE="\${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"
 export EXPECTED_SUPABASE_PROJECT_ID
 
+reject_supabase_project_id_override() {
+  if [[ -n "\${SUPABASE_PROJECT_ID:-}" ]]; then
+    echo "SUPABASE_PROJECT_ID must not be set for generated local Infra scripts."
+    echo "Unset SUPABASE_PROJECT_ID and use supabase/config.toml project_id instead."
+    return 1
+  fi
+
+  unset SUPABASE_PROJECT_ID
+}
+
+if ! reject_supabase_project_id_override; then
+  exit 1
+fi
+
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "kubectl is required but not installed."
   exit 1
@@ -1814,6 +1828,16 @@ SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
 SUPABASE_PROFILE_RECONCILE_FILE="\${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"
 export EXPECTED_SUPABASE_PROJECT_ID
 
+reject_supabase_project_id_override() {
+  if [[ -n "\${SUPABASE_PROJECT_ID:-}" ]]; then
+    echo "SUPABASE_PROJECT_ID must not be set for generated local Infra scripts."
+    echo "Unset SUPABASE_PROJECT_ID and use supabase/config.toml project_id instead."
+    exit 1
+  fi
+
+  unset SUPABASE_PROJECT_ID
+}
+
 SUPABASE_LOCAL_PORT_BASE="\${SUPABASE_LOCAL_PORT_BASE:-${supabaseLocalPorts.base}}"
 SUPABASE_LOCAL_SHADOW_PORT="\${SUPABASE_LOCAL_SHADOW_PORT:-\${SUPABASE_LOCAL_PORT_BASE}}"
 SUPABASE_LOCAL_API_PORT="\${SUPABASE_LOCAL_API_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 1))}"
@@ -1855,6 +1879,11 @@ require_supabase_cli_capabilities() {
   if ! command -v supabase >/dev/null 2>&1; then
     echo "supabase CLI is required but not installed."
     echo "Install or upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
+    exit 1
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "python3 is required to reconcile supabase/config.toml before local Supabase startup."
     exit 1
   fi
 
@@ -1919,6 +1948,7 @@ run_checked_sql_file() {
     psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${sql_file}"
 }
 
+reject_supabase_project_id_override
 require_supabase_cli_capabilities
 
 if [[ ! -d "\${SUPABASE_PROJECT_DIR}" ]]; then
@@ -1928,18 +1958,6 @@ fi
 
 configure_supabase_local_ports() {
   local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
-
-  if ! command -v python3 >/dev/null 2>&1; then
-    echo "python3 is required to patch supabase/config.toml with generated local port defaults."
-    echo "Install python3 (recommended) or manually edit \${config_file} ports:"
-    echo "- [api] port = \${SUPABASE_LOCAL_API_PORT}"
-    echo "- [db] port = \${SUPABASE_LOCAL_DB_PORT}"
-    echo "- [db] shadow_port = \${SUPABASE_LOCAL_SHADOW_PORT}"
-    echo "- [studio] port = \${SUPABASE_LOCAL_STUDIO_PORT}"
-    echo "- [inbucket] port = \${SUPABASE_LOCAL_INBUCKET_PORT}"
-    echo "- [analytics] port = \${SUPABASE_LOCAL_ANALYTICS_PORT}"
-    exit 1
-  fi
 
   python3 - "\${config_file}" <<'PY'
 import os

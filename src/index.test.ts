@@ -687,7 +687,39 @@ describe('generateInfrastructure', () => {
         namespaceHint: 'shop',
         appManifest: createAppManifest('Scanner App'),
       }),
-    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug');
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
+
+    const fortyCharacterSlug = 'a'.repeat(40);
+    const fortyCharacterResult = generateInfrastructure(manifest, {
+      namespaceHint: 'shop',
+      appManifest: createAppManifest(fortyCharacterSlug),
+    });
+    const fortyCharacterScript = fortyCharacterResult.files.find(
+      (f) => f.path === 'infra/minikube/scripts/supabase-local-env.sh',
+    );
+    expect(fortyCharacterScript?.content).toContain(
+      `EXPECTED_SUPABASE_PROJECT_ID="${fortyCharacterSlug}"`,
+    );
+
+    expect(() =>
+      generateInfrastructure(manifest, {
+        namespaceHint: 'shop',
+        appManifest: createAppManifest('a'.repeat(41)),
+      }),
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
+
+    expect(() =>
+      generateInfrastructure(manifest, {
+        namespaceHint: 'shop',
+        appManifest: createAppManifest('very-long-project-name-with-identical-prefix-alpha'),
+      }),
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
+    expect(() =>
+      generateInfrastructure(manifest, {
+        namespaceHint: 'shop',
+        appManifest: createAppManifest('very-long-project-name-with-identical-prefix-beta'),
+      }),
+    ).toThrow('appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters');
   });
 
   test('keeps Supabase project identity independent from domain-derived namespace', () => {

@@ -102,6 +102,7 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(script).not.toContain('_minikube');
 
     expect(status).toContain('EXPECTED_SUPABASE_PROJECT_ID="scanner"');
+    expect(status).toContain('reject_supabase_project_id_override');
     expect(status).toContain('validate_supabase_project_identity');
     expect(status).toContain('Supabase project identity mismatch.');
     expect(status).toContain('Destroy the invalid local stack and run Infra Up again.');
@@ -151,6 +152,38 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
   });
 
+  test('rejects ambient SUPABASE_PROJECT_ID before Supabase CLI operations', () => {
+    const run = runGeneratedSupabaseScript({
+      projectId: 'scanner',
+      existingConfig: 'project_id = "scanner"\n[api]\nport = 54321\n',
+      env: {
+        SUPABASE_PROJECT_ID: 'minikube',
+      },
+    });
+
+    expect(run.status).not.toBe(0);
+    expect(run.combinedOutput).toContain(
+      'SUPABASE_PROJECT_ID must not be set for generated local Infra scripts.',
+    );
+    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
+  });
+
+  test('requires python before Supabase init mutates the workdir', () => {
+    const run = runGeneratedSupabaseScript({
+      projectId: 'scanner',
+      existingConfig: null,
+      withoutPython: true,
+    });
+
+    expect(run.status).not.toBe(0);
+    expect(run.combinedOutput).toContain(
+      'python3 is required to reconcile supabase/config.toml before local Supabase startup.',
+    );
+    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
+    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('init --yes');
+    expect(() => readFileSync(run.configPath, 'utf-8')).toThrow();
+  });
+
   test('generates bootstrap logic that retries unhealthy local Supabase startup once', () => {
     const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
 
@@ -175,9 +208,15 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
 
     expect(script).toContain('SUPABASE_PROJECT_DIR="${SUPABASE_PROJECT_DIR:-${ROOT_DIR}}"');
+    expect(script).toContain(
+      'reject_supabase_project_id_override\nrequire_supabase_cli_capabilities',
+    );
     expect(script).toContain('supabase CLI >= 2.106.0 is required');
     expect(script).toContain('supabase CLI does not support required global --workdir flag');
     expect(script).toContain('supabase CLI does not support required migration up --local command');
+    expect(script).toContain(
+      'python3 is required to reconcile supabase/config.toml before local Supabase startup.',
+    );
     expect(script).toContain('psql is required but not installed');
     expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" init --yes');
     expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" migration up --local');
@@ -306,7 +345,12 @@ function createInfraManifest(overrides: Partial<InfraManifestInput> = {}): Infra
   };
 }
 
-function runGeneratedSupabaseScript(args: { projectId: string; existingConfig: string | null }): {
+function runGeneratedSupabaseScript(args: {
+  projectId: string;
+  existingConfig: string | null;
+  env?: Record<string, string>;
+  withoutPython?: boolean;
+}): {
   status: number | null;
   combinedOutput: string;
   root: string;
@@ -346,7 +390,7 @@ function runGeneratedSupabaseScript(args: { projectId: string; existingConfig: s
   const supabaseStubPath = join(binDir, 'supabase');
   writeFileSync(
     supabaseStubPath,
-    `#!/usr/bin/env bash
+    `#!/bin/bash
 set -euo pipefail
 printf '%s\\n' "$*" >> "\${SUPABASE_STUB_LOG}"
 
@@ -399,19 +443,20 @@ exit 1
   const psqlStubPath = join(binDir, 'psql');
   writeFileSync(
     psqlStubPath,
-    `#!/usr/bin/env bash
+    `#!/bin/bash
 exit 0
 `,
   );
   chmodSync(psqlStubPath, 0o755);
 
-  const result = spawnSync(scriptPath, {
+  const result = spawnSync('/bin/bash', [scriptPath], {
     cwd: tempRoot,
     env: {
-      ...process.env,
-      PATH: `${binDir}:${process.env.PATH ?? ''}`,
+      ...(args.withoutPython ? {} : process.env),
+      PATH: args.withoutPython ? binDir : `${binDir}:${process.env.PATH ?? ''}`,
       APP_SOURCE_DIR: appSourceDir,
       SUPABASE_STUB_LOG: supabaseLogPath,
+      ...args.env,
     },
     encoding: 'utf-8',
   });

@@ -12,7 +12,7 @@ import { generateSecretStoreArtifacts } from './secrets';
 import { generateStorageArtifacts } from './storage';
 
 const DEFAULT_NAMESPACE = 'ankh-app';
-const CANONICAL_PROJECT_SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+const CANONICAL_PROJECT_SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/;
 
 export function generateMinikubeInfra(
   manifest: InfraManifestInput,
@@ -166,7 +166,7 @@ function validateCanonicalProjectSlug(slug: string | undefined): string {
 
   if (slug.trim() !== slug || !CANONICAL_PROJECT_SLUG_RE.test(slug)) {
     throw new Error(
-      'Cannot generate local Supabase infrastructure: appManifest.metadata.slug must be a canonical lowercase slug using only a-z, 0-9, and hyphens, without leading or trailing hyphens.',
+      'Cannot generate local Supabase infrastructure: appManifest.metadata.slug must be a canonical lowercase slug up to 40 characters using only a-z, 0-9, and hyphens, without leading or trailing hyphens.',
     );
   }
 
