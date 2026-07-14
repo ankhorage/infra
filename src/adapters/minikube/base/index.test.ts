@@ -323,6 +323,28 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     );
     expect(run.kubectlLog).toContain('get all -n plain');
   });
+
+  test('rejects empty Supabase project identity before local Supabase status checks', () => {
+    const run = runGeneratedStatusScript({
+      manifest: {
+        deployment: {
+          target: 'minikube',
+          monitoring: false,
+        },
+        plugins: [],
+      },
+      supabaseProjectId: null,
+      env: {
+        SUPABASE_LOCAL_ENABLED: 'true',
+      },
+    });
+
+    expect(run.status).not.toBe(0);
+    expect(run.combinedOutput).toContain(
+      'Cannot run local Supabase infrastructure: expected Supabase project identity is empty.',
+    );
+    expect(run.supabaseLog).toBe('');
+  });
 });
 
 function getGeneratedFileContent(
@@ -519,6 +541,7 @@ function runGeneratedStatusScript(args: {
   status: number | null;
   combinedOutput: string;
   kubectlLog: string;
+  supabaseLog: string;
 } {
   const tempRoot = mkdtempSync(join(tmpdir(), 'infra-status-'));
   const root = join(tempRoot, 'infra', 'minikube');
@@ -526,11 +549,13 @@ function runGeneratedStatusScript(args: {
   const binDir = join(tempRoot, 'bin');
   const scriptPath = join(scriptsDir, 'status.sh');
   const kubectlLogPath = join(tempRoot, 'kubectl.log');
+  const supabaseLogPath = join(tempRoot, 'supabase.log');
 
   mkdirSync(scriptsDir, { recursive: true });
   mkdirSync(binDir, { recursive: true });
   writeFileSync(join(root, '.env.example'), '');
   writeFileSync(kubectlLogPath, '');
+  writeFileSync(supabaseLogPath, '');
 
   const artifact = generateMinikubeBaseArtifacts({
     manifest: args.manifest,
@@ -579,12 +604,41 @@ exit 1
   );
   chmodSync(kubectlStubPath, 0o755);
 
+  const supabaseStubPath = join(binDir, 'supabase');
+  writeFileSync(
+    supabaseStubPath,
+    `#!/bin/bash
+set -euo pipefail
+printf '%s\\n' "$*" >> "\${SUPABASE_STUB_LOG}"
+
+if [[ "\${1:-}" == "--version" ]]; then
+  echo "supabase 2.106.0"
+  exit 0
+fi
+
+if [[ "\${1:-}" == "status" && "\${2:-}" == "--help" ]]; then
+  echo "--workdir"
+  exit 0
+fi
+
+if [[ "\${1:-}" == "migration" && "\${2:-}" == "up" && "\${3:-}" == "--help" ]]; then
+  echo "--local"
+  exit 0
+fi
+
+echo "unexpected supabase call: $*" >&2
+exit 1
+`,
+  );
+  chmodSync(supabaseStubPath, 0o755);
+
   const result = spawnSync('/bin/bash', [scriptPath], {
     cwd: tempRoot,
     env: {
       ...process.env,
       PATH: `${binDir}:${process.env.PATH ?? ''}`,
       KUBECTL_STUB_LOG: kubectlLogPath,
+      SUPABASE_STUB_LOG: supabaseLogPath,
       ...args.env,
     },
     encoding: 'utf-8',
@@ -594,5 +648,6 @@ exit 1
     status: result.status,
     combinedOutput: `${result.stdout}${result.stderr}`,
     kubectlLog: readFileSync(kubectlLogPath, 'utf-8'),
+    supabaseLog: readFileSync(supabaseLogPath, 'utf-8'),
   };
 }

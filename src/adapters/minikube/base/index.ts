@@ -1465,6 +1465,14 @@ reject_supabase_project_id_override() {
   unset SUPABASE_PROJECT_ID
 }
 
+require_expected_supabase_project_identity() {
+  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
+    echo "Cannot run local Supabase infrastructure: expected Supabase project identity is empty."
+    echo "Regenerate Infra with appManifest.metadata.slug for Supabase-backed local services."
+    return 1
+  fi
+}
+
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "kubectl is required but not installed."
   exit 1
@@ -1716,7 +1724,9 @@ if [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "tru
   echo "Local Supabase database checks:"
   status_failed=0
 
-  if ! reject_supabase_project_id_override; then
+  if ! require_expected_supabase_project_identity; then
+    status_failed=1
+  elif ! reject_supabase_project_id_override; then
     status_failed=1
   elif require_supabase_cli_capabilities; then
     if ! validate_supabase_project_identity; then
