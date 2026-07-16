@@ -29,7 +29,7 @@ export function generateSupabaseVaultSecretStoreArtifacts(args: {
     resources: [],
     envEntries: [
       `SECRET_STORE_PROVIDER=${SUPABASE_VAULT_SECRET_STORE_PROVIDER}`,
-      'SUPABASE_LOCAL_ENABLED=true',
+      'SUPABASE_KUBERNETES_ENABLED=true',
     ],
     warnings: [],
   };
@@ -68,7 +68,8 @@ The immutable migration at:
 ${SUPABASE_VAULT_MIGRATION_PATH}
 \`\`\`
 
-is applied by the existing local Supabase migration lifecycle during \`scripts/up.sh\`.
+is applied by the Kubernetes-owned Supabase migration lifecycle during \`scripts/up.sh\`
+with \`supabase migration up --db-url "$SUPABASE_DB_URL"\`.
 
 ## Security boundary
 

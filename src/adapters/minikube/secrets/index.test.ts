@@ -21,7 +21,7 @@ function createManifest(overrides: Partial<InfraManifestInput> = {}): InfraManif
 }
 
 describe('minikube secret-store generation', () => {
-  test('generates the released Supabase Vault migration through the existing lifecycle', () => {
+  test('generates the released Supabase Vault migration through the Kubernetes lifecycle', () => {
     const result = generateInfrastructure(createManifest(), {
       appManifest: createAppManifest('vault-app'),
     });
@@ -31,8 +31,10 @@ describe('minikube secret-store generation', () => {
 
     expect(migration?.content).toBe(`${SUPABASE_VAULT_MIGRATION_SQL.trim()}\n`);
     expect(envExample?.content).toContain('SECRET_STORE_PROVIDER=supabase-vault');
-    expect(envExample?.content).toContain('SUPABASE_LOCAL_ENABLED=true');
-    expect(upScript?.content).toContain('SUPABASE_LOCAL_ENABLED="${SUPABASE_LOCAL_ENABLED:-true}"');
+    expect(envExample?.content).toContain('SUPABASE_KUBERNETES_ENABLED=true');
+    expect(upScript?.content).toContain(
+      'SUPABASE_KUBERNETES_ENABLED="${SUPABASE_KUBERNETES_ENABLED:-true}"',
+    );
     expect(result.meta.providers).toContain('supabase-vault');
   });
 
@@ -102,6 +104,7 @@ describe('minikube secret-store generation', () => {
             provider: 'aws-secrets-manager',
           },
         }),
+        { appManifest: createAppManifest('vault-app') },
       ),
     ).toThrow('Unsupported secret-store provider for minikube adapter');
   });

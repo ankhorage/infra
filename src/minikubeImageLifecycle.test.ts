@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 
 import { generateInfrastructure } from './index';
+import { createAppManifest } from './testSupport';
 import type { InfraManifestInput } from './types';
 
 describe('minikube generated app image lifecycle', () => {
@@ -13,7 +14,7 @@ describe('minikube generated app image lifecycle', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'shop' });
+    const result = generateInfrastructure(manifest, { appManifest: createAppManifest('shop') });
 
     const envExample = result.files.find((file) => file.path === 'infra/minikube/.env.example');
     expect(envExample?.content).toContain('APP_IMAGE=ankh/shop:dev');
@@ -26,7 +27,7 @@ describe('minikube generated app image lifecycle', () => {
     );
     expect(appBuildScript?.content).toContain('docker build');
     expect(appBuildScript?.content).toContain('--label "ankhorage.kind=generated-app"');
-    expect(appBuildScript?.content).toContain('--label "ankhorage.namespace=${NAMESPACE}"');
+    expect(appBuildScript?.content).toContain('--label "ankhorage.app_slug=${PROFILE}"');
     expect(appBuildScript?.content).toContain('--label "ankhorage.image=${APP_IMAGE}"');
     expect(appBuildScript?.content).toContain('-t "${APP_IMAGE}"');
     expect(appBuildScript?.content).toContain('-f "${DOCKERFILE_PATH}"');

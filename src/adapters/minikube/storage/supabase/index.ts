@@ -25,11 +25,6 @@ export function generateSupabaseStorageArtifacts(args: {
     envEntries.push(
       '',
       '# Supabase provider connection details',
-      'SUPABASE_SECRET_SYNC_ENABLED=true',
-      'SUPABASE_URL=',
-      'SUPABASE_ANON_KEY=',
-      'SUPABASE_SERVICE_ROLE_KEY=',
-      'SUPABASE_JWT_SECRET=',
       'EXPO_PUBLIC_SUPABASE_URL=',
       'EXPO_PUBLIC_SUPABASE_ANON_KEY=',
     );

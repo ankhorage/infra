@@ -10,7 +10,7 @@ const PROFILE_POLICY_VERSION = 1;
 const PROFILE_RECONCILER_VERSION = 1;
 const PROFILE_ARTIFACT_KEY = 'auth.profile';
 
-export const MANAGED_PROFILE_COLUMNS = [
+const MANAGED_PROFILE_COLUMNS = [
   'email',
   'display_name',
   'first_name',
