@@ -74,13 +74,15 @@ describe('generateInfrastructure', () => {
 
     const envExample = getFile(result.files, 'infra/minikube/.env.example');
     expect(envExample).toContain('ANKH_APP_SLUG=alpha');
-    expect(envExample).toContain('SUPABASE_KUBERNETES_ENABLED=true');
+    expect(envExample).not.toContain('SUPABASE_RUNTIME_ENABLED=');
     expect(envExample).toContain('EXPO_PUBLIC_SUPABASE_URL=');
     expect(envExample).toContain('APP_IMAGE=ankh/alpha:dev');
     expect(envExample).not.toContain('MINIKUBE_PROFILE=');
     expect(envExample).not.toContain('SUPABASE_PROJECT_DIR=');
 
     const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    expect(upScript).toContain('SUPABASE_RUNTIME_ENABLED="true"');
+    expect(upScript).not.toContain('SUPABASE_RUNTIME_ENABLED="${SUPABASE_RUNTIME_ENABLED');
     expect(upScript).toContain('minikube start -p "${PROFILE}"');
     expect(upScript).toContain('kubectl --context "${PROFILE}" apply -k "${K8S_DIR}"');
     expect(upScript).toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');

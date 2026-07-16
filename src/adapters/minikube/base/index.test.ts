@@ -71,6 +71,9 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
 
     expect(upScript).toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
     expect(upScript).not.toContain('migration up --local');
+    expect(upScript).toContain('cd "${ROOT_DIR}"');
+    expect(upScript).toContain('set_env_default POSTGRES_PASSWORD "$(random_hex 32)"');
+    expect(upScript).not.toContain('set_env_default POSTGRES_PASSWORD "$(random_base64');
     expect(upScript).toContain(
       'set_env_default SUPABASE_DB_URL "postgres://postgres:${POSTGRES_PASSWORD}@127.0.0.1:${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres"',
     );
@@ -120,6 +123,82 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(resetScript).toContain('does not delete the Minikube profile');
     expect(downScript).toContain('minikube stop -p "${PROFILE}"');
     expect(downScript).not.toContain('delete namespace');
+  });
+
+  test('keeps reset scoped to app namespace when Supabase is not generated', () => {
+    const result = generateInfrastructure(
+      {
+        deployment: {
+          target: 'minikube',
+          monitoring: false,
+        },
+      },
+      {
+        appManifest: createAppManifest('plain'),
+      },
+    );
+    const paths = result.files.map((file) => file.path);
+    const resetScript = getFile(result.files, 'infra/minikube/scripts/reset.sh');
+    const statusScript = getFile(result.files, 'infra/minikube/scripts/status.sh');
+
+    expect(paths).not.toContain('infra/minikube/k8s/namespaces/supabase.yaml');
+    expect(resetScript).toContain('delete namespace app');
+    expect(resetScript).not.toContain('delete namespace supabase');
+    expect(resetScript).not.toContain('namespaces/supabase.yaml');
+    expect(statusScript).toContain('for namespace in app; do');
+  });
+
+  test('uses generated Supabase runtime ownership as an immutable script decision', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(envExample).not.toContain('SUPABASE_RUNTIME_ENABLED=');
+    expect(upScript).toContain('SUPABASE_RUNTIME_ENABLED="true"');
+    expect(upScript).not.toContain('SUPABASE_RUNTIME_ENABLED="${SUPABASE_RUNTIME_ENABLED');
+  });
+
+  test('wires configured OAuth providers into GoTrue runtime env without serializing secrets', () => {
+    const result = generateInfrastructure(
+      {
+        ...createSupabaseManifest(),
+        secretStore: {
+          provider: 'supabase-vault',
+        },
+        auth: {
+          scope: 'global',
+          provider: 'supabase',
+          oauth: {
+            enabled: true,
+            callbackRoute: '/auth/callback',
+            providers: [
+              {
+                id: 'google',
+                enabled: true,
+                credentialsRef: 'auth/oauth/google',
+              },
+            ],
+          },
+        },
+      },
+      {
+        appManifest: createAppManifest('oauth-app'),
+      },
+    );
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(envExample).toContain('# google: auth/oauth/google');
+    expect(envExample).toContain('GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=');
+    expect(envExample).toContain('GOTRUE_EXTERNAL_GOOGLE_SECRET=');
+    expect(upScript).toContain('GOTRUE_EXTERNAL_GOOGLE_ENABLED=true');
+    expect(upScript).toContain(
+      'GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=${GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID}',
+    );
+    expect(upScript).toContain('credentialsRef auth/oauth/google');
+    expect(upScript).not.toContain('clientSecret');
   });
 
   test('treats port-forwards as slug-owned lifecycle resources', () => {

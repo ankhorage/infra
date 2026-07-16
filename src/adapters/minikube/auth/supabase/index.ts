@@ -70,11 +70,7 @@ export function generateSupabaseAuthArtifacts(args: {
       `${resourceRoot}/supabase-auth.configmap.yaml`,
       `${resourceRoot}/app-runtime-auth.env.configmap.yaml`,
     ],
-    envEntries: [
-      'SUPABASE_SECRET_SYNC_ENABLED=true',
-      'EXPO_PUBLIC_SUPABASE_URL=',
-      'EXPO_PUBLIC_SUPABASE_ANON_KEY=',
-    ],
+    envEntries: ['EXPO_PUBLIC_SUPABASE_URL=', 'EXPO_PUBLIC_SUPABASE_ANON_KEY='],
     warnings,
   };
 }
@@ -210,13 +206,12 @@ with \`optional: true\` for auth sources.
 - \`AUTH_PROFILE_PRIMARY_KEY\`
 - \`AUTH_PROFILE_CREATE_STRATEGY\`
 - \`AUTH_PROFILE_UPDATE_STRATEGY\`
-- \`SUPABASE_SECRET_SYNC_ENABLED\`
 - \`SUPABASE_URL\`
 - \`SUPABASE_ANON_KEY\`
 - \`EXPO_PUBLIC_SUPABASE_URL\`
 - \`EXPO_PUBLIC_SUPABASE_ANON_KEY\`
 ${profileSection}
-## Secret Sync
+## Runtime Secrets
 
 When Supabase is enabled, \`scripts/up.sh\` creates/updates \`Secret/supabase-public-runtime\`
 with browser-safe values for the app namespace. Privileged Supabase runtime secrets remain in

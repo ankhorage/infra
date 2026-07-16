@@ -18,7 +18,7 @@ describe('minikube generated app image lifecycle', () => {
 
     const envExample = result.files.find((file) => file.path === 'infra/minikube/.env.example');
     expect(envExample?.content).toContain('APP_IMAGE=ankh/shop:dev');
-    expect(envExample?.content).toContain('APP_IMAGE_CLEANUP_ON_DOWN=true');
+    expect(envExample?.content).toContain('APP_IMAGE_CLEANUP_ON_DESTROY=true');
     expect(envExample?.content).toContain('APP_IMAGE_CLEANUP_MINIKUBE=true');
     expect(envExample?.content).toContain('APP_IMAGE_CLEANUP_DOCKER=true');
 

@@ -31,10 +31,9 @@ describe('minikube secret-store generation', () => {
 
     expect(migration?.content).toBe(`${SUPABASE_VAULT_MIGRATION_SQL.trim()}\n`);
     expect(envExample?.content).toContain('SECRET_STORE_PROVIDER=supabase-vault');
-    expect(envExample?.content).toContain('SUPABASE_KUBERNETES_ENABLED=true');
-    expect(upScript?.content).toContain(
-      'SUPABASE_KUBERNETES_ENABLED="${SUPABASE_KUBERNETES_ENABLED:-true}"',
-    );
+    expect(envExample?.content).not.toContain('SUPABASE_RUNTIME_ENABLED=');
+    expect(upScript?.content).toContain('SUPABASE_RUNTIME_ENABLED="true"');
+    expect(upScript?.content).not.toContain('SUPABASE_RUNTIME_ENABLED="${SUPABASE_RUNTIME_ENABLED');
     expect(result.meta.providers).toContain('supabase-vault');
   });
 
