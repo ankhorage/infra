@@ -71,8 +71,40 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
 
     expect(upScript).toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
     expect(upScript).not.toContain('migration up --local');
-    expect(upScript).toContain('SUPABASE_DB_URL="${SUPABASE_DB_URL:-postgres://postgres:');
+    expect(upScript).toContain(
+      'set_env_default SUPABASE_DB_URL "postgres://postgres:${POSTGRES_PASSWORD}@127.0.0.1:${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres"',
+    );
+    expect(upScript).toContain('bootstrap_supabase_database');
     expect(readme).toContain('Migration authoring/history remains Supabase');
+  });
+
+  test('lists and generates Supabase Kubernetes bootstrap and gateway contract files', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const paths = result.files.map((file) => file.path);
+    const readme = getFile(result.files, 'infra/minikube/README.md');
+    const kustomization = getFile(result.files, 'infra/minikube/k8s/kustomization.yaml');
+    const bootstrap = getFile(result.files, 'infra/minikube/k8s/supabase/bootstrap.sql');
+    const gatewayTemplate = getFile(
+      result.files,
+      'infra/minikube/k8s/supabase/gateway.template.yml',
+    );
+    const kongEntrypoint = getFile(result.files, 'infra/minikube/k8s/supabase/kong-entrypoint.sh');
+
+    expect(paths).toContain('infra/minikube/k8s/supabase/bootstrap.sql');
+    expect(paths).toContain('infra/minikube/k8s/supabase/gateway.template.yml');
+    expect(paths).toContain('infra/minikube/k8s/supabase/kong-entrypoint.sh');
+    expect(paths).not.toContain('infra/minikube/k8s/supabase/secrets.yaml');
+    expect(readme).toContain('supabase/bootstrap.sql');
+    expect(readme).toContain('supabase/gateway.template.yml');
+    expect(readme).toContain('supabase/kong-entrypoint.sh');
+    expect(kustomization).not.toContain('supabase/secrets.yaml');
+    expect(kustomization).not.toContain('gateway.configmap.yaml');
+    expect(bootstrap).toContain('CREATE SCHEMA IF NOT EXISTS auth');
+    expect(gatewayTemplate).toContain('keyauth_credentials');
+    expect(gatewayTemplate).toContain('request-transformer');
+    expect(kongEntrypoint).toContain('LUA_AUTH_EXPR');
   });
 
   test('defines reset separately from down and destroy', () => {
