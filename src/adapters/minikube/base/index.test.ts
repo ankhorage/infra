@@ -302,6 +302,57 @@ describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
     expect(status).toContain('generated trigger function execute privilege must be revoked');
   });
 
+  test('generates relation-safe disabled profile verification for local env and status', () => {
+    const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
+    const status = getGeneratedFileContent('chess', 'infra/minikube/scripts/status.sh');
+    const expectedDynamicLookup = `execute
+      'select exists (
+         select 1
+         from ankhorage_internal.generated_schema_state
+         where artifact_key = $1
+       )'
+      into has_profile_state
+      using 'auth.profile';`;
+
+    for (const generated of [script, status]) {
+      expect(generated).toContain('has_profile_state boolean := false;');
+      expect(generated).toContain(expectedDynamicLookup);
+      expect(generated).toContain(
+        'manifest auth.profile.table was removed but local generated auth.profile state still exists; reset local Supabase or add an explicit cleanup migration',
+      );
+      expect(generated).not.toContain(
+        `if to_regclass('ankhorage_internal.generated_schema_state') is not null
+    and exists (`,
+      );
+      expect(generated.replace(expectedDynamicLookup, '')).not.toContain(
+        `from ankhorage_internal.generated_schema_state
+      where artifact_key = 'auth.profile'`,
+      );
+    }
+
+    expect(script).toContain('Generated profile disabled-state verification');
+    expect(status).toContain('- profile reconciliation: skipped (no profile table configured)');
+    expect(status).toContain('- profile schema: skipped (no profile table configured)');
+  });
+
+  test('status succeeds for a clean disabled profile local Supabase stack', () => {
+    const run = runGeneratedStatusScript({
+      manifest: createInfraManifest(),
+      supabaseProjectId: 'plain',
+      env: {
+        AUTH_RUNTIME_MODE: 'local',
+      },
+    });
+
+    expect(run.status).toBe(0);
+    expect(run.combinedOutput).toContain('- immutable migrations: applied');
+    expect(run.combinedOutput).toContain(
+      '- profile reconciliation: skipped (no profile table configured)',
+    );
+    expect(run.combinedOutput).toContain('- profile schema: skipped (no profile table configured)');
+    expect(run.supabaseLog).toContain('--workdir');
+  });
+
   test('does not reject SUPABASE_PROJECT_ID for non-Supabase status checks', () => {
     const run = runGeneratedStatusScript({
       manifest: {
@@ -546,16 +597,24 @@ function runGeneratedStatusScript(args: {
   const tempRoot = mkdtempSync(join(tmpdir(), 'infra-status-'));
   const root = join(tempRoot, 'infra', 'minikube');
   const scriptsDir = join(root, 'scripts');
+  const supabaseDir = join(root, 'supabase');
   const binDir = join(tempRoot, 'bin');
   const scriptPath = join(scriptsDir, 'status.sh');
   const kubectlLogPath = join(tempRoot, 'kubectl.log');
   const supabaseLogPath = join(tempRoot, 'supabase.log');
+  const psqlLogPath = join(tempRoot, 'psql.log');
 
   mkdirSync(scriptsDir, { recursive: true });
   mkdirSync(binDir, { recursive: true });
   writeFileSync(join(root, '.env.example'), '');
   writeFileSync(kubectlLogPath, '');
   writeFileSync(supabaseLogPath, '');
+  writeFileSync(psqlLogPath, '');
+
+  if (args.supabaseProjectId !== null) {
+    mkdirSync(supabaseDir, { recursive: true });
+    writeFileSync(join(supabaseDir, 'config.toml'), `project_id = "${args.supabaseProjectId}"\n`);
+  }
 
   const artifact = generateMinikubeBaseArtifacts({
     manifest: args.manifest,
@@ -626,11 +685,47 @@ if [[ "\${1:-}" == "migration" && "\${2:-}" == "up" && "\${3:-}" == "--help" ]];
   exit 0
 fi
 
+if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "status" && "\${4:-}" == "-o" && "\${5:-}" == "env" ]]; then
+  cat <<'ENV'
+DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
+API_URL=http://127.0.0.1:54321
+ANON_KEY=anon
+SERVICE_ROLE_KEY=service
+JWT_SECRET=secret
+ENV
+  exit 0
+fi
+
+if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "status" ]]; then
+  exit 0
+fi
+
 echo "unexpected supabase call: $*" >&2
 exit 1
 `,
   );
   chmodSync(supabaseStubPath, 0o755);
+
+  const psqlStubPath = join(binDir, 'psql');
+  writeFileSync(
+    psqlStubPath,
+    `#!/bin/bash
+set -euo pipefail
+printf '%s\\n' "$*" >> "\${PSQL_STUB_LOG}"
+
+if [[ "$*" == *"select version from supabase_migrations.schema_migrations"* ]]; then
+  exit 0
+fi
+
+if [[ "$*" == *"-f"* ]]; then
+  exit 0
+fi
+
+echo "unexpected psql call: $*" >&2
+exit 1
+`,
+  );
+  chmodSync(psqlStubPath, 0o755);
 
   const result = spawnSync('/bin/bash', [scriptPath], {
     cwd: tempRoot,
@@ -639,6 +734,7 @@ exit 1
       PATH: `${binDir}:${process.env.PATH ?? ''}`,
       KUBECTL_STUB_LOG: kubectlLogPath,
       SUPABASE_STUB_LOG: supabaseLogPath,
+      PSQL_STUB_LOG: psqlLogPath,
       ...args.env,
     },
     encoding: 'utf-8',

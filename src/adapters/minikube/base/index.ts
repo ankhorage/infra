@@ -1067,13 +1067,21 @@ $$;`;
 
 function getSupabaseProfileDisabledGuardSql(): string {
   return `do $$
+declare
+  has_profile_state boolean := false;
 begin
-  if to_regclass('ankhorage_internal.generated_schema_state') is not null
-    and exists (
-      select 1
-      from ankhorage_internal.generated_schema_state
-      where artifact_key = 'auth.profile'
-    ) then
+  if to_regclass('ankhorage_internal.generated_schema_state') is not null then
+    execute
+      'select exists (
+         select 1
+         from ankhorage_internal.generated_schema_state
+         where artifact_key = $1
+       )'
+      into has_profile_state
+      using 'auth.profile';
+  end if;
+
+  if has_profile_state then
     raise exception 'manifest auth.profile.table was removed but local generated auth.profile state still exists; reset local Supabase or add an explicit cleanup migration';
   end if;
 end;
