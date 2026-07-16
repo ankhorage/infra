@@ -70,12 +70,13 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     const readme = getFile(result.files, 'infra/minikube/README.md');
 
     expect(upScript).toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
+    expect(upScript).toContain('export SUPABASE_DB_URL PGSSLMODE=disable');
     expect(upScript).not.toContain('migration up --local');
     expect(upScript).toContain('cd "${ROOT_DIR}"');
-    expect(upScript).toContain('set_env_default POSTGRES_PASSWORD "$(random_hex 32)"');
+    expect(upScript).toContain('set_required_env_default POSTGRES_PASSWORD "$(random_hex 32)"');
     expect(upScript).not.toContain('set_env_default POSTGRES_PASSWORD "$(random_base64');
     expect(upScript).toContain(
-      'set_env_default SUPABASE_DB_URL "postgres://postgres:${POSTGRES_PASSWORD}@127.0.0.1:${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres"',
+      'set_required_env_default SUPABASE_DB_URL "postgres://postgres:${POSTGRES_PASSWORD}@127.0.0.1:${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres?sslmode=disable"',
     );
     expect(upScript).toContain('bootstrap_supabase_database');
     expect(readme).toContain('Migration authoring/history remains Supabase');
@@ -89,25 +90,75 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     const readme = getFile(result.files, 'infra/minikube/README.md');
     const kustomization = getFile(result.files, 'infra/minikube/k8s/kustomization.yaml');
     const bootstrap = getFile(result.files, 'infra/minikube/k8s/supabase/bootstrap.sql');
+    const postgresInit = getFile(
+      result.files,
+      'infra/minikube/k8s/supabase/postgres.init.configmap.yaml',
+    );
+    const postgres = getFile(result.files, 'infra/minikube/k8s/supabase/postgres.yaml');
+    const auth = getFile(result.files, 'infra/minikube/k8s/supabase/auth.yaml');
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
     const gatewayTemplate = getFile(
       result.files,
       'infra/minikube/k8s/supabase/gateway.template.yml',
     );
+    const gateway = getFile(result.files, 'infra/minikube/k8s/supabase/gateway.yaml');
+    const storage = getFile(result.files, 'infra/minikube/k8s/supabase/storage.yaml');
     const kongEntrypoint = getFile(result.files, 'infra/minikube/k8s/supabase/kong-entrypoint.sh');
 
     expect(paths).toContain('infra/minikube/k8s/supabase/bootstrap.sql');
+    expect(paths).toContain('infra/minikube/k8s/supabase/postgres.init.configmap.yaml');
     expect(paths).toContain('infra/minikube/k8s/supabase/gateway.template.yml');
     expect(paths).toContain('infra/minikube/k8s/supabase/kong-entrypoint.sh');
     expect(paths).not.toContain('infra/minikube/k8s/supabase/secrets.yaml');
     expect(readme).toContain('supabase/bootstrap.sql');
+    expect(readme).toContain('supabase/postgres.init.configmap.yaml');
     expect(readme).toContain('supabase/gateway.template.yml');
     expect(readme).toContain('supabase/kong-entrypoint.sh');
     expect(kustomization).not.toContain('supabase/secrets.yaml');
     expect(kustomization).not.toContain('gateway.configmap.yaml');
+    expect(kustomization).toContain('supabase/postgres.init.configmap.yaml');
     expect(bootstrap).toContain('CREATE SCHEMA IF NOT EXISTS auth');
+    expect(bootstrap).toContain(
+      'GRANT anon, authenticated, service_role TO supabase_storage_admin',
+    );
+    expect(postgresInit).toContain('alter role postgres with superuser');
+    expect(postgresInit).toContain('grant pg_read_server_files to supabase_admin');
+    expect(postgresInit).toContain('grant execute on function pg_read_file(text) to public');
+    expect(postgres).toContain('name: POSTGRES_USER');
+    expect(postgres).toContain('value: postgres');
+    expect(postgres).toContain('name: PGPORT');
+    expect(postgres).toContain(
+      'mountPath: /docker-entrypoint-initdb.d/99-ankhorage-local-dev-extensions.sql',
+    );
+    expect(postgres).toContain('config_file=/etc/postgresql/postgresql.conf');
     expect(gatewayTemplate).toContain('keyauth_credentials');
     expect(gatewayTemplate).toContain('request-transformer');
     expect(kongEntrypoint).toContain('LUA_AUTH_EXPR');
+    expect(auth).toContain('name: GOTRUE_JWT_EXP');
+    expect(auth).toContain('key: JWT_EXPIRY');
+    expect(auth).toContain(
+      'postgres://supabase_auth_admin:$(POSTGRES_PASSWORD)@postgres.supabase.svc.cluster.local:5432/postgres?search_path=auth&sslmode=disable',
+    );
+    expect(storage).toContain(
+      'postgres://supabase_storage_admin:$(POSTGRES_PASSWORD)@postgres.supabase.svc.cluster.local:5432/postgres?search_path=storage&sslmode=disable',
+    );
+    expect(envExample).toContain('PGRST_DB_SCHEMAS=public,storage,graphql_public');
+    expect(auth).toContain('name: GOTRUE_EXTERNAL_EMAIL_ENABLED');
+    expect(auth).toContain('key: ENABLE_EMAIL_SIGNUP');
+    expect(auth).toContain('name: GOTRUE_SMTP_HOST');
+    expect(auth).toContain('name: GOTRUE_SMTP_PORT');
+    expect(auth).toContain('name: GOTRUE_SMTP_USER');
+    expect(auth).toContain('name: GOTRUE_SMTP_PASS');
+    expect(gatewayTemplate).toContain('name: realtime-v1-rest-openapi');
+    expect(gatewayTemplate).toContain('paths: [/realtime/v1/api/openapi]');
+    expect(gatewayTemplate).toContain('name: realtime-v1-rest-tenants');
+    expect(gatewayTemplate).toContain('paths: [/realtime/v1/api/tenants]');
+    expect(gatewayTemplate).toContain('name: request-termination');
+    expect(gatewayTemplate).toContain('status_code: 403');
+    expect(gateway).toContain('mountPath: /home/kong/temp.yml');
+    expect(gateway).toContain('subPath: temp.yml');
+    expect(gateway).toContain('mountPath: /home/kong/kong-entrypoint.sh');
+    expect(gateway).toContain('command: ["kong", "health"]');
   });
 
   test('defines reset separately from down and destroy', () => {
@@ -198,7 +249,68 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
       'GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=${GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID}',
     );
     expect(upScript).toContain('credentialsRef auth/oauth/google');
-    expect(upScript).not.toContain('clientSecret');
+    expect(upScript).toContain("resolve_vault_secret_field 'auth/oauth/google' 'clientSecret'");
+    expect(upScript).not.toContain('sentinel-client-secret-value');
+  });
+
+  test('generates required secrets even when copied env example contains empty keys', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(upScript).toContain('load_env_file_preserving_process_env');
+    expect(upScript).toContain('APP_IMAGE="${APP_IMAGE:-}"');
+    expect(upScript).toContain(
+      'load_env_file_preserving_process_env\nSUPABASE_RUNTIME_ENABLED="true"',
+    );
+    expect(upScript.indexOf('load_env_file_preserving_process_env')).toBeLessThan(
+      upScript.lastIndexOf('APP_IMAGE="${APP_IMAGE:-ankh/scanner:dev}"'),
+    );
+    expect(upScript).toContain('set_required_env_default POSTGRES_PASSWORD "$(random_hex 32)"');
+    expect(upScript).toContain('write_env_value "${key}" "${value}"');
+    expect(upScript).toContain('set_optional_env_default SMTP_USER ""');
+  });
+
+  test('starts Supabase schema owners before app migrations and profile reconciliation', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(upScript).toContain('apply_supabase_runtime_workloads');
+    expect(upScript).toContain('exec deployment/postgres -- psql -U postgres');
+    expect(upScript).toContain('create schema if not exists vault');
+    expect(upScript).toContain('grant execute on function pg_read_file(text) to public');
+    expect(upScript.indexOf('postgres.init.configmap.yaml')).toBeLessThan(
+      upScript.indexOf('postgres.pvc.yaml'),
+    );
+    expect(upScript.lastIndexOf('  wait_for_supabase_database')).toBeLessThan(
+      upScript.lastIndexOf('  bootstrap_supabase_database'),
+    );
+    expect(upScript).toContain('rollout status deployment/postgres --timeout=900s');
+    expect(upScript).toContain('rollout status deployment/gateway --timeout=600s');
+    const runMigrationsCallIndex = upScript.lastIndexOf('  run_supabase_migrations');
+    const reconcileProfileCallIndex = upScript.lastIndexOf('  reconcile_supabase_profile');
+    const appRuntimeApplyIndex = upScript.lastIndexOf(
+      'kubectl --context "${PROFILE}" apply -k "${K8S_DIR}"',
+    );
+
+    expect(upScript.lastIndexOf('  apply_supabase_runtime_workloads')).toBeLessThan(
+      upScript.indexOf('rollout status deployment/auth'),
+    );
+    expect(upScript.indexOf('rollout status deployment/auth')).toBeLessThan(runMigrationsCallIndex);
+    expect(upScript.indexOf('rollout status deployment/storage')).toBeLessThan(
+      runMigrationsCallIndex,
+    );
+    expect(upScript.indexOf('  reconcile_supabase_profile')).toBeLessThan(
+      upScript.indexOf('  reload_postgrest_schema'),
+    );
+    expect(upScript.indexOf('rollout status deployment/studio')).toBeLessThan(
+      upScript.indexOf('"${PORT_FORWARD_SCRIPT}" start studio'),
+    );
+    expect(runMigrationsCallIndex).toBeLessThan(reconcileProfileCallIndex);
+    expect(reconcileProfileCallIndex).toBeLessThan(appRuntimeApplyIndex);
   });
 
   test('treats port-forwards as slug-owned lifecycle resources', () => {

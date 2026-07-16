@@ -167,6 +167,7 @@ export function generateMinikubeBaseArtifacts(args: {
         defaultAppImage,
         supabaseKubernetesEnabled,
         profileModel,
+        secretStoreProvider,
         supabaseHostPorts,
         oauthProviders,
       }),
@@ -254,6 +255,7 @@ function getReadmeMarkdown(args: {
     ...(supabaseKubernetesEnabled
       ? [
           'supabase/bootstrap.sql',
+          'supabase/postgres.init.configmap.yaml',
           'supabase/postgres.pvc.yaml',
           'supabase/postgres.yaml',
           'supabase/auth.yaml',
@@ -437,7 +439,7 @@ function getEnvExample(args: {
     'SMTP_USER=',
     'SMTP_PASS=',
     'SMTP_SENDER_NAME=Ankhorage',
-    'PGRST_DB_SCHEMAS=public,graphql_public',
+    'PGRST_DB_SCHEMAS=public,storage,graphql_public',
     'PGRST_DB_MAX_ROWS=1000',
     'PGRST_DB_EXTRA_SEARCH_PATH=public',
     'GLOBAL_S3_BUCKET=stub',
@@ -480,9 +482,9 @@ function getOAuthScriptEnvDefaults(providers: readonly SupabaseOAuthProviderRunt
 
   return providers
     .map(
-      (provider) => `  set_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID ""
-  set_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET ""
-  set_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI "\${API_EXTERNAL_URL}/callback"`,
+      (provider) => `  set_optional_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID ""
+  set_optional_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET ""
+  set_optional_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI "\${API_EXTERNAL_URL}/callback"`,
     )
     .join('\n');
 }
@@ -519,6 +521,65 @@ function getOAuthRuntimeValidationScript(
   return `
   # OAuth provider secrets must be resolved by trusted host code before Kubernetes sync.
 ${checks}`;
+}
+
+function getOAuthVaultResolutionScript(args: {
+  appSlug: string;
+  oauthProviders: readonly SupabaseOAuthProviderRuntime[];
+  secretStoreProvider: string;
+}): string {
+  const { appSlug, oauthProviders, secretStoreProvider } = args;
+  if (secretStoreProvider !== 'supabase-vault' || oauthProviders.length === 0) {
+    return `
+resolve_oauth_credentials_from_vault() {
+  return 0
+}
+`;
+  }
+
+  const lines = oauthProviders
+    .map((provider) => {
+      const ref = escapeSingleQuotedSql(provider.credentialsRef);
+      const idKey = `GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID`;
+      const secretKey = `GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET`;
+
+      return `  if [[ -z "\${${idKey}:-}" || -z "\${${secretKey}:-}" ]]; then
+    local resolved_client_id resolved_client_secret
+    resolved_client_id="$(resolve_vault_secret_field '${ref}' 'clientId')"
+    resolved_client_secret="$(resolve_vault_secret_field '${ref}' 'clientSecret')"
+    if [[ -n "\${resolved_client_id}" ]]; then
+      write_env_value ${idKey} "\${resolved_client_id}"
+      export ${idKey}="\${resolved_client_id}"
+    fi
+    if [[ -n "\${resolved_client_secret}" ]]; then
+      write_env_value ${secretKey} "\${resolved_client_secret}"
+      export ${secretKey}="\${resolved_client_secret}"
+    fi
+  fi`;
+    })
+    .join('\n');
+
+  return `
+resolve_vault_secret_field() {
+  local ref="\${1}"
+  local field="\${2}"
+  psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -Atq -c "select coalesce(decrypted.decrypted_secret::jsonb ->> '\${field}', '') from ankh_secret_store.secret_metadata metadata join vault.decrypted_secrets decrypted on decrypted.id = metadata.vault_secret_id where metadata.project_id = '${escapeSingleQuotedSql(
+    appSlug,
+  )}' and metadata.environment = 'local' and metadata.secret_ref = '\${ref}' limit 1;" 2>/dev/null || true
+}
+
+resolve_oauth_credentials_from_vault() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+${lines}
+}
+`;
+}
+
+function escapeSingleQuotedSql(value: string): string {
+  return value.replace(/'/gu, "''");
 }
 
 function getNamespaceManifest(namespace: string): string {
@@ -667,6 +728,7 @@ function getKustomizationManifest(args: {
 }): string {
   const supabaseResources = args.supabaseEnabled
     ? [
+        'supabase/postgres.init.configmap.yaml',
         'supabase/postgres.pvc.yaml',
         'supabase/postgres.yaml',
         'supabase/auth.yaml',
@@ -774,6 +836,10 @@ function getSupabaseResourceFiles(k8sRoot: string): GeneratedInfrastructureFile[
       content: getSupabaseBootstrapSql(),
     },
     {
+      path: `${k8sRoot}/supabase/postgres.init.configmap.yaml`,
+      content: getSupabasePostgresInitConfigMap(),
+    },
+    {
       path: `${k8sRoot}/supabase/postgres.pvc.yaml`,
       content: getSupabasePvcManifest('supabase-postgres-data', '20Gi'),
     },
@@ -872,6 +938,7 @@ ALTER ROLE supabase_storage_admin WITH PASSWORD :'pgpass';
 ALTER ROLE supabase_admin WITH PASSWORD :'pgpass';
 
 GRANT anon, authenticated, service_role TO authenticator;
+GRANT anon, authenticated, service_role TO supabase_storage_admin;
 GRANT postgres TO supabase_auth_admin;
 GRANT postgres TO supabase_storage_admin;
 GRANT postgres TO supabase_functions_admin;
@@ -895,6 +962,23 @@ ALTER DATABASE postgres SET "app.settings.jwt_exp" TO :'jwt_exp';
 
 SELECT 'CREATE DATABASE _supabase WITH OWNER supabase_admin'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '_supabase')\\gexec
+`;
+}
+
+function getSupabasePostgresInitConfigMap(): string {
+  return `apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: supabase-postgres-init
+  namespace: ${SUPABASE_NAMESPACE}
+data:
+  99-ankhorage-local-dev-extensions.sql: |
+    -- Local Minikube bootstrap for extension setup performed before runtime migrations.
+    alter role postgres with superuser;
+    grant pg_read_server_files to postgres;
+    grant pg_read_server_files to supabase_admin;
+    grant execute on function pg_read_file(text) to public;
+    grant execute on function pg_read_file(text, bigint, bigint) to public;
 `;
 }
 
@@ -950,21 +1034,44 @@ spec:
             - containerPort: 5432
               name: postgres
           env:
+            - name: POSTGRES_USER
+              value: postgres
             - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: POSTGRES_PASSWORD
+            - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: supabase-runtime-secrets
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_DB
               value: postgres
+            - name: PGDATABASE
+              value: postgres
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_HOST
+              value: /var/run/postgresql
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: supabase-runtime-secrets
                   key: JWT_SECRET
+            - name: JWT_EXP
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: JWT_EXPIRY
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d/99-ankhorage-local-dev-extensions.sql
+              subPath: 99-ankhorage-local-dev-extensions.sql
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "postgres"]
@@ -975,10 +1082,19 @@ spec:
               command: ["pg_isready", "-U", "postgres"]
             initialDelaySeconds: 30
             periodSeconds: 10
+          args:
+            - postgres
+            - -c
+            - config_file=/etc/postgresql/postgresql.conf
+            - -c
+            - log_min_messages=fatal
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: supabase-postgres-data
+        - name: init-scripts
+          configMap:
+            name: supabase-postgres-init
 `;
 }
 
@@ -1046,7 +1162,7 @@ spec:
             - name: GOTRUE_DB_DRIVER
               value: postgres
             - name: GOTRUE_DB_DATABASE_URL
-              value: "postgres://supabase_auth_admin:$(POSTGRES_PASSWORD)@postgres.${SUPABASE_NAMESPACE}.svc.cluster.local:5432/postgres"
+              value: "postgres://supabase_auth_admin:$(POSTGRES_PASSWORD)@postgres.${SUPABASE_NAMESPACE}.svc.cluster.local:5432/postgres?search_path=auth&sslmode=disable"
             - name: GOTRUE_JWT_AUD
               value: authenticated
             - name: GOTRUE_JWT_DEFAULT_GROUP_NAME
@@ -1054,19 +1170,55 @@ spec:
             - name: GOTRUE_JWT_ADMIN_ROLES
               value: service_role
             - name: GOTRUE_JWT_EXP
-              value: "3600"
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: JWT_EXPIRY
             - name: GOTRUE_JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: supabase-runtime-secrets
                   key: JWT_SECRET
             - name: GOTRUE_EXTERNAL_EMAIL_ENABLED
-              value: "true"
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: ENABLE_EMAIL_SIGNUP
             - name: GOTRUE_MAILER_AUTOCONFIRM
               valueFrom:
                 configMapKeyRef:
                   name: supabase-runtime-config
                   key: ENABLE_EMAIL_AUTOCONFIRM
+            - name: GOTRUE_SMTP_ADMIN_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_ADMIN_EMAIL
+            - name: GOTRUE_SMTP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_HOST
+            - name: GOTRUE_SMTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_PORT
+            - name: GOTRUE_SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SMTP_USER
+            - name: GOTRUE_SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SMTP_PASS
+            - name: GOTRUE_SMTP_SENDER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_SENDER_NAME
           envFrom:
             - secretRef:
                 name: supabase-runtime-secrets
@@ -1282,7 +1434,7 @@ spec:
                   name: supabase-runtime-secrets
                   key: JWT_SECRET
             - name: DATABASE_URL
-              value: "postgres://supabase_storage_admin:$(POSTGRES_PASSWORD)@postgres.${SUPABASE_NAMESPACE}.svc.cluster.local:5432/postgres"
+              value: "postgres://supabase_storage_admin:$(POSTGRES_PASSWORD)@postgres.${SUPABASE_NAMESPACE}.svc.cluster.local:5432/postgres?search_path=storage&sslmode=disable"
             - name: POSTGREST_URL
               value: "http://rest.${SUPABASE_NAMESPACE}.svc.cluster.local:3000"
             - name: STORAGE_BACKEND
@@ -1576,6 +1728,30 @@ services:
         config:
           hide_groups_header: true
           allow: [admin, anon]
+  - name: realtime-v1-rest-openapi
+    url: http://realtime.${SUPABASE_NAMESPACE}.svc.cluster.local:4000/api/openapi
+    protocol: http
+    routes:
+      - name: realtime-v1-rest-openapi
+        strip_path: true
+        paths: [/realtime/v1/api/openapi]
+    plugins:
+      - name: request-termination
+        config:
+          status_code: 403
+          message: "Access is forbidden."
+  - name: realtime-v1-rest-tenants
+    url: http://realtime.${SUPABASE_NAMESPACE}.svc.cluster.local:4000/api/tenants
+    protocol: http
+    routes:
+      - name: realtime-v1-rest-tenants
+        strip_path: true
+        paths: [/realtime/v1/api/tenants]
+    plugins:
+      - name: request-termination
+        config:
+          status_code: 403
+          message: "Access is forbidden."
   - name: realtime-v1-rest
     url: http://realtime.${SUPABASE_NAMESPACE}.svc.cluster.local:4000/api
     protocol: http
@@ -1746,7 +1922,8 @@ spec:
                 name: supabase-runtime-secrets
           volumeMounts:
             - name: config
-              mountPath: /home/kong
+              mountPath: /home/kong/temp.yml
+              subPath: temp.yml
               readOnly: true
             - name: entrypoint
               mountPath: /home/kong/kong-entrypoint.sh
@@ -1754,9 +1931,8 @@ spec:
               readOnly: true
           command: ["/bin/sh", "/home/kong/kong-entrypoint.sh"]
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            exec:
+              command: ["kong", "health"]
             initialDelaySeconds: 10
             periodSeconds: 10
       volumes:
@@ -1846,6 +2022,7 @@ function getUpScript(args: {
   defaultAppImage: string;
   supabaseKubernetesEnabled: boolean;
   profileModel: ResolvedProfileModel;
+  secretStoreProvider: string;
   supabaseHostPorts: SupabaseHostPorts;
   oauthProviders: readonly SupabaseOAuthProviderRuntime[];
 }): string {
@@ -1854,12 +2031,18 @@ function getUpScript(args: {
     defaultAppImage,
     supabaseKubernetesEnabled,
     profileModel,
+    secretStoreProvider,
     supabaseHostPorts,
     oauthProviders,
   } = args;
   const oauthEnvDefaults = getOAuthScriptEnvDefaults(oauthProviders);
   const oauthRuntimeSecretLines = getOAuthRuntimeSecretLines(oauthProviders);
   const oauthValidation = getOAuthRuntimeValidationScript(oauthProviders);
+  const oauthVaultResolution = getOAuthVaultResolutionScript({
+    appSlug,
+    oauthProviders,
+    secretStoreProvider,
+  });
 
   return `#!/usr/bin/env bash
 set -euo pipefail
@@ -1870,48 +2053,63 @@ K8S_DIR="\${ROOT_DIR}/k8s"
 BUILD_SCRIPT="\${SCRIPT_DIR}/build-app-image.sh"
 PORT_FORWARD_SCRIPT="\${SCRIPT_DIR}/port-forward.sh"
 APP_SLUG="${appSlug}"
-PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
-DRIVER="\${MINIKUBE_DRIVER:-docker}"
+PROFILE="\${ANKH_APP_SLUG:-}"
+DRIVER="\${MINIKUBE_DRIVER:-}"
 APP_NAMESPACE="${APP_NAMESPACE}"
 SUPABASE_NAMESPACE="${SUPABASE_NAMESPACE}"
 SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
-APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-true}"
-APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
-APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-.ankh/web-export}"
-APP_IMAGE="\${APP_IMAGE:-${defaultAppImage}}"
-APP_IMAGE_SYNC_STRATEGY="\${APP_IMAGE_SYNC_STRATEGY:-docker-load}"
-APP_REPLICAS="\${APP_REPLICAS:-1}"
-APP_FORCE_ROLLOUT_RESTART="\${APP_FORCE_ROLLOUT_RESTART:-true}"
+APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-}"
+APP_SOURCE_DIR="\${APP_SOURCE_DIR:-}"
+APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-}"
+APP_IMAGE="\${APP_IMAGE:-}"
+APP_IMAGE_SYNC_STRATEGY="\${APP_IMAGE_SYNC_STRATEGY:-}"
+APP_REPLICAS="\${APP_REPLICAS:-}"
+APP_FORCE_ROLLOUT_RESTART="\${APP_FORCE_ROLLOUT_RESTART:-}"
 APP_IMAGE_PULL_SECRET_NAME="\${APP_IMAGE_PULL_SECRET_NAME:-}"
-APP_IMAGE_PULL_SECRET_SERVER="\${APP_IMAGE_PULL_SECRET_SERVER:-ghcr.io}"
+APP_IMAGE_PULL_SECRET_SERVER="\${APP_IMAGE_PULL_SECRET_SERVER:-}"
 APP_IMAGE_PULL_SECRET_USERNAME="\${APP_IMAGE_PULL_SECRET_USERNAME:-}"
 APP_IMAGE_PULL_SECRET_PASSWORD="\${APP_IMAGE_PULL_SECRET_PASSWORD:-}"
 APP_IMAGE_PULL_SECRET_EMAIL="\${APP_IMAGE_PULL_SECRET_EMAIL:-}"
-APP_PORT_FORWARD_LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
-SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
-SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
+APP_PORT_FORWARD_LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-}"
+SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-}"
+SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-}"
 SUPABASE_DB_URL="\${SUPABASE_DB_URL:-}"
 SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
 SUPABASE_PROFILE_RECONCILE_FILE="\${ROOT_DIR}/supabase/generated/auth_profiles.sql"
-
-if [[ -f "\${ROOT_DIR}/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source "\${ROOT_DIR}/.env"
-  set +a
-fi
-SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
-
-if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
-  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
-  exit 1
-fi
 
 require_command() {
   if ! command -v "\${1}" >/dev/null 2>&1; then
     echo "\${1} is required but not installed."
     exit 1
   fi
+}
+
+load_env_file_preserving_process_env() {
+  local line trimmed key value current
+  if [[ ! -f "\${ROOT_DIR}/.env" ]]; then
+    return 0
+  fi
+
+  while IFS= read -r line || [[ -n "\${line}" ]]; do
+    trimmed="$(printf '%s' "\${line}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    if [[ -z "\${trimmed}" || "\${trimmed}" == \\#* || "\${trimmed}" != *=* ]]; then
+      continue
+    fi
+
+    key="\${trimmed%%=*}"
+    value="\${trimmed#*=}"
+    key="\${key//[[:space:]]/}"
+    value="$(printf '%s' "\${value}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    value="\${value%\\"}"
+    value="\${value#\\"}"
+    value="\${value%\\'}"
+    value="\${value#\\'}"
+    current="\${!key:-}"
+    if [[ -n "\${current}" ]]; then
+      continue
+    fi
+    export "\${key}=\${value}"
+  done < "\${ROOT_DIR}/.env"
 }
 
 env_file_value() {
@@ -1930,12 +2128,33 @@ env_file_has_key() {
   awk -F= -v key="\${key}" '$1 == key { found = 1 } END { exit found ? 0 : 1 }' "\${ROOT_DIR}/.env"
 }
 
-set_env_default() {
+write_env_value() {
+  local key="\${1}"
+  local value="\${2}"
+  local tmp_env
+  mkdir -p "\${ROOT_DIR}"
+  touch "\${ROOT_DIR}/.env"
+  tmp_env="$(mktemp)"
+  awk -F= -v key="\${key}" -v value="\${value}" '
+    $1 == key {
+      print key "=" value
+      found = 1
+      next
+    }
+    { print }
+    END {
+      if (!found) print key "=" value
+    }
+  ' "\${ROOT_DIR}/.env" > "\${tmp_env}"
+  mv "\${tmp_env}" "\${ROOT_DIR}/.env"
+}
+
+set_required_env_default() {
   local key="\${1}"
   local value="\${2}"
   local current="\${!key:-}"
-  if env_file_has_key "\${key}"; then
-    export "\${key}=\${current}"
+  if [[ -n "\${current}" ]]; then
+    write_env_value "\${key}" "\${current}"
     return 0
   fi
 
@@ -1945,9 +2164,28 @@ set_env_default() {
     return 0
   fi
 
-  touch "\${ROOT_DIR}/.env"
-  printf '%s=%s\\n' "\${key}" "\${value}" >> "\${ROOT_DIR}/.env"
+  write_env_value "\${key}" "\${value}"
   export "\${key}=\${value}"
+}
+
+set_optional_env_default() {
+  local key="\${1}"
+  local value="\${2}"
+  local current="\${!key:-}"
+  if env_file_has_key "\${key}"; then
+    export "\${key}=\${current}"
+    return 0
+  fi
+  if [[ -n "\${current}" ]]; then
+    write_env_value "\${key}" "\${current}"
+    return 0
+  fi
+  write_env_value "\${key}" "\${value}"
+  export "\${key}=\${value}"
+}
+
+set_env_default() {
+  set_required_env_default "\${1}" "\${2}"
 }
 
 random_base64() {
@@ -1980,45 +2218,45 @@ ensure_supabase_runtime_env() {
 
   require_command openssl
 
-  set_env_default POSTGRES_PASSWORD "$(random_hex 32)"
-  set_env_default JWT_SECRET "$(random_base64 48)"
-  set_env_default SUPABASE_ANON_KEY "$(generate_supabase_jwt anon)"
-  set_env_default SUPABASE_SERVICE_ROLE_KEY "$(generate_supabase_jwt service_role)"
-  set_env_default DASHBOARD_USERNAME "supabase"
-  set_env_default DASHBOARD_PASSWORD "$(random_base64 24)"
-  set_env_default SECRET_KEY_BASE "$(random_base64 48)"
-  set_env_default REALTIME_DB_ENC_KEY "$(random_hex 8)"
-  set_env_default PG_META_CRYPTO_KEY "$(random_base64 32)"
-  set_env_default S3_PROTOCOL_ACCESS_KEY_ID "$(random_hex 16)"
-  set_env_default S3_PROTOCOL_ACCESS_KEY_SECRET "$(random_hex 32)"
-  set_env_default JWT_EXPIRY "3600"
-  set_env_default SUPABASE_GATEWAY_FORWARD_LOCAL_PORT "\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
-  set_env_default APP_PORT_FORWARD_LOCAL_PORT "\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
-  set_env_default SUPABASE_PUBLIC_URL "http://127.0.0.1:\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT}"
-  set_env_default API_EXTERNAL_URL "\${SUPABASE_PUBLIC_URL}/auth/v1"
-  set_env_default SITE_URL "http://127.0.0.1:\${APP_PORT_FORWARD_LOCAL_PORT}"
-  set_env_default ADDITIONAL_REDIRECT_URLS "\${SITE_URL}"
-  set_env_default ENABLE_EMAIL_SIGNUP "true"
-  set_env_default ENABLE_EMAIL_AUTOCONFIRM "true"
-  set_env_default SMTP_ADMIN_EMAIL "admin@example.com"
-  set_env_default SMTP_HOST "localhost"
-  set_env_default SMTP_PORT "2500"
-  set_env_default SMTP_USER ""
-  set_env_default SMTP_PASS ""
-  set_env_default SMTP_SENDER_NAME "Ankhorage"
-  set_env_default PGRST_DB_SCHEMAS "public,graphql_public"
-  set_env_default PGRST_DB_MAX_ROWS "1000"
-  set_env_default PGRST_DB_EXTRA_SEARCH_PATH "public"
-  set_env_default GLOBAL_S3_BUCKET "stub"
-  set_env_default STORAGE_TENANT_ID "stub"
-  set_env_default REGION "stub"
-  set_env_default SUPABASE_DB_FORWARD_LOCAL_PORT "\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
-  set_env_default SUPABASE_DB_URL "postgres://postgres:\${POSTGRES_PASSWORD}@127.0.0.1:\${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres"
-  set_env_default EXPO_PUBLIC_SUPABASE_URL "\${SUPABASE_PUBLIC_URL}"
-  set_env_default EXPO_PUBLIC_SUPABASE_ANON_KEY "\${SUPABASE_ANON_KEY}"
+  set_required_env_default POSTGRES_PASSWORD "$(random_hex 32)"
+  set_required_env_default JWT_SECRET "$(random_base64 48)"
+  set_required_env_default SUPABASE_ANON_KEY "$(generate_supabase_jwt anon)"
+  set_required_env_default SUPABASE_SERVICE_ROLE_KEY "$(generate_supabase_jwt service_role)"
+  set_required_env_default DASHBOARD_USERNAME "supabase"
+  set_required_env_default DASHBOARD_PASSWORD "$(random_base64 24)"
+  set_required_env_default SECRET_KEY_BASE "$(random_base64 48)"
+  set_required_env_default REALTIME_DB_ENC_KEY "$(random_hex 8)"
+  set_required_env_default PG_META_CRYPTO_KEY "$(random_base64 32)"
+  set_required_env_default S3_PROTOCOL_ACCESS_KEY_ID "$(random_hex 16)"
+  set_required_env_default S3_PROTOCOL_ACCESS_KEY_SECRET "$(random_hex 32)"
+  set_required_env_default JWT_EXPIRY "3600"
+  set_required_env_default SUPABASE_GATEWAY_FORWARD_LOCAL_PORT "\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
+  set_required_env_default APP_PORT_FORWARD_LOCAL_PORT "\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
+  set_required_env_default SUPABASE_PUBLIC_URL "http://127.0.0.1:\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT}"
+  set_required_env_default API_EXTERNAL_URL "\${SUPABASE_PUBLIC_URL}/auth/v1"
+  set_required_env_default SITE_URL "http://127.0.0.1:\${APP_PORT_FORWARD_LOCAL_PORT}"
+  set_required_env_default ADDITIONAL_REDIRECT_URLS "\${SITE_URL}"
+  set_required_env_default ENABLE_EMAIL_SIGNUP "true"
+  set_required_env_default ENABLE_EMAIL_AUTOCONFIRM "true"
+  set_required_env_default SMTP_ADMIN_EMAIL "admin@example.com"
+  set_required_env_default SMTP_HOST "localhost"
+  set_required_env_default SMTP_PORT "2500"
+  set_optional_env_default SMTP_USER ""
+  set_optional_env_default SMTP_PASS ""
+  set_required_env_default SMTP_SENDER_NAME "Ankhorage"
+  set_required_env_default PGRST_DB_SCHEMAS "public,storage,graphql_public"
+  set_required_env_default PGRST_DB_MAX_ROWS "1000"
+  set_required_env_default PGRST_DB_EXTRA_SEARCH_PATH "public"
+  set_required_env_default GLOBAL_S3_BUCKET "stub"
+  set_required_env_default STORAGE_TENANT_ID "stub"
+  set_required_env_default REGION "stub"
+  set_required_env_default SUPABASE_DB_FORWARD_LOCAL_PORT "\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
+  set_required_env_default SUPABASE_DB_URL "postgres://postgres:\${POSTGRES_PASSWORD}@127.0.0.1:\${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres?sslmode=disable"
+  set_required_env_default EXPO_PUBLIC_SUPABASE_URL "\${SUPABASE_PUBLIC_URL}"
+  set_required_env_default EXPO_PUBLIC_SUPABASE_ANON_KEY "\${SUPABASE_ANON_KEY}"
 ${oauthEnvDefaults}
-${oauthValidation}
 }
+${oauthVaultResolution}
 
 sync_supabase_secrets() {
   if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
@@ -2039,6 +2277,8 @@ SUPABASE_PUBLISHABLE_KEY=\${SUPABASE_PUBLISHABLE_KEY:-}
 SUPABASE_SECRET_KEY=\${SUPABASE_SECRET_KEY:-}
 DASHBOARD_USERNAME=\${DASHBOARD_USERNAME:-supabase}
 DASHBOARD_PASSWORD=\${DASHBOARD_PASSWORD:-}
+SMTP_USER=\${SMTP_USER:-}
+SMTP_PASS=\${SMTP_PASS:-}
 SECRET_KEY_BASE=\${SECRET_KEY_BASE}
 REALTIME_DB_ENC_KEY=\${REALTIME_DB_ENC_KEY}
 PG_META_CRYPTO_KEY=\${PG_META_CRYPTO_KEY}
@@ -2066,6 +2306,10 @@ EOF
     --from-literal=JWT_EXPIRY="\${JWT_EXPIRY}" \
     --from-literal=ENABLE_EMAIL_SIGNUP="\${ENABLE_EMAIL_SIGNUP}" \
     --from-literal=ENABLE_EMAIL_AUTOCONFIRM="\${ENABLE_EMAIL_AUTOCONFIRM}" \
+    --from-literal=SMTP_ADMIN_EMAIL="\${SMTP_ADMIN_EMAIL}" \
+    --from-literal=SMTP_HOST="\${SMTP_HOST}" \
+    --from-literal=SMTP_PORT="\${SMTP_PORT}" \
+    --from-literal=SMTP_SENDER_NAME="\${SMTP_SENDER_NAME}" \
     --from-literal=PGRST_DB_SCHEMAS="\${PGRST_DB_SCHEMAS}" \
     --from-literal=PGRST_DB_MAX_ROWS="\${PGRST_DB_MAX_ROWS}" \
     --from-literal=PGRST_DB_EXTRA_SEARCH_PATH="\${PGRST_DB_EXTRA_SEARCH_PATH}" \
@@ -2099,7 +2343,7 @@ run_supabase_migrations() {
     return 0
   fi
 
-  export SUPABASE_DB_URL
+  export SUPABASE_DB_URL PGSSLMODE=disable
 
   if [[ -d "\${ROOT_DIR}/supabase/migrations" ]]; then
     require_command supabase
@@ -2108,9 +2352,35 @@ run_supabase_migrations() {
       supabase migration up --db-url "\${SUPABASE_DB_URL}"
     )
   fi
+}
 
+reconcile_supabase_profile() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
   if [[ "\${SUPABASE_PROFILE_ENABLED}" == "true" && -f "\${SUPABASE_PROFILE_RECONCILE_FILE}" ]]; then
     psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${SUPABASE_PROFILE_RECONCILE_FILE}"
+  fi
+}
+
+reload_postgrest_schema() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -c "notify pgrst, 'reload schema';"
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout restart deployment/rest >/dev/null
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/rest --timeout=600s
+}
+
+bootstrap_supabase_vault_migration() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+  if [[ -f "\${ROOT_DIR}/supabase/migrations/202607120001_ankhorage_supabase_vault.sql" ]]; then
+    kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" exec deployment/postgres -- psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q -c "alter role postgres with superuser;"
+    kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" exec deployment/postgres -- psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q -c "create schema if not exists vault; grant pg_read_server_files to postgres; grant pg_read_server_files to supabase_admin; grant execute on function pg_read_file(text) to public; grant execute on function pg_read_file(text, bigint, bigint) to public;"
+    psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${ROOT_DIR}/supabase/migrations/202607120001_ankhorage_supabase_vault.sql"
   fi
 }
 
@@ -2120,10 +2390,69 @@ bootstrap_supabase_database() {
   fi
 
   require_command psql
-  "\${PORT_FORWARD_SCRIPT}" start db-migration >/dev/null
   export POSTGRES_PASSWORD JWT_SECRET JWT_EXP="\${JWT_EXPIRY}" POSTGRES_USER=postgres
   psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${K8S_DIR}/supabase/bootstrap.sql"
 }
+
+wait_for_supabase_database() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  require_command psql
+  "\${PORT_FORWARD_SCRIPT}" start db-migration >/dev/null
+  for attempt in {1..60}; do
+    if PGPASSWORD="\${POSTGRES_PASSWORD}" psql -h 127.0.0.1 -p "\${SUPABASE_DB_FORWARD_LOCAL_PORT}" -U postgres -d postgres -v ON_ERROR_STOP=1 -Atq -c 'select 1' >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 2
+  done
+
+  echo "Postgres did not accept SQL connections as postgres before bootstrap."
+  "\${PORT_FORWARD_SCRIPT}" status db-migration || true
+  exit 1
+}
+
+apply_supabase_runtime_workloads() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/auth.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/rest.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/realtime.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/imgproxy.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/storage.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/meta.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/gateway.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/studio.yaml"
+}
+
+load_env_file_preserving_process_env
+SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
+DRIVER="\${MINIKUBE_DRIVER:-docker}"
+APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-true}"
+APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
+APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-.ankh/web-export}"
+APP_IMAGE="\${APP_IMAGE:-${defaultAppImage}}"
+APP_IMAGE_SYNC_STRATEGY="\${APP_IMAGE_SYNC_STRATEGY:-docker-load}"
+APP_REPLICAS="\${APP_REPLICAS:-1}"
+APP_FORCE_ROLLOUT_RESTART="\${APP_FORCE_ROLLOUT_RESTART:-true}"
+APP_IMAGE_PULL_SECRET_NAME="\${APP_IMAGE_PULL_SECRET_NAME:-}"
+APP_IMAGE_PULL_SECRET_SERVER="\${APP_IMAGE_PULL_SECRET_SERVER:-ghcr.io}"
+APP_IMAGE_PULL_SECRET_USERNAME="\${APP_IMAGE_PULL_SECRET_USERNAME:-}"
+APP_IMAGE_PULL_SECRET_PASSWORD="\${APP_IMAGE_PULL_SECRET_PASSWORD:-}"
+APP_IMAGE_PULL_SECRET_EMAIL="\${APP_IMAGE_PULL_SECRET_EMAIL:-}"
+APP_PORT_FORWARD_LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
+SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
+SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
+SUPABASE_DB_URL="\${SUPABASE_DB_URL:-}"
+
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
+  exit 1
+fi
 
 require_command minikube
 require_command kubectl
@@ -2138,16 +2467,26 @@ if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
   kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/app.yaml"
   kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/supabase.yaml"
   sync_supabase_secrets
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.init.configmap.yaml"
   kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.pvc.yaml"
   kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.yaml"
-  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/postgres --timeout=240s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/postgres --timeout=900s
+  wait_for_supabase_database
   bootstrap_supabase_database
+  bootstrap_supabase_vault_migration
+  resolve_oauth_credentials_from_vault
+${oauthValidation}
+  sync_supabase_secrets
+  apply_supabase_runtime_workloads
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/auth --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/rest --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/realtime --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/storage --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/gateway --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/studio --timeout=600s
   run_supabase_migrations
-  kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
-  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/auth --timeout=240s
-  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/rest --timeout=240s
-  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/storage --timeout=240s
-  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/gateway --timeout=240s
+  reconcile_supabase_profile
+  reload_postgrest_schema
   "\${PORT_FORWARD_SCRIPT}" start supabase-gateway >/dev/null
   "\${PORT_FORWARD_SCRIPT}" start studio >/dev/null
 else
@@ -2190,6 +2529,10 @@ case "\${APP_IMAGE_SYNC_STRATEGY}" in
     exit 1
     ;;
 esac
+
+if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
+  kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
+fi
 
 if [[ -n "\${APP_IMAGE_PULL_SECRET_NAME}" ]]; then
   if [[ -z "\${APP_IMAGE_PULL_SECRET_USERNAME}" || -z "\${APP_IMAGE_PULL_SECRET_PASSWORD}" ]]; then
