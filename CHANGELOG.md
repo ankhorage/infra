@@ -1,5 +1,12 @@
 # @ankhorage/infra
 
+## 0.4.2
+
+### Patch Changes
+
+- 53c8e75: Make generated disabled Supabase profile verification safe when local generated profile state has
+  never existed.
+
 ## 0.4.1
 
 ### Patch Changes
