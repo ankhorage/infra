@@ -1,17 +1,29 @@
 import { execFile as execFileCallback } from 'node:child_process';
-import { chmod, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
 import { describe, expect, test } from 'bun:test';
 
-import { generateInfrastructure } from '../../../../index';
+import { generateInfrastructure as generateRawInfrastructure } from '../../../../index';
+import { createAppManifest } from '../../../../testSupport';
 import type { GeneratedInfrastructureFile, InfraManifestInput } from '../../../../types';
 
 const execFile = promisify(execFileCallback);
 const INTEGRATION_TIMEOUT_MS = 300_000;
 const integrationTest = process.env.ANKH_SUPABASE_INTEGRATION === '1' ? test : test.skip;
+
+function generateInfrastructure(
+  manifest: InfraManifestInput,
+  options: { namespaceHint?: string } = {},
+): ReturnType<typeof generateRawInfrastructure> {
+  const slug = options.namespaceHint ?? 'profile-integration';
+  return generateRawInfrastructure(manifest, {
+    ...options,
+    appManifest: createAppManifest(slug),
+  });
+}
 
 describe('generated Supabase profile reconciliation integration', () => {
   integrationTest(
@@ -125,6 +137,109 @@ begin
 end;
 $$;`,
         );
+      } finally {
+        await cleanupIntegrationProject(appRoot, minikubeRoot);
+      }
+    },
+    INTEGRATION_TIMEOUT_MS,
+  );
+
+  integrationTest(
+    'boots clean disabled profile and writes client env idempotently',
+    async () => {
+      const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+      try {
+        await writeGeneratedFiles(
+          appRoot,
+          generateInfrastructure(createManifest({ table: undefined, fields: ['email'] }), {
+            namespaceHint,
+          }).files,
+        );
+
+        await runLocalSupabaseEnv(minikubeRoot);
+        await runLocalSupabaseEnv(minikubeRoot);
+
+        const { stdout: statusEnv } = await execFile('supabase', [
+          '--workdir',
+          minikubeRoot,
+          'status',
+          '-o',
+          'env',
+        ]);
+        const expectedUrl = readStatusEnv(statusEnv, 'API_URL');
+        const expectedAnonKey = readStatusEnv(statusEnv, 'ANON_KEY');
+        const appEnv = await readFile(path.join(appRoot, '.env.local'), 'utf8');
+
+        expect(readStatusEnv(appEnv, 'EXPO_PUBLIC_SUPABASE_URL')).toBe(expectedUrl);
+        expect(readStatusEnv(appEnv, 'EXPO_PUBLIC_SUPABASE_ANON_KEY')).toBe(expectedAnonKey);
+      } finally {
+        await cleanupIntegrationProject(appRoot, minikubeRoot);
+      }
+    },
+    INTEGRATION_TIMEOUT_MS,
+  );
+
+  integrationTest(
+    'accepts disabled profile when state table exists without auth profile state',
+    async () => {
+      const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+      try {
+        await writeGeneratedFiles(
+          appRoot,
+          generateInfrastructure(createManifest({ table: undefined, fields: ['email'] }), {
+            namespaceHint,
+          }).files,
+        );
+
+        await runLocalSupabaseEnv(minikubeRoot);
+        await runSupabaseSql(
+          minikubeRoot,
+          `create schema if not exists ankhorage_internal;
+         create table if not exists ankhorage_internal.generated_schema_state (
+           artifact_key text primary key,
+           table_name text,
+           content_hash text,
+           updated_at timestamptz not null default now()
+         );
+         insert into ankhorage_internal.generated_schema_state (
+           artifact_key,
+           table_name,
+           content_hash
+         )
+         values ('storage.bucket', 'objects', repeat('1', 64))
+         on conflict (artifact_key) do update
+           set table_name = excluded.table_name,
+               content_hash = excluded.content_hash,
+               updated_at = now();`,
+        );
+
+        await runLocalSupabaseEnv(minikubeRoot);
+      } finally {
+        await cleanupIntegrationProject(appRoot, minikubeRoot);
+      }
+    },
+    INTEGRATION_TIMEOUT_MS,
+  );
+
+  integrationTest(
+    'status reports clean disabled profile as skipped',
+    async () => {
+      const { appRoot, minikubeRoot, namespaceHint } = await createIntegrationProject();
+
+      try {
+        await writeGeneratedFiles(
+          appRoot,
+          generateInfrastructure(createManifest({ table: undefined, fields: ['email'] }), {
+            namespaceHint,
+          }).files,
+        );
+        await runLocalSupabaseEnv(minikubeRoot);
+
+        const output = await runGeneratedStatus(minikubeRoot);
+        expect(output).toContain('- profile reconciliation: skipped (no profile table configured)');
+        expect(output).toContain('- profile schema: skipped (no profile table configured)');
       } finally {
         await cleanupIntegrationProject(appRoot, minikubeRoot);
       }
@@ -787,6 +902,59 @@ exit 0
   }
 
   throw new Error('Expected generated status script to fail');
+}
+
+async function runGeneratedStatus(minikubeRoot: string): Promise<string> {
+  const fakeBin = path.join(minikubeRoot, 'fake-status-bin');
+  const fakeKubectl = path.join(fakeBin, 'kubectl');
+  await mkdir(fakeBin, { recursive: true });
+  await writeFile(
+    fakeKubectl,
+    `#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "\${1:-}" == "config" && "\${2:-}" == "current-context" ]]; then
+  echo fake-context
+  exit 0
+fi
+
+if [[ "\${1:-}" == "cluster-info" ]]; then
+  echo "Kubernetes control plane is running"
+  exit 0
+fi
+
+if [[ "\${1:-}" == "get" && "\${2:-}" == "namespace" ]]; then
+  exit 0
+fi
+
+if [[ "\${1:-}" == "get" && "\${2:-}" == "all" ]]; then
+  exit 0
+fi
+
+if [[ "\${1:-}" == "-n" && "\${3:-}" == "get" && "\${4:-}" == "configmap" ]]; then
+  exit 0
+fi
+
+if [[ "\${1:-}" == "-n" && "\${3:-}" == "get" && "\${4:-}" == "secret" ]]; then
+  exit 1
+fi
+
+exit 0
+`,
+    'utf8',
+  );
+  await chmod(fakeKubectl, 0o755);
+
+  const result = await execFile(path.join(minikubeRoot, 'scripts/status.sh'), {
+    cwd: minikubeRoot,
+    env: {
+      ...process.env,
+      PATH: `${fakeBin}:${process.env.PATH ?? ''}`,
+      SUPABASE_PROJECT_DIR: minikubeRoot,
+    },
+  });
+
+  return `${result.stdout}\n${result.stderr}`;
 }
 
 async function runSupabaseSql(minikubeRoot: string, sql: string): Promise<void> {
