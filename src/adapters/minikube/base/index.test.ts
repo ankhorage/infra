@@ -199,6 +199,44 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(statusScript).toContain('for namespace in app; do');
   });
 
+  test('places standalone provider workloads in provider-owned namespaces', () => {
+    const result = generateInfrastructure(
+      {
+        ...createSupabaseManifest(),
+        auth: {
+          scope: 'global',
+          provider: 'supabase',
+          authorization: {
+            engine: 'cerbos',
+            kind: 'RBAC',
+          },
+        },
+      },
+      {
+        appManifest: createAppManifest('authz-app'),
+      },
+    );
+    const paths = result.files.map((file) => file.path);
+    const kustomization = getFile(result.files, 'infra/minikube/k8s/kustomization.yaml');
+    const readme = getFile(result.files, 'infra/minikube/README.md');
+    const cerbosDeployment = getFile(
+      result.files,
+      'infra/minikube/k8s/authz/cerbos/cerbos.deployment.yaml',
+    );
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const resetScript = getFile(result.files, 'infra/minikube/scripts/reset.sh');
+    const statusScript = getFile(result.files, 'infra/minikube/scripts/status.sh');
+
+    expect(paths).toContain('infra/minikube/k8s/namespaces/cerbos.yaml');
+    expect(kustomization).toContain('namespaces/cerbos.yaml');
+    expect(readme).toContain('- Provider namespaces: `cerbos`');
+    expect(cerbosDeployment).toContain('namespace: cerbos');
+    expect(cerbosDeployment).not.toContain('namespace: app');
+    expect(envExample).toContain('CERBOS_URL=http://cerbos.cerbos.svc.cluster.local:3592');
+    expect(resetScript).toContain('delete namespace cerbos');
+    expect(statusScript).toContain('for namespace in app supabase cerbos; do');
+  });
+
   test('uses generated Supabase runtime ownership as an immutable script decision', () => {
     const result = generateInfrastructure(createSupabaseManifest(), {
       appManifest: createAppManifest('scanner'),
@@ -250,6 +288,13 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     );
     expect(upScript).toContain('credentialsRef auth/oauth/google');
     expect(upScript).toContain("resolve_vault_secret_field 'auth/oauth/google' 'clientSecret'");
+    expect(upScript).toContain(
+      'set_required_env_default ADDITIONAL_REDIRECT_URLS "$(derive_additional_redirect_urls)"',
+    );
+    expect(upScript).toContain('site_url_without_slash}/${callback_path}');
+    expect(upScript).toContain('OAUTH_NATIVE_REDIRECT_URLS');
+    expect(upScript).not.toContain('write_env_value GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID');
+    expect(upScript).not.toContain('write_env_value GOTRUE_EXTERNAL_GOOGLE_SECRET');
     expect(upScript).not.toContain('sentinel-client-secret-value');
   });
 
@@ -329,8 +374,14 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(portForwardScript).toContain('${PROFILE}-${1}.pid');
     expect(portForwardScript).toContain('crashed stale_pid');
     expect(statusScript).toContain('port-forward.sh" status all');
+    expect(upScript).toContain('set -Eeuo pipefail');
+    expect(upScript).toContain('trap cleanup_failed_up ERR');
     expect(upScript).toContain('start supabase-gateway');
     expect(upScript).toContain('start db-migration');
+    expect(upScript.indexOf('trap cleanup_failed_up ERR')).toBeLessThan(
+      upScript.indexOf('require_command minikube'),
+    );
+    expect(upScript).toContain('trap - ERR');
     expect(downScript).toContain('port-forward.sh" stop all');
   });
 });

@@ -4,12 +4,15 @@ import { resolveAuthFlow } from '@ankhorage/contracts/auth';
 import type { InfraManifestInput } from '../../../../types';
 import type { MinikubeAdapterArtifacts } from '../../contracts';
 
+const CERBOS_NAMESPACE = 'cerbos';
+
 export function generateCerbosAuthzArtifacts(args: {
   manifest: InfraManifestInput;
   namespace: string;
   appManifest?: CerbosAppManifest;
 }): MinikubeAdapterArtifacts {
-  const { manifest, namespace, appManifest } = args;
+  const { manifest, appManifest } = args;
+  const namespace = CERBOS_NAMESPACE;
 
   const root = 'infra/minikube/k8s/authz/cerbos';
   const resourceRoot = 'authz/cerbos';
@@ -40,7 +43,8 @@ export function generateCerbosAuthzArtifacts(args: {
       `${resourceRoot}/cerbos.deployment.yaml`,
       `${resourceRoot}/cerbos.service.yaml`,
     ],
-    envEntries: ['CERBOS_URL=http://cerbos:3592'],
+    providerNamespaces: [namespace],
+    envEntries: ['CERBOS_URL=http://cerbos.cerbos.svc.cluster.local:3592'],
     warnings: [],
   };
 }

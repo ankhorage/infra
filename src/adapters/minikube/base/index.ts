@@ -35,6 +35,7 @@ interface SupabaseOAuthProviderRuntime {
   id: string;
   envPrefix: string;
   credentialsRef: string;
+  callbackRoute: string;
 }
 
 const SUPABASE_IMAGES: SupabaseImagePins = {
@@ -58,9 +59,10 @@ export function generateMinikubeBaseArtifacts(args: {
   manifest: InfraManifestInput;
   appSlug: string;
   extraResources: string[];
+  providerNamespaces: string[];
   extraEnvEntries: string[];
 }): GeneratedInfrastructureFile[] {
-  const { manifest, appSlug, extraResources, extraEnvEntries } = args;
+  const { manifest, appSlug, extraResources, providerNamespaces, extraEnvEntries } = args;
 
   const root = 'infra/minikube';
   const k8sRoot = `${root}/k8s`;
@@ -86,9 +88,11 @@ export function generateMinikubeBaseArtifacts(args: {
     secretStoreProvider === 'supabase-vault';
 
   const supabaseResources = supabaseKubernetesEnabled ? getSupabaseResourceFiles(k8sRoot) : [];
-  const namespaceResources = supabaseKubernetesEnabled
-    ? ['namespaces/app.yaml', 'namespaces/supabase.yaml']
-    : ['namespaces/app.yaml'];
+  const namespaceResources = [
+    'namespaces/app.yaml',
+    ...(supabaseKubernetesEnabled ? ['namespaces/supabase.yaml'] : []),
+    ...providerNamespaces.map((namespace) => `namespaces/${namespace}.yaml`),
+  ];
 
   return [
     {
@@ -104,6 +108,7 @@ export function generateMinikubeBaseArtifacts(args: {
         supabaseKubernetesEnabled,
         profileModel,
         oauthProviders,
+        providerNamespaces,
       }),
     },
     {
@@ -130,6 +135,10 @@ export function generateMinikubeBaseArtifacts(args: {
           },
         ]
       : []),
+    ...providerNamespaces.map((namespace) => ({
+      path: `${k8sRoot}/namespaces/${namespace}.yaml`,
+      content: getNamespaceManifest(namespace),
+    })),
     {
       path: `${k8sRoot}/app.configmap.yaml`,
       content: getAppConfigMap({
@@ -197,6 +206,7 @@ export function generateMinikubeBaseArtifacts(args: {
       content: getResetScript({
         appSlug,
         supabaseKubernetesEnabled,
+        providerNamespaces,
       }),
       executable: true,
     },
@@ -212,6 +222,7 @@ export function generateMinikubeBaseArtifacts(args: {
         supabaseKubernetesEnabled,
         profileModel,
         supabaseHostPorts,
+        providerNamespaces,
       }),
       executable: true,
     },
@@ -233,6 +244,7 @@ function getReadmeMarkdown(args: {
   supabaseKubernetesEnabled: boolean;
   profileModel: ResolvedProfileModel;
   oauthProviders: readonly SupabaseOAuthProviderRuntime[];
+  providerNamespaces: readonly string[];
 }): string {
   const {
     appSlug,
@@ -245,10 +257,12 @@ function getReadmeMarkdown(args: {
     supabaseKubernetesEnabled,
     profileModel,
     oauthProviders,
+    providerNamespaces,
   } = args;
   const resourceLines = [
     'namespaces/app.yaml',
     ...(supabaseKubernetesEnabled ? ['namespaces/supabase.yaml'] : []),
+    ...providerNamespaces.map((namespace) => `namespaces/${namespace}.yaml`),
     'app.configmap.yaml',
     'app/deployment.yaml',
     'app/service.yaml',
@@ -275,9 +289,20 @@ function getReadmeMarkdown(args: {
     .map((resource) => `- \`k8s/${resource}\``)
     .join('\n');
 
-  const resetDescription = supabaseKubernetesEnabled
-    ? `deletes and recreates the \`app\` and \`supabase\` namespaces and their PVC-backed data inside the existing profile`
-    : `deletes and recreates the \`app\` namespace inside the existing profile`;
+  const resetNamespaces = [
+    APP_NAMESPACE,
+    ...(supabaseKubernetesEnabled ? [SUPABASE_NAMESPACE] : []),
+    ...providerNamespaces,
+  ];
+  const resetDescription = `deletes and recreates namespaces ${resetNamespaces
+    .map((namespace) => `\`${namespace}\``)
+    .join(
+      ', ',
+    )} inside the existing profile. This removes app-owned Kubernetes state and provider-owned PVC data for reset namespaces`;
+  const providerNamespaceLine =
+    providerNamespaces.length > 0
+      ? `- Provider namespaces: \`${providerNamespaces.join('`, `')}\`\n`
+      : '';
   const oauthDescription =
     oauthProviders.length > 0
       ? `\nConfigured OAuth providers are wired into GoTrue through generated \`GOTRUE_EXTERNAL_*\` runtime keys. The keys are named in \`.env.example\`; values must come from trusted secret resolution for the configured \`credentialsRef\` entries.\n`
@@ -292,7 +317,7 @@ This directory is generated from \`ankh.config.json\` (infra manifest).
 - App slug / Minikube profile: \`${appSlug}\`
 - App runtime namespace: \`${APP_NAMESPACE}\`
 - Supabase namespace: \`${supabaseKubernetesEnabled ? SUPABASE_NAMESPACE : 'unused'}\`
-- Default app image: \`${defaultAppImage}\`
+${providerNamespaceLine}- Default app image: \`${defaultAppImage}\`
 
 One app owns one complete Minikube profile. Provider-owned workloads are separated by
 Kubernetes namespace inside that profile. There is no shared \`minikube\` profile and no
@@ -428,6 +453,7 @@ function getEnvExample(args: {
     'S3_PROTOCOL_ACCESS_KEY_SECRET=',
     'JWT_EXPIRY=3600',
     'SITE_URL=',
+    'OAUTH_NATIVE_REDIRECT_URLS=',
     'ADDITIONAL_REDIRECT_URLS=',
     'SUPABASE_PUBLIC_URL=',
     'API_EXTERNAL_URL=',
@@ -482,9 +508,11 @@ function getOAuthScriptEnvDefaults(providers: readonly SupabaseOAuthProviderRunt
 
   return providers
     .map(
-      (provider) => `  set_optional_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID ""
-  set_optional_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET ""
-  set_optional_env_default GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI "\${API_EXTERNAL_URL}/callback"`,
+      (
+        provider,
+      ) => `  export GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID="\${GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID:-}"
+  export GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET="\${GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET:-}"
+  export GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI="\${GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI:-\${API_EXTERNAL_URL}/callback}"`,
     )
     .join('\n');
 }
@@ -523,6 +551,10 @@ function getOAuthRuntimeValidationScript(
 ${checks}`;
 }
 
+function getSupabaseOAuthCallbackRoute(providers: readonly SupabaseOAuthProviderRuntime[]): string {
+  return providers[0]?.callbackRoute ?? '/auth/callback';
+}
+
 function getOAuthVaultResolutionScript(args: {
   appSlug: string;
   oauthProviders: readonly SupabaseOAuthProviderRuntime[];
@@ -548,11 +580,9 @@ resolve_oauth_credentials_from_vault() {
     resolved_client_id="$(resolve_vault_secret_field '${ref}' 'clientId')"
     resolved_client_secret="$(resolve_vault_secret_field '${ref}' 'clientSecret')"
     if [[ -n "\${resolved_client_id}" ]]; then
-      write_env_value ${idKey} "\${resolved_client_id}"
       export ${idKey}="\${resolved_client_id}"
     fi
     if [[ -n "\${resolved_client_secret}" ]]; then
-      write_env_value ${secretKey} "\${resolved_client_secret}"
       export ${secretKey}="\${resolved_client_secret}"
     fi
   fi`;
@@ -680,6 +710,7 @@ function resolveSupabaseOAuthProviders(
 ): readonly SupabaseOAuthProviderRuntime[] {
   const oauth = manifest.auth?.oauth;
   if (!oauth?.enabled) return [];
+  const callbackRoute = normalizeOAuthCallbackRoute(oauth.callbackRoute);
 
   return oauth.providers
     .filter((provider) => provider.enabled !== false)
@@ -702,8 +733,16 @@ function resolveSupabaseOAuthProviders(
         id,
         envPrefix,
         credentialsRef,
+        callbackRoute,
       };
     });
+}
+
+function normalizeOAuthCallbackRoute(rawRoute: string | undefined): string {
+  const trimmedRoute = rawRoute?.trim();
+  const route = trimmedRoute && trimmedRoute.length > 0 ? trimmedRoute : '/auth/callback';
+  const withLeadingSlash = route.startsWith('/') ? route : `/${route}`;
+  return withLeadingSlash.replace(/\/+/gu, '/');
 }
 
 function normalizeBuckets(rawBuckets: readonly string[]): string[] {
@@ -2038,6 +2077,7 @@ function getUpScript(args: {
   const oauthEnvDefaults = getOAuthScriptEnvDefaults(oauthProviders);
   const oauthRuntimeSecretLines = getOAuthRuntimeSecretLines(oauthProviders);
   const oauthValidation = getOAuthRuntimeValidationScript(oauthProviders);
+  const oauthCallbackRoute = getSupabaseOAuthCallbackRoute(oauthProviders);
   const oauthVaultResolution = getOAuthVaultResolutionScript({
     appSlug,
     oauthProviders,
@@ -2045,7 +2085,7 @@ function getUpScript(args: {
   });
 
   return `#!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
@@ -2188,6 +2228,17 @@ set_env_default() {
   set_required_env_default "\${1}" "\${2}"
 }
 
+derive_additional_redirect_urls() {
+  local callback_route="${oauthCallbackRoute}"
+  local callback_path="\${callback_route#/}"
+  local site_url_without_slash="\${SITE_URL%/}"
+  local urls="\${site_url_without_slash},\${site_url_without_slash}/\${callback_path}"
+  if [[ -n "\${OAUTH_NATIVE_REDIRECT_URLS:-}" ]]; then
+    urls="\${urls},\${OAUTH_NATIVE_REDIRECT_URLS}"
+  fi
+  printf '%s' "\${urls}"
+}
+
 random_base64() {
   openssl rand -base64 "\${1}" | tr -d '\\n'
 }
@@ -2235,7 +2286,8 @@ ensure_supabase_runtime_env() {
   set_required_env_default SUPABASE_PUBLIC_URL "http://127.0.0.1:\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT}"
   set_required_env_default API_EXTERNAL_URL "\${SUPABASE_PUBLIC_URL}/auth/v1"
   set_required_env_default SITE_URL "http://127.0.0.1:\${APP_PORT_FORWARD_LOCAL_PORT}"
-  set_required_env_default ADDITIONAL_REDIRECT_URLS "\${SITE_URL}"
+  export OAUTH_NATIVE_REDIRECT_URLS="\${OAUTH_NATIVE_REDIRECT_URLS:-}"
+  set_required_env_default ADDITIONAL_REDIRECT_URLS "$(derive_additional_redirect_urls)"
   set_required_env_default ENABLE_EMAIL_SIGNUP "true"
   set_required_env_default ENABLE_EMAIL_AUTOCONFIRM "true"
   set_required_env_default SMTP_ADMIN_EMAIL "admin@example.com"
@@ -2428,6 +2480,13 @@ apply_supabase_runtime_workloads() {
   kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/studio.yaml"
 }
 
+apply_namespace_manifests() {
+  local namespace_manifest
+  for namespace_manifest in "\${K8S_DIR}"/namespaces/*.yaml; do
+    kubectl --context "\${PROFILE}" apply -f "\${namespace_manifest}"
+  done
+}
+
 load_env_file_preserving_process_env
 SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
 PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
@@ -2454,6 +2513,12 @@ if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
   exit 1
 fi
 
+cleanup_failed_up() {
+  "\${PORT_FORWARD_SCRIPT}" stop all >/dev/null 2>&1 || true
+}
+
+trap cleanup_failed_up ERR
+
 require_command minikube
 require_command kubectl
 ensure_supabase_runtime_env
@@ -2464,8 +2529,7 @@ if [[ "\${HOST_STATUS}" != "Running" ]]; then
 fi
 
 if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
-  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/app.yaml"
-  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/supabase.yaml"
+  apply_namespace_manifests
   sync_supabase_secrets
   kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.init.configmap.yaml"
   kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.pvc.yaml"
@@ -2566,6 +2630,7 @@ fi
 kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" rollout status deployment/app-runtime --timeout=180s >/dev/null
 "\${PORT_FORWARD_SCRIPT}" start app >/dev/null
 
+trap - ERR
 echo "Minikube infrastructure for '\${PROFILE}' is running."
 `;
 }
@@ -2887,22 +2952,30 @@ echo "Stopped Minikube profile '\${PROFILE}'. Persistent data remains in the pro
 `;
 }
 
-function getResetScript(args: { appSlug: string; supabaseKubernetesEnabled: boolean }): string {
-  const { appSlug, supabaseKubernetesEnabled } = args;
-  const supabaseResetCommands = supabaseKubernetesEnabled
-    ? `kubectl --context "\${PROFILE}" delete namespace ${SUPABASE_NAMESPACE} --ignore-not-found
-kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/supabase.yaml"
-`
-    : '';
-  const resetScope = supabaseKubernetesEnabled
-    ? 'app and Supabase Kubernetes namespaces'
-    : 'app Kubernetes namespace';
-  const resetDataDescription = supabaseKubernetesEnabled
-    ? 'reset.sh deletes namespace app and namespace supabase, including Supabase DB and Storage PVC data. It does not delete the Minikube profile.'
-    : 'reset.sh deletes namespace app. It does not delete the Minikube profile.';
-  const completionDescription = supabaseKubernetesEnabled
-    ? 'Reset app and Supabase namespaces'
-    : 'Reset app namespace';
+function getResetScript(args: {
+  appSlug: string;
+  supabaseKubernetesEnabled: boolean;
+  providerNamespaces: readonly string[];
+}): string {
+  const { appSlug, supabaseKubernetesEnabled, providerNamespaces } = args;
+  const resetNamespaces = [
+    APP_NAMESPACE,
+    ...(supabaseKubernetesEnabled ? [SUPABASE_NAMESPACE] : []),
+    ...providerNamespaces,
+  ];
+  const resetNamespaceCommands = resetNamespaces
+    .map(
+      (
+        namespace,
+      ) => `kubectl --context "\${PROFILE}" delete namespace ${namespace} --ignore-not-found
+kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/${namespace}.yaml"`,
+    )
+    .join('\n');
+  const resetScope = `Kubernetes namespaces ${resetNamespaces.join(', ')}`;
+  const resetDataDescription = `reset.sh deletes and recreates namespaces ${resetNamespaces.join(
+    ', ',
+  )}. This resets app workloads and provider-owned data in those namespaces. It does not delete the Minikube profile.`;
+  const completionDescription = `Reset namespaces ${resetNamespaces.join(', ')}`;
 
   return `#!/usr/bin/env bash
 set -euo pipefail
@@ -2938,9 +3011,8 @@ if ! command -v kubectl >/dev/null 2>&1; then
 fi
 
 "\${SCRIPT_DIR}/port-forward.sh" stop all >/dev/null || true
-kubectl --context "\${PROFILE}" delete namespace ${APP_NAMESPACE} --ignore-not-found
-kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/app.yaml"
-${supabaseResetCommands}echo "${completionDescription} for profile '\${PROFILE}'. Run ./scripts/up.sh to recreate runtime secrets, migrations, forwards, and app rollout."
+${resetNamespaceCommands}
+echo "${completionDescription} for profile '\${PROFILE}'. Run ./scripts/up.sh to recreate runtime secrets, migrations, forwards, and app rollout."
 `;
 }
 
@@ -2976,11 +3048,20 @@ function getStatusScript(args: {
   supabaseKubernetesEnabled: boolean;
   profileModel: ResolvedProfileModel;
   supabaseHostPorts: SupabaseHostPorts;
+  providerNamespaces: readonly string[];
 }): string {
-  const { appSlug, supabaseKubernetesEnabled, profileModel, supabaseHostPorts } = args;
-  const namespaces = supabaseKubernetesEnabled
-    ? `${APP_NAMESPACE} ${SUPABASE_NAMESPACE}`
-    : APP_NAMESPACE;
+  const {
+    appSlug,
+    supabaseKubernetesEnabled,
+    profileModel,
+    supabaseHostPorts,
+    providerNamespaces,
+  } = args;
+  const namespaces = [
+    APP_NAMESPACE,
+    ...(supabaseKubernetesEnabled ? [SUPABASE_NAMESPACE] : []),
+    ...providerNamespaces,
+  ].join(' ');
 
   return `#!/usr/bin/env bash
 set -euo pipefail

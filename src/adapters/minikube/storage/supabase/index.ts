@@ -53,6 +53,7 @@ export function generateSupabaseStorageArtifacts(args: {
       `${resourceRoot}/supabase-storage.configmap.yaml`,
       `${resourceRoot}/app-runtime-storage.env.configmap.yaml`,
     ],
+    providerNamespaces: [],
     envEntries,
     warnings: [
       `Storage buckets are configured but not created automatically yet. Ensure buckets exist in Supabase Storage: ${bucketsCsv}.`,

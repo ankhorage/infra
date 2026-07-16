@@ -70,7 +70,11 @@ describe('generated Minikube two-app isolation', () => {
         await expectNoHostSupabaseComposeContainersFor(first.slug, second.slug);
 
         await expectSupabaseEndToEnd(first);
-        await expectSupabaseEndToEnd(second);
+        const secondSession = await expectSupabaseEndToEnd(second);
+
+        await runScript(second.minikubeRoot, 'down.sh');
+        await runScript(second.minikubeRoot, 'up.sh');
+        await expectSupabaseSessionPersists(second, secondSession);
 
         await runScript(first.minikubeRoot, 'destroy.sh');
         await expectSupabaseEndToEnd(second);
@@ -290,7 +294,18 @@ async function expectNoHostSupabaseComposeContainersFor(...slugs: string[]) {
   }
 }
 
-async function expectSupabaseEndToEnd(app: { minikubeRoot: string; slug: string }): Promise<void> {
+interface SupabaseSessionFixture {
+  readonly accessToken: string;
+  readonly anonKey: string;
+  readonly email: string;
+  readonly gatewayUrl: string;
+  readonly userId: string;
+}
+
+async function expectSupabaseEndToEnd(app: {
+  minikubeRoot: string;
+  slug: string;
+}): Promise<SupabaseSessionFixture> {
   const env = await readGeneratedEnv(app.minikubeRoot);
   const gatewayUrl = readRequiredEnv(env, 'SUPABASE_PUBLIC_URL');
   const anonKey = readRequiredEnv(env, 'SUPABASE_ANON_KEY');
@@ -330,6 +345,33 @@ async function expectSupabaseEndToEnd(app: { minikubeRoot: string; slug: string 
 
   await ensureStorageObjectRoundTrip(gatewayUrl, serviceRoleKey, app.slug);
   await ensureVaultRoundTrip(dbUrl, app.slug);
+
+  return { accessToken, anonKey, email, gatewayUrl, userId };
+}
+
+async function expectSupabaseSessionPersists(
+  app: { minikubeRoot: string; slug: string },
+  session: SupabaseSessionFixture,
+): Promise<void> {
+  const env = await readGeneratedEnv(app.minikubeRoot);
+  const gatewayUrl = readRequiredEnv(env, 'SUPABASE_PUBLIC_URL');
+  const anonKey = readRequiredEnv(env, 'SUPABASE_ANON_KEY');
+  expect(gatewayUrl).toBe(session.gatewayUrl);
+  expect(anonKey).toBe(session.anonKey);
+
+  const user = await getJson(`${gatewayUrl}/auth/v1/user`, anonKey, session.accessToken);
+  assertHttpOk(user, 'auth user read after stop/start');
+  expect(user.body).toMatchObject({ id: session.userId, email: session.email });
+
+  const profile = await getJson(
+    `${gatewayUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(session.userId)}&select=id,email`,
+    anonKey,
+    session.accessToken,
+  );
+  assertHttpOk(profile, 'profile REST read after stop/start');
+  expect(Array.isArray(profile.body)).toBe(true);
+  expect(profile.body).toHaveLength(1);
+  expect(profile.body[0]).toMatchObject({ id: session.userId, email: session.email });
 }
 
 async function readGeneratedEnv(minikubeRoot: string): Promise<Map<string, string>> {

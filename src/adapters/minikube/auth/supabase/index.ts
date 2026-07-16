@@ -70,6 +70,7 @@ export function generateSupabaseAuthArtifacts(args: {
       `${resourceRoot}/supabase-auth.configmap.yaml`,
       `${resourceRoot}/app-runtime-auth.env.configmap.yaml`,
     ],
+    providerNamespaces: [],
     envEntries: ['EXPO_PUBLIC_SUPABASE_URL=', 'EXPO_PUBLIC_SUPABASE_ANON_KEY='],
     warnings,
   };
