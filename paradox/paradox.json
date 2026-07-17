@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.4.2",
+      "value": "v1.0.0",
       "color": "cb3837"
     },
     {
@@ -1017,7 +1017,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 235,
+        "line": 240,
         "column": 1
       }
     },
@@ -1026,7 +1026,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 264,
+        "line": 269,
         "column": 1
       }
     },
@@ -1035,7 +1035,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/index.ts",
-        "line": 286,
+        "line": 291,
         "column": 1
       }
     },
@@ -1692,7 +1692,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2831,
+        "line": 2869,
         "column": 1
       }
     },
@@ -1701,7 +1701,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2911,
+        "line": 2949,
         "column": 1
       }
     },
@@ -1710,7 +1710,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2935,
+        "line": 2973,
         "column": 1
       }
     },
@@ -1719,7 +1719,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3270,
+        "line": 3308,
         "column": 1
       }
     },
@@ -1728,7 +1728,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3304,
+        "line": 3342,
         "column": 1
       }
     },
@@ -1737,7 +1737,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3368,
+        "line": 3406,
         "column": 1
       }
     },
@@ -1746,7 +1746,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3395,
+        "line": 3433,
         "column": 1
       }
     },
@@ -1755,7 +1755,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3564,
+        "line": 3602,
         "column": 1
       }
     },
@@ -1764,7 +1764,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3568,
+        "line": 3606,
         "column": 1
       }
     },
@@ -1773,7 +1773,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3578,
+        "line": 3616,
         "column": 1
       }
     },
@@ -1782,7 +1782,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3583,
+        "line": 3621,
         "column": 1
       }
     },
@@ -1791,7 +1791,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3591,
+        "line": 3629,
         "column": 1
       }
     },

@@ -100,6 +100,7 @@ describe('generateInfrastructure', () => {
 
     const runtimeGuide = getFile(result.files, 'infra/minikube/auth/supabase-runtime-wiring.md');
     expect(runtimeGuide).toContain('supabase-public-runtime');
+    expect(runtimeGuide).toContain('${APP_SOURCE_DIR}/.env.local');
     expect(runtimeGuide).not.toContain('SUPABASE_SERVICE_ROLE_KEY');
   });
 

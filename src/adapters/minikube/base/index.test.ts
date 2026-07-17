@@ -333,6 +333,27 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(upScript).toContain('set_optional_env_default SMTP_USER ""');
   });
 
+  test('syncs browser-safe Supabase env into the generated app env.local before build', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('books'),
+    });
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(upScript).toContain('sync_app_public_supabase_env()');
+    expect(upScript).toContain('local app_env_file="${APP_SOURCE_DIR}/.env.local"');
+    expect(upScript).toContain(
+      'write_key_value_file_value "${app_env_file}" "EXPO_PUBLIC_SUPABASE_URL" "${EXPO_PUBLIC_SUPABASE_URL}"',
+    );
+    expect(upScript).toContain(
+      'write_key_value_file_value "${app_env_file}" "EXPO_PUBLIC_SUPABASE_ANON_KEY" "${EXPO_PUBLIC_SUPABASE_ANON_KEY}"',
+    );
+    expect(upScript).toContain('ensure_supabase_runtime_env\nsync_app_public_supabase_env');
+    expect(upScript.lastIndexOf('sync_app_public_supabase_env')).toBeLessThan(
+      upScript.indexOf('if [[ "${APP_BUILD_ENABLED}" == "true" ]]'),
+    );
+    expect(upScript).not.toContain('SUPABASE_SERVICE_ROLE_KEY" "${SUPABASE_SERVICE_ROLE_KEY}"');
+  });
+
   test('starts Supabase schema owners before app migrations and profile reconciliation', () => {
     const result = generateInfrastructure(createSupabaseManifest(), {
       appManifest: createAppManifest('scanner'),

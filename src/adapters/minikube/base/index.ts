@@ -2372,6 +2372,43 @@ write_env_value() {
   mv "\${tmp_env}" "\${ROOT_DIR}/.env"
 }
 
+write_key_value_file_value() {
+  local file_path="\${1}"
+  local key="\${2}"
+  local value="\${3}"
+  local tmp_env
+  mkdir -p "$(dirname "\${file_path}")"
+  touch "\${file_path}"
+  tmp_env="$(mktemp)"
+  awk -F= -v key="\${key}" -v value="\${value}" '
+    $1 == key {
+      print key "=" value
+      found = 1
+      next
+    }
+    { print }
+    END {
+      if (!found) print key "=" value
+    }
+  ' "\${file_path}" > "\${tmp_env}"
+  mv "\${tmp_env}" "\${file_path}"
+}
+
+sync_app_public_supabase_env() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  if [[ -z "\${APP_SOURCE_DIR:-}" ]]; then
+    echo "APP_SOURCE_DIR is required to write app Supabase public environment."
+    exit 1
+  fi
+
+  local app_env_file="\${APP_SOURCE_DIR}/.env.local"
+  write_key_value_file_value "\${app_env_file}" "EXPO_PUBLIC_SUPABASE_URL" "\${EXPO_PUBLIC_SUPABASE_URL}"
+  write_key_value_file_value "\${app_env_file}" "EXPO_PUBLIC_SUPABASE_ANON_KEY" "\${EXPO_PUBLIC_SUPABASE_ANON_KEY}"
+}
+
 set_required_env_default() {
   local key="\${1}"
   local value="\${2}"
@@ -2711,6 +2748,7 @@ trap cleanup_failed_up ERR
 require_command minikube
 require_command kubectl
 ensure_supabase_runtime_env
+sync_app_public_supabase_env
 
 HOST_STATUS="$(minikube -p "\${PROFILE}" status --format='{{.Host}}' 2>/dev/null || true)"
 if [[ "\${HOST_STATUS}" != "Running" ]]; then
