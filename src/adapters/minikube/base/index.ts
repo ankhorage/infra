@@ -2,6 +2,7 @@ import type { GeneratedInfrastructureFile } from '../../../types';
 import type { InfraManifestInput } from '../../../types';
 import type { ResolvedProfileModel } from '../auth/supabase/profile';
 import { resolveSupabaseProfileModel } from '../auth/supabase/profile';
+import type { MinikubeProviderLifecycle } from '../contracts';
 
 export const APP_NAMESPACE = 'app';
 const SUPABASE_NAMESPACE = 'supabase';
@@ -60,9 +61,17 @@ export function generateMinikubeBaseArtifacts(args: {
   appSlug: string;
   extraResources: string[];
   providerNamespaces: string[];
+  providerLifecycle: MinikubeProviderLifecycle[];
   extraEnvEntries: string[];
 }): GeneratedInfrastructureFile[] {
-  const { manifest, appSlug, extraResources, providerNamespaces, extraEnvEntries } = args;
+  const {
+    manifest,
+    appSlug,
+    extraResources,
+    providerNamespaces,
+    providerLifecycle,
+    extraEnvEntries,
+  } = args;
 
   const root = 'infra/minikube';
   const k8sRoot = `${root}/k8s`;
@@ -109,6 +118,7 @@ export function generateMinikubeBaseArtifacts(args: {
         profileModel,
         oauthProviders,
         providerNamespaces,
+        providerLifecycle,
       }),
     },
     {
@@ -179,6 +189,7 @@ export function generateMinikubeBaseArtifacts(args: {
         secretStoreProvider,
         supabaseHostPorts,
         oauthProviders,
+        providerLifecycle,
       }),
       executable: true,
     },
@@ -223,6 +234,7 @@ export function generateMinikubeBaseArtifacts(args: {
         profileModel,
         supabaseHostPorts,
         providerNamespaces,
+        providerLifecycle,
       }),
       executable: true,
     },
@@ -245,6 +257,7 @@ function getReadmeMarkdown(args: {
   profileModel: ResolvedProfileModel;
   oauthProviders: readonly SupabaseOAuthProviderRuntime[];
   providerNamespaces: readonly string[];
+  providerLifecycle: readonly MinikubeProviderLifecycle[];
 }): string {
   const {
     appSlug,
@@ -258,6 +271,7 @@ function getReadmeMarkdown(args: {
     profileModel,
     oauthProviders,
     providerNamespaces,
+    providerLifecycle,
   } = args;
   const resourceLines = [
     'namespaces/app.yaml',
@@ -302,6 +316,26 @@ function getReadmeMarkdown(args: {
   const providerNamespaceLine =
     providerNamespaces.length > 0
       ? `- Provider namespaces: \`${providerNamespaces.join('`, `')}\`\n`
+      : '';
+  const providerLifecycleLines =
+    providerLifecycle.length > 0
+      ? `\n## Provider Lifecycle Contributions\n\n${providerLifecycle
+          .map((provider) => {
+            const readiness =
+              provider.readinessChecks.length > 0
+                ? provider.readinessChecks
+                    .map((check) => `\`${check.resource}\` in namespace \`${check.namespace}\``)
+                    .join(', ')
+                : 'none';
+            const endpoints =
+              provider.endpoints.length > 0
+                ? provider.endpoints
+                    .map((endpoint) => `\`${endpoint.name}\` = \`${endpoint.url}\``)
+                    .join(', ')
+                : 'none';
+            return `- \`${provider.id}\`: namespace \`${provider.namespace}\`; readiness ${readiness}; endpoints ${endpoints}`;
+          })
+          .join('\n')}\n`
       : '';
   const oauthDescription =
     oauthProviders.length > 0
@@ -389,6 +423,7 @@ Pinned images:
 - Auth provider: \`${authProvider}\`
 - Authorization engine: \`${authzEngine}\`
 ${profileModel.enabled ? '- Generated profile reconciliation lives in `supabase/generated/auth_profiles.sql` and records checksum state in `ankhorage_internal.generated_schema_state`.\n' : ''}
+${providerLifecycleLines}
 `;
 }
 
@@ -610,6 +645,151 @@ ${lines}
 
 function escapeSingleQuotedSql(value: string): string {
   return value.replace(/'/gu, "''");
+}
+
+function escapeShellDoubleQuoted(value: string): string {
+  return value.replace(/["\\$`]/gu, (char) => `\\${char}`);
+}
+
+function getProviderLifecycleStageScripts(
+  providerLifecycle: readonly MinikubeProviderLifecycle[],
+): string {
+  return `${getProviderLifecycleCommandFunction({
+    functionName: 'run_provider_migrations',
+    emptyReturn: 'return 0',
+    commands: providerLifecycle.flatMap((provider) =>
+      provider.migrationCommands.map((command) => ({
+        providerId: provider.id,
+        label: command.label,
+        command: command.command,
+      })),
+    ),
+  })}
+
+${getProviderLifecycleCommandFunction({
+  functionName: 'run_provider_reconciliation',
+  emptyReturn: 'return 0',
+  commands: providerLifecycle.flatMap((provider) =>
+    provider.reconciliationCommands.map((command) => ({
+      providerId: provider.id,
+      label: command.label,
+      command: command.command,
+    })),
+  ),
+})}
+
+${getProviderReadinessFunction(providerLifecycle)}`;
+}
+
+function getProviderLifecycleCommandFunction(args: {
+  functionName: string;
+  emptyReturn: string;
+  commands: readonly { providerId: string; label: string; command: string }[];
+}): string {
+  if (args.commands.length === 0) {
+    return `${args.functionName}() {
+  ${args.emptyReturn}
+}`;
+  }
+
+  const body = args.commands
+    .map(
+      (command) => `  echo "Running provider ${escapeShellDoubleQuoted(
+        command.providerId,
+      )} ${escapeShellDoubleQuoted(command.label)}."
+${indentShellBlock(command.command.trim(), 2)}`,
+    )
+    .join('\n\n');
+
+  return `${args.functionName}() {
+${body}
+}`;
+}
+
+function getProviderReadinessFunction(
+  providerLifecycle: readonly MinikubeProviderLifecycle[],
+): string {
+  const checks = providerLifecycle.flatMap((provider) =>
+    provider.readinessChecks.map((check) => ({ providerId: provider.id, ...check })),
+  );
+
+  if (checks.length === 0) {
+    return `wait_for_provider_readiness() {
+  return 0
+}`;
+  }
+
+  const body = checks
+    .map(
+      (check) =>
+        `  kubectl --context "\${PROFILE}" -n "${escapeShellDoubleQuoted(
+          check.namespace,
+        )}" rollout status "${escapeShellDoubleQuoted(
+          check.resource,
+        )}" --timeout=${check.timeoutSeconds}s`,
+    )
+    .join('\n');
+
+  return `wait_for_provider_readiness() {
+${body}
+}`;
+}
+
+function getProviderStatusScript(providerLifecycle: readonly MinikubeProviderLifecycle[]): string {
+  if (providerLifecycle.length === 0) {
+    return '';
+  }
+
+  return providerLifecycle
+    .map((provider) => {
+      const endpointLines = provider.endpoints
+        .map(
+          (endpoint) =>
+            `  echo "- provider ${escapeShellDoubleQuoted(
+              provider.id,
+            )} endpoint/${escapeShellDoubleQuoted(endpoint.name)}: ${escapeShellDoubleQuoted(
+              endpoint.url,
+            )}"`,
+        )
+        .join('\n');
+      const readinessLines = provider.readinessChecks
+        .map(
+          (check) => `  if kubectl --context "\${PROFILE}" -n "${escapeShellDoubleQuoted(
+            check.namespace,
+          )}" rollout status "${escapeShellDoubleQuoted(
+            check.resource,
+          )}" --timeout=5s >/dev/null 2>&1; then
+    echo "- provider ${escapeShellDoubleQuoted(provider.id)}/${escapeShellDoubleQuoted(
+      check.label,
+    )}: ready"
+  else
+    echo "- provider ${escapeShellDoubleQuoted(provider.id)}/${escapeShellDoubleQuoted(
+      check.label,
+    )}: not ready"
+  fi`,
+        )
+        .join('\n');
+      const customStatusLines = provider.statusChecks
+        .map(
+          (check) => `  echo "Running provider ${escapeShellDoubleQuoted(
+            provider.id,
+          )} status check ${escapeShellDoubleQuoted(check.label)}."
+${indentShellBlock(check.command.trim(), 2)}`,
+        )
+        .join('\n');
+
+      return [endpointLines, readinessLines, customStatusLines].filter(Boolean).join('\n');
+    })
+    .filter(Boolean)
+    .join('\n');
+}
+
+function indentShellBlock(value: string, spaces: number): string {
+  const indent = ' '.repeat(spaces);
+  return value
+    .split('\n')
+    .map((line) => `${indent}${line}`)
+    .join('\n');
 }
 
 function getNamespaceManifest(namespace: string): string {
@@ -2064,6 +2244,7 @@ function getUpScript(args: {
   secretStoreProvider: string;
   supabaseHostPorts: SupabaseHostPorts;
   oauthProviders: readonly SupabaseOAuthProviderRuntime[];
+  providerLifecycle: readonly MinikubeProviderLifecycle[];
 }): string {
   const {
     appSlug,
@@ -2073,11 +2254,13 @@ function getUpScript(args: {
     secretStoreProvider,
     supabaseHostPorts,
     oauthProviders,
+    providerLifecycle,
   } = args;
   const oauthEnvDefaults = getOAuthScriptEnvDefaults(oauthProviders);
   const oauthRuntimeSecretLines = getOAuthRuntimeSecretLines(oauthProviders);
   const oauthValidation = getOAuthRuntimeValidationScript(oauthProviders);
   const oauthCallbackRoute = getSupabaseOAuthCallbackRoute(oauthProviders);
+  const providerLifecycleStageScripts = getProviderLifecycleStageScripts(providerLifecycle);
   const oauthVaultResolution = getOAuthVaultResolutionScript({
     appSlug,
     oauthProviders,
@@ -2487,6 +2670,8 @@ apply_namespace_manifests() {
   done
 }
 
+${providerLifecycleStageScripts}
+
 load_env_file_preserving_process_env
 SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
 PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
@@ -2597,6 +2782,10 @@ esac
 if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
   kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
 fi
+
+wait_for_provider_readiness
+run_provider_migrations
+run_provider_reconciliation
 
 if [[ -n "\${APP_IMAGE_PULL_SECRET_NAME}" ]]; then
   if [[ -z "\${APP_IMAGE_PULL_SECRET_USERNAME}" || -z "\${APP_IMAGE_PULL_SECRET_PASSWORD}" ]]; then
@@ -3049,6 +3238,7 @@ function getStatusScript(args: {
   profileModel: ResolvedProfileModel;
   supabaseHostPorts: SupabaseHostPorts;
   providerNamespaces: readonly string[];
+  providerLifecycle: readonly MinikubeProviderLifecycle[];
 }): string {
   const {
     appSlug,
@@ -3056,12 +3246,14 @@ function getStatusScript(args: {
     profileModel,
     supabaseHostPorts,
     providerNamespaces,
+    providerLifecycle,
   } = args;
   const namespaces = [
     APP_NAMESPACE,
     ...(supabaseKubernetesEnabled ? [SUPABASE_NAMESPACE] : []),
     ...providerNamespaces,
   ].join(' ');
+  const providerStatusScript = getProviderStatusScript(providerLifecycle);
 
   return `#!/usr/bin/env bash
 set -euo pipefail
@@ -3137,6 +3329,8 @@ done
 if kubectl --context "\${PROFILE}" -n ${APP_NAMESPACE} get deployment app-runtime >/dev/null 2>&1; then
   kubectl --context "\${PROFILE}" -n ${APP_NAMESPACE} rollout status deployment/app-runtime --timeout=5s >/dev/null 2>&1 && echo "- app-runtime: ready" || echo "- app-runtime: not ready"
 fi
+
+${providerStatusScript}
 
 if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
   for deployment in postgres auth rest realtime storage gateway studio; do

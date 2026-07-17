@@ -2,7 +2,7 @@ import type { AppManifest, NavigatorSpec, RouteDefinition } from '@ankhorage/con
 import { resolveAuthFlow } from '@ankhorage/contracts/auth';
 
 import type { InfraManifestInput } from '../../../../types';
-import type { MinikubeAdapterArtifacts } from '../../contracts';
+import type { MinikubeAdapterArtifacts, MinikubeProviderLifecycle } from '../../contracts';
 
 const CERBOS_NAMESPACE = 'cerbos';
 
@@ -17,6 +17,24 @@ export function generateCerbosAuthzArtifacts(args: {
   const root = 'infra/minikube/k8s/authz/cerbos';
   const resourceRoot = 'authz/cerbos';
   const intent = buildCerbosPolicyIntent({ manifest, appManifest });
+
+  const endpointUrl = `http://cerbos.${namespace}.svc.cluster.local:3592`;
+  const lifecycle: MinikubeProviderLifecycle = {
+    id: 'cerbos',
+    namespace,
+    endpoints: [{ name: 'http', url: endpointUrl }],
+    readinessChecks: [
+      {
+        label: 'cerbos',
+        namespace,
+        resource: 'deployment/cerbos',
+        timeoutSeconds: 180,
+      },
+    ],
+    migrationCommands: [],
+    reconciliationCommands: [],
+    statusChecks: [],
+  };
 
   return {
     files: [
@@ -43,8 +61,8 @@ export function generateCerbosAuthzArtifacts(args: {
       `${resourceRoot}/cerbos.deployment.yaml`,
       `${resourceRoot}/cerbos.service.yaml`,
     ],
-    providerNamespaces: [namespace],
-    envEntries: ['CERBOS_URL=http://cerbos.cerbos.svc.cluster.local:3592'],
+    providerLifecycle: [lifecycle],
+    envEntries: [`CERBOS_URL=${endpointUrl}`],
     warnings: [],
   };
 }

@@ -51,11 +51,14 @@ export function generateMinikubeInfra(
     ...storageArtifacts.resources,
     ...secretStoreArtifacts.resources,
   ]);
+  const providerLifecycle = [
+    ...authArtifacts.providerLifecycle,
+    ...authzArtifacts.providerLifecycle,
+    ...storageArtifacts.providerLifecycle,
+    ...secretStoreArtifacts.providerLifecycle,
+  ];
   const providerNamespaces = unique([
-    ...authArtifacts.providerNamespaces,
-    ...authzArtifacts.providerNamespaces,
-    ...storageArtifacts.providerNamespaces,
-    ...secretStoreArtifacts.providerNamespaces,
+    ...providerLifecycle.map((contribution) => contribution.namespace),
   ]);
   const extraEnvEntries = unique([
     ...authArtifacts.envEntries,
@@ -69,6 +72,7 @@ export function generateMinikubeInfra(
     appSlug,
     extraResources,
     providerNamespaces,
+    providerLifecycle,
     extraEnvEntries,
   });
 

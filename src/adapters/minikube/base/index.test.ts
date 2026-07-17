@@ -226,15 +226,31 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     const envExample = getFile(result.files, 'infra/minikube/.env.example');
     const resetScript = getFile(result.files, 'infra/minikube/scripts/reset.sh');
     const statusScript = getFile(result.files, 'infra/minikube/scripts/status.sh');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
 
     expect(paths).toContain('infra/minikube/k8s/namespaces/cerbos.yaml');
     expect(kustomization).toContain('namespaces/cerbos.yaml');
     expect(readme).toContain('- Provider namespaces: `cerbos`');
+    expect(readme).toContain('## Provider Lifecycle Contributions');
+    expect(readme).toContain('`cerbos`: namespace `cerbos`');
+    expect(readme).toContain('`deployment/cerbos` in namespace `cerbos`');
+    expect(readme).toContain('`http` = `http://cerbos.cerbos.svc.cluster.local:3592`');
     expect(cerbosDeployment).toContain('namespace: cerbos');
     expect(cerbosDeployment).not.toContain('namespace: app');
     expect(envExample).toContain('CERBOS_URL=http://cerbos.cerbos.svc.cluster.local:3592');
     expect(resetScript).toContain('delete namespace cerbos');
+    expect(upScript).toContain('wait_for_provider_readiness');
+    expect(upScript).toContain('run_provider_migrations');
+    expect(upScript).toContain('run_provider_reconciliation');
+    expect(upScript).toContain('rollout status "deployment/cerbos" --timeout=180s');
+    expect(upScript.indexOf('kubectl --context "${PROFILE}" apply -k "${K8S_DIR}"')).toBeLessThan(
+      upScript.lastIndexOf('wait_for_provider_readiness'),
+    );
     expect(statusScript).toContain('for namespace in app supabase cerbos; do');
+    expect(statusScript).toContain(
+      '- provider cerbos endpoint/http: http://cerbos.cerbos.svc.cluster.local:3592',
+    );
+    expect(statusScript).toContain('- provider cerbos/cerbos: ready');
   });
 
   test('uses generated Supabase runtime ownership as an immutable script decision', () => {

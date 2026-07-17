@@ -27,7 +27,7 @@ export function generateSupabaseVaultSecretStoreArtifacts(args: {
       },
     ],
     resources: [],
-    providerNamespaces: [],
+    providerLifecycle: [],
     envEntries: [`SECRET_STORE_PROVIDER=${SUPABASE_VAULT_SECRET_STORE_PROVIDER}`],
     warnings: [],
   };

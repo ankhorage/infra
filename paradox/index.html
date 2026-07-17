@@ -252,7 +252,7 @@
                 data-target="src/adapters/minikube/base/index.ts"
               >
                 src/adapters/minikube/base/index.ts
-                <small>47 functions</small>
+                <small>53 functions</small>
               </button>
             </li>
             <li>
@@ -481,14 +481,14 @@
             </article>
             <article
               class="item"
-              data-search="src/adapters/minikube/base/index.ts src/adapters/minikube/auth/supabase/profile.ts src/types.ts APP_NAMESPACE generateMinikubeBaseArtifacts"
+              data-search="src/adapters/minikube/base/index.ts src/adapters/minikube/auth/supabase/profile.ts src/adapters/minikube/contracts.ts src/types.ts APP_NAMESPACE generateMinikubeBaseArtifacts"
             >
               <h3>src/adapters/minikube/base/index.ts</h3>
               <p class="muted">Referenced module</p>
               <p>
                 <strong>Dependencies:</strong>
                 <code>src/adapters/minikube/auth/supabase/profile.ts</code>,
-                <code>src/types.ts</code>
+                <code>src/adapters/minikube/contracts.ts</code>, <code>src/types.ts</code>
               </p>
               <p>
                 <strong>Exports:</strong> <code>APP_NAMESPACE</code>,
@@ -497,14 +497,14 @@
             </article>
             <article
               class="item"
-              data-search="src/adapters/minikube/contracts.ts src/types.ts emptyMinikubeArtifacts MinikubeAdapterArtifacts"
+              data-search="src/adapters/minikube/contracts.ts src/types.ts emptyMinikubeArtifacts MinikubeAdapterArtifacts MinikubeProviderLifecycle"
             >
               <h3>src/adapters/minikube/contracts.ts</h3>
               <p class="muted">Referenced module</p>
               <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
               <p>
                 <strong>Exports:</strong> <code>emptyMinikubeArtifacts</code>,
-                <code>MinikubeAdapterArtifacts</code>
+                <code>MinikubeAdapterArtifacts</code>, <code>MinikubeProviderLifecycle</code>
               </p>
             </article>
             <article
@@ -1555,7 +1555,9 @@
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_base_index_ts
                 module_src_adapters_minikube_base_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_profile_ts
-                module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_base_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_base_index_ts
+                --&gt; module_src_types_ts
                 module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_contracts_ts
                 module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
@@ -1676,6 +1678,7 @@ graph TD
   module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_base_index_ts
   module_src_adapters_minikube_base_index_ts --&gt; module_src_adapters_minikube_auth_supabase_profile_ts
+  module_src_adapters_minikube_base_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_contracts_ts[&quot;src/adapters/minikube/contracts.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_contracts_ts
@@ -1819,9 +1822,10 @@ graph TD
                 module_src_adapters_minikube_authz_index_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_base_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_profile_ts
-                module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
-                module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
-                module_src_adapters_minikube_index_ts --&gt;
+                module_src_adapters_minikube_base_index_ts --&gt;
+                module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_base_index_ts
+                --&gt; module_src_types_ts module_src_adapters_minikube_contracts_ts --&gt;
+                module_src_types_ts module_src_adapters_minikube_index_ts --&gt;
                 module_src_adapters_minikube_auth_index_ts module_src_adapters_minikube_index_ts
                 --&gt; module_src_adapters_minikube_authz_index_ts
                 module_src_adapters_minikube_index_ts --&gt;
@@ -1910,6 +1914,7 @@ graph LR
   module_src_adapters_minikube_authz_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_authz_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_base_index_ts --&gt; module_src_adapters_minikube_auth_supabase_profile_ts
+  module_src_adapters_minikube_base_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_auth_index_ts
@@ -2429,7 +2434,7 @@ sequenceDiagram
               data-search="getCerbosConfigMap src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getCerbosConfigMap</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:52:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:70:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2437,7 +2442,7 @@ sequenceDiagram
               data-search="getCerbosPolicyConfigMap src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getCerbosPolicyConfigMap</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:69:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:87:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2445,7 +2450,7 @@ sequenceDiagram
               data-search="getCerbosDeployment src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getCerbosDeployment</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:90:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:108:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2453,7 +2458,7 @@ sequenceDiagram
               data-search="getCerbosService src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getCerbosService</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:131:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:149:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2461,7 +2466,7 @@ sequenceDiagram
               data-search="getCerbosPolicyEntries src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getCerbosPolicyEntries</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:182:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:200:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2469,7 +2474,7 @@ sequenceDiagram
               data-search="getAppPolicy src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getAppPolicy</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:207:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:225:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2477,7 +2482,7 @@ sequenceDiagram
               data-search="getRoutePolicy src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getRoutePolicy</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:219:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:237:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2485,7 +2490,7 @@ sequenceDiagram
               data-search="getScreenPolicy src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getScreenPolicy</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:251:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:269:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2493,7 +2498,7 @@ sequenceDiagram
               data-search="renderRule src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>renderRule</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:283:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:301:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2501,7 +2506,7 @@ sequenceDiagram
               data-search="getInConditionExpr src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>getInConditionExpr</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:301:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:319:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2509,7 +2514,7 @@ sequenceDiagram
               data-search="indentLines src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>indentLines</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:305:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:323:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2517,7 +2522,7 @@ sequenceDiagram
               data-search="buildCerbosPolicyIntent src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>buildCerbosPolicyIntent</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:314:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:332:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2525,12 +2530,12 @@ sequenceDiagram
               data-search="flattenNavigatorRoutes src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>flattenNavigatorRoutes</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:385:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:403:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="walk src/adapters/minikube/authz/cerbos/index.ts ">
               <h3>walk</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:388:9</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:406:9</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2538,7 +2543,7 @@ sequenceDiagram
               data-search="normalizeGuards src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>normalizeGuards</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:408:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:426:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2546,17 +2551,17 @@ sequenceDiagram
               data-search="isPublicRoute src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>isPublicRoute</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:412:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:430:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="hasAny src/adapters/minikube/authz/cerbos/index.ts ">
               <h3>hasAny</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:450:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:468:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="unique src/adapters/minikube/authz/cerbos/index.ts ">
               <h3>unique</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:457:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:475:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2564,7 +2569,7 @@ sequenceDiagram
               data-search="authFlowPathToRouteName src/adapters/minikube/authz/cerbos/index.ts "
             >
               <h3>authFlowPathToRouteName</h3>
-              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:461:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/authz/cerbos/index.ts:479:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -2600,7 +2605,7 @@ sequenceDiagram
               data-search="generateMinikubeBaseArtifacts src/adapters/minikube/base/index.ts "
             >
               <h3>generateMinikubeBaseArtifacts</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:58:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:59:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2608,12 +2613,12 @@ sequenceDiagram
               data-search="getReadmeMarkdown src/adapters/minikube/base/index.ts "
             >
               <h3>getReadmeMarkdown</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:236:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:248:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getEnvExample src/adapters/minikube/base/index.ts ">
               <h3>getEnvExample</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:395:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:430:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2621,7 +2626,7 @@ sequenceDiagram
               data-search="getOAuthEnvExampleEntries src/adapters/minikube/base/index.ts "
             >
               <h3>getOAuthEnvExampleEntries</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:491:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:526:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2629,7 +2634,7 @@ sequenceDiagram
               data-search="getOAuthScriptEnvDefaults src/adapters/minikube/base/index.ts "
             >
               <h3>getOAuthScriptEnvDefaults</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:506:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:541:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2637,7 +2642,7 @@ sequenceDiagram
               data-search="getOAuthRuntimeSecretLines src/adapters/minikube/base/index.ts "
             >
               <h3>getOAuthRuntimeSecretLines</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:520:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:555:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2645,7 +2650,7 @@ sequenceDiagram
               data-search="getOAuthRuntimeValidationScript src/adapters/minikube/base/index.ts "
             >
               <h3>getOAuthRuntimeValidationScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:533:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:568:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2653,7 +2658,7 @@ sequenceDiagram
               data-search="getSupabaseOAuthCallbackRoute src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseOAuthCallbackRoute</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:554:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:589:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2661,7 +2666,7 @@ sequenceDiagram
               data-search="getOAuthVaultResolutionScript src/adapters/minikube/base/index.ts "
             >
               <h3>getOAuthVaultResolutionScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:558:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:593:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2669,7 +2674,55 @@ sequenceDiagram
               data-search="escapeSingleQuotedSql src/adapters/minikube/base/index.ts "
             >
               <h3>escapeSingleQuotedSql</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:611:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:646:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="escapeShellDoubleQuoted src/adapters/minikube/base/index.ts "
+            >
+              <h3>escapeShellDoubleQuoted</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:650:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getProviderLifecycleStageScripts src/adapters/minikube/base/index.ts "
+            >
+              <h3>getProviderLifecycleStageScripts</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:654:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getProviderLifecycleCommandFunction src/adapters/minikube/base/index.ts "
+            >
+              <h3>getProviderLifecycleCommandFunction</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:684:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getProviderReadinessFunction src/adapters/minikube/base/index.ts "
+            >
+              <h3>getProviderReadinessFunction</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:709:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getProviderStatusScript src/adapters/minikube/base/index.ts "
+            >
+              <h3>getProviderStatusScript</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:738:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="indentShellBlock src/adapters/minikube/base/index.ts "
+            >
+              <h3>indentShellBlock</h3>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:787:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2677,7 +2730,7 @@ sequenceDiagram
               data-search="getNamespaceManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getNamespaceManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:615:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:795:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2685,7 +2738,7 @@ sequenceDiagram
               data-search="getAppConfigMap src/adapters/minikube/base/index.ts "
             >
               <h3>getAppConfigMap</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:626:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:806:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2693,7 +2746,7 @@ sequenceDiagram
               data-search="resolveAppInfraStorageMetadata src/adapters/minikube/base/index.ts "
             >
               <h3>resolveAppInfraStorageMetadata</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:673:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:853:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2701,7 +2754,7 @@ sequenceDiagram
               data-search="resolveSupabaseOAuthProviders src/adapters/minikube/base/index.ts "
             >
               <h3>resolveSupabaseOAuthProviders</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:708:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:888:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2709,7 +2762,7 @@ sequenceDiagram
               data-search="normalizeOAuthCallbackRoute src/adapters/minikube/base/index.ts "
             >
               <h3>normalizeOAuthCallbackRoute</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:741:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:921:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2717,7 +2770,7 @@ sequenceDiagram
               data-search="normalizeBuckets src/adapters/minikube/base/index.ts "
             >
               <h3>normalizeBuckets</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:748:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:928:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2725,7 +2778,7 @@ sequenceDiagram
               data-search="getKustomizationManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getKustomizationManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:763:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:943:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2733,7 +2786,7 @@ sequenceDiagram
               data-search="getAppDeploymentManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getAppDeploymentManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:800:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:980:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2741,7 +2794,7 @@ sequenceDiagram
               data-search="getAppServiceManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getAppServiceManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:852:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1032:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2749,7 +2802,7 @@ sequenceDiagram
               data-search="getSupabaseResourceFiles src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseResourceFiles</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:871:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1051:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2757,7 +2810,7 @@ sequenceDiagram
               data-search="getSupabaseBootstrapSql src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseBootstrapSql</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:933:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1113:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2765,7 +2818,7 @@ sequenceDiagram
               data-search="getSupabasePostgresInitConfigMap src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabasePostgresInitConfigMap</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1007:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1187:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2773,7 +2826,7 @@ sequenceDiagram
               data-search="getSupabasePvcManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabasePvcManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1024:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1204:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2781,7 +2834,7 @@ sequenceDiagram
               data-search="getSupabasePostgresManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabasePostgresManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1039:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1219:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2789,7 +2842,7 @@ sequenceDiagram
               data-search="getSupabaseAuthManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseAuthManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1140:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1320:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2797,7 +2850,7 @@ sequenceDiagram
               data-search="getSupabaseRestManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseRestManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1275:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1455:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2805,7 +2858,7 @@ sequenceDiagram
               data-search="getSupabaseRealtimeManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseRealtimeManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1336:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1516:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2813,7 +2866,7 @@ sequenceDiagram
               data-search="getSupabaseStorageManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseStorageManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1421:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1601:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2821,7 +2874,7 @@ sequenceDiagram
               data-search="getSupabaseImgproxyManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseImgproxyManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1515:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1695:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2829,7 +2882,7 @@ sequenceDiagram
               data-search="getSupabaseMetaManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseMetaManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1557:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1737:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2837,7 +2890,7 @@ sequenceDiagram
               data-search="getSupabaseGatewayTemplate src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseGatewayTemplate</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1617:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:1797:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2845,7 +2898,7 @@ sequenceDiagram
               data-search="getSupabaseKongEntrypointScript src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseKongEntrypointScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1870:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2050:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2853,7 +2906,7 @@ sequenceDiagram
               data-search="getSupabaseGatewayManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseGatewayManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1903:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2083:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2861,12 +2914,12 @@ sequenceDiagram
               data-search="getSupabaseStudioManifest src/adapters/minikube/base/index.ts "
             >
               <h3>getSupabaseStudioManifest</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:1988:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2168:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getUpScript src/adapters/minikube/base/index.ts ">
               <h3>getUpScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:2059:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2239:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2874,7 +2927,7 @@ sequenceDiagram
               data-search="getBuildAppImageScript src/adapters/minikube/base/index.ts "
             >
               <h3>getBuildAppImageScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:2638:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2827:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2882,7 +2935,7 @@ sequenceDiagram
               data-search="getAppImageDockerfile src/adapters/minikube/base/index.ts "
             >
               <h3>getAppImageDockerfile</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:2718:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2907:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2890,17 +2943,17 @@ sequenceDiagram
               data-search="getPortForwardScript src/adapters/minikube/base/index.ts "
             >
               <h3>getPortForwardScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:2742:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2931:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getDownScript src/adapters/minikube/base/index.ts ">
               <h3>getDownScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:2921:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3110:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getResetScript src/adapters/minikube/base/index.ts ">
               <h3>getResetScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:2955:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3144:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2908,7 +2961,7 @@ sequenceDiagram
               data-search="getDestroyScript src/adapters/minikube/base/index.ts "
             >
               <h3>getDestroyScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3019:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3208:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2916,7 +2969,7 @@ sequenceDiagram
               data-search="getStatusScript src/adapters/minikube/base/index.ts "
             >
               <h3>getStatusScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3046:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3235:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2924,7 +2977,7 @@ sequenceDiagram
               data-search="getDefaultAppImage src/adapters/minikube/base/index.ts "
             >
               <h3>getDefaultAppImage</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3210:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3404:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2932,7 +2985,7 @@ sequenceDiagram
               data-search="resolveSupabaseHostPorts src/adapters/minikube/base/index.ts "
             >
               <h3>resolveSupabaseHostPorts</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3214:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3408:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2940,12 +2993,12 @@ sequenceDiagram
               data-search="resolvePortBucket src/adapters/minikube/base/index.ts "
             >
               <h3>resolvePortBucket</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3224:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3418:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="hashSlug src/adapters/minikube/base/index.ts ">
               <h3>hashSlug</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3229:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3423:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2953,7 +3006,7 @@ sequenceDiagram
               data-search="escapeYamlDoubleQuoted src/adapters/minikube/base/index.ts "
             >
               <h3>escapeYamlDoubleQuoted</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3237:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3431:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -2971,7 +3024,7 @@ sequenceDiagram
               data-search="emptyMinikubeArtifacts src/adapters/minikube/contracts.ts "
             >
               <h3>emptyMinikubeArtifacts</h3>
-              <p class="muted"><code>src/adapters/minikube/contracts.ts:11:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/contracts.ts:38:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -2994,17 +3047,17 @@ sequenceDiagram
             </article>
             <article class="item" data-search="collectProviders src/adapters/minikube/index.ts ">
               <h3>collectProviders</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:102:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:106:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectDependencies src/adapters/minikube/index.ts ">
               <h3>collectDependencies</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:117:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:121:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectWarnings src/adapters/minikube/index.ts ">
               <h3>collectWarnings</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:131:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:135:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3012,12 +3065,12 @@ sequenceDiagram
               data-search="validateCanonicalAppSlug src/adapters/minikube/index.ts "
             >
               <h3>validateCanonicalAppSlug</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:147:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:151:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="unique src/adapters/minikube/index.ts ">
               <h3>unique</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:163:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:167:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
