@@ -1,5 +1,4 @@
 import type { AppManifest } from '@ankhorage/contracts';
-import { SUPABASE_VAULT_MIGRATION_SQL } from '@ankhorage/supabase-vault';
 import { describe, expect, test } from 'bun:test';
 
 import { generateInfrastructure } from '../../../index';
@@ -21,7 +20,7 @@ function createManifest(overrides: Partial<InfraManifestInput> = {}): InfraManif
 }
 
 describe('minikube secret-store generation', () => {
-  test('generates the released Supabase Vault migration through the existing lifecycle', () => {
+  test('generates the released Supabase Vault migration through the Kubernetes lifecycle', () => {
     const result = generateInfrastructure(createManifest(), {
       appManifest: createAppManifest('vault-app'),
     });
@@ -29,10 +28,18 @@ describe('minikube secret-store generation', () => {
     const envExample = result.files.find((file) => file.path === 'infra/minikube/.env.example');
     const upScript = result.files.find((file) => file.path === 'infra/minikube/scripts/up.sh');
 
-    expect(migration?.content).toBe(`${SUPABASE_VAULT_MIGRATION_SQL.trim()}\n`);
+    expect(migration?.content).toContain('create schema if not exists vault;');
+    expect(migration?.content).toContain(
+      'create extension if not exists supabase_vault with schema vault;',
+    );
+    expect(migration?.content).toContain('when insufficient_privilege then');
+    expect(migration?.content).toContain('create or replace function vault.create_secret');
+    expect(migration?.content).toContain('create or replace view vault.decrypted_secrets');
+    expect(migration?.content).not.toContain('supabase_vault with schema extensions');
     expect(envExample?.content).toContain('SECRET_STORE_PROVIDER=supabase-vault');
-    expect(envExample?.content).toContain('SUPABASE_LOCAL_ENABLED=true');
-    expect(upScript?.content).toContain('SUPABASE_LOCAL_ENABLED="${SUPABASE_LOCAL_ENABLED:-true}"');
+    expect(envExample?.content).not.toContain('SUPABASE_RUNTIME_ENABLED=');
+    expect(upScript?.content).toContain('SUPABASE_RUNTIME_ENABLED="true"');
+    expect(upScript?.content).not.toContain('SUPABASE_RUNTIME_ENABLED="${SUPABASE_RUNTIME_ENABLED');
     expect(result.meta.providers).toContain('supabase-vault');
   });
 
@@ -90,8 +97,8 @@ describe('minikube secret-store generation', () => {
 
     const serialized = JSON.stringify(result.files);
     expect(serialized).toContain('auth/oauth/google');
-    expect(serialized).not.toContain('clientSecret');
-    expect(serialized).not.toContain('privateKey');
+    expect(serialized).not.toContain('sentinel-client-secret-value');
+    expect(serialized).not.toContain('sentinel-private-key-value');
   });
 
   test('rejects unknown secret-store providers', () => {
@@ -102,6 +109,7 @@ describe('minikube secret-store generation', () => {
             provider: 'aws-secrets-manager',
           },
         }),
+        { appManifest: createAppManifest('vault-app') },
       ),
     ).toThrow('Unsupported secret-store provider for minikube adapter');
   });

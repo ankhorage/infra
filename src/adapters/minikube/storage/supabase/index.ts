@@ -25,11 +25,6 @@ export function generateSupabaseStorageArtifacts(args: {
     envEntries.push(
       '',
       '# Supabase provider connection details',
-      'SUPABASE_SECRET_SYNC_ENABLED=true',
-      'SUPABASE_URL=',
-      'SUPABASE_ANON_KEY=',
-      'SUPABASE_SERVICE_ROLE_KEY=',
-      'SUPABASE_JWT_SECRET=',
       'EXPO_PUBLIC_SUPABASE_URL=',
       'EXPO_PUBLIC_SUPABASE_ANON_KEY=',
     );
@@ -58,6 +53,7 @@ export function generateSupabaseStorageArtifacts(args: {
       `${resourceRoot}/supabase-storage.configmap.yaml`,
       `${resourceRoot}/app-runtime-storage.env.configmap.yaml`,
     ],
+    providerLifecycle: [],
     envEntries,
     warnings: [
       `Storage buckets are configured but not created automatically yet. Ensure buckets exist in Supabase Storage: ${bucketsCsv}.`,

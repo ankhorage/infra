@@ -1,429 +1,431 @@
-import { spawnSync } from 'node:child_process';
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-
 import { describe, expect, test } from 'bun:test';
 
+import { generateInfrastructure } from '../../../index';
+import { createAppManifest } from '../../../testSupport';
 import type { InfraManifestInput } from '../../../types';
-import { generateMinikubeBaseArtifacts } from './index';
 
-describe('generateMinikubeBaseArtifacts Supabase local ports', () => {
-  test('keeps legacy my-app defaults while allocating a different range for another app', () => {
-    const myAppEnv = getGeneratedFileContent('my-app', 'infra/minikube/.env.example');
-    const chessEnv = getGeneratedFileContent('chess', 'infra/minikube/.env.example');
+describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
+  test('uses the canonical app slug as the only Minikube profile identity', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      namespaceHint: 'ignored',
+      appManifest: createAppManifest('chess'),
+    });
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    const downScript = getFile(result.files, 'infra/minikube/scripts/down.sh');
+    const destroyScript = getFile(result.files, 'infra/minikube/scripts/destroy.sh');
 
-    expect(myAppEnv).toContain('SUPABASE_LOCAL_PORT_BASE=55320');
-    expect(myAppEnv).toContain('SUPABASE_LOCAL_SHADOW_PORT=55320');
-    expect(myAppEnv).toContain('SUPABASE_LOCAL_API_PORT=55321');
-    expect(myAppEnv).toContain('SUPABASE_LOCAL_DB_PORT=55322');
-    expect(myAppEnv).toContain('SUPABASE_LOCAL_STUDIO_PORT=55323');
-    expect(myAppEnv).toContain('SUPABASE_LOCAL_INBUCKET_PORT=55324');
-    expect(myAppEnv).toContain('SUPABASE_LOCAL_ANALYTICS_PORT=55325');
-
-    expect(chessEnv).toContain('SUPABASE_LOCAL_PORT_BASE=62200');
-    expect(chessEnv).toContain('SUPABASE_LOCAL_SHADOW_PORT=62200');
-    expect(chessEnv).toContain('SUPABASE_LOCAL_API_PORT=62201');
-    expect(chessEnv).toContain('SUPABASE_LOCAL_DB_PORT=62202');
-    expect(chessEnv).toContain('SUPABASE_LOCAL_STUDIO_PORT=62203');
-    expect(chessEnv).toContain('SUPABASE_LOCAL_INBUCKET_PORT=62204');
-    expect(chessEnv).toContain('SUPABASE_LOCAL_ANALYTICS_PORT=62205');
-    expect(chessEnv).not.toContain('SUPABASE_LOCAL_DB_PORT=55322');
+    expect(envExample).toContain('ANKH_APP_SLUG=chess');
+    expect(envExample).not.toContain('MINIKUBE_PROFILE=');
+    expect(upScript).toContain('PROFILE="${ANKH_APP_SLUG:-chess}"');
+    expect(upScript).toContain('minikube start -p "${PROFILE}"');
+    expect(upScript).not.toContain('PROFILE="${MINIKUBE_PROFILE:-minikube}"');
+    expect(downScript).toContain('minikube stop -p "${PROFILE}"');
+    expect(destroyScript).toContain('minikube delete -p "${PROFILE}"');
   });
 
-  test('generates bootstrap logic that derives ports from the app port base and preflights collisions', () => {
-    const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
+  test('generates fixed app and supabase namespaces instead of slug namespaces', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('uwm'),
+    });
+    const paths = result.files.map((file) => file.path);
+    const appNamespace = getFile(result.files, 'infra/minikube/k8s/namespaces/app.yaml');
+    const supabaseNamespace = getFile(result.files, 'infra/minikube/k8s/namespaces/supabase.yaml');
+    const appDeployment = getFile(result.files, 'infra/minikube/k8s/app/deployment.yaml');
+    const postgres = getFile(result.files, 'infra/minikube/k8s/supabase/postgres.yaml');
 
-    expect(script).toContain('SUPABASE_LOCAL_PORT_BASE="${SUPABASE_LOCAL_PORT_BASE:-62200}"');
-    expect(script).toContain(
-      'SUPABASE_LOCAL_DB_PORT="${SUPABASE_LOCAL_DB_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 2))}"',
-    );
-    expect(script).toContain('assert_supabase_local_ports_available');
-    expect(script).toContain('Supabase local port preflight failed for project');
-    expect(script).toContain(
-      'Override SUPABASE_LOCAL_PORT_BASE or the specific SUPABASE_LOCAL_*_PORT values',
-    );
-    expect(script).toContain(
-      'upsert_env "${ENV_FILE}" "SUPABASE_LOCAL_PORT_BASE" "${SUPABASE_LOCAL_PORT_BASE}"',
-    );
+    expect(paths).toContain('infra/minikube/k8s/namespaces/app.yaml');
+    expect(paths).toContain('infra/minikube/k8s/namespaces/supabase.yaml');
+    expect(paths).not.toContain('infra/minikube/k8s/namespace.yaml');
+    expect(appNamespace).toContain('name: app');
+    expect(supabaseNamespace).toContain('name: supabase');
+    expect(appDeployment).toContain('namespace: app');
+    expect(appDeployment).toContain('name: supabase-public-runtime');
+    expect(postgres).toContain('namespace: supabase');
   });
 
-  test('uses app project identity for Supabase ports independently from namespace', () => {
-    const scannerEnv = getGeneratedFileContent(
-      'local-example-test',
-      'infra/minikube/.env.example',
-      {},
-      'scanner',
-    );
-    const scannerNamespace = getGeneratedFileContent(
-      'local-example-test',
-      'infra/minikube/k8s/namespace.yaml',
-      {},
-      'scanner',
-    );
-    const chessEnv = getGeneratedFileContent(
-      'local-example-test',
-      'infra/minikube/.env.example',
-      {},
-      'chess',
-    );
+  test('removes host-level Supabase runtime ownership from generated files', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const serialized = JSON.stringify(result.files);
 
-    expect(scannerNamespace).toContain('name: local-example-test');
-    expect(scannerEnv).toContain('SUPABASE_LOCAL_PORT_BASE=64020');
-    expect(chessEnv).toContain('SUPABASE_LOCAL_PORT_BASE=62200');
-    expect(scannerEnv).not.toContain('SUPABASE_LOCAL_PORT_BASE=62200');
-  });
-
-  test('generates canonical Supabase project identity checks', () => {
-    const script = getGeneratedFileContent(
-      'scanner',
+    expect(result.files.map((file) => file.path)).not.toContain(
       'infra/minikube/scripts/supabase-local-env.sh',
     );
-    const status = getGeneratedFileContent('scanner', 'infra/minikube/scripts/status.sh');
-
-    expect(script).toContain('EXPECTED_SUPABASE_PROJECT_ID="scanner"');
-    expect(script).toContain('write_supabase_project_identity_for_new_config');
-    expect(script).toContain('validate_supabase_project_identity');
-    expect(script).toContain('project_id = "{expected}"');
-    expect(script).toContain(
-      'The existing local Supabase project belongs to a different identity.',
-    );
-    expect(script).toContain(
-      'Destroy the invalid local stack and its project-owned resources, then run Infra Up again.',
-    );
-    expect(script).toContain(
-      'supabase --workdir "${SUPABASE_PROJECT_DIR}" init --yes >/dev/null\n  write_supabase_project_identity_for_new_config',
-    );
-    expect(script).toContain('validate_supabase_project_identity\nconfigure_supabase_local_ports');
-    expect(script).toContain(
-      'validate_supabase_project_identity\n  assert_supabase_local_ports_available',
-    );
-    expect(script).toContain('validate_supabase_project_identity\nrun_checked_command');
-    expect(script).not.toContain('basename "${APP_SOURCE_DIR}"');
-    expect(script).not.toContain('_minikube');
-
-    expect(status).toContain('EXPECTED_SUPABASE_PROJECT_ID="scanner"');
-    expect(status).toContain('reject_supabase_project_id_override');
-    expect(status).toContain('validate_supabase_project_identity');
-    expect(status).toContain('Supabase project identity mismatch.');
-    expect(status).toContain('Destroy the invalid local stack and run Infra Up again.');
-    expect(status).not.toContain('write_supabase_project_identity_for_new_config');
-    expect(status).not.toContain('configure_supabase_local_ports');
-    expect(status).not.toContain('_minikube');
+    expect(serialized).not.toContain('supabase start');
+    expect(serialized).not.toContain('supabase stop');
+    expect(serialized).not.toContain('supabase status');
+    expect(serialized).not.toContain('SUPABASE_PROJECT_DIR');
+    expect(serialized).not.toContain('SUPABASE_LOCAL_PORT');
+    expect(serialized).not.toContain('supabase_*_');
+    expect(serialized).not.toContain('supabase-auth-secrets');
   });
 
-  test('patches only a newly initialized Supabase config to the canonical project identity', () => {
-    const run = runGeneratedSupabaseScript({
-      projectId: 'scanner',
-      existingConfig: null,
+  test('keeps Supabase migration history but executes against the Kubernetes DB URL', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
     });
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    const readme = getFile(result.files, 'infra/minikube/README.md');
 
-    expect(run.status).toBe(0);
-    expect(readFileSync(run.configPath, 'utf-8')).toContain('project_id = "scanner"');
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).toContain(
-      '--workdir ' + run.root + ' init --yes',
+    expect(upScript).toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
+    expect(upScript).toContain('export SUPABASE_DB_URL PGSSLMODE=disable');
+    expect(upScript).not.toContain('migration up --local');
+    expect(upScript).toContain('cd "${ROOT_DIR}"');
+    expect(upScript).toContain('set_required_env_default POSTGRES_PASSWORD "$(random_hex 32)"');
+    expect(upScript).not.toContain('set_env_default POSTGRES_PASSWORD "$(random_base64');
+    expect(upScript).toContain(
+      'set_required_env_default SUPABASE_DB_URL "postgres://postgres:${POSTGRES_PASSWORD}@127.0.0.1:${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres?sslmode=disable"',
     );
+    expect(upScript).toContain('bootstrap_supabase_database');
+    expect(readme).toContain('Migration authoring/history remains Supabase');
   });
 
-  test('rejects an existing Supabase config with a different project identity before lifecycle work', () => {
-    const run = runGeneratedSupabaseScript({
-      projectId: 'scanner',
-      existingConfig: 'project_id = "minikube"\n[api]\nport = 54321\n',
+  test('lists and generates Supabase Kubernetes bootstrap and gateway contract files', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
     });
-
-    expect(run.status).not.toBe(0);
-    expect(run.combinedOutput).toContain('Supabase project identity mismatch.');
-    expect(run.combinedOutput).toContain('Expected "scanner", found "minikube".');
-    expect(run.combinedOutput).toContain(
-      'Destroy the invalid local stack and its project-owned resources, then run Infra Up again.',
+    const paths = result.files.map((file) => file.path);
+    const readme = getFile(result.files, 'infra/minikube/README.md');
+    const kustomization = getFile(result.files, 'infra/minikube/k8s/kustomization.yaml');
+    const bootstrap = getFile(result.files, 'infra/minikube/k8s/supabase/bootstrap.sql');
+    const postgresInit = getFile(
+      result.files,
+      'infra/minikube/k8s/supabase/postgres.init.configmap.yaml',
     );
-    expect(readFileSync(run.configPath, 'utf-8')).toContain('project_id = "minikube"');
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
+    const postgres = getFile(result.files, 'infra/minikube/k8s/supabase/postgres.yaml');
+    const auth = getFile(result.files, 'infra/minikube/k8s/supabase/auth.yaml');
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const gatewayTemplate = getFile(
+      result.files,
+      'infra/minikube/k8s/supabase/gateway.template.yml',
+    );
+    const gateway = getFile(result.files, 'infra/minikube/k8s/supabase/gateway.yaml');
+    const storage = getFile(result.files, 'infra/minikube/k8s/supabase/storage.yaml');
+    const kongEntrypoint = getFile(result.files, 'infra/minikube/k8s/supabase/kong-entrypoint.sh');
+
+    expect(paths).toContain('infra/minikube/k8s/supabase/bootstrap.sql');
+    expect(paths).toContain('infra/minikube/k8s/supabase/postgres.init.configmap.yaml');
+    expect(paths).toContain('infra/minikube/k8s/supabase/gateway.template.yml');
+    expect(paths).toContain('infra/minikube/k8s/supabase/kong-entrypoint.sh');
+    expect(paths).not.toContain('infra/minikube/k8s/supabase/secrets.yaml');
+    expect(readme).toContain('supabase/bootstrap.sql');
+    expect(readme).toContain('supabase/postgres.init.configmap.yaml');
+    expect(readme).toContain('supabase/gateway.template.yml');
+    expect(readme).toContain('supabase/kong-entrypoint.sh');
+    expect(kustomization).not.toContain('supabase/secrets.yaml');
+    expect(kustomization).not.toContain('gateway.configmap.yaml');
+    expect(kustomization).toContain('supabase/postgres.init.configmap.yaml');
+    expect(bootstrap).toContain('CREATE SCHEMA IF NOT EXISTS auth');
+    expect(bootstrap).toContain(
+      'GRANT anon, authenticated, service_role TO supabase_storage_admin',
+    );
+    expect(postgresInit).toContain('alter role postgres with superuser');
+    expect(postgresInit).toContain('grant pg_read_server_files to supabase_admin');
+    expect(postgresInit).toContain('grant execute on function pg_read_file(text) to public');
+    expect(postgres).toContain('name: POSTGRES_USER');
+    expect(postgres).toContain('value: postgres');
+    expect(postgres).toContain('name: PGPORT');
+    expect(postgres).toContain(
+      'mountPath: /docker-entrypoint-initdb.d/99-ankhorage-local-dev-extensions.sql',
+    );
+    expect(postgres).toContain('config_file=/etc/postgresql/postgresql.conf');
+    expect(gatewayTemplate).toContain('keyauth_credentials');
+    expect(gatewayTemplate).toContain('request-transformer');
+    expect(kongEntrypoint).toContain('LUA_AUTH_EXPR');
+    expect(auth).toContain('name: GOTRUE_JWT_EXP');
+    expect(auth).toContain('key: JWT_EXPIRY');
+    expect(auth).toContain(
+      'postgres://supabase_auth_admin:$(POSTGRES_PASSWORD)@postgres.supabase.svc.cluster.local:5432/postgres?search_path=auth&sslmode=disable',
+    );
+    expect(storage).toContain(
+      'postgres://supabase_storage_admin:$(POSTGRES_PASSWORD)@postgres.supabase.svc.cluster.local:5432/postgres?search_path=storage&sslmode=disable',
+    );
+    expect(envExample).toContain('PGRST_DB_SCHEMAS=public,storage,graphql_public');
+    expect(auth).toContain('name: GOTRUE_EXTERNAL_EMAIL_ENABLED');
+    expect(auth).toContain('key: ENABLE_EMAIL_SIGNUP');
+    expect(auth).toContain('name: GOTRUE_SMTP_HOST');
+    expect(auth).toContain('name: GOTRUE_SMTP_PORT');
+    expect(auth).toContain('name: GOTRUE_SMTP_USER');
+    expect(auth).toContain('name: GOTRUE_SMTP_PASS');
+    expect(gatewayTemplate).toContain('name: realtime-v1-rest-openapi');
+    expect(gatewayTemplate).toContain('paths: [/realtime/v1/api/openapi]');
+    expect(gatewayTemplate).toContain('name: realtime-v1-rest-tenants');
+    expect(gatewayTemplate).toContain('paths: [/realtime/v1/api/tenants]');
+    expect(gatewayTemplate).toContain('name: request-termination');
+    expect(gatewayTemplate).toContain('status_code: 403');
+    expect(gateway).toContain('mountPath: /home/kong/temp.yml');
+    expect(gateway).toContain('subPath: temp.yml');
+    expect(gateway).toContain('mountPath: /home/kong/kong-entrypoint.sh');
+    expect(gateway).toContain('command: ["kong", "health"]');
   });
 
-  test('rejects an existing Supabase config with missing top-level project identity', () => {
-    const run = runGeneratedSupabaseScript({
-      projectId: 'scanner',
-      existingConfig: '[api]\nport = 54321\n',
+  test('defines reset separately from down and destroy', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('uwm'),
     });
+    const resetScript = getFile(result.files, 'infra/minikube/scripts/reset.sh');
+    const downScript = getFile(result.files, 'infra/minikube/scripts/down.sh');
 
-    expect(run.status).not.toBe(0);
-    expect(run.combinedOutput).toContain('Expected "scanner", found missing.');
-    expect(readFileSync(run.configPath, 'utf-8')).not.toContain('project_id = "scanner"');
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
+    expect(resetScript).toContain('ANKH_RESET_CONFIRM');
+    expect(resetScript).toContain('delete namespace app');
+    expect(resetScript).toContain('delete namespace supabase');
+    expect(resetScript).toContain('does not delete the Minikube profile');
+    expect(downScript).toContain('minikube stop -p "${PROFILE}"');
+    expect(downScript).not.toContain('delete namespace');
   });
 
-  test('rejects ambient SUPABASE_PROJECT_ID before Supabase CLI operations', () => {
-    const run = runGeneratedSupabaseScript({
-      projectId: 'scanner',
-      existingConfig: 'project_id = "scanner"\n[api]\nport = 54321\n',
-      env: {
-        SUPABASE_PROJECT_ID: 'minikube',
-      },
-    });
-
-    expect(run.status).not.toBe(0);
-    expect(run.combinedOutput).toContain(
-      'SUPABASE_PROJECT_ID must not be set for generated local Infra scripts.',
-    );
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
-  });
-
-  test('rejects empty Supabase project identity before Supabase CLI operations', () => {
-    const run = runGeneratedSupabaseScript({
-      projectId: 'plain',
-      supabaseProjectId: null,
-      existingConfig: null,
-    });
-
-    expect(run.status).not.toBe(0);
-    expect(run.combinedOutput).toContain(
-      'Cannot run local Supabase infrastructure: expected Supabase project identity is empty.',
-    );
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('init --yes');
-    expect(() => readFileSync(run.configPath, 'utf-8')).toThrow();
-  });
-
-  test('requires python before Supabase init mutates the workdir', () => {
-    const run = runGeneratedSupabaseScript({
-      projectId: 'scanner',
-      existingConfig: null,
-      withoutPython: true,
-    });
-
-    expect(run.status).not.toBe(0);
-    expect(run.combinedOutput).toContain(
-      'python3 is required to reconcile supabase/config.toml before local Supabase startup.',
-    );
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('--workdir');
-    expect(readFileSync(run.supabaseLogPath, 'utf-8')).not.toContain('init --yes');
-    expect(() => readFileSync(run.configPath, 'utf-8')).toThrow();
-  });
-
-  test('generates bootstrap logic that retries unhealthy local Supabase startup once', () => {
-    const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
-
-    expect(script).toContain('start_supabase_local_stack() {');
-    expect(script).toContain(
-      'Supabase local start failed. Stopping stale local stack and retrying once...',
-    );
-    expect(script).toContain(
-      'supabase --workdir "${SUPABASE_PROJECT_DIR}" stop --no-backup >/dev/null 2>&1 || true',
-    );
-    expect(script).toContain('Supabase local start failed after retry.');
-    expect(script).toContain('start_supabase_local_stack');
-    expect(
-      countOccurrences(script, 'supabase --workdir "${SUPABASE_PROJECT_DIR}" start >/dev/null'),
-    ).toBe(2);
-    expect(
-      countOccurrences(script, 'supabase --workdir "${SUPABASE_PROJECT_DIR}" stop --no-backup'),
-    ).toBe(1);
-  });
-
-  test('generates canonical Supabase workdir and required CLI capability checks', () => {
-    const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
-
-    expect(script).toContain('SUPABASE_PROJECT_DIR="${SUPABASE_PROJECT_DIR:-${ROOT_DIR}}"');
-    expect(script).toContain('require_expected_supabase_project_identity');
-    expect(script).toContain(
-      'require_expected_supabase_project_identity\nreject_supabase_project_id_override\nrequire_supabase_cli_capabilities',
-    );
-    expect(script).toContain('supabase CLI >= 2.106.0 is required');
-    expect(script).toContain('supabase CLI does not support required global --workdir flag');
-    expect(script).toContain('supabase CLI does not support required migration up --local command');
-    expect(script).toContain(
-      'python3 is required to reconcile supabase/config.toml before local Supabase startup.',
-    );
-    expect(script).toContain('psql is required but not installed');
-    expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" init --yes');
-    expect(script).toContain('supabase --workdir "${SUPABASE_PROJECT_DIR}" migration up --local');
-    expect(script).toContain('psql "${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "${sql_file}"');
-  });
-
-  test('generates profile reconciliation and live verification flow when profile table is configured', () => {
-    const overrides = {
-      auth: {
-        profile: {
-          table: 'profiles',
-          fields: ['email', 'displayName'],
-        },
-      },
-    } satisfies Partial<InfraManifestInput>;
-    const script = getGeneratedFileContent(
-      'chess',
-      'infra/minikube/scripts/supabase-local-env.sh',
-      overrides,
-    );
-    const status = getGeneratedFileContent('chess', 'infra/minikube/scripts/status.sh', overrides);
-
-    expect(script).toContain('SUPABASE_PROFILE_ENABLED="true"');
-    expect(script).toContain(
-      'SUPABASE_PROFILE_RECONCILE_FILE="${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"',
-    );
-    expect(script).toContain('Generated profile reconciliation');
-    expect(script).toContain('SQL file: ${sql_file}');
-    expect(script).toContain('Supabase project workdir: ${SUPABASE_PROJECT_DIR}');
-    expect(script).toContain('Exit status: ${status}');
-    expect(script).toContain('ankhorage_internal.generated_schema_state');
-    expect(script).toContain('check_immutable_migrations_applied');
-    expect(status).toContain('- immutable migrations: applied');
-    expect(status).toContain('- immutable migrations: pending');
-    expect(status).toContain('- profile reconciliation: applied, checksum matches');
-    expect(status).toContain('- profile schema: verified');
-    expect(status).toContain('reserved conflicting identity table public.users exists');
-    expect(status).toContain('stale managed profile column');
-    expect(status).toContain('own-profile SELECT policy is missing or has unsafe definition');
-    expect(status).toContain('unexpected profile table RLS policy exists');
-    expect(status).toContain(
-      "has_any_column_privilege('anon', format('public.%I', profile_table), 'SELECT')",
-    );
-    expect(status).toContain(
-      "has_any_column_privilege('anon', format('public.%I', profile_table), 'INSERT')",
-    );
-    expect(status).toContain(
-      "has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')",
-    );
-    expect(status).toContain(
-      "has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')",
-    );
-    expect(status).toContain(
-      "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')",
-    );
-    expect(status).toContain(
-      "has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')",
-    );
-    expect(status).toContain(
-      'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege',
-    );
-    expect(status).toContain(
-      'authenticated role has unexpected UPDATE privilege on profile column',
-    );
-    expect(status).toContain('generated trigger function execute privilege must be revoked');
-  });
-
-  test('generates relation-safe disabled profile verification for local env and status', () => {
-    const script = getGeneratedFileContent('chess', 'infra/minikube/scripts/supabase-local-env.sh');
-    const status = getGeneratedFileContent('chess', 'infra/minikube/scripts/status.sh');
-    const expectedDynamicLookup = `execute
-      'select exists (
-         select 1
-         from ankhorage_internal.generated_schema_state
-         where artifact_key = $1
-       )'
-      into has_profile_state
-      using 'auth.profile';`;
-
-    for (const generated of [script, status]) {
-      expect(generated).toContain('has_profile_state boolean := false;');
-      expect(generated).toContain(expectedDynamicLookup);
-      expect(generated).toContain(
-        'manifest auth.profile.table was removed but local generated auth.profile state still exists; reset local Supabase or add an explicit cleanup migration',
-      );
-      expect(generated).not.toContain(
-        `if to_regclass('ankhorage_internal.generated_schema_state') is not null
-    and exists (`,
-      );
-      expect(generated.replace(expectedDynamicLookup, '')).not.toContain(
-        `from ankhorage_internal.generated_schema_state
-      where artifact_key = 'auth.profile'`,
-      );
-    }
-
-    expect(script).toContain('Generated profile disabled-state verification');
-    expect(status).toContain('- profile reconciliation: skipped (no profile table configured)');
-    expect(status).toContain('- profile schema: skipped (no profile table configured)');
-  });
-
-  test('status succeeds for a clean disabled profile local Supabase stack', () => {
-    const run = runGeneratedStatusScript({
-      manifest: createInfraManifest(),
-      supabaseProjectId: 'plain',
-      env: {
-        AUTH_RUNTIME_MODE: 'local',
-      },
-    });
-
-    expect(run.status).toBe(0);
-    expect(run.combinedOutput).toContain('- immutable migrations: applied');
-    expect(run.combinedOutput).toContain(
-      '- profile reconciliation: skipped (no profile table configured)',
-    );
-    expect(run.combinedOutput).toContain('- profile schema: skipped (no profile table configured)');
-    expect(run.supabaseLog).toContain('--workdir');
-  });
-
-  test('does not reject SUPABASE_PROJECT_ID for non-Supabase status checks', () => {
-    const run = runGeneratedStatusScript({
-      manifest: {
+  test('keeps reset scoped to app namespace when Supabase is not generated', () => {
+    const result = generateInfrastructure(
+      {
         deployment: {
           target: 'minikube',
           monitoring: false,
         },
-        plugins: [],
       },
-      supabaseProjectId: null,
-      env: {
-        SUPABASE_PROJECT_ID: 'ambient-project',
+      {
+        appManifest: createAppManifest('plain'),
       },
-    });
-
-    expect(run.status).toBe(0);
-    expect(run.combinedOutput).not.toContain(
-      'SUPABASE_PROJECT_ID must not be set for generated local Infra scripts.',
     );
-    expect(run.kubectlLog).toContain('get all -n plain');
+    const paths = result.files.map((file) => file.path);
+    const resetScript = getFile(result.files, 'infra/minikube/scripts/reset.sh');
+    const statusScript = getFile(result.files, 'infra/minikube/scripts/status.sh');
+
+    expect(paths).not.toContain('infra/minikube/k8s/namespaces/supabase.yaml');
+    expect(resetScript).toContain('delete namespace app');
+    expect(resetScript).not.toContain('delete namespace supabase');
+    expect(resetScript).not.toContain('namespaces/supabase.yaml');
+    expect(statusScript).toContain('for namespace in app; do');
   });
 
-  test('rejects empty Supabase project identity before local Supabase status checks', () => {
-    const run = runGeneratedStatusScript({
-      manifest: {
-        deployment: {
-          target: 'minikube',
-          monitoring: false,
+  test('places standalone provider workloads in provider-owned namespaces', () => {
+    const result = generateInfrastructure(
+      {
+        ...createSupabaseManifest(),
+        auth: {
+          scope: 'global',
+          provider: 'supabase',
+          authorization: {
+            engine: 'cerbos',
+            kind: 'RBAC',
+          },
         },
-        plugins: [],
       },
-      supabaseProjectId: null,
-      env: {
-        SUPABASE_LOCAL_ENABLED: 'true',
+      {
+        appManifest: createAppManifest('authz-app'),
       },
-    });
-
-    expect(run.status).not.toBe(0);
-    expect(run.combinedOutput).toContain(
-      'Cannot run local Supabase infrastructure: expected Supabase project identity is empty.',
     );
-    expect(run.supabaseLog).toBe('');
+    const paths = result.files.map((file) => file.path);
+    const kustomization = getFile(result.files, 'infra/minikube/k8s/kustomization.yaml');
+    const readme = getFile(result.files, 'infra/minikube/README.md');
+    const cerbosDeployment = getFile(
+      result.files,
+      'infra/minikube/k8s/authz/cerbos/cerbos.deployment.yaml',
+    );
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const resetScript = getFile(result.files, 'infra/minikube/scripts/reset.sh');
+    const statusScript = getFile(result.files, 'infra/minikube/scripts/status.sh');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(paths).toContain('infra/minikube/k8s/namespaces/cerbos.yaml');
+    expect(kustomization).toContain('namespaces/cerbos.yaml');
+    expect(readme).toContain('- Provider namespaces: `cerbos`');
+    expect(readme).toContain('## Provider Lifecycle Contributions');
+    expect(readme).toContain('`cerbos`: namespace `cerbos`');
+    expect(readme).toContain('`deployment/cerbos` in namespace `cerbos`');
+    expect(readme).toContain('`http` = `http://cerbos.cerbos.svc.cluster.local:3592`');
+    expect(cerbosDeployment).toContain('namespace: cerbos');
+    expect(cerbosDeployment).not.toContain('namespace: app');
+    expect(envExample).toContain('CERBOS_URL=http://cerbos.cerbos.svc.cluster.local:3592');
+    expect(resetScript).toContain('delete namespace cerbos');
+    expect(upScript).toContain('wait_for_provider_readiness');
+    expect(upScript).toContain('run_provider_migrations');
+    expect(upScript).toContain('run_provider_reconciliation');
+    expect(upScript).toContain('rollout status "deployment/cerbos" --timeout=180s');
+    expect(upScript.indexOf('kubectl --context "${PROFILE}" apply -k "${K8S_DIR}"')).toBeLessThan(
+      upScript.lastIndexOf('wait_for_provider_readiness'),
+    );
+    expect(statusScript).toContain('for namespace in app supabase cerbos; do');
+    expect(statusScript).toContain(
+      '- provider cerbos endpoint/http: http://cerbos.cerbos.svc.cluster.local:3592',
+    );
+    expect(statusScript).toContain('- provider cerbos/cerbos: ready');
+  });
+
+  test('uses generated Supabase runtime ownership as an immutable script decision', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(envExample).not.toContain('SUPABASE_RUNTIME_ENABLED=');
+    expect(upScript).toContain('SUPABASE_RUNTIME_ENABLED="true"');
+    expect(upScript).not.toContain('SUPABASE_RUNTIME_ENABLED="${SUPABASE_RUNTIME_ENABLED');
+  });
+
+  test('wires configured OAuth providers into GoTrue runtime env without serializing secrets', () => {
+    const result = generateInfrastructure(
+      {
+        ...createSupabaseManifest(),
+        secretStore: {
+          provider: 'supabase-vault',
+        },
+        auth: {
+          scope: 'global',
+          provider: 'supabase',
+          oauth: {
+            enabled: true,
+            callbackRoute: '/auth/callback',
+            providers: [
+              {
+                id: 'google',
+                enabled: true,
+                credentialsRef: 'auth/oauth/google',
+              },
+            ],
+          },
+        },
+      },
+      {
+        appManifest: createAppManifest('oauth-app'),
+      },
+    );
+    const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(envExample).toContain('# google: auth/oauth/google');
+    expect(envExample).toContain('GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=');
+    expect(envExample).toContain('GOTRUE_EXTERNAL_GOOGLE_SECRET=');
+    expect(upScript).toContain('GOTRUE_EXTERNAL_GOOGLE_ENABLED=true');
+    expect(upScript).toContain(
+      'GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=${GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID}',
+    );
+    expect(upScript).toContain('credentialsRef auth/oauth/google');
+    expect(upScript).toContain("resolve_vault_secret_field 'auth/oauth/google' 'clientSecret'");
+    expect(upScript).toContain(
+      'set_required_env_default ADDITIONAL_REDIRECT_URLS "$(derive_additional_redirect_urls)"',
+    );
+    expect(upScript).toContain('site_url_without_slash}/${callback_path}');
+    expect(upScript).toContain('OAUTH_NATIVE_REDIRECT_URLS');
+    expect(upScript).not.toContain('write_env_value GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID');
+    expect(upScript).not.toContain('write_env_value GOTRUE_EXTERNAL_GOOGLE_SECRET');
+    expect(upScript).not.toContain('sentinel-client-secret-value');
+  });
+
+  test('generates required secrets even when copied env example contains empty keys', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(upScript).toContain('load_env_file_preserving_process_env');
+    expect(upScript).toContain('APP_IMAGE="${APP_IMAGE:-}"');
+    expect(upScript).toContain(
+      'load_env_file_preserving_process_env\nSUPABASE_RUNTIME_ENABLED="true"',
+    );
+    expect(upScript.indexOf('load_env_file_preserving_process_env')).toBeLessThan(
+      upScript.lastIndexOf('APP_IMAGE="${APP_IMAGE:-ankh/scanner:dev}"'),
+    );
+    expect(upScript).toContain('set_required_env_default POSTGRES_PASSWORD "$(random_hex 32)"');
+    expect(upScript).toContain('write_env_value "${key}" "${value}"');
+    expect(upScript).toContain('set_optional_env_default SMTP_USER ""');
+  });
+
+  test('starts Supabase schema owners before app migrations and profile reconciliation', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('scanner'),
+    });
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+
+    expect(upScript).toContain('apply_supabase_runtime_workloads');
+    expect(upScript).toContain('exec deployment/postgres -- psql -U postgres');
+    expect(upScript).toContain('create schema if not exists vault');
+    expect(upScript).toContain('grant execute on function pg_read_file(text) to public');
+    expect(upScript.indexOf('postgres.init.configmap.yaml')).toBeLessThan(
+      upScript.indexOf('postgres.pvc.yaml'),
+    );
+    expect(upScript.lastIndexOf('  wait_for_supabase_database')).toBeLessThan(
+      upScript.lastIndexOf('  bootstrap_supabase_database'),
+    );
+    expect(upScript).toContain('rollout status deployment/postgres --timeout=900s');
+    expect(upScript).toContain('rollout status deployment/gateway --timeout=600s');
+    const runMigrationsCallIndex = upScript.lastIndexOf('  run_supabase_migrations');
+    const reconcileProfileCallIndex = upScript.lastIndexOf('  reconcile_supabase_profile');
+    const appRuntimeApplyIndex = upScript.lastIndexOf(
+      'kubectl --context "${PROFILE}" apply -k "${K8S_DIR}"',
+    );
+
+    expect(upScript.lastIndexOf('  apply_supabase_runtime_workloads')).toBeLessThan(
+      upScript.indexOf('rollout status deployment/auth'),
+    );
+    expect(upScript.indexOf('rollout status deployment/auth')).toBeLessThan(runMigrationsCallIndex);
+    expect(upScript.indexOf('rollout status deployment/storage')).toBeLessThan(
+      runMigrationsCallIndex,
+    );
+    expect(upScript.indexOf('  reconcile_supabase_profile')).toBeLessThan(
+      upScript.indexOf('  reload_postgrest_schema'),
+    );
+    expect(upScript.indexOf('rollout status deployment/studio')).toBeLessThan(
+      upScript.indexOf('"${PORT_FORWARD_SCRIPT}" start studio'),
+    );
+    expect(runMigrationsCallIndex).toBeLessThan(reconcileProfileCallIndex);
+    expect(reconcileProfileCallIndex).toBeLessThan(appRuntimeApplyIndex);
+  });
+
+  test('treats port-forwards as slug-owned lifecycle resources', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('uwm'),
+    });
+    const portForwardScript = getFile(result.files, 'infra/minikube/scripts/port-forward.sh');
+    const statusScript = getFile(result.files, 'infra/minikube/scripts/status.sh');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    const downScript = getFile(result.files, 'infra/minikube/scripts/down.sh');
+
+    expect(portForwardScript).toContain('service/app-runtime');
+    expect(portForwardScript).toContain('service/gateway');
+    expect(portForwardScript).toContain('service/studio');
+    expect(portForwardScript).toContain('service/postgres');
+    expect(portForwardScript).toContain('${PROFILE}-${1}.pid');
+    expect(portForwardScript).toContain('crashed stale_pid');
+    expect(portForwardScript).toContain('is_port_accepting()');
+    expect(portForwardScript).toContain('recent kubectl port-forward log');
+    expect(portForwardScript).toContain('did not become ready on local port');
+    expect(portForwardScript).toContain('not ready pid=');
+    expect(portForwardScript).toContain('terminate_forward_process()');
+    expect(portForwardScript).toContain('ps -p "${pid}" -o command=');
+    expect(portForwardScript).toContain('ps -p "${pid}" -o comm=');
+    expect(portForwardScript).toContain('is_owned_forward_process()');
+    expect(portForwardScript).toContain(
+      '*"kubectl --context ${PROFILE} -n ${namespace} port-forward ${resource} ${local_port}:${remote_port}"*',
+    );
+    expect(portForwardScript).toContain('kill -KILL "${pid}"');
+    expect(portForwardScript).toContain('failed to stop owned port-forward pid');
+    expect(portForwardScript).toContain('local port ${local_port} is still accepting connections');
+    expect(portForwardScript).toContain('refusing to terminate non-owned live pid');
+    expect(portForwardScript).toContain(
+      'stale pid file pointed at non-owned live pid ${pid}; removing ownership record ${pid_file}',
+    );
+    expect(portForwardScript).toContain(
+      'port occupied by non-owned process on local port ${local_port}',
+    );
+    expect(portForwardScript).toContain('stale_pid_non_owned=${pid}');
+    expect(statusScript).toContain('port-forward.sh" status all');
+    expect(upScript).toContain('set -Eeuo pipefail');
+    expect(upScript).toContain('trap cleanup_failed_up ERR');
+    expect(upScript).toContain('start supabase-gateway');
+    expect(upScript).toContain('start db-migration');
+    expect(upScript).toContain('Failed to start db-migration port-forward for Supabase bootstrap.');
+    expect(upScript.indexOf('trap cleanup_failed_up ERR')).toBeLessThan(
+      upScript.indexOf('require_command minikube'),
+    );
+    expect(upScript).toContain('trap - ERR');
+    expect(downScript).toContain('port-forward.sh" stop all');
   });
 });
 
-function getGeneratedFileContent(
-  namespace: string,
-  filePath: string,
-  overrides: Partial<InfraManifestInput> = {},
-  supabaseProjectId = namespace,
-): string {
-  const artifact = generateMinikubeBaseArtifacts({
-    manifest: createInfraManifest(overrides),
-    namespace,
-    supabaseProjectId,
-    extraResources: [],
-    extraEnvEntries: [],
-  }).find((file) => file.path === filePath);
-
-  if (!artifact) {
-    throw new Error(`Expected generated artifact at ${filePath}`);
-  }
-
-  return artifact.content;
-}
-
-function countOccurrences(source: string, needle: string): number {
-  return source.split(needle).length - 1;
-}
-
-function createInfraManifest(overrides: Partial<InfraManifestInput> = {}): InfraManifestInput {
+function createSupabaseManifest(): InfraManifestInput {
   return {
     deployment: {
       target: 'minikube',
@@ -432,318 +434,21 @@ function createInfraManifest(overrides: Partial<InfraManifestInput> = {}): Infra
     auth: {
       scope: 'global',
       provider: 'supabase',
-      authorization: {
-        kind: 'RBAC',
-        engine: 'native',
-      },
     },
     database: {
       provider: 'supabase',
       tier: 'dev',
     },
-    networking: {
-      cdn: false,
+    storage: {
+      provider: 'supabase',
+      buckets: ['assets'],
     },
     plugins: [],
-    ...overrides,
-    auth: {
-      scope: 'global',
-      provider: 'supabase',
-      authorization: {
-        kind: 'RBAC',
-        engine: 'native',
-      },
-      ...overrides.auth,
-    },
   };
 }
 
-function runGeneratedSupabaseScript(args: {
-  projectId: string;
-  supabaseProjectId?: string | null;
-  existingConfig: string | null;
-  env?: Record<string, string>;
-  withoutPython?: boolean;
-}): {
-  status: number | null;
-  combinedOutput: string;
-  root: string;
-  configPath: string;
-  supabaseLogPath: string;
-} {
-  const tempRoot = mkdtempSync(join(tmpdir(), 'infra-supabase-identity-'));
-  const root = join(tempRoot, 'infra', 'minikube');
-  const scriptsDir = join(root, 'scripts');
-  const supabaseDir = join(root, 'supabase');
-  const binDir = join(tempRoot, 'bin');
-  const appSourceDir = join(tempRoot, 'app');
-  const scriptPath = join(scriptsDir, 'supabase-local-env.sh');
-  const configPath = join(supabaseDir, 'config.toml');
-  const supabaseLogPath = join(tempRoot, 'supabase.log');
-
-  mkdirSync(scriptsDir, { recursive: true });
-  mkdirSync(binDir, { recursive: true });
-  mkdirSync(appSourceDir, { recursive: true });
-  writeFileSync(join(root, '.env.example'), '');
-  writeFileSync(supabaseLogPath, '');
-
-  if (args.existingConfig !== null) {
-    mkdirSync(supabaseDir, { recursive: true });
-    writeFileSync(configPath, args.existingConfig);
-  }
-
-  const script = getGeneratedFileContent(
-    args.projectId,
-    'infra/minikube/scripts/supabase-local-env.sh',
-    {},
-    args.supabaseProjectId === undefined ? args.projectId : args.supabaseProjectId,
-  );
-  writeFileSync(scriptPath, script);
-  chmodSync(scriptPath, 0o755);
-
-  const supabaseStubPath = join(binDir, 'supabase');
-  writeFileSync(
-    supabaseStubPath,
-    `#!/bin/bash
-set -euo pipefail
-printf '%s\\n' "$*" >> "\${SUPABASE_STUB_LOG}"
-
-if [[ "\${1:-}" == "--version" ]]; then
-  echo "supabase 2.106.0"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "status" && "\${2:-}" == "--help" ]]; then
-  echo "--workdir"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "migration" && "\${2:-}" == "up" && "\${3:-}" == "--help" ]]; then
-  echo "--local"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "init" && "\${4:-}" == "--yes" ]]; then
-  mkdir -p "\${2}/supabase"
-  printf '%s\\n' 'project_id = "minikube"' '[api]' 'port = 54321' > "\${2}/supabase/config.toml"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "status" && "\${4:-}" == "-o" && "\${5:-}" == "env" ]]; then
-  cat <<'ENV'
-DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
-API_URL=http://127.0.0.1:54321
-ANON_KEY=anon
-SERVICE_ROLE_KEY=service
-JWT_SECRET=secret
-ENV
-  exit 0
-fi
-
-if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "status" ]]; then
-  exit 0
-fi
-
-if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "migration" && "\${4:-}" == "up" && "\${5:-}" == "--local" ]]; then
-  exit 0
-fi
-
-echo "unexpected supabase call: $*" >&2
-exit 1
-`,
-  );
-  chmodSync(supabaseStubPath, 0o755);
-
-  const psqlStubPath = join(binDir, 'psql');
-  writeFileSync(
-    psqlStubPath,
-    `#!/bin/bash
-exit 0
-`,
-  );
-  chmodSync(psqlStubPath, 0o755);
-
-  const result = spawnSync('/bin/bash', [scriptPath], {
-    cwd: tempRoot,
-    env: {
-      ...(args.withoutPython ? {} : process.env),
-      PATH: args.withoutPython ? binDir : `${binDir}:${process.env.PATH ?? ''}`,
-      APP_SOURCE_DIR: appSourceDir,
-      SUPABASE_STUB_LOG: supabaseLogPath,
-      ...args.env,
-    },
-    encoding: 'utf-8',
-  });
-
-  return {
-    status: result.status,
-    combinedOutput: `${result.stdout}${result.stderr}`,
-    root,
-    configPath,
-    supabaseLogPath,
-  };
-}
-
-function runGeneratedStatusScript(args: {
-  manifest: InfraManifestInput;
-  supabaseProjectId: string | null;
-  env?: Record<string, string>;
-}): {
-  status: number | null;
-  combinedOutput: string;
-  kubectlLog: string;
-  supabaseLog: string;
-} {
-  const tempRoot = mkdtempSync(join(tmpdir(), 'infra-status-'));
-  const root = join(tempRoot, 'infra', 'minikube');
-  const scriptsDir = join(root, 'scripts');
-  const supabaseDir = join(root, 'supabase');
-  const binDir = join(tempRoot, 'bin');
-  const scriptPath = join(scriptsDir, 'status.sh');
-  const kubectlLogPath = join(tempRoot, 'kubectl.log');
-  const supabaseLogPath = join(tempRoot, 'supabase.log');
-  const psqlLogPath = join(tempRoot, 'psql.log');
-
-  mkdirSync(scriptsDir, { recursive: true });
-  mkdirSync(binDir, { recursive: true });
-  writeFileSync(join(root, '.env.example'), '');
-  writeFileSync(kubectlLogPath, '');
-  writeFileSync(supabaseLogPath, '');
-  writeFileSync(psqlLogPath, '');
-
-  if (args.supabaseProjectId !== null) {
-    mkdirSync(supabaseDir, { recursive: true });
-    writeFileSync(join(supabaseDir, 'config.toml'), `project_id = "${args.supabaseProjectId}"\n`);
-  }
-
-  const artifact = generateMinikubeBaseArtifacts({
-    manifest: args.manifest,
-    namespace: 'plain',
-    supabaseProjectId: args.supabaseProjectId,
-    extraResources: [],
-    extraEnvEntries: [],
-  }).find((file) => file.path === 'infra/minikube/scripts/status.sh');
-
-  if (!artifact) {
-    throw new Error('Expected generated status.sh artifact');
-  }
-
-  writeFileSync(scriptPath, artifact.content);
-  chmodSync(scriptPath, 0o755);
-
-  const kubectlStubPath = join(binDir, 'kubectl');
-  writeFileSync(
-    kubectlStubPath,
-    `#!/bin/bash
-set -euo pipefail
-printf '%s\\n' "$*" >> "\${KUBECTL_STUB_LOG}"
-
-if [[ "\${1:-}" == "config" && "\${2:-}" == "current-context" ]]; then
-  echo "minikube"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "cluster-info" ]]; then
-  echo "Kubernetes control plane is running"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "get" && "\${2:-}" == "namespace" ]]; then
-  exit 0
-fi
-
-if [[ "\${1:-}" == "get" && "\${2:-}" == "all" ]]; then
-  echo "No resources found"
-  exit 0
-fi
-
-echo "unexpected kubectl call: $*" >&2
-exit 1
-`,
-  );
-  chmodSync(kubectlStubPath, 0o755);
-
-  const supabaseStubPath = join(binDir, 'supabase');
-  writeFileSync(
-    supabaseStubPath,
-    `#!/bin/bash
-set -euo pipefail
-printf '%s\\n' "$*" >> "\${SUPABASE_STUB_LOG}"
-
-if [[ "\${1:-}" == "--version" ]]; then
-  echo "supabase 2.106.0"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "status" && "\${2:-}" == "--help" ]]; then
-  echo "--workdir"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "migration" && "\${2:-}" == "up" && "\${3:-}" == "--help" ]]; then
-  echo "--local"
-  exit 0
-fi
-
-if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "status" && "\${4:-}" == "-o" && "\${5:-}" == "env" ]]; then
-  cat <<'ENV'
-DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
-API_URL=http://127.0.0.1:54321
-ANON_KEY=anon
-SERVICE_ROLE_KEY=service
-JWT_SECRET=secret
-ENV
-  exit 0
-fi
-
-if [[ "\${1:-}" == "--workdir" && "\${3:-}" == "status" ]]; then
-  exit 0
-fi
-
-echo "unexpected supabase call: $*" >&2
-exit 1
-`,
-  );
-  chmodSync(supabaseStubPath, 0o755);
-
-  const psqlStubPath = join(binDir, 'psql');
-  writeFileSync(
-    psqlStubPath,
-    `#!/bin/bash
-set -euo pipefail
-printf '%s\\n' "$*" >> "\${PSQL_STUB_LOG}"
-
-if [[ "$*" == *"select version from supabase_migrations.schema_migrations"* ]]; then
-  exit 0
-fi
-
-if [[ "$*" == *"-f"* ]]; then
-  exit 0
-fi
-
-echo "unexpected psql call: $*" >&2
-exit 1
-`,
-  );
-  chmodSync(psqlStubPath, 0o755);
-
-  const result = spawnSync('/bin/bash', [scriptPath], {
-    cwd: tempRoot,
-    env: {
-      ...process.env,
-      PATH: `${binDir}:${process.env.PATH ?? ''}`,
-      KUBECTL_STUB_LOG: kubectlLogPath,
-      SUPABASE_STUB_LOG: supabaseLogPath,
-      PSQL_STUB_LOG: psqlLogPath,
-      ...args.env,
-    },
-    encoding: 'utf-8',
-  });
-
-  return {
-    status: result.status,
-    combinedOutput: `${result.stdout}${result.stderr}`,
-    kubectlLog: readFileSync(kubectlLogPath, 'utf-8'),
-    supabaseLog: readFileSync(supabaseLogPath, 'utf-8'),
-  };
+function getFile(files: readonly { path: string; content: string }[], path: string): string {
+  const file = files.find((candidate) => candidate.path === path);
+  if (!file) throw new Error(`Missing generated file: ${path}`);
+  return file.content;
 }

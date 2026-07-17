@@ -2,6 +2,7 @@ import type { AppManifest } from '@ankhorage/contracts';
 import { describe, expect, test } from 'bun:test';
 
 import { generateInfrastructure } from './index';
+import { createAppManifest } from './testSupport';
 import type { InfraManifestInput } from './types';
 
 describe('API infrastructure generation', () => {
@@ -197,7 +198,7 @@ describe('API infrastructure generation', () => {
       plugins: [],
     };
 
-    const result = generateInfrastructure(manifest, { namespaceHint: 'cards' });
+    const result = generateInfrastructure(manifest, { appManifest: createAppManifest('cards') });
 
     expect(result.meta.providers).toContain('legend');
     expect(result.dependencies).toEqual([

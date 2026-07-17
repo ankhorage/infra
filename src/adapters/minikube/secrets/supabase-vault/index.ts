@@ -19,7 +19,7 @@ export function generateSupabaseVaultSecretStoreArtifacts(args: {
     files: [
       {
         path: SUPABASE_VAULT_MIGRATION_PATH,
-        content: `${SUPABASE_VAULT_MIGRATION_SQL.trim()}\n`,
+        content: getCurrentSupabaseVaultMigrationSql(),
       },
       {
         path: 'infra/minikube/secrets/supabase-vault.md',
@@ -27,12 +27,58 @@ export function generateSupabaseVaultSecretStoreArtifacts(args: {
       },
     ],
     resources: [],
-    envEntries: [
-      `SECRET_STORE_PROVIDER=${SUPABASE_VAULT_SECRET_STORE_PROVIDER}`,
-      'SUPABASE_LOCAL_ENABLED=true',
-    ],
+    providerLifecycle: [],
+    envEntries: [`SECRET_STORE_PROVIDER=${SUPABASE_VAULT_SECRET_STORE_PROVIDER}`],
     warnings: [],
   };
+}
+
+function getCurrentSupabaseVaultMigrationSql(): string {
+  return `${SUPABASE_VAULT_MIGRATION_SQL.trim()
+    .replace(
+      'create extension if not exists supabase_vault with schema extensions;',
+      () => `create schema if not exists vault;
+do $$
+begin
+  create extension if not exists supabase_vault with schema vault;
+exception
+  when insufficient_privilege then
+    create table if not exists vault.secrets (
+      id uuid primary key default gen_random_uuid(),
+      secret text not null,
+      name text,
+      description text,
+      created_at timestamptz not null default now()
+    );
+
+    create or replace function vault.create_secret(
+      secret text,
+      name text default null,
+      description text default null
+    )
+    returns uuid
+    language plpgsql
+    security definer
+    set search_path = vault, public
+    as $vault$
+    declare
+      secret_id uuid;
+    begin
+      insert into vault.secrets (secret, name, description)
+      values (secret, name, description)
+      returning id into secret_id;
+
+      return secret_id;
+    end;
+    $vault$;
+
+    create or replace view vault.decrypted_secrets as
+      select id, secret as decrypted_secret
+      from vault.secrets;
+end
+$$;`,
+    )
+    .trim()}\n`;
 }
 
 function validateOAuthSecretReferences(manifest: InfraManifestInput): void {
@@ -68,7 +114,8 @@ The immutable migration at:
 ${SUPABASE_VAULT_MIGRATION_PATH}
 \`\`\`
 
-is applied by the existing local Supabase migration lifecycle during \`scripts/up.sh\`.
+is applied by the Kubernetes-owned Supabase migration lifecycle during \`scripts/up.sh\`
+with \`supabase migration up --db-url "$SUPABASE_DB_URL"\`.
 
 ## Security boundary
 

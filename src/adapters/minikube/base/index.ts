@@ -1,19 +1,17 @@
 import type { GeneratedInfrastructureFile } from '../../../types';
 import type { InfraManifestInput } from '../../../types';
-import {
-  MANAGED_PROFILE_COLUMNS,
-  type ResolvedProfileModel,
-  resolveSupabaseProfileModel,
-} from '../auth/supabase/profile';
+import type { ResolvedProfileModel } from '../auth/supabase/profile';
+import { resolveSupabaseProfileModel } from '../auth/supabase/profile';
+import type { MinikubeProviderLifecycle } from '../contracts';
 
-interface SupabaseLocalPorts {
-  base: number;
-  shadow: number;
-  api: number;
-  db: number;
+export const APP_NAMESPACE = 'app';
+const SUPABASE_NAMESPACE = 'supabase';
+
+interface SupabaseHostPorts {
+  app: number;
+  gateway: number;
   studio: number;
-  inbucket: number;
-  analytics: number;
+  db: number;
 }
 
 interface AppInfraStorageMetadata {
@@ -22,26 +20,65 @@ interface AppInfraStorageMetadata {
   defaultBucket: string;
 }
 
-const SUPABASE_LOCAL_PORT_BASE = 55320;
-const SUPABASE_LOCAL_PORT_BUCKET_SIZE = 10;
-const SUPABASE_LOCAL_PORT_BUCKET_COUNT = 1000;
-const SUPABASE_LOCAL_PORT_REFERENCE_PROJECT = 'my-app';
+interface SupabaseImagePins {
+  postgres: string;
+  auth: string;
+  rest: string;
+  realtime: string;
+  storage: string;
+  imgproxy: string;
+  meta: string;
+  gateway: string;
+  studio: string;
+}
+
+interface SupabaseOAuthProviderRuntime {
+  id: string;
+  envPrefix: string;
+  credentialsRef: string;
+  callbackRoute: string;
+}
+
+const SUPABASE_IMAGES: SupabaseImagePins = {
+  postgres: 'supabase/postgres:17.6.1.136',
+  auth: 'supabase/gotrue:v2.189.0',
+  rest: 'postgrest/postgrest:v14.12',
+  realtime: 'supabase/realtime:v2.102.3',
+  storage: 'supabase/storage-api:v1.60.4',
+  imgproxy: 'darthsim/imgproxy:v3.30.1',
+  meta: 'supabase/postgres-meta:v0.96.6',
+  gateway: 'kong/kong:3.9.1',
+  studio: 'supabase/studio:2026.07.07-sha-a6a04f2',
+};
+
+const PORT_BASE = 18080;
+const PORT_BUCKET_SIZE = 20;
+const PORT_BUCKET_COUNT = 1000;
+const PORT_REFERENCE_SLUG = 'my-app';
 
 export function generateMinikubeBaseArtifacts(args: {
   manifest: InfraManifestInput;
-  namespace: string;
-  supabaseProjectId: string | null;
+  appSlug: string;
   extraResources: string[];
+  providerNamespaces: string[];
+  providerLifecycle: MinikubeProviderLifecycle[];
   extraEnvEntries: string[];
 }): GeneratedInfrastructureFile[] {
-  const { manifest, namespace, supabaseProjectId, extraResources, extraEnvEntries } = args;
+  const {
+    manifest,
+    appSlug,
+    extraResources,
+    providerNamespaces,
+    providerLifecycle,
+    extraEnvEntries,
+  } = args;
 
   const root = 'infra/minikube';
   const k8sRoot = `${root}/k8s`;
   const scriptsRoot = `${root}/scripts`;
   const appImageRoot = `${root}/app-image`;
-  const defaultAppImage = getDefaultAppImage(namespace);
-  const supabaseLocalPorts = resolveSupabaseLocalPorts(supabaseProjectId ?? namespace);
+  const defaultAppImage = getDefaultAppImage(appSlug);
+  const supabaseHostPorts = resolveSupabaseHostPorts(appSlug);
 
   const authScope = manifest.auth?.scope ?? 'none';
   const authProvider = manifest.auth?.provider ?? 'none';
@@ -50,49 +87,72 @@ export function generateMinikubeBaseArtifacts(args: {
   const secretStoreProvider = manifest.secretStore?.provider ?? 'none';
   const storageMetadata = resolveAppInfraStorageMetadata(manifest);
   const profileModel = resolveSupabaseProfileModel(manifest);
+  const oauthProviders = resolveSupabaseOAuthProviders(manifest);
   const monitoringEnabled = manifest.deployment?.monitoring === true;
   const domain = manifest.networking?.domain ?? '';
-  const supabaseLocalEnabled =
+  const supabaseKubernetesEnabled =
     authProvider === 'supabase' ||
     databaseProvider === 'supabase' ||
     storageMetadata !== null ||
     secretStoreProvider === 'supabase-vault';
 
+  const supabaseResources = supabaseKubernetesEnabled ? getSupabaseResourceFiles(k8sRoot) : [];
+  const namespaceResources = [
+    'namespaces/app.yaml',
+    ...(supabaseKubernetesEnabled ? ['namespaces/supabase.yaml'] : []),
+    ...providerNamespaces.map((namespace) => `namespaces/${namespace}.yaml`),
+  ];
+
   return [
     {
       path: `${root}/README.md`,
       content: getReadmeMarkdown({
-        namespace,
+        appSlug,
         defaultAppImage,
         monitoringEnabled,
         authProvider,
         authzEngine,
         extraResources,
-        supabaseLocalPorts,
-        supabaseProjectId,
-        supabaseLocalEnabled,
+        supabaseHostPorts,
+        supabaseKubernetesEnabled,
         profileModel,
+        oauthProviders,
+        providerNamespaces,
+        providerLifecycle,
       }),
     },
     {
       path: `${root}/.env.example`,
       content: getEnvExample({
-        namespace,
+        appSlug,
         domain,
         extraEnvEntries,
         defaultAppImage,
-        supabaseLocalPorts,
-        supabaseLocalEnabled,
+        supabaseHostPorts,
+        supabaseKubernetesEnabled,
+        oauthProviders,
       }),
     },
     {
-      path: `${k8sRoot}/namespace.yaml`,
-      content: getNamespaceManifest(namespace),
+      path: `${k8sRoot}/namespaces/app.yaml`,
+      content: getNamespaceManifest(APP_NAMESPACE),
     },
+    ...(supabaseKubernetesEnabled
+      ? [
+          {
+            path: `${k8sRoot}/namespaces/supabase.yaml`,
+            content: getNamespaceManifest(SUPABASE_NAMESPACE),
+          },
+        ]
+      : []),
+    ...providerNamespaces.map((namespace) => ({
+      path: `${k8sRoot}/namespaces/${namespace}.yaml`,
+      content: getNamespaceManifest(namespace),
+    })),
     {
       path: `${k8sRoot}/app.configmap.yaml`,
       content: getAppConfigMap({
-        namespace,
+        appSlug,
         authScope,
         authProvider,
         databaseProvider,
@@ -104,56 +164,77 @@ export function generateMinikubeBaseArtifacts(args: {
     },
     {
       path: `${k8sRoot}/app/deployment.yaml`,
-      content: getAppDeploymentManifest({ namespace, defaultAppImage }),
+      content: getAppDeploymentManifest(defaultAppImage),
     },
     {
       path: `${k8sRoot}/app/service.yaml`,
-      content: getAppServiceManifest(namespace),
+      content: getAppServiceManifest(),
     },
+    ...supabaseResources,
     {
       path: `${k8sRoot}/kustomization.yaml`,
-      content: getKustomizationManifest(extraResources),
+      content: getKustomizationManifest({
+        namespaceResources,
+        supabaseEnabled: supabaseKubernetesEnabled,
+        extraResources,
+      }),
     },
     {
       path: `${scriptsRoot}/up.sh`,
       content: getUpScript({
-        defaultNamespace: namespace,
+        appSlug,
         defaultAppImage,
-        supabaseLocalEnabled,
+        supabaseKubernetesEnabled,
+        profileModel,
+        secretStoreProvider,
+        supabaseHostPorts,
+        oauthProviders,
+        providerLifecycle,
       }),
       executable: true,
     },
     {
       path: `${scriptsRoot}/build-app-image.sh`,
-      content: getBuildAppImageScript({ defaultNamespace: namespace, defaultAppImage }),
+      content: getBuildAppImageScript({ appSlug, defaultAppImage }),
       executable: true,
     },
     {
       path: `${scriptsRoot}/port-forward.sh`,
-      content: getPortForwardScript(namespace),
+      content: getPortForwardScript({
+        appSlug,
+        supabaseKubernetesEnabled,
+        supabaseHostPorts,
+      }),
       executable: true,
     },
     {
       path: `${scriptsRoot}/down.sh`,
-      content: getDownScript(),
+      content: getDownScript(appSlug),
+      executable: true,
+    },
+    {
+      path: `${scriptsRoot}/reset.sh`,
+      content: getResetScript({
+        appSlug,
+        supabaseKubernetesEnabled,
+        providerNamespaces,
+      }),
+      executable: true,
+    },
+    {
+      path: `${scriptsRoot}/destroy.sh`,
+      content: getDestroyScript(appSlug),
       executable: true,
     },
     {
       path: `${scriptsRoot}/status.sh`,
       content: getStatusScript({
-        defaultNamespace: namespace,
-        supabaseProjectId,
-        supabaseLocalEnabled,
+        appSlug,
+        supabaseKubernetesEnabled,
         profileModel,
-      }),
-      executable: true,
-    },
-    {
-      path: `${scriptsRoot}/supabase-local-env.sh`,
-      content: getSupabaseLocalEnvScript({
-        supabaseProjectId,
-        supabaseLocalPorts,
-        profileModel,
+        supabaseHostPorts,
+        providerNamespaces,
+        providerLifecycle,
       }),
       executable: true,
     },
@@ -165,50 +246,116 @@ export function generateMinikubeBaseArtifacts(args: {
 }
 
 function getReadmeMarkdown(args: {
-  namespace: string;
+  appSlug: string;
   defaultAppImage: string;
   monitoringEnabled: boolean;
   authProvider: string;
   authzEngine: string;
   extraResources: string[];
-  supabaseLocalPorts: SupabaseLocalPorts;
-  supabaseProjectId: string | null;
-  supabaseLocalEnabled: boolean;
+  supabaseHostPorts: SupabaseHostPorts;
+  supabaseKubernetesEnabled: boolean;
   profileModel: ResolvedProfileModel;
+  oauthProviders: readonly SupabaseOAuthProviderRuntime[];
+  providerNamespaces: readonly string[];
+  providerLifecycle: readonly MinikubeProviderLifecycle[];
 }): string {
   const {
-    namespace,
+    appSlug,
     defaultAppImage,
     monitoringEnabled,
     authProvider,
     authzEngine,
     extraResources,
-    supabaseLocalPorts,
-    supabaseProjectId,
-    supabaseLocalEnabled,
+    supabaseHostPorts,
+    supabaseKubernetesEnabled,
     profileModel,
+    oauthProviders,
+    providerNamespaces,
+    providerLifecycle,
   } = args;
   const resourceLines = [
-    'namespace.yaml',
+    'namespaces/app.yaml',
+    ...(supabaseKubernetesEnabled ? ['namespaces/supabase.yaml'] : []),
+    ...providerNamespaces.map((namespace) => `namespaces/${namespace}.yaml`),
     'app.configmap.yaml',
     'app/deployment.yaml',
     'app/service.yaml',
+    ...(supabaseKubernetesEnabled
+      ? [
+          'supabase/bootstrap.sql',
+          'supabase/postgres.init.configmap.yaml',
+          'supabase/postgres.pvc.yaml',
+          'supabase/postgres.yaml',
+          'supabase/auth.yaml',
+          'supabase/rest.yaml',
+          'supabase/realtime.yaml',
+          'supabase/storage.yaml',
+          'supabase/imgproxy.yaml',
+          'supabase/meta.yaml',
+          'supabase/gateway.template.yml',
+          'supabase/kong-entrypoint.sh',
+          'supabase/gateway.yaml',
+          'supabase/studio.yaml',
+        ]
+      : []),
     ...extraResources,
   ]
-    .map((r) => `- \`k8s/${r}\``)
+    .map((resource) => `- \`k8s/${resource}\``)
     .join('\n');
+
+  const resetNamespaces = [
+    APP_NAMESPACE,
+    ...(supabaseKubernetesEnabled ? [SUPABASE_NAMESPACE] : []),
+    ...providerNamespaces,
+  ];
+  const resetDescription = `deletes and recreates namespaces ${resetNamespaces
+    .map((namespace) => `\`${namespace}\``)
+    .join(
+      ', ',
+    )} inside the existing profile. This removes app-owned Kubernetes state and provider-owned PVC data for reset namespaces`;
+  const providerNamespaceLine =
+    providerNamespaces.length > 0
+      ? `- Provider namespaces: \`${providerNamespaces.join('`, `')}\`\n`
+      : '';
+  const providerLifecycleLines =
+    providerLifecycle.length > 0
+      ? `\n## Provider Lifecycle Contributions\n\n${providerLifecycle
+          .map((provider) => {
+            const readiness =
+              provider.readinessChecks.length > 0
+                ? provider.readinessChecks
+                    .map((check) => `\`${check.resource}\` in namespace \`${check.namespace}\``)
+                    .join(', ')
+                : 'none';
+            const endpoints =
+              provider.endpoints.length > 0
+                ? provider.endpoints
+                    .map((endpoint) => `\`${endpoint.name}\` = \`${endpoint.url}\``)
+                    .join(', ')
+                : 'none';
+            return `- \`${provider.id}\`: namespace \`${provider.namespace}\`; readiness ${readiness}; endpoints ${endpoints}`;
+          })
+          .join('\n')}\n`
+      : '';
+  const oauthDescription =
+    oauthProviders.length > 0
+      ? `\nConfigured OAuth providers are wired into GoTrue through generated \`GOTRUE_EXTERNAL_*\` runtime keys. The keys are named in \`.env.example\`; values must come from trusted secret resolution for the configured \`credentialsRef\` entries.\n`
+      : '';
 
   return `# Minikube Infra
 
 This directory is generated from \`ankh.config.json\` (infra manifest).
 
-## Requirements
+## Ownership Model
 
-- minikube
-- kubectl
-- docker (when using the default driver)
-- bun (for Expo web export in app image build flow)
-- python3 (for patching generated local Supabase port defaults and checking port availability)
+- App slug / Minikube profile: \`${appSlug}\`
+- App runtime namespace: \`${APP_NAMESPACE}\`
+- Supabase namespace: \`${supabaseKubernetesEnabled ? SUPABASE_NAMESPACE : 'unused'}\`
+${providerNamespaceLine}- Default app image: \`${defaultAppImage}\`
+
+One app owns one complete Minikube profile. Provider-owned workloads are separated by
+Kubernetes namespace inside that profile. There is no shared \`minikube\` profile and no
+host-level Supabase Compose runtime.
 
 ## Quick Start
 
@@ -216,190 +363,102 @@ This directory is generated from \`ankh.config.json\` (infra manifest).
    \`\`\`bash
    cp .env.example .env
    \`\`\`
-2. Optional: import local Supabase credentials from \`supabase status\` output:
-   \`\`\`bash
-   ./scripts/supabase-local-env.sh
-   \`\`\`
-3. Apply baseline infra:
+2. Adjust optional values in \`.env\`; missing Supabase development secrets are generated by \`up.sh\`.
+3. Start infra:
    \`\`\`bash
    ./scripts/up.sh
    \`\`\`
-4. Start app port-forward:
-   \`\`\`bash
-   ./scripts/port-forward.sh
-   \`\`\`
-5. Check status:
+4. Check status:
    \`\`\`bash
    ./scripts/status.sh
    \`\`\`
-6. Tear down:
+5. Stop the app-owned cluster without deleting data:
    \`\`\`bash
    ./scripts/down.sh
    \`\`\`
+
+## Lifecycle Semantics
+
+- \`up.sh\`: starts \`minikube -p ${appSlug}\`, deploys provider namespaces, runs migrations with \`supabase migration up --db-url "$SUPABASE_DB_URL"\`, starts slug-owned port-forwards, and deploys the app runtime.
+- \`down.sh\`: stops slug-owned port-forwards, then stops \`minikube -p ${appSlug}\`. Persistent data remains in the profile.
+- \`reset.sh\`: requires \`ANKH_RESET_CONFIRM=${appSlug}\`; ${resetDescription}. It does not delete the Minikube profile.
+- \`destroy.sh\`: deletes only \`minikube -p ${appSlug}\`.
 
 ## Generated Resources
 
 ${resourceLines}
 
-## Generated Helpers
+## Supabase Runtime
 
-- \`scripts/build-app-image.sh\`
-- \`scripts/port-forward.sh\`
-- \`scripts/supabase-local-env.sh\`
-- \`app-image/Dockerfile\`
+Supabase runtime ownership is Kubernetes. Migration authoring/history remains Supabase
+migration files. Migration execution targets the Kubernetes Postgres endpoint through
+\`supabase migration up --db-url "$SUPABASE_DB_URL"\`.
+
+Supabase manifests are generated from the current official Supabase self-hosting Docker
+topology, service documentation, environment-variable contracts, and pinned official images.
+Kubernetes/Helm is treated as community-driven upstream guidance, not an official
+distribution copied by this generator.
+${oauthDescription}
+
+Pinned images:
+
+- Postgres: \`${SUPABASE_IMAGES.postgres}\`
+- Auth: \`${SUPABASE_IMAGES.auth}\`
+- PostgREST: \`${SUPABASE_IMAGES.rest}\`
+- Realtime: \`${SUPABASE_IMAGES.realtime}\`
+- Storage: \`${SUPABASE_IMAGES.storage}\`
+- Gateway: \`${SUPABASE_IMAGES.gateway}\`
+- Studio: \`${SUPABASE_IMAGES.studio}\`
+
+## Host URLs
+
+- App: \`http://127.0.0.1:${supabaseHostPorts.app}\`
+- Supabase gateway: \`http://127.0.0.1:${supabaseHostPorts.gateway}\`
+- Studio: \`http://127.0.0.1:${supabaseHostPorts.studio}\`
+- DB migration endpoint: \`127.0.0.1:${supabaseHostPorts.db}\`
 
 ## Runtime Conventions
 
-- Namespace: \`${namespace}\`
-- Supabase local project identity: \`${supabaseProjectId ?? 'unused'}\`
 - Monitoring requested: \`${monitoringEnabled ? 'true' : 'false'}\`
 - Auth provider: \`${authProvider}\`
 - Authorization engine: \`${authzEngine}\`
-- Namespace source: \`infra.networking.domain\` first, otherwise project slug hint from CLI.
-
-## App Runtime
-
-Default app runtime manifests are generated:
-
-- \`k8s/app/deployment.yaml\`
-- \`k8s/app/service.yaml\`
-
-Deployment env wiring includes:
-
-- \`ConfigMap/app-infra-config\`
-- \`ConfigMap/app-runtime-auth-env\` (optional)
-- \`ConfigMap/app-runtime-storage-env\` (optional)
-- \`Secret/supabase-auth-secrets\` (optional)
-
-If \`auth.provider\` is \`supabase\`, use:
-
-- \`k8s/auth/supabase/supabase-auth.secret.yaml\`
-- \`k8s/auth/supabase/app-runtime-auth.env.configmap.yaml\`
-- \`auth/supabase-runtime-wiring.md\`
-
-The app deployment should import runtime config sources in this order:
-
-\`\`\`yaml
-envFrom:
-  - configMapRef:
-      name: app-runtime-auth-env
-  - configMapRef:
-      name: app-runtime-storage-env
-  - secretRef:
-      name: supabase-auth-secrets
-\`\`\`
-
-Default runtime knobs in \`.env\`:
-
-- \`APP_BUILD_ENABLED\`
-- \`APP_SOURCE_DIR\`
-- \`APP_WEB_EXPORT_DIR\`
-- \`APP_IMAGE\`
-- \`APP_IMAGE_SYNC_STRATEGY\`
-- \`APP_IMAGE_CLEANUP_ON_DOWN\`
-- \`APP_IMAGE_CLEANUP_MINIKUBE\`
-- \`APP_IMAGE_CLEANUP_DOCKER\`
-- \`AUTH_RUNTIME_MODE\`
-- \`APP_PORT_FORWARD_LOCAL_PORT\`
-- \`APP_PORT_FORWARD_REMOTE_PORT\`
-- \`APP_REPLICAS\`
-- \`APP_FORCE_ROLLOUT_RESTART\`
-- \`SUPABASE_PROJECT_DIR\` (optional supabase CLI project path)
-- \`SUPABASE_LOCAL_PORT_BASE\` (generated default \`${supabaseLocalPorts.base}\`)
-- \`SUPABASE_LOCAL_API_PORT\` (generated default \`${supabaseLocalPorts.api}\`)
-- \`SUPABASE_LOCAL_DB_PORT\` (generated default \`${supabaseLocalPorts.db}\`)
-- \`SUPABASE_LOCAL_STUDIO_PORT\` (generated default \`${supabaseLocalPorts.studio}\`)
-- \`SUPABASE_LOCAL_INBUCKET_PORT\` (generated default \`${supabaseLocalPorts.inbucket}\`)
-- \`SUPABASE_LOCAL_ANALYTICS_PORT\` (generated default \`${supabaseLocalPorts.analytics}\`)
-- \`SUPABASE_LOCAL_SHADOW_PORT\` (generated default \`${supabaseLocalPorts.shadow}\`)
-- \`APP_IMAGE_PULL_SECRET_NAME\` + credentials (optional, private registry)
-- \`SUPABASE_SECRET_SYNC_ENABLED\`
-
-Generated app Supabase local defaults:
-
-- Port base: \`${supabaseLocalPorts.base}\`
-- API: \`http://127.0.0.1:${supabaseLocalPorts.api}\`
-- DB: \`127.0.0.1:${supabaseLocalPorts.db}\`
-- Studio: \`http://127.0.0.1:${supabaseLocalPorts.studio}\`
-- Inbucket: \`http://127.0.0.1:${supabaseLocalPorts.inbucket}\`
-- Analytics: \`http://127.0.0.1:${supabaseLocalPorts.analytics}\`
-- Shadow DB: \`127.0.0.1:${supabaseLocalPorts.shadow}\`
-
-Override with:
-
-- \`SUPABASE_LOCAL_PORT_BASE\`
-- \`SUPABASE_LOCAL_API_PORT\`
-- \`SUPABASE_LOCAL_DB_PORT\`
-- \`SUPABASE_LOCAL_STUDIO_PORT\`
-- \`SUPABASE_LOCAL_INBUCKET_PORT\`
-- \`SUPABASE_LOCAL_ANALYTICS_PORT\`
-- \`SUPABASE_LOCAL_SHADOW_PORT\`
-
-Build flow:
-
-- \`./scripts/up.sh\` calls \`./scripts/build-app-image.sh\` when \`APP_BUILD_ENABLED=true\`.
-- Supabase local project root: \`infra/minikube\`${supabaseLocalEnabled ? '' : ' (unused unless Supabase-backed auth/database/storage is enabled)'}.
-- Supabase local project identity: \`${supabaseProjectId ?? 'unused'}\`; existing local configs with another \`project_id\` must be destroyed and recreated manually.
-- Immutable migrations live in \`supabase/migrations/\` and are applied with \`supabase migration up --local\`.
-${profileModel.enabled ? '- Generated profile desired-state reconciliation lives in `supabase/generated/auth_profiles.sql` and records checksum state in `ankhorage_internal.generated_schema_state`.\n' : ''}- \`./scripts/supabase-local-env.sh\` can populate Supabase keys in \`.env\` from local \`supabase status -o env\`.
-- \`./scripts/supabase-local-env.sh\` writes \`EXPO_PUBLIC_SUPABASE_URL\` + \`EXPO_PUBLIC_SUPABASE_ANON_KEY\` into \`$APP_SOURCE_DIR/.env.local\` (e.g. \`apps/card/.env.local\`) for local app runs.
-- With \`AUTH_RUNTIME_MODE=local\` (default), \`up.sh\` runs \`supabase-local-env.sh\` before app/Kubernetes startup when Supabase-backed local services are enabled.
-- \`supabase-local-env.sh\` checks configured host ports before starting a missing local Supabase stack.
-- \`build-app-image.sh\` runs \`bunx expo export --platform web\` from app source.
-- \`app-image/Dockerfile\` builds an nginx image from exported web artifacts.
-- \`build-app-image.sh\` labels the generated Docker image with Ankhorage metadata for diagnostics.
-- \`up.sh\` syncs runtime image by strategy:
-  - \`APP_IMAGE_SYNC_STRATEGY=docker-load\` (default): load prebuilt local Docker image into Minikube.
-  - \`APP_IMAGE_SYNC_STRATEGY=minikube-build\`: build directly into Minikube image store.
-  - \`APP_IMAGE_SYNC_STRATEGY=none\`: skip local image sync.
-- \`up.sh\` applies image/replica changes and (by default) restarts \`deployment/app-runtime\`.
-- If Supabase keys are provided, \`up.sh\` syncs \`Secret/supabase-auth-secrets\` from env.
-
-Default generated app image tag: \`${defaultAppImage}\`.
-
-## Notes
-
-- Auth/database/authorization resources are generated in adapter modules.
-- Cerbos route/screen policies derive from app navigator + authFlow intent when available.
-- Re-generate infra by saving the manifest or calling the bridge infra endpoint.
+${profileModel.enabled ? '- Generated profile reconciliation lives in `supabase/generated/auth_profiles.sql` and records checksum state in `ankhorage_internal.generated_schema_state`.\n' : ''}
+${providerLifecycleLines}
 `;
 }
 
 function getEnvExample(args: {
-  namespace: string;
+  appSlug: string;
   domain: string;
   extraEnvEntries: string[];
   defaultAppImage: string;
-  supabaseLocalPorts: SupabaseLocalPorts;
-  supabaseLocalEnabled: boolean;
+  supabaseHostPorts: SupabaseHostPorts;
+  supabaseKubernetesEnabled: boolean;
+  oauthProviders: readonly SupabaseOAuthProviderRuntime[];
 }): string {
-  const { namespace, domain, extraEnvEntries, defaultAppImage, supabaseLocalPorts } = args;
+  const { appSlug, domain, extraEnvEntries, defaultAppImage, supabaseHostPorts, oauthProviders } =
+    args;
 
   const baseEntries = [
-    '# Minikube runtime configuration',
-    `ANKH_NAMESPACE=${namespace}`,
-    'MINIKUBE_PROFILE=minikube',
+    '# App-owned Minikube profile configuration',
+    `ANKH_APP_SLUG=${appSlug}`,
     'MINIKUBE_DRIVER=docker',
     'APP_BUILD_ENABLED=true',
     'APP_SOURCE_DIR=',
     'APP_WEB_EXPORT_DIR=.ankh/web-export',
-    '# Canonical Supabase project root. Leave empty to use infra/minikube.',
-    'SUPABASE_PROJECT_DIR=',
-    `SUPABASE_LOCAL_PORT_BASE=${supabaseLocalPorts.base}`,
-    `SUPABASE_LOCAL_SHADOW_PORT=${supabaseLocalPorts.shadow}`,
-    `SUPABASE_LOCAL_API_PORT=${supabaseLocalPorts.api}`,
-    `SUPABASE_LOCAL_DB_PORT=${supabaseLocalPorts.db}`,
-    `SUPABASE_LOCAL_STUDIO_PORT=${supabaseLocalPorts.studio}`,
-    `SUPABASE_LOCAL_INBUCKET_PORT=${supabaseLocalPorts.inbucket}`,
-    `SUPABASE_LOCAL_ANALYTICS_PORT=${supabaseLocalPorts.analytics}`,
     `APP_IMAGE=${defaultAppImage}`,
     'APP_IMAGE_SYNC_STRATEGY=docker-load',
-    'APP_IMAGE_CLEANUP_ON_DOWN=true',
+    'APP_IMAGE_CLEANUP_ON_DESTROY=true',
     'APP_IMAGE_CLEANUP_MINIKUBE=true',
     'APP_IMAGE_CLEANUP_DOCKER=true',
-    'AUTH_RUNTIME_MODE=local',
-    'APP_PORT_FORWARD_LOCAL_PORT=18080',
+    `APP_PORT_FORWARD_LOCAL_PORT=${supabaseHostPorts.app}`,
     'APP_PORT_FORWARD_REMOTE_PORT=80',
+    `SUPABASE_GATEWAY_FORWARD_LOCAL_PORT=${supabaseHostPorts.gateway}`,
+    'SUPABASE_GATEWAY_FORWARD_REMOTE_PORT=8000',
+    `SUPABASE_STUDIO_FORWARD_LOCAL_PORT=${supabaseHostPorts.studio}`,
+    'SUPABASE_STUDIO_FORWARD_REMOTE_PORT=3000',
+    `SUPABASE_DB_FORWARD_LOCAL_PORT=${supabaseHostPorts.db}`,
+    'SUPABASE_DB_FORWARD_REMOTE_PORT=5432',
     'APP_REPLICAS=1',
     'APP_FORCE_ROLLOUT_RESTART=true',
     '',
@@ -413,6 +472,45 @@ function getEnvExample(args: {
     '# Optional app networking domain',
     `APP_DOMAIN=${domain}`,
     '',
+    '# Supabase Kubernetes runtime secrets',
+    'POSTGRES_PASSWORD=',
+    'JWT_SECRET=',
+    'SUPABASE_ANON_KEY=',
+    'SUPABASE_SERVICE_ROLE_KEY=',
+    'SUPABASE_PUBLISHABLE_KEY=',
+    'SUPABASE_SECRET_KEY=',
+    'DASHBOARD_USERNAME=supabase',
+    'DASHBOARD_PASSWORD=',
+    'SECRET_KEY_BASE=',
+    'REALTIME_DB_ENC_KEY=',
+    'PG_META_CRYPTO_KEY=',
+    'S3_PROTOCOL_ACCESS_KEY_ID=',
+    'S3_PROTOCOL_ACCESS_KEY_SECRET=',
+    'JWT_EXPIRY=3600',
+    'SITE_URL=',
+    'OAUTH_NATIVE_REDIRECT_URLS=',
+    'ADDITIONAL_REDIRECT_URLS=',
+    'SUPABASE_PUBLIC_URL=',
+    'API_EXTERNAL_URL=',
+    'ENABLE_EMAIL_SIGNUP=true',
+    'ENABLE_EMAIL_AUTOCONFIRM=true',
+    'SMTP_ADMIN_EMAIL=admin@example.com',
+    'SMTP_HOST=localhost',
+    'SMTP_PORT=2500',
+    'SMTP_USER=',
+    'SMTP_PASS=',
+    'SMTP_SENDER_NAME=Ankhorage',
+    'PGRST_DB_SCHEMAS=public,storage,graphql_public',
+    'PGRST_DB_MAX_ROWS=1000',
+    'PGRST_DB_EXTRA_SEARCH_PATH=public',
+    'GLOBAL_S3_BUCKET=stub',
+    'STORAGE_TENANT_ID=stub',
+    'REGION=stub',
+    'SUPABASE_DB_URL=',
+    'EXPO_PUBLIC_SUPABASE_URL=',
+    'EXPO_PUBLIC_SUPABASE_ANON_KEY=',
+    ...getOAuthEnvExampleEntries(oauthProviders),
+    '',
     '# Adapter-provided runtime keys',
   ];
 
@@ -425,6 +523,275 @@ function getEnvExample(args: {
   return `${unique.join('\n')}\n`;
 }
 
+function getOAuthEnvExampleEntries(providers: readonly SupabaseOAuthProviderRuntime[]): string[] {
+  if (providers.length === 0) return [];
+
+  return [
+    '',
+    '# OAuth provider runtime values resolved from trusted credentialsRef entries',
+    ...providers.flatMap((provider) => [
+      `# ${provider.id}: ${provider.credentialsRef}`,
+      `GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID=`,
+      `GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET=`,
+      `GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI=`,
+    ]),
+  ];
+}
+
+function getOAuthScriptEnvDefaults(providers: readonly SupabaseOAuthProviderRuntime[]): string {
+  if (providers.length === 0) return '';
+
+  return providers
+    .map(
+      (
+        provider,
+      ) => `  export GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID="\${GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID:-}"
+  export GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET="\${GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET:-}"
+  export GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI="\${GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI:-\${API_EXTERNAL_URL}/callback}"`,
+    )
+    .join('\n');
+}
+
+function getOAuthRuntimeSecretLines(providers: readonly SupabaseOAuthProviderRuntime[]): string {
+  if (providers.length === 0) return '';
+
+  return providers
+    .map(
+      (provider) => `GOTRUE_EXTERNAL_${provider.envPrefix}_ENABLED=true
+GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID=\${GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID}
+GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET=\${GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET}
+GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI=\${GOTRUE_EXTERNAL_${provider.envPrefix}_REDIRECT_URI}`,
+    )
+    .join('\n');
+}
+
+function getOAuthRuntimeValidationScript(
+  providers: readonly SupabaseOAuthProviderRuntime[],
+): string {
+  if (providers.length === 0) return '';
+
+  const checks = providers
+    .map(
+      (
+        provider,
+      ) => `  if [[ -z "\${GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID:-}" || -z "\${GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET:-}" ]]; then
+    echo "OAuth provider ${provider.id} requires trusted runtime values GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID and GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET from credentialsRef ${provider.credentialsRef}."
+    exit 1
+  fi`,
+    )
+    .join('\n');
+
+  return `
+  # OAuth provider secrets must be resolved by trusted host code before Kubernetes sync.
+${checks}`;
+}
+
+function getSupabaseOAuthCallbackRoute(providers: readonly SupabaseOAuthProviderRuntime[]): string {
+  return providers[0]?.callbackRoute ?? '/auth/callback';
+}
+
+function getOAuthVaultResolutionScript(args: {
+  appSlug: string;
+  oauthProviders: readonly SupabaseOAuthProviderRuntime[];
+  secretStoreProvider: string;
+}): string {
+  const { appSlug, oauthProviders, secretStoreProvider } = args;
+  if (secretStoreProvider !== 'supabase-vault' || oauthProviders.length === 0) {
+    return `
+resolve_oauth_credentials_from_vault() {
+  return 0
+}
+`;
+  }
+
+  const lines = oauthProviders
+    .map((provider) => {
+      const ref = escapeSingleQuotedSql(provider.credentialsRef);
+      const idKey = `GOTRUE_EXTERNAL_${provider.envPrefix}_CLIENT_ID`;
+      const secretKey = `GOTRUE_EXTERNAL_${provider.envPrefix}_SECRET`;
+
+      return `  if [[ -z "\${${idKey}:-}" || -z "\${${secretKey}:-}" ]]; then
+    local resolved_client_id resolved_client_secret
+    resolved_client_id="$(resolve_vault_secret_field '${ref}' 'clientId')"
+    resolved_client_secret="$(resolve_vault_secret_field '${ref}' 'clientSecret')"
+    if [[ -n "\${resolved_client_id}" ]]; then
+      export ${idKey}="\${resolved_client_id}"
+    fi
+    if [[ -n "\${resolved_client_secret}" ]]; then
+      export ${secretKey}="\${resolved_client_secret}"
+    fi
+  fi`;
+    })
+    .join('\n');
+
+  return `
+resolve_vault_secret_field() {
+  local ref="\${1}"
+  local field="\${2}"
+  psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -Atq -c "select coalesce(decrypted.decrypted_secret::jsonb ->> '\${field}', '') from ankh_secret_store.secret_metadata metadata join vault.decrypted_secrets decrypted on decrypted.id = metadata.vault_secret_id where metadata.project_id = '${escapeSingleQuotedSql(
+    appSlug,
+  )}' and metadata.environment = 'local' and metadata.secret_ref = '\${ref}' limit 1;" 2>/dev/null || true
+}
+
+resolve_oauth_credentials_from_vault() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+${lines}
+}
+`;
+}
+
+function escapeSingleQuotedSql(value: string): string {
+  return value.replace(/'/gu, "''");
+}
+
+function escapeShellDoubleQuoted(value: string): string {
+  return value.replace(/["\\$`]/gu, (char) => `\\${char}`);
+}
+
+function getProviderLifecycleStageScripts(
+  providerLifecycle: readonly MinikubeProviderLifecycle[],
+): string {
+  return `${getProviderLifecycleCommandFunction({
+    functionName: 'run_provider_migrations',
+    emptyReturn: 'return 0',
+    commands: providerLifecycle.flatMap((provider) =>
+      provider.migrationCommands.map((command) => ({
+        providerId: provider.id,
+        label: command.label,
+        command: command.command,
+      })),
+    ),
+  })}
+
+${getProviderLifecycleCommandFunction({
+  functionName: 'run_provider_reconciliation',
+  emptyReturn: 'return 0',
+  commands: providerLifecycle.flatMap((provider) =>
+    provider.reconciliationCommands.map((command) => ({
+      providerId: provider.id,
+      label: command.label,
+      command: command.command,
+    })),
+  ),
+})}
+
+${getProviderReadinessFunction(providerLifecycle)}`;
+}
+
+function getProviderLifecycleCommandFunction(args: {
+  functionName: string;
+  emptyReturn: string;
+  commands: readonly { providerId: string; label: string; command: string }[];
+}): string {
+  if (args.commands.length === 0) {
+    return `${args.functionName}() {
+  ${args.emptyReturn}
+}`;
+  }
+
+  const body = args.commands
+    .map(
+      (command) => `  echo "Running provider ${escapeShellDoubleQuoted(
+        command.providerId,
+      )} ${escapeShellDoubleQuoted(command.label)}."
+${indentShellBlock(command.command.trim(), 2)}`,
+    )
+    .join('\n\n');
+
+  return `${args.functionName}() {
+${body}
+}`;
+}
+
+function getProviderReadinessFunction(
+  providerLifecycle: readonly MinikubeProviderLifecycle[],
+): string {
+  const checks = providerLifecycle.flatMap((provider) =>
+    provider.readinessChecks.map((check) => ({ providerId: provider.id, ...check })),
+  );
+
+  if (checks.length === 0) {
+    return `wait_for_provider_readiness() {
+  return 0
+}`;
+  }
+
+  const body = checks
+    .map(
+      (check) =>
+        `  kubectl --context "\${PROFILE}" -n "${escapeShellDoubleQuoted(
+          check.namespace,
+        )}" rollout status "${escapeShellDoubleQuoted(
+          check.resource,
+        )}" --timeout=${check.timeoutSeconds}s`,
+    )
+    .join('\n');
+
+  return `wait_for_provider_readiness() {
+${body}
+}`;
+}
+
+function getProviderStatusScript(providerLifecycle: readonly MinikubeProviderLifecycle[]): string {
+  if (providerLifecycle.length === 0) {
+    return '';
+  }
+
+  return providerLifecycle
+    .map((provider) => {
+      const endpointLines = provider.endpoints
+        .map(
+          (endpoint) =>
+            `  echo "- provider ${escapeShellDoubleQuoted(
+              provider.id,
+            )} endpoint/${escapeShellDoubleQuoted(endpoint.name)}: ${escapeShellDoubleQuoted(
+              endpoint.url,
+            )}"`,
+        )
+        .join('\n');
+      const readinessLines = provider.readinessChecks
+        .map(
+          (check) => `  if kubectl --context "\${PROFILE}" -n "${escapeShellDoubleQuoted(
+            check.namespace,
+          )}" rollout status "${escapeShellDoubleQuoted(
+            check.resource,
+          )}" --timeout=5s >/dev/null 2>&1; then
+    echo "- provider ${escapeShellDoubleQuoted(provider.id)}/${escapeShellDoubleQuoted(
+      check.label,
+    )}: ready"
+  else
+    echo "- provider ${escapeShellDoubleQuoted(provider.id)}/${escapeShellDoubleQuoted(
+      check.label,
+    )}: not ready"
+  fi`,
+        )
+        .join('\n');
+      const customStatusLines = provider.statusChecks
+        .map(
+          (check) => `  echo "Running provider ${escapeShellDoubleQuoted(
+            provider.id,
+          )} status check ${escapeShellDoubleQuoted(check.label)}."
+${indentShellBlock(check.command.trim(), 2)}`,
+        )
+        .join('\n');
+
+      return [endpointLines, readinessLines, customStatusLines].filter(Boolean).join('\n');
+    })
+    .filter(Boolean)
+    .join('\n');
+}
+
+function indentShellBlock(value: string, spaces: number): string {
+  const indent = ' '.repeat(spaces);
+  return value
+    .split('\n')
+    .map((line) => `${indent}${line}`)
+    .join('\n');
+}
+
 function getNamespaceManifest(namespace: string): string {
   return `apiVersion: v1
 kind: Namespace
@@ -432,11 +799,12 @@ metadata:
   name: ${namespace}
   labels:
     app.kubernetes.io/part-of: ankhorage
+    ankhorage.io/namespace-role: ${namespace}
 `;
 }
 
 function getAppConfigMap(args: {
-  namespace: string;
+  appSlug: string;
   authScope: string;
   authProvider: string;
   databaseProvider: string;
@@ -446,7 +814,7 @@ function getAppConfigMap(args: {
   domain: string;
 }): string {
   const {
-    namespace,
+    appSlug,
     authScope,
     authProvider,
     databaseProvider,
@@ -467,15 +835,18 @@ function getAppConfigMap(args: {
 kind: ConfigMap
 metadata:
   name: app-infra-config
-  namespace: ${namespace}
+  namespace: ${APP_NAMESPACE}
 data:
+  ANKH_APP_SLUG: "${appSlug}"
   DEPLOYMENT_TARGET: "minikube"
+  APP_NAMESPACE: "${APP_NAMESPACE}"
+  SUPABASE_NAMESPACE: "${SUPABASE_NAMESPACE}"
   MONITORING_ENABLED: "${monitoringEnabled ? 'true' : 'false'}"
   AUTH_SCOPE: "${authScope}"
   AUTH_PROVIDER: "${authProvider}"
   DATABASE_PROVIDER: "${databaseProvider}"
   SECRET_STORE_PROVIDER: "${secretStoreProvider}"
-${storageLines}  NETWORK_DOMAIN: "${domain}"
+${storageLines}  NETWORK_DOMAIN: "${escapeYamlDoubleQuoted(domain)}"
 `;
 }
 
@@ -514,6 +885,46 @@ function resolveAppInfraStorageMetadata(
   return null;
 }
 
+function resolveSupabaseOAuthProviders(
+  manifest: InfraManifestInput,
+): readonly SupabaseOAuthProviderRuntime[] {
+  const oauth = manifest.auth?.oauth;
+  if (!oauth?.enabled) return [];
+  const callbackRoute = normalizeOAuthCallbackRoute(oauth.callbackRoute);
+
+  return oauth.providers
+    .filter((provider) => provider.enabled !== false)
+    .map((provider) => {
+      const id = provider.id.trim();
+      const credentialsRef = provider.credentialsRef?.trim();
+      if (!credentialsRef) {
+        throw new Error(`OAuth provider "${id}" is enabled but does not define credentialsRef.`);
+      }
+
+      const envPrefix = id
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/gu, '_')
+        .replace(/^_+|_+$/gu, '');
+      if (!envPrefix) {
+        throw new Error(`OAuth provider "${id}" cannot be mapped to GoTrue environment keys.`);
+      }
+
+      return {
+        id,
+        envPrefix,
+        credentialsRef,
+        callbackRoute,
+      };
+    });
+}
+
+function normalizeOAuthCallbackRoute(rawRoute: string | undefined): string {
+  const trimmedRoute = rawRoute?.trim();
+  const route = trimmedRoute && trimmedRoute.length > 0 ? trimmedRoute : '/auth/callback';
+  const withLeadingSlash = route.startsWith('/') ? route : `/${route}`;
+  return withLeadingSlash.replace(/\/+/gu, '/');
+}
+
 function normalizeBuckets(rawBuckets: readonly string[]): string[] {
   const normalized: string[] = [];
   const seen = new Set<string>();
@@ -529,19 +940,35 @@ function normalizeBuckets(rawBuckets: readonly string[]): string[] {
   return normalized;
 }
 
-function escapeYamlDoubleQuoted(value: string): string {
-  return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
-}
-
-function getKustomizationManifest(extraResources: string[]): string {
+function getKustomizationManifest(args: {
+  namespaceResources: string[];
+  supabaseEnabled: boolean;
+  extraResources: string[];
+}): string {
+  const supabaseResources = args.supabaseEnabled
+    ? [
+        'supabase/postgres.init.configmap.yaml',
+        'supabase/postgres.pvc.yaml',
+        'supabase/postgres.yaml',
+        'supabase/auth.yaml',
+        'supabase/rest.yaml',
+        'supabase/realtime.yaml',
+        'supabase/imgproxy.yaml',
+        'supabase/storage.yaml',
+        'supabase/meta.yaml',
+        'supabase/gateway.yaml',
+        'supabase/studio.yaml',
+      ]
+    : [];
   const resources = [
-    'namespace.yaml',
+    ...args.namespaceResources,
     'app.configmap.yaml',
     'app/deployment.yaml',
     'app/service.yaml',
-    ...extraResources,
+    ...supabaseResources,
+    ...args.extraResources,
   ];
-  const resourceLines = resources.map((r) => `  - ${r}`).join('\n');
+  const resourceLines = resources.map((resource) => `  - ${resource}`).join('\n');
 
   return `apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -550,14 +977,12 @@ ${resourceLines}
 `;
 }
 
-function getAppDeploymentManifest(args: { namespace: string; defaultAppImage: string }): string {
-  const { namespace, defaultAppImage } = args;
-
+function getAppDeploymentManifest(defaultAppImage: string): string {
   return `apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-runtime
-  namespace: ${namespace}
+  namespace: ${APP_NAMESPACE}
   labels:
     app.kubernetes.io/name: app-runtime
 spec:
@@ -587,7 +1012,7 @@ spec:
                 name: app-runtime-storage-env
                 optional: true
             - secretRef:
-                name: supabase-auth-secrets
+                name: supabase-public-runtime
                 optional: true
           readinessProbe:
             httpGet:
@@ -604,12 +1029,12 @@ spec:
 `;
 }
 
-function getAppServiceManifest(namespace: string): string {
+function getAppServiceManifest(): string {
   return `apiVersion: v1
 kind: Service
 metadata:
   name: app-runtime
-  namespace: ${namespace}
+  namespace: ${APP_NAMESPACE}
   labels:
     app.kubernetes.io/name: app-runtime
 spec:
@@ -623,31 +1048,1638 @@ spec:
 `;
 }
 
+function getSupabaseResourceFiles(k8sRoot: string): GeneratedInfrastructureFile[] {
+  return [
+    {
+      path: `${k8sRoot}/supabase/bootstrap.sql`,
+      content: getSupabaseBootstrapSql(),
+    },
+    {
+      path: `${k8sRoot}/supabase/postgres.init.configmap.yaml`,
+      content: getSupabasePostgresInitConfigMap(),
+    },
+    {
+      path: `${k8sRoot}/supabase/postgres.pvc.yaml`,
+      content: getSupabasePvcManifest('supabase-postgres-data', '20Gi'),
+    },
+    {
+      path: `${k8sRoot}/supabase/postgres.yaml`,
+      content: getSupabasePostgresManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/auth.yaml`,
+      content: getSupabaseAuthManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/rest.yaml`,
+      content: getSupabaseRestManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/realtime.yaml`,
+      content: getSupabaseRealtimeManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/storage.yaml`,
+      content: getSupabaseStorageManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/imgproxy.yaml`,
+      content: getSupabaseImgproxyManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/meta.yaml`,
+      content: getSupabaseMetaManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/gateway.template.yml`,
+      content: getSupabaseGatewayTemplate(),
+    },
+    {
+      path: `${k8sRoot}/supabase/kong-entrypoint.sh`,
+      content: getSupabaseKongEntrypointScript(),
+      executable: true,
+    },
+    {
+      path: `${k8sRoot}/supabase/gateway.yaml`,
+      content: getSupabaseGatewayManifest(),
+    },
+    {
+      path: `${k8sRoot}/supabase/studio.yaml`,
+      content: getSupabaseStudioManifest(),
+    },
+  ];
+}
+
+function getSupabaseBootstrapSql(): string {
+  return `-- Generated from the official Supabase self-hosting Docker database bootstrap contract.
+-- Applied by scripts/up.sh after Postgres is ready and before Supabase services start.
+\\set pgpass \`echo "$POSTGRES_PASSWORD"\`
+\\set jwt_secret \`echo "$JWT_SECRET"\`
+\\set jwt_exp \`echo "$JWT_EXP"\`
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN
+    CREATE ROLE anon NOLOGIN NOINHERIT;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authenticated') THEN
+    CREATE ROLE authenticated NOLOGIN NOINHERIT;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN
+    CREATE ROLE service_role NOLOGIN NOINHERIT BYPASSRLS;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authenticator') THEN
+    CREATE ROLE authenticator NOINHERIT LOGIN;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_admin') THEN
+    CREATE ROLE supabase_admin LOGIN CREATEROLE CREATEDB REPLICATION BYPASSRLS;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_auth_admin') THEN
+    CREATE ROLE supabase_auth_admin LOGIN CREATEROLE;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_storage_admin') THEN
+    CREATE ROLE supabase_storage_admin LOGIN CREATEROLE;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_functions_admin') THEN
+    CREATE ROLE supabase_functions_admin LOGIN CREATEROLE;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'pgbouncer') THEN
+    CREATE ROLE pgbouncer LOGIN;
+  END IF;
+END
+$$;
+
+ALTER ROLE authenticator WITH PASSWORD :'pgpass';
+ALTER ROLE pgbouncer WITH PASSWORD :'pgpass';
+ALTER ROLE supabase_auth_admin WITH PASSWORD :'pgpass';
+ALTER ROLE supabase_functions_admin WITH PASSWORD :'pgpass';
+ALTER ROLE supabase_storage_admin WITH PASSWORD :'pgpass';
+ALTER ROLE supabase_admin WITH PASSWORD :'pgpass';
+
+GRANT anon, authenticated, service_role TO authenticator;
+GRANT anon, authenticated, service_role TO supabase_storage_admin;
+GRANT postgres TO supabase_auth_admin;
+GRANT postgres TO supabase_storage_admin;
+GRANT postgres TO supabase_functions_admin;
+GRANT pg_monitor TO supabase_admin;
+
+CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION supabase_auth_admin;
+CREATE SCHEMA IF NOT EXISTS storage AUTHORIZATION supabase_storage_admin;
+CREATE SCHEMA IF NOT EXISTS graphql_public;
+CREATE SCHEMA IF NOT EXISTS _realtime AUTHORIZATION supabase_admin;
+
+GRANT USAGE ON SCHEMA public, graphql_public TO anon, authenticated, service_role;
+GRANT USAGE ON SCHEMA auth TO supabase_auth_admin;
+GRANT USAGE ON SCHEMA storage TO supabase_storage_admin, anon, authenticated, service_role;
+GRANT USAGE ON SCHEMA _realtime TO supabase_admin;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO anon, authenticated, service_role;
+
+ALTER DATABASE postgres SET "app.settings.jwt_secret" TO :'jwt_secret';
+ALTER DATABASE postgres SET "app.settings.jwt_exp" TO :'jwt_exp';
+
+SELECT 'CREATE DATABASE _supabase WITH OWNER supabase_admin'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '_supabase')\\gexec
+`;
+}
+
+function getSupabasePostgresInitConfigMap(): string {
+  return `apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: supabase-postgres-init
+  namespace: ${SUPABASE_NAMESPACE}
+data:
+  99-ankhorage-local-dev-extensions.sql: |
+    -- Local Minikube bootstrap for extension setup performed before runtime migrations.
+    alter role postgres with superuser;
+    grant pg_read_server_files to postgres;
+    grant pg_read_server_files to supabase_admin;
+    grant execute on function pg_read_file(text) to public;
+    grant execute on function pg_read_file(text, bigint, bigint) to public;
+`;
+}
+
+function getSupabasePvcManifest(name: string, size: string): string {
+  return `apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ${name}
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${size}
+`;
+}
+
+function getSupabasePostgresManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: ${SUPABASE_IMAGES.postgres}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: POSTGRES_PASSWORD
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: postgres
+            - name: PGDATABASE
+              value: postgres
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_HOST
+              value: /var/run/postgresql
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: JWT_SECRET
+            - name: JWT_EXP
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: JWT_EXPIRY
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d/99-ankhorage-local-dev-extensions.sql
+              subPath: 99-ankhorage-local-dev-extensions.sql
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          args:
+            - postgres
+            - -c
+            - config_file=/etc/postgresql/postgresql.conf
+            - -c
+            - log_min_messages=fatal
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: supabase-postgres-data
+        - name: init-scripts
+          configMap:
+            name: supabase-postgres-init
+`;
+}
+
+function getSupabaseAuthManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-auth
+  ports:
+    - name: http
+      port: 9999
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-auth
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-auth
+    spec:
+      containers:
+        - name: auth
+          image: ${SUPABASE_IMAGES.auth}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9999
+              name: http
+          env:
+            - name: GOTRUE_API_HOST
+              value: "0.0.0.0"
+            - name: GOTRUE_API_PORT
+              value: "9999"
+            - name: API_EXTERNAL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: API_EXTERNAL_URL
+            - name: GOTRUE_SITE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SITE_URL
+            - name: GOTRUE_URI_ALLOW_LIST
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: ADDITIONAL_REDIRECT_URLS
+            - name: GOTRUE_JWT_ISSUER
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: API_EXTERNAL_URL
+            - name: GOTRUE_DB_DRIVER
+              value: postgres
+            - name: GOTRUE_DB_DATABASE_URL
+              value: "postgres://supabase_auth_admin:$(POSTGRES_PASSWORD)@postgres.${SUPABASE_NAMESPACE}.svc.cluster.local:5432/postgres?search_path=auth&sslmode=disable"
+            - name: GOTRUE_JWT_AUD
+              value: authenticated
+            - name: GOTRUE_JWT_DEFAULT_GROUP_NAME
+              value: authenticated
+            - name: GOTRUE_JWT_ADMIN_ROLES
+              value: service_role
+            - name: GOTRUE_JWT_EXP
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: JWT_EXPIRY
+            - name: GOTRUE_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: JWT_SECRET
+            - name: GOTRUE_EXTERNAL_EMAIL_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: ENABLE_EMAIL_SIGNUP
+            - name: GOTRUE_MAILER_AUTOCONFIRM
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: ENABLE_EMAIL_AUTOCONFIRM
+            - name: GOTRUE_SMTP_ADMIN_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_ADMIN_EMAIL
+            - name: GOTRUE_SMTP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_HOST
+            - name: GOTRUE_SMTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_PORT
+            - name: GOTRUE_SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SMTP_USER
+            - name: GOTRUE_SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SMTP_PASS
+            - name: GOTRUE_SMTP_SENDER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SMTP_SENDER_NAME
+          envFrom:
+            - secretRef:
+                name: supabase-runtime-secrets
+            - configMapRef:
+                name: supabase-runtime-config
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+`;
+}
+
+function getSupabaseRestManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: rest
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-rest
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rest
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-rest
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-rest
+    spec:
+      containers:
+        - name: rest
+          image: ${SUPABASE_IMAGES.rest}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: PGRST_DB_URI
+              value: "postgres://authenticator:$(POSTGRES_PASSWORD)@postgres.${SUPABASE_NAMESPACE}.svc.cluster.local:5432/postgres"
+            - name: PGRST_DB_SCHEMAS
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: PGRST_DB_SCHEMAS
+            - name: PGRST_DB_ANON_ROLE
+              value: anon
+            - name: PGRST_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: JWT_SECRET
+            - name: PGRST_DB_USE_LEGACY_GUCS
+              value: "false"
+          envFrom:
+            - secretRef:
+                name: supabase-runtime-secrets
+            - configMapRef:
+                name: supabase-runtime-config
+`;
+}
+
+function getSupabaseRealtimeManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: realtime
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-realtime
+  ports:
+    - name: http
+      port: 4000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: realtime
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-realtime
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-realtime
+    spec:
+      containers:
+        - name: realtime
+          image: ${SUPABASE_IMAGES.realtime}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+              name: http
+          env:
+            - name: PORT
+              value: "4000"
+            - name: DB_HOST
+              value: "postgres.${SUPABASE_NAMESPACE}.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: postgres
+            - name: DB_USER
+              value: supabase_admin
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: POSTGRES_PASSWORD
+            - name: API_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: JWT_SECRET
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SECRET_KEY_BASE
+            - name: DB_AFTER_CONNECT_QUERY
+              value: "SET search_path TO _realtime"
+            - name: DB_ENC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: REALTIME_DB_ENC_KEY
+            - name: METRICS_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: JWT_SECRET
+            - name: APP_NAME
+              value: realtime
+            - name: SEED_SELF_HOST
+              value: "true"
+            - name: RUN_JANITOR
+              value: "true"
+            - name: DISABLE_HEALTHCHECK_LOGGING
+              value: "true"
+`;
+}
+
+function getSupabaseStorageManifest(): string {
+  return `${getSupabasePvcManifest('supabase-storage-data', '10Gi')}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-storage
+  ports:
+    - name: http
+      port: 5000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-storage
+    spec:
+      containers:
+        - name: storage
+          image: ${SUPABASE_IMAGES.storage}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+          env:
+            - name: ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SUPABASE_ANON_KEY
+            - name: SERVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SUPABASE_SERVICE_ROLE_KEY
+            - name: AUTH_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: JWT_SECRET
+            - name: DATABASE_URL
+              value: "postgres://supabase_storage_admin:$(POSTGRES_PASSWORD)@postgres.${SUPABASE_NAMESPACE}.svc.cluster.local:5432/postgres?search_path=storage&sslmode=disable"
+            - name: POSTGREST_URL
+              value: "http://rest.${SUPABASE_NAMESPACE}.svc.cluster.local:3000"
+            - name: STORAGE_BACKEND
+              value: file
+            - name: STORAGE_PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SUPABASE_PUBLIC_URL
+            - name: REQUEST_ALLOW_X_FORWARDED_PATH
+              value: "true"
+            - name: FILE_SIZE_LIMIT
+              value: "52428800"
+            - name: FILE_STORAGE_BACKEND_PATH
+              value: /var/lib/storage
+            - name: TENANT_ID
+              value: stub
+            - name: REGION
+              value: local
+            - name: GLOBAL_S3_BUCKET
+              value: local
+            - name: IMGPROXY_URL
+              value: "http://imgproxy.${SUPABASE_NAMESPACE}.svc.cluster.local:5001"
+          envFrom:
+            - secretRef:
+                name: supabase-runtime-secrets
+            - configMapRef:
+                name: supabase-runtime-config
+          volumeMounts:
+            - name: storage
+              mountPath: /var/lib/storage
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: supabase-storage-data
+`;
+}
+
+function getSupabaseImgproxyManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: imgproxy
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-imgproxy
+  ports:
+    - name: http
+      port: 5001
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imgproxy
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-imgproxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-imgproxy
+    spec:
+      containers:
+        - name: imgproxy
+          image: ${SUPABASE_IMAGES.imgproxy}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
+              name: http
+          env:
+            - name: IMGPROXY_BIND
+              value: ":5001"
+`;
+}
+
+function getSupabaseMetaManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: meta
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-meta
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meta
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-meta
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-meta
+    spec:
+      containers:
+        - name: meta
+          image: ${SUPABASE_IMAGES.meta}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PG_META_PORT
+              value: "8080"
+            - name: PG_META_DB_HOST
+              value: "postgres.${SUPABASE_NAMESPACE}.svc.cluster.local"
+            - name: PG_META_DB_PORT
+              value: "5432"
+            - name: PG_META_DB_NAME
+              value: postgres
+            - name: PG_META_DB_USER
+              value: postgres
+            - name: PG_META_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: POSTGRES_PASSWORD
+            - name: CRYPTO_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: PG_META_CRYPTO_KEY
+`;
+}
+
+function getSupabaseGatewayTemplate(): string {
+  return `_format_version: '2.1'
+_transform: true
+
+consumers:
+  - username: DASHBOARD
+  - username: anon
+    keyauth_credentials:
+      - key: $SUPABASE_ANON_KEY
+      - key: $SUPABASE_PUBLISHABLE_KEY
+  - username: service_role
+    keyauth_credentials:
+      - key: $SUPABASE_SERVICE_KEY
+      - key: $SUPABASE_SECRET_KEY
+
+acls:
+  - consumer: anon
+    group: anon
+  - consumer: service_role
+    group: admin
+
+basicauth_credentials:
+  - consumer: DASHBOARD
+    username: '$DASHBOARD_USERNAME'
+    password: '$DASHBOARD_PASSWORD'
+
+services:
+  - name: auth-v1-open
+    url: http://auth.${SUPABASE_NAMESPACE}.svc.cluster.local:9999/verify
+    routes:
+      - name: auth-v1-open
+        strip_path: true
+        paths: [/auth/v1/verify]
+    plugins:
+      - name: cors
+  - name: auth-v1-open-callback
+    url: http://auth.${SUPABASE_NAMESPACE}.svc.cluster.local:9999/callback
+    routes:
+      - name: auth-v1-open-callback
+        strip_path: true
+        paths: [/auth/v1/callback]
+    plugins:
+      - name: cors
+  - name: auth-v1-open-authorize
+    url: http://auth.${SUPABASE_NAMESPACE}.svc.cluster.local:9999/authorize
+    routes:
+      - name: auth-v1-open-authorize
+        strip_path: true
+        paths: [/auth/v1/authorize]
+    plugins:
+      - name: cors
+  - name: auth-v1-open-jwks
+    url: http://auth.${SUPABASE_NAMESPACE}.svc.cluster.local:9999/.well-known/jwks.json
+    routes:
+      - name: auth-v1-open-jwks
+        strip_path: true
+        paths: [/auth/v1/.well-known/jwks.json]
+    plugins:
+      - name: cors
+  - name: auth-v1
+    url: http://auth.${SUPABASE_NAMESPACE}.svc.cluster.local:9999/
+    routes:
+      - name: auth-v1-all
+        strip_path: true
+        paths: [/auth/v1/]
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+          replace:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+  - name: rest-v1
+    url: http://rest.${SUPABASE_NAMESPACE}.svc.cluster.local:3000/
+    routes:
+      - name: rest-v1-all
+        strip_path: true
+        paths: [/rest/v1/]
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+          replace:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+  - name: graphql-v1
+    url: http://rest.${SUPABASE_NAMESPACE}.svc.cluster.local:3000/rpc/graphql
+    routes:
+      - name: graphql-v1-all
+        strip_path: true
+        paths: [/graphql/v1]
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "Content-Profile: graphql_public"
+              - "Authorization: $LUA_AUTH_EXPR"
+          replace:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+  - name: realtime-v1-ws
+    url: http://realtime.${SUPABASE_NAMESPACE}.svc.cluster.local:4000/socket
+    protocol: ws
+    routes:
+      - name: realtime-v1-ws
+        strip_path: true
+        paths: [/realtime/v1/]
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "x-api-key:$LUA_RT_WS_EXPR"
+          replace:
+            querystring:
+              - "apikey:$LUA_RT_WS_EXPR"
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+  - name: realtime-v1-rest-openapi
+    url: http://realtime.${SUPABASE_NAMESPACE}.svc.cluster.local:4000/api/openapi
+    protocol: http
+    routes:
+      - name: realtime-v1-rest-openapi
+        strip_path: true
+        paths: [/realtime/v1/api/openapi]
+    plugins:
+      - name: request-termination
+        config:
+          status_code: 403
+          message: "Access is forbidden."
+  - name: realtime-v1-rest-tenants
+    url: http://realtime.${SUPABASE_NAMESPACE}.svc.cluster.local:4000/api/tenants
+    protocol: http
+    routes:
+      - name: realtime-v1-rest-tenants
+        strip_path: true
+        paths: [/realtime/v1/api/tenants]
+    plugins:
+      - name: request-termination
+        config:
+          status_code: 403
+          message: "Access is forbidden."
+  - name: realtime-v1-rest
+    url: http://realtime.${SUPABASE_NAMESPACE}.svc.cluster.local:4000/api
+    protocol: http
+    routes:
+      - name: realtime-v1-rest
+        strip_path: true
+        paths: [/realtime/v1/api]
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+          replace:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin, anon]
+  - name: storage-v1
+    url: http://storage.${SUPABASE_NAMESPACE}.svc.cluster.local:5000/
+    routes:
+      - name: storage-v1-all
+        strip_path: true
+        paths: [/storage/v1/]
+    plugins:
+      - name: cors
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+          replace:
+            headers:
+              - "Authorization: $LUA_AUTH_EXPR"
+      - name: post-function
+        config:
+          access:
+            - |
+              local auth = kong.request.get_header("authorization")
+              if auth == nil or auth == "" or auth:find("^%s*$") then
+                kong.service.request.clear_header("authorization")
+              end
+  - name: meta
+    url: http://meta.${SUPABASE_NAMESPACE}.svc.cluster.local:8080/
+    routes:
+      - name: meta-all
+        strip_path: true
+        paths: [/pg/]
+    plugins:
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow: [admin]
+  - name: dashboard
+    url: http://studio.${SUPABASE_NAMESPACE}.svc.cluster.local:3000/
+    routes:
+      - name: dashboard-all
+        strip_path: true
+        paths: [/]
+    plugins:
+      - name: cors
+      - name: basic-auth
+        config:
+          hide_credentials: true
+`;
+}
+
+function getSupabaseKongEntrypointScript(): string {
+  return `#!/bin/sh
+set -eu
+
+if [ -n "\${SUPABASE_SECRET_KEY:-}" ] && [ -n "\${SUPABASE_PUBLISHABLE_KEY:-}" ]; then
+  export LUA_AUTH_EXPR="\\$((headers.authorization ~= nil and headers.authorization:sub(1, 10) ~= 'Bearer sb_' and headers.authorization) or (headers.apikey == '\${SUPABASE_SECRET_KEY}' and 'Bearer \${SERVICE_ROLE_KEY_ASYMMETRIC:-}') or (headers.apikey == '\${SUPABASE_PUBLISHABLE_KEY}' and 'Bearer \${ANON_KEY_ASYMMETRIC:-}') or headers.apikey)"
+  export LUA_RT_WS_EXPR="\\$((query_params.apikey == '\${SUPABASE_SECRET_KEY}' and '\${SERVICE_ROLE_KEY_ASYMMETRIC:-}') or (query_params.apikey == '\${SUPABASE_PUBLISHABLE_KEY}' and '\${ANON_KEY_ASYMMETRIC:-}') or query_params.apikey)"
+else
+  export LUA_AUTH_EXPR="\\$((headers.authorization ~= nil and headers.authorization:sub(1, 10) ~= 'Bearer sb_' and headers.authorization) or headers.apikey)"
+  export LUA_RT_WS_EXPR="\\$(query_params.apikey)"
+fi
+
+awk '{
+  result = ""
+  rest = $0
+  while (match(rest, /\\$[A-Za-z_][A-Za-z_0-9]*/)) {
+    varname = substr(rest, RSTART + 1, RLENGTH - 1)
+    if (varname in ENVIRON) {
+      result = result substr(rest, 1, RSTART - 1) ENVIRON[varname]
+    } else {
+      result = result substr(rest, 1, RSTART + RLENGTH - 1)
+    }
+    rest = substr(rest, RSTART + RLENGTH)
+  }
+  print result rest
+}' /home/kong/temp.yml > "\${KONG_DECLARATIVE_CONFIG}"
+
+sed -i '/^[[:space:]]*- key:[[:space:]]*$/d' "\${KONG_DECLARATIVE_CONFIG}"
+
+exec /entrypoint.sh kong docker-start
+`;
+}
+
+function getSupabaseGatewayManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-gateway
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-gateway
+    spec:
+      containers:
+        - name: gateway
+          image: ${SUPABASE_IMAGES.gateway}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: KONG_DATABASE
+              value: "off"
+            - name: KONG_DECLARATIVE_CONFIG
+              value: /usr/local/kong/kong.yml
+            - name: KONG_ROUTER_FLAVOR
+              value: expressions
+            - name: KONG_DNS_ORDER
+              value: LAST,A,CNAME
+            - name: KONG_DNS_NOT_FOUND_TTL
+              value: "1"
+            - name: KONG_PLUGINS
+              value: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function
+            - name: KONG_PROXY_LISTEN
+              value: "0.0.0.0:8000"
+            - name: SUPABASE_SERVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SUPABASE_SERVICE_ROLE_KEY
+          envFrom:
+            - secretRef:
+                name: supabase-runtime-secrets
+          volumeMounts:
+            - name: config
+              mountPath: /home/kong/temp.yml
+              subPath: temp.yml
+              readOnly: true
+            - name: entrypoint
+              mountPath: /home/kong/kong-entrypoint.sh
+              subPath: kong-entrypoint.sh
+              readOnly: true
+          command: ["/bin/sh", "/home/kong/kong-entrypoint.sh"]
+          readinessProbe:
+            exec:
+              command: ["kong", "health"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: supabase-gateway-config
+        - name: entrypoint
+          configMap:
+            name: supabase-kong-entrypoint
+            defaultMode: 0755
+`;
+}
+
+function getSupabaseStudioManifest(): string {
+  return `apiVersion: v1
+kind: Service
+metadata:
+  name: studio
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  selector:
+    app.kubernetes.io/name: supabase-studio
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: studio
+  namespace: ${SUPABASE_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: supabase-studio
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: supabase-studio
+    spec:
+      containers:
+        - name: studio
+          image: ${SUPABASE_IMAGES.studio}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: STUDIO_PG_META_URL
+              value: "http://meta.${SUPABASE_NAMESPACE}.svc.cluster.local:8080"
+            - name: SUPABASE_URL
+              value: "http://gateway.${SUPABASE_NAMESPACE}.svc.cluster.local:8000"
+            - name: SUPABASE_PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: supabase-runtime-config
+                  key: SUPABASE_PUBLIC_URL
+            - name: SUPABASE_ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SUPABASE_ANON_KEY
+            - name: SUPABASE_SERVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: SUPABASE_SERVICE_ROLE_KEY
+            - name: AUTH_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: supabase-runtime-secrets
+                  key: JWT_SECRET
+          envFrom:
+            - secretRef:
+                name: supabase-runtime-secrets
+            - configMapRef:
+                name: supabase-runtime-config
+`;
+}
+
 function getUpScript(args: {
-  defaultNamespace: string;
+  appSlug: string;
   defaultAppImage: string;
-  supabaseLocalEnabled: boolean;
+  supabaseKubernetesEnabled: boolean;
+  profileModel: ResolvedProfileModel;
+  secretStoreProvider: string;
+  supabaseHostPorts: SupabaseHostPorts;
+  oauthProviders: readonly SupabaseOAuthProviderRuntime[];
+  providerLifecycle: readonly MinikubeProviderLifecycle[];
 }): string {
-  const { defaultNamespace, defaultAppImage, supabaseLocalEnabled } = args;
+  const {
+    appSlug,
+    defaultAppImage,
+    supabaseKubernetesEnabled,
+    profileModel,
+    secretStoreProvider,
+    supabaseHostPorts,
+    oauthProviders,
+    providerLifecycle,
+  } = args;
+  const oauthEnvDefaults = getOAuthScriptEnvDefaults(oauthProviders);
+  const oauthRuntimeSecretLines = getOAuthRuntimeSecretLines(oauthProviders);
+  const oauthValidation = getOAuthRuntimeValidationScript(oauthProviders);
+  const oauthCallbackRoute = getSupabaseOAuthCallbackRoute(oauthProviders);
+  const providerLifecycleStageScripts = getProviderLifecycleStageScripts(providerLifecycle);
+  const oauthVaultResolution = getOAuthVaultResolutionScript({
+    appSlug,
+    oauthProviders,
+    secretStoreProvider,
+  });
 
   return `#!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
 K8S_DIR="\${ROOT_DIR}/k8s"
 BUILD_SCRIPT="\${SCRIPT_DIR}/build-app-image.sh"
+PORT_FORWARD_SCRIPT="\${SCRIPT_DIR}/port-forward.sh"
+APP_SLUG="${appSlug}"
+PROFILE="\${ANKH_APP_SLUG:-}"
+DRIVER="\${MINIKUBE_DRIVER:-}"
+APP_NAMESPACE="${APP_NAMESPACE}"
+SUPABASE_NAMESPACE="${SUPABASE_NAMESPACE}"
+SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-}"
+APP_SOURCE_DIR="\${APP_SOURCE_DIR:-}"
+APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-}"
+APP_IMAGE="\${APP_IMAGE:-}"
+APP_IMAGE_SYNC_STRATEGY="\${APP_IMAGE_SYNC_STRATEGY:-}"
+APP_REPLICAS="\${APP_REPLICAS:-}"
+APP_FORCE_ROLLOUT_RESTART="\${APP_FORCE_ROLLOUT_RESTART:-}"
+APP_IMAGE_PULL_SECRET_NAME="\${APP_IMAGE_PULL_SECRET_NAME:-}"
+APP_IMAGE_PULL_SECRET_SERVER="\${APP_IMAGE_PULL_SECRET_SERVER:-}"
+APP_IMAGE_PULL_SECRET_USERNAME="\${APP_IMAGE_PULL_SECRET_USERNAME:-}"
+APP_IMAGE_PULL_SECRET_PASSWORD="\${APP_IMAGE_PULL_SECRET_PASSWORD:-}"
+APP_IMAGE_PULL_SECRET_EMAIL="\${APP_IMAGE_PULL_SECRET_EMAIL:-}"
+APP_PORT_FORWARD_LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-}"
+SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-}"
+SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-}"
+SUPABASE_DB_URL="\${SUPABASE_DB_URL:-}"
+SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
+SUPABASE_PROFILE_RECONCILE_FILE="\${ROOT_DIR}/supabase/generated/auth_profiles.sql"
 
-if [[ -f "\${ROOT_DIR}/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source "\${ROOT_DIR}/.env"
-  set +a
-fi
+require_command() {
+  if ! command -v "\${1}" >/dev/null 2>&1; then
+    echo "\${1} is required but not installed."
+    exit 1
+  fi
+}
 
-PROFILE="\${MINIKUBE_PROFILE:-minikube}"
+load_env_file_preserving_process_env() {
+  local line trimmed key value current
+  if [[ ! -f "\${ROOT_DIR}/.env" ]]; then
+    return 0
+  fi
+
+  while IFS= read -r line || [[ -n "\${line}" ]]; do
+    trimmed="$(printf '%s' "\${line}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    if [[ -z "\${trimmed}" || "\${trimmed}" == \\#* || "\${trimmed}" != *=* ]]; then
+      continue
+    fi
+
+    key="\${trimmed%%=*}"
+    value="\${trimmed#*=}"
+    key="\${key//[[:space:]]/}"
+    value="$(printf '%s' "\${value}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    value="\${value%\\"}"
+    value="\${value#\\"}"
+    value="\${value%\\'}"
+    value="\${value#\\'}"
+    current="\${!key:-}"
+    if [[ -n "\${current}" ]]; then
+      continue
+    fi
+    export "\${key}=\${value}"
+  done < "\${ROOT_DIR}/.env"
+}
+
+env_file_value() {
+  local key="\${1}"
+  if [[ ! -f "\${ROOT_DIR}/.env" ]]; then
+    return 0
+  fi
+  awk -F= -v key="\${key}" '$1 == key { value = substr($0, index($0, "=") + 1) } END { print value }' "\${ROOT_DIR}/.env"
+}
+
+env_file_has_key() {
+  local key="\${1}"
+  if [[ ! -f "\${ROOT_DIR}/.env" ]]; then
+    return 1
+  fi
+  awk -F= -v key="\${key}" '$1 == key { found = 1 } END { exit found ? 0 : 1 }' "\${ROOT_DIR}/.env"
+}
+
+write_env_value() {
+  local key="\${1}"
+  local value="\${2}"
+  local tmp_env
+  mkdir -p "\${ROOT_DIR}"
+  touch "\${ROOT_DIR}/.env"
+  tmp_env="$(mktemp)"
+  awk -F= -v key="\${key}" -v value="\${value}" '
+    $1 == key {
+      print key "=" value
+      found = 1
+      next
+    }
+    { print }
+    END {
+      if (!found) print key "=" value
+    }
+  ' "\${ROOT_DIR}/.env" > "\${tmp_env}"
+  mv "\${tmp_env}" "\${ROOT_DIR}/.env"
+}
+
+set_required_env_default() {
+  local key="\${1}"
+  local value="\${2}"
+  local current="\${!key:-}"
+  if [[ -n "\${current}" ]]; then
+    write_env_value "\${key}" "\${current}"
+    return 0
+  fi
+
+  current="$(env_file_value "\${key}")"
+  if [[ -n "\${current}" ]]; then
+    export "\${key}=\${current}"
+    return 0
+  fi
+
+  write_env_value "\${key}" "\${value}"
+  export "\${key}=\${value}"
+}
+
+set_optional_env_default() {
+  local key="\${1}"
+  local value="\${2}"
+  local current="\${!key:-}"
+  if env_file_has_key "\${key}"; then
+    export "\${key}=\${current}"
+    return 0
+  fi
+  if [[ -n "\${current}" ]]; then
+    write_env_value "\${key}" "\${current}"
+    return 0
+  fi
+  write_env_value "\${key}" "\${value}"
+  export "\${key}=\${value}"
+}
+
+set_env_default() {
+  set_required_env_default "\${1}" "\${2}"
+}
+
+derive_additional_redirect_urls() {
+  local callback_route="${oauthCallbackRoute}"
+  local callback_path="\${callback_route#/}"
+  local site_url_without_slash="\${SITE_URL%/}"
+  local urls="\${site_url_without_slash},\${site_url_without_slash}/\${callback_path}"
+  if [[ -n "\${OAUTH_NATIVE_REDIRECT_URLS:-}" ]]; then
+    urls="\${urls},\${OAUTH_NATIVE_REDIRECT_URLS}"
+  fi
+  printf '%s' "\${urls}"
+}
+
+random_base64() {
+  openssl rand -base64 "\${1}" | tr -d '\\n'
+}
+
+random_hex() {
+  openssl rand -hex "\${1}" | tr -d '\\n'
+}
+
+base64url() {
+  openssl base64 -A | tr '+/' '-_' | tr -d '='
+}
+
+generate_supabase_jwt() {
+  local role="\${1}"
+  local iat exp header payload signature
+  iat="$(date +%s)"
+  exp="$((iat + 315360000))"
+  header="$(printf '{"alg":"HS256","typ":"JWT"}' | base64url)"
+  payload="$(printf '{"role":"%s","iss":"supabase-demo","iat":%s,"exp":%s}' "\${role}" "\${iat}" "\${exp}" | base64url)"
+  signature="$(printf '%s.%s' "\${header}" "\${payload}" | openssl dgst -binary -sha256 -hmac "\${JWT_SECRET}" | base64url)"
+  printf '%s.%s.%s' "\${header}" "\${payload}" "\${signature}"
+}
+
+ensure_supabase_runtime_env() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  require_command openssl
+
+  set_required_env_default POSTGRES_PASSWORD "$(random_hex 32)"
+  set_required_env_default JWT_SECRET "$(random_base64 48)"
+  set_required_env_default SUPABASE_ANON_KEY "$(generate_supabase_jwt anon)"
+  set_required_env_default SUPABASE_SERVICE_ROLE_KEY "$(generate_supabase_jwt service_role)"
+  set_required_env_default DASHBOARD_USERNAME "supabase"
+  set_required_env_default DASHBOARD_PASSWORD "$(random_base64 24)"
+  set_required_env_default SECRET_KEY_BASE "$(random_base64 48)"
+  set_required_env_default REALTIME_DB_ENC_KEY "$(random_hex 8)"
+  set_required_env_default PG_META_CRYPTO_KEY "$(random_base64 32)"
+  set_required_env_default S3_PROTOCOL_ACCESS_KEY_ID "$(random_hex 16)"
+  set_required_env_default S3_PROTOCOL_ACCESS_KEY_SECRET "$(random_hex 32)"
+  set_required_env_default JWT_EXPIRY "3600"
+  set_required_env_default SUPABASE_GATEWAY_FORWARD_LOCAL_PORT "\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
+  set_required_env_default APP_PORT_FORWARD_LOCAL_PORT "\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
+  set_required_env_default SUPABASE_PUBLIC_URL "http://127.0.0.1:\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT}"
+  set_required_env_default API_EXTERNAL_URL "\${SUPABASE_PUBLIC_URL}/auth/v1"
+  set_required_env_default SITE_URL "http://127.0.0.1:\${APP_PORT_FORWARD_LOCAL_PORT}"
+  export OAUTH_NATIVE_REDIRECT_URLS="\${OAUTH_NATIVE_REDIRECT_URLS:-}"
+  set_required_env_default ADDITIONAL_REDIRECT_URLS "$(derive_additional_redirect_urls)"
+  set_required_env_default ENABLE_EMAIL_SIGNUP "true"
+  set_required_env_default ENABLE_EMAIL_AUTOCONFIRM "true"
+  set_required_env_default SMTP_ADMIN_EMAIL "admin@example.com"
+  set_required_env_default SMTP_HOST "localhost"
+  set_required_env_default SMTP_PORT "2500"
+  set_optional_env_default SMTP_USER ""
+  set_optional_env_default SMTP_PASS ""
+  set_required_env_default SMTP_SENDER_NAME "Ankhorage"
+  set_required_env_default PGRST_DB_SCHEMAS "public,storage,graphql_public"
+  set_required_env_default PGRST_DB_MAX_ROWS "1000"
+  set_required_env_default PGRST_DB_EXTRA_SEARCH_PATH "public"
+  set_required_env_default GLOBAL_S3_BUCKET "stub"
+  set_required_env_default STORAGE_TENANT_ID "stub"
+  set_required_env_default REGION "stub"
+  set_required_env_default SUPABASE_DB_FORWARD_LOCAL_PORT "\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
+  set_required_env_default SUPABASE_DB_URL "postgres://postgres:\${POSTGRES_PASSWORD}@127.0.0.1:\${SUPABASE_DB_FORWARD_LOCAL_PORT}/postgres?sslmode=disable"
+  set_required_env_default EXPO_PUBLIC_SUPABASE_URL "\${SUPABASE_PUBLIC_URL}"
+  set_required_env_default EXPO_PUBLIC_SUPABASE_ANON_KEY "\${SUPABASE_ANON_KEY}"
+${oauthEnvDefaults}
+}
+${oauthVaultResolution}
+
+sync_supabase_secrets() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  local tmp_runtime tmp_public
+  tmp_runtime="$(mktemp)"
+  tmp_public="$(mktemp)"
+  trap 'rm -f "\${tmp_runtime}" "\${tmp_public}"' EXIT
+
+  cat > "\${tmp_runtime}" <<EOF
+POSTGRES_PASSWORD=\${POSTGRES_PASSWORD}
+JWT_SECRET=\${JWT_SECRET}
+SUPABASE_ANON_KEY=\${SUPABASE_ANON_KEY}
+SUPABASE_SERVICE_ROLE_KEY=\${SUPABASE_SERVICE_ROLE_KEY}
+SUPABASE_PUBLISHABLE_KEY=\${SUPABASE_PUBLISHABLE_KEY:-}
+SUPABASE_SECRET_KEY=\${SUPABASE_SECRET_KEY:-}
+DASHBOARD_USERNAME=\${DASHBOARD_USERNAME:-supabase}
+DASHBOARD_PASSWORD=\${DASHBOARD_PASSWORD:-}
+SMTP_USER=\${SMTP_USER:-}
+SMTP_PASS=\${SMTP_PASS:-}
+SECRET_KEY_BASE=\${SECRET_KEY_BASE}
+REALTIME_DB_ENC_KEY=\${REALTIME_DB_ENC_KEY}
+PG_META_CRYPTO_KEY=\${PG_META_CRYPTO_KEY}
+S3_PROTOCOL_ACCESS_KEY_ID=\${S3_PROTOCOL_ACCESS_KEY_ID}
+S3_PROTOCOL_ACCESS_KEY_SECRET=\${S3_PROTOCOL_ACCESS_KEY_SECRET}
+${oauthRuntimeSecretLines}
+EOF
+
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" create secret generic supabase-runtime-secrets --from-env-file="\${tmp_runtime}" --dry-run=client -o yaml | kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" apply -f -
+
+  cat > "\${tmp_public}" <<EOF
+EXPO_PUBLIC_SUPABASE_URL=\${EXPO_PUBLIC_SUPABASE_URL}
+EXPO_PUBLIC_SUPABASE_ANON_KEY=\${EXPO_PUBLIC_SUPABASE_ANON_KEY}
+SUPABASE_URL=http://gateway.${SUPABASE_NAMESPACE}.svc.cluster.local:8000
+SUPABASE_ANON_KEY=\${SUPABASE_ANON_KEY}
+EOF
+
+  kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" create secret generic supabase-public-runtime --from-env-file="\${tmp_public}" --dry-run=client -o yaml | kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" apply -f -
+
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" create configmap supabase-runtime-config \
+    --from-literal=SUPABASE_PUBLIC_URL="\${SUPABASE_PUBLIC_URL}" \
+    --from-literal=API_EXTERNAL_URL="\${API_EXTERNAL_URL}" \
+    --from-literal=SITE_URL="\${SITE_URL}" \
+    --from-literal=ADDITIONAL_REDIRECT_URLS="\${ADDITIONAL_REDIRECT_URLS}" \
+    --from-literal=JWT_EXPIRY="\${JWT_EXPIRY}" \
+    --from-literal=ENABLE_EMAIL_SIGNUP="\${ENABLE_EMAIL_SIGNUP}" \
+    --from-literal=ENABLE_EMAIL_AUTOCONFIRM="\${ENABLE_EMAIL_AUTOCONFIRM}" \
+    --from-literal=SMTP_ADMIN_EMAIL="\${SMTP_ADMIN_EMAIL}" \
+    --from-literal=SMTP_HOST="\${SMTP_HOST}" \
+    --from-literal=SMTP_PORT="\${SMTP_PORT}" \
+    --from-literal=SMTP_SENDER_NAME="\${SMTP_SENDER_NAME}" \
+    --from-literal=PGRST_DB_SCHEMAS="\${PGRST_DB_SCHEMAS}" \
+    --from-literal=PGRST_DB_MAX_ROWS="\${PGRST_DB_MAX_ROWS}" \
+    --from-literal=PGRST_DB_EXTRA_SEARCH_PATH="\${PGRST_DB_EXTRA_SEARCH_PATH}" \
+    --from-literal=GLOBAL_S3_BUCKET="\${GLOBAL_S3_BUCKET}" \
+    --from-literal=STORAGE_TENANT_ID="\${STORAGE_TENANT_ID}" \
+    --from-literal=REGION="\${REGION}" \
+    --dry-run=client -o yaml | kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" apply -f -
+
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" create configmap supabase-gateway-config \
+    --from-file=temp.yml="\${K8S_DIR}/supabase/gateway.template.yml" \
+    --dry-run=client -o yaml | kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" apply -f -
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" create configmap supabase-kong-entrypoint \
+    --from-file=kong-entrypoint.sh="\${K8S_DIR}/supabase/kong-entrypoint.sh" \
+    --dry-run=client -o yaml | kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" apply -f -
+
+  rm -f "\${tmp_runtime}" "\${tmp_public}"
+  trap - EXIT
+}
+
+docker_load_image_to_minikube() {
+  if command -v docker >/dev/null 2>&1 && docker image inspect "\${APP_IMAGE}" >/dev/null 2>&1; then
+    minikube -p "\${PROFILE}" image load --daemon=true --overwrite=true "\${APP_IMAGE}" >/dev/null
+    return 0
+  fi
+
+  return 1
+}
+
+run_supabase_migrations() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  export SUPABASE_DB_URL PGSSLMODE=disable
+
+  if [[ -d "\${ROOT_DIR}/supabase/migrations" ]]; then
+    require_command supabase
+    (
+      cd "\${ROOT_DIR}"
+      supabase migration up --db-url "\${SUPABASE_DB_URL}"
+    )
+  fi
+}
+
+reconcile_supabase_profile() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+  if [[ "\${SUPABASE_PROFILE_ENABLED}" == "true" && -f "\${SUPABASE_PROFILE_RECONCILE_FILE}" ]]; then
+    psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${SUPABASE_PROFILE_RECONCILE_FILE}"
+  fi
+}
+
+reload_postgrest_schema() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -c "notify pgrst, 'reload schema';"
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout restart deployment/rest >/dev/null
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/rest --timeout=600s
+}
+
+bootstrap_supabase_vault_migration() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+  if [[ -f "\${ROOT_DIR}/supabase/migrations/202607120001_ankhorage_supabase_vault.sql" ]]; then
+    kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" exec deployment/postgres -- psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q -c "alter role postgres with superuser;"
+    kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" exec deployment/postgres -- psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q -c "create schema if not exists vault; grant pg_read_server_files to postgres; grant pg_read_server_files to supabase_admin; grant execute on function pg_read_file(text) to public; grant execute on function pg_read_file(text, bigint, bigint) to public;"
+    psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${ROOT_DIR}/supabase/migrations/202607120001_ankhorage_supabase_vault.sql"
+  fi
+}
+
+bootstrap_supabase_database() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  require_command psql
+  export POSTGRES_PASSWORD JWT_SECRET JWT_EXP="\${JWT_EXPIRY}" POSTGRES_USER=postgres
+  psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${K8S_DIR}/supabase/bootstrap.sql"
+}
+
+wait_for_supabase_database() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  require_command psql
+  if ! "\${PORT_FORWARD_SCRIPT}" start db-migration; then
+    echo "Failed to start db-migration port-forward for Supabase bootstrap."
+    "\${PORT_FORWARD_SCRIPT}" status db-migration || true
+    exit 1
+  fi
+  for attempt in {1..60}; do
+    if PGPASSWORD="\${POSTGRES_PASSWORD}" psql -h 127.0.0.1 -p "\${SUPABASE_DB_FORWARD_LOCAL_PORT}" -U postgres -d postgres -v ON_ERROR_STOP=1 -Atq -c 'select 1' >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 2
+  done
+
+  echo "Postgres did not accept SQL connections as postgres before bootstrap."
+  "\${PORT_FORWARD_SCRIPT}" status db-migration || true
+  exit 1
+}
+
+apply_supabase_runtime_workloads() {
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    return 0
+  fi
+
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/auth.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/rest.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/realtime.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/imgproxy.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/storage.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/meta.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/gateway.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/studio.yaml"
+}
+
+apply_namespace_manifests() {
+  local namespace_manifest
+  for namespace_manifest in "\${K8S_DIR}"/namespaces/*.yaml; do
+    kubectl --context "\${PROFILE}" apply -f "\${namespace_manifest}"
+  done
+}
+
+${providerLifecycleStageScripts}
+
+load_env_file_preserving_process_env
+SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
 DRIVER="\${MINIKUBE_DRIVER:-docker}"
-NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
 APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-true}"
 APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
 APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-.ankh/web-export}"
@@ -660,70 +2692,58 @@ APP_IMAGE_PULL_SECRET_SERVER="\${APP_IMAGE_PULL_SECRET_SERVER:-ghcr.io}"
 APP_IMAGE_PULL_SECRET_USERNAME="\${APP_IMAGE_PULL_SECRET_USERNAME:-}"
 APP_IMAGE_PULL_SECRET_PASSWORD="\${APP_IMAGE_PULL_SECRET_PASSWORD:-}"
 APP_IMAGE_PULL_SECRET_EMAIL="\${APP_IMAGE_PULL_SECRET_EMAIL:-}"
-AUTH_RUNTIME_MODE="\${AUTH_RUNTIME_MODE:-local}"
-SUPABASE_LOCAL_ENABLED="\${SUPABASE_LOCAL_ENABLED:-${supabaseLocalEnabled ? 'true' : 'false'}}"
-SUPABASE_SECRET_SYNC_ENABLED="\${SUPABASE_SECRET_SYNC_ENABLED:-true}"
-SUPABASE_LOCAL_ENV_SCRIPT="\${SCRIPT_DIR}/supabase-local-env.sh"
-SUPABASE_URL="\${SUPABASE_URL:-}"
-SUPABASE_ANON_KEY="\${SUPABASE_ANON_KEY:-}"
-SUPABASE_SERVICE_ROLE_KEY="\${SUPABASE_SERVICE_ROLE_KEY:-}"
-SUPABASE_JWT_SECRET="\${SUPABASE_JWT_SECRET:-}"
-SUPABASE_PUBLIC_URL="\${EXPO_PUBLIC_SUPABASE_URL:-\${SUPABASE_URL}}"
-SUPABASE_PUBLIC_ANON_KEY="\${EXPO_PUBLIC_SUPABASE_ANON_KEY:-\${SUPABASE_ANON_KEY}}"
+APP_PORT_FORWARD_LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
+SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
+SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
+SUPABASE_DB_URL="\${SUPABASE_DB_URL:-}"
 
-refresh_supabase_env() {
-  SUPABASE_URL="\${SUPABASE_URL:-}"
-  SUPABASE_ANON_KEY="\${SUPABASE_ANON_KEY:-}"
-  SUPABASE_SERVICE_ROLE_KEY="\${SUPABASE_SERVICE_ROLE_KEY:-}"
-  SUPABASE_JWT_SECRET="\${SUPABASE_JWT_SECRET:-}"
-  SUPABASE_PUBLIC_URL="\${EXPO_PUBLIC_SUPABASE_URL:-\${SUPABASE_URL}}"
-  SUPABASE_PUBLIC_ANON_KEY="\${EXPO_PUBLIC_SUPABASE_ANON_KEY:-\${SUPABASE_ANON_KEY}}"
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
+  exit 1
+fi
+
+cleanup_failed_up() {
+  "\${PORT_FORWARD_SCRIPT}" stop all >/dev/null 2>&1 || true
 }
 
-has_required_supabase_env() {
-  [[ -n "\${SUPABASE_URL}" && -n "\${SUPABASE_ANON_KEY}" && -n "\${SUPABASE_SERVICE_ROLE_KEY}" && -n "\${SUPABASE_JWT_SECRET}" ]]
-}
+trap cleanup_failed_up ERR
 
-refresh_supabase_env
-
-if [[ "\${AUTH_RUNTIME_MODE}" != "local" && "\${AUTH_RUNTIME_MODE}" != "remote" ]]; then
-  echo "Unsupported AUTH_RUNTIME_MODE=\${AUTH_RUNTIME_MODE}. Use local or remote."
-  exit 1
-fi
-
-if ! command -v minikube >/dev/null 2>&1; then
-  echo "minikube is required but not installed."
-  exit 1
-fi
-
-if ! command -v kubectl >/dev/null 2>&1; then
-  echo "kubectl is required but not installed."
-  exit 1
-fi
+require_command minikube
+require_command kubectl
+ensure_supabase_runtime_env
 
 HOST_STATUS="$(minikube -p "\${PROFILE}" status --format='{{.Host}}' 2>/dev/null || true)"
 if [[ "\${HOST_STATUS}" != "Running" ]]; then
   minikube start -p "\${PROFILE}" --driver="\${DRIVER}"
 fi
 
-if [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "true" ]]; then
-  if [[ ! -x "\${SUPABASE_LOCAL_ENV_SCRIPT}" ]]; then
-    echo "Supabase local bootstrap failed: missing executable \${SUPABASE_LOCAL_ENV_SCRIPT}."
-    exit 1
-  else
-    echo "Running local Supabase bootstrap, immutable migrations, generated reconciliation, and schema verification."
-    if ! "\${SUPABASE_LOCAL_ENV_SCRIPT}"; then
-      echo "Supabase local bootstrap failed."
-      exit 1
-    fi
-    if [[ -f "\${ROOT_DIR}/.env" ]]; then
-      set -a
-      # shellcheck disable=SC1090
-      source "\${ROOT_DIR}/.env"
-      set +a
-    fi
-    refresh_supabase_env
-  fi
+if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
+  apply_namespace_manifests
+  sync_supabase_secrets
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.init.configmap.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.pvc.yaml"
+  kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/supabase/postgres.yaml"
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/postgres --timeout=900s
+  wait_for_supabase_database
+  bootstrap_supabase_database
+  bootstrap_supabase_vault_migration
+  resolve_oauth_credentials_from_vault
+${oauthValidation}
+  sync_supabase_secrets
+  apply_supabase_runtime_workloads
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/auth --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/rest --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/realtime --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/storage --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/gateway --timeout=600s
+  kubectl --context "\${PROFILE}" -n "\${SUPABASE_NAMESPACE}" rollout status deployment/studio --timeout=600s
+  run_supabase_migrations
+  reconcile_supabase_profile
+  reload_postgrest_schema
+  "\${PORT_FORWARD_SCRIPT}" start supabase-gateway >/dev/null
+  "\${PORT_FORWARD_SCRIPT}" start studio >/dev/null
+else
+  kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
 fi
 
 if [[ "\${APP_BUILD_ENABLED}" == "true" ]]; then
@@ -741,38 +2761,13 @@ else
   EXPORT_DIR="\${APP_SOURCE_DIR}/\${APP_WEB_EXPORT_DIR}"
 fi
 
-docker_load_image_to_minikube() {
-  if command -v docker >/dev/null 2>&1 && docker image inspect "\${APP_IMAGE}" >/dev/null 2>&1; then
-    minikube -p "\${PROFILE}" image load --daemon=true --overwrite=true "\${APP_IMAGE}" >/dev/null
-    return 0
-  fi
-
-  return 1
-}
-
 case "\${APP_IMAGE_SYNC_STRATEGY}" in
   minikube-build)
     if [[ ! -f "\${EXPORT_DIR}/index.html" ]]; then
       echo "Expected web export output not found at \${EXPORT_DIR}/index.html"
-      echo "Run build-app-image.sh first or switch APP_IMAGE_SYNC_STRATEGY=docker-load."
       exit 1
     fi
-
-    if minikube -p "\${PROFILE}" image build -t "\${APP_IMAGE}" -f "\${ROOT_DIR}/app-image/Dockerfile" "\${EXPORT_DIR}" >/dev/null; then
-      if ! minikube -p "\${PROFILE}" image ls 2>/dev/null | grep -Fq "\${APP_IMAGE}"; then
-        echo "minikube image build did not register \${APP_IMAGE}; falling back to docker-load."
-        if ! docker_load_image_to_minikube; then
-          echo "Fallback docker-load failed: local Docker image \${APP_IMAGE} not found."
-          exit 1
-        fi
-      fi
-    else
-      echo "minikube image build failed for \${APP_IMAGE}; falling back to docker-load."
-      if ! docker_load_image_to_minikube; then
-        echo "Fallback docker-load failed: local Docker image \${APP_IMAGE} not found."
-        exit 1
-      fi
-    fi
+    minikube -p "\${PROFILE}" image build -t "\${APP_IMAGE}" -f "\${ROOT_DIR}/app-image/Dockerfile" "\${EXPORT_DIR}" >/dev/null
     ;;
   docker-load)
     if ! docker_load_image_to_minikube; then
@@ -788,56 +2783,13 @@ case "\${APP_IMAGE_SYNC_STRATEGY}" in
     ;;
 esac
 
-kubectl apply -k "\${K8S_DIR}"
-
-if [[ "\${SUPABASE_SECRET_SYNC_ENABLED}" == "true" ]]; then
-  if ! has_required_supabase_env && [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "true" ]]; then
-    if [[ ! -x "\${SUPABASE_LOCAL_ENV_SCRIPT}" ]]; then
-      echo "Supabase local bootstrap failed: missing executable \${SUPABASE_LOCAL_ENV_SCRIPT}."
-      exit 1
-    else
-      echo "Supabase keys missing; running \${SUPABASE_LOCAL_ENV_SCRIPT}."
-      if ! "\${SUPABASE_LOCAL_ENV_SCRIPT}"; then
-        echo "Supabase local bootstrap failed."
-        exit 1
-      fi
-      if [[ -f "\${ROOT_DIR}/.env" ]]; then
-        set -a
-        # shellcheck disable=SC1090
-        source "\${ROOT_DIR}/.env"
-        set +a
-      fi
-      refresh_supabase_env
-    fi
-  fi
-
-  if ! has_required_supabase_env; then
-    if [[ "\${AUTH_RUNTIME_MODE}" == "local" ]]; then
-      echo "Supabase secret sync skipped: local credentials still missing after bootstrap."
-      echo "Run ./scripts/supabase-local-env.sh and retry."
-    else
-      echo "Supabase secret sync skipped: set SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, and SUPABASE_JWT_SECRET in .env."
-    fi
-  else
-    TMP_SUPABASE_ENV_FILE="$(mktemp)"
-    trap 'rm -f "\${TMP_SUPABASE_ENV_FILE}"' EXIT
-
-    cat > "\${TMP_SUPABASE_ENV_FILE}" <<EOF
-SUPABASE_URL=\${SUPABASE_URL}
-SUPABASE_ANON_KEY=\${SUPABASE_ANON_KEY}
-SUPABASE_SERVICE_ROLE_KEY=\${SUPABASE_SERVICE_ROLE_KEY}
-SUPABASE_JWT_SECRET=\${SUPABASE_JWT_SECRET}
-EXPO_PUBLIC_SUPABASE_URL=\${SUPABASE_PUBLIC_URL}
-EXPO_PUBLIC_SUPABASE_ANON_KEY=\${SUPABASE_PUBLIC_ANON_KEY}
-EOF
-
-    kubectl -n "\${NAMESPACE}" create secret generic supabase-auth-secrets --from-env-file="\${TMP_SUPABASE_ENV_FILE}" --dry-run=client -o yaml | kubectl -n "\${NAMESPACE}" apply -f -
-
-    rm -f "\${TMP_SUPABASE_ENV_FILE}"
-    trap - EXIT
-    echo "Synchronized supabase-auth-secrets from environment values."
-  fi
+if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
+  kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
 fi
+
+wait_for_provider_readiness
+run_provider_migrations
+run_provider_reconciliation
 
 if [[ -n "\${APP_IMAGE_PULL_SECRET_NAME}" ]]; then
   if [[ -z "\${APP_IMAGE_PULL_SECRET_USERNAME}" || -z "\${APP_IMAGE_PULL_SECRET_PASSWORD}" ]]; then
@@ -850,34 +2802,34 @@ if [[ -n "\${APP_IMAGE_PULL_SECRET_NAME}" ]]; then
     SECRET_EMAIL_ARG=(--docker-email="\${APP_IMAGE_PULL_SECRET_EMAIL}")
   fi
 
-  kubectl -n "\${NAMESPACE}" create secret docker-registry "\${APP_IMAGE_PULL_SECRET_NAME}" --docker-server="\${APP_IMAGE_PULL_SECRET_SERVER}" --docker-username="\${APP_IMAGE_PULL_SECRET_USERNAME}" --docker-password="\${APP_IMAGE_PULL_SECRET_PASSWORD}" "\${SECRET_EMAIL_ARG[@]}" --dry-run=client -o yaml | kubectl -n "\${NAMESPACE}" apply -f -
+  kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" create secret docker-registry "\${APP_IMAGE_PULL_SECRET_NAME}" --docker-server="\${APP_IMAGE_PULL_SECRET_SERVER}" --docker-username="\${APP_IMAGE_PULL_SECRET_USERNAME}" --docker-password="\${APP_IMAGE_PULL_SECRET_PASSWORD}" "\${SECRET_EMAIL_ARG[@]}" --dry-run=client -o yaml | kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" apply -f -
 
   PULL_SECRET_PATCH="$(cat <<EOF
 {"spec":{"template":{"spec":{"imagePullSecrets":[{"name":"\${APP_IMAGE_PULL_SECRET_NAME}"}]}}}}
 EOF
 )"
-  kubectl -n "\${NAMESPACE}" patch deployment app-runtime --type=merge --patch "\${PULL_SECRET_PATCH}" >/dev/null
+  kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" patch deployment app-runtime --type=merge --patch "\${PULL_SECRET_PATCH}" >/dev/null
 else
-  kubectl -n "\${NAMESPACE}" patch deployment app-runtime --type=json --patch='[{"op":"remove","path":"/spec/template/spec/imagePullSecrets"}]' >/dev/null 2>&1 || true
+  kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" patch deployment app-runtime --type=json --patch='[{"op":"remove","path":"/spec/template/spec/imagePullSecrets"}]' >/dev/null 2>&1 || true
 fi
 
-kubectl -n "\${NAMESPACE}" set image deployment/app-runtime app="\${APP_IMAGE}" >/dev/null
-kubectl -n "\${NAMESPACE}" scale deployment/app-runtime --replicas="\${APP_REPLICAS}" >/dev/null
+kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" set image deployment/app-runtime app="\${APP_IMAGE}" >/dev/null
+kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" scale deployment/app-runtime --replicas="\${APP_REPLICAS}" >/dev/null
 
 if [[ "\${APP_FORCE_ROLLOUT_RESTART}" == "true" ]]; then
-  kubectl -n "\${NAMESPACE}" rollout restart deployment/app-runtime >/dev/null
+  kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" rollout restart deployment/app-runtime >/dev/null
 fi
 
-kubectl -n "\${NAMESPACE}" rollout status deployment/app-runtime --timeout=180s >/dev/null
-echo "Minikube infrastructure applied."
+kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" rollout status deployment/app-runtime --timeout=180s >/dev/null
+"\${PORT_FORWARD_SCRIPT}" start app >/dev/null
+
+trap - ERR
+echo "Minikube infrastructure for '\${PROFILE}' is running."
 `;
 }
 
-function getBuildAppImageScript(args: {
-  defaultNamespace: string;
-  defaultAppImage: string;
-}): string {
-  const { defaultNamespace, defaultAppImage } = args;
+function getBuildAppImageScript(args: { appSlug: string; defaultAppImage: string }): string {
+  const { appSlug, defaultAppImage } = args;
 
   return `#!/usr/bin/env bash
 set -euo pipefail
@@ -885,6 +2837,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
 DOCKERFILE_PATH="\${ROOT_DIR}/app-image/Dockerfile"
+APP_SLUG="${appSlug}"
 
 if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set -a
@@ -893,11 +2846,16 @@ if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set +a
 fi
 
-NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
 APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-true}"
 APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
 APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-.ankh/web-export}"
 APP_IMAGE="\${APP_IMAGE:-${defaultAppImage}}"
+
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
+  exit 1
+fi
 
 if [[ "\${APP_BUILD_ENABLED}" != "true" ]]; then
   echo "Skipping app image build (APP_BUILD_ENABLED=\${APP_BUILD_ENABLED})."
@@ -942,11 +2900,11 @@ fi
 
 docker build -t "\${APP_IMAGE}" \
   --label "ankhorage.kind=generated-app" \
-  --label "ankhorage.namespace=\${NAMESPACE}" \
+  --label "ankhorage.app_slug=\${PROFILE}" \
   --label "ankhorage.image=\${APP_IMAGE}" \
   -f "\${DOCKERFILE_PATH}" \
   "\${EXPORT_DIR}"
-echo "Built app image: \${APP_IMAGE} (namespace: \${NAMESPACE})"
+echo "Built app image: \${APP_IMAGE} (profile: \${PROFILE})"
 `;
 }
 
@@ -974,12 +2932,349 @@ CMD ["nginx", "-g", "daemon off;"]
 `;
 }
 
-function getPortForwardScript(defaultNamespace: string): string {
+function getPortForwardScript(args: {
+  appSlug: string;
+  supabaseKubernetesEnabled: boolean;
+  supabaseHostPorts: SupabaseHostPorts;
+}): string {
+  const { appSlug, supabaseKubernetesEnabled, supabaseHostPorts } = args;
+
   return `#!/usr/bin/env bash
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+STATE_DIR="\${ROOT_DIR}/.state/forwards"
+APP_SLUG="${appSlug}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
+SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+APP_PORT_FORWARD_LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
+APP_PORT_FORWARD_REMOTE_PORT="\${APP_PORT_FORWARD_REMOTE_PORT:-80}"
+SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
+SUPABASE_GATEWAY_FORWARD_REMOTE_PORT="\${SUPABASE_GATEWAY_FORWARD_REMOTE_PORT:-8000}"
+SUPABASE_STUDIO_FORWARD_LOCAL_PORT="\${SUPABASE_STUDIO_FORWARD_LOCAL_PORT:-${supabaseHostPorts.studio}}"
+SUPABASE_STUDIO_FORWARD_REMOTE_PORT="\${SUPABASE_STUDIO_FORWARD_REMOTE_PORT:-3000}"
+SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
+SUPABASE_DB_FORWARD_REMOTE_PORT="\${SUPABASE_DB_FORWARD_REMOTE_PORT:-5432}"
+
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ROOT_DIR}/.env"
+  set +a
+fi
+SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
+  exit 1
+fi
+
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "kubectl is required but not installed."
+  exit 1
+fi
+
+mkdir -p "\${STATE_DIR}"
+
+pid_file_for() {
+  echo "\${STATE_DIR}/\${PROFILE}-\${1}.pid"
+}
+
+target_for() {
+  case "\${1}" in
+    app)
+      echo "${APP_NAMESPACE} service/app-runtime \${APP_PORT_FORWARD_LOCAL_PORT} \${APP_PORT_FORWARD_REMOTE_PORT}"
+      ;;
+    supabase-gateway)
+      echo "${SUPABASE_NAMESPACE} service/gateway \${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT} \${SUPABASE_GATEWAY_FORWARD_REMOTE_PORT}"
+      ;;
+    studio)
+      echo "${SUPABASE_NAMESPACE} service/studio \${SUPABASE_STUDIO_FORWARD_LOCAL_PORT} \${SUPABASE_STUDIO_FORWARD_REMOTE_PORT}"
+      ;;
+    db-migration)
+      echo "${SUPABASE_NAMESPACE} service/postgres \${SUPABASE_DB_FORWARD_LOCAL_PORT} \${SUPABASE_DB_FORWARD_REMOTE_PORT}"
+      ;;
+    *)
+      echo "Unknown forward '\${1}'. Use app, supabase-gateway, studio, db-migration, or all." >&2
+      return 1
+      ;;
+  esac
+}
+
+is_pid_running() {
+  local pid="\${1}"
+  [[ -n "\${pid}" ]] && kill -0 "\${pid}" >/dev/null 2>&1
+}
+
+is_port_accepting() {
+  local port="\${1}"
+  (echo >/dev/tcp/127.0.0.1/"\${port}") >/dev/null 2>&1
+}
+
+print_forward_log_tail() {
+  local name="\${1}"
+  local log_file="\${STATE_DIR}/\${PROFILE}-\${name}.log"
+  if [[ -s "\${log_file}" ]]; then
+    echo "\${name}: recent kubectl port-forward log:"
+    tail -n 20 "\${log_file}"
+  fi
+}
+
+process_command_for_pid() {
+  local pid="\${1}"
+  ps -p "\${pid}" -o command= 2>/dev/null || true
+}
+
+process_name_for_pid() {
+  local pid="\${1}"
+  ps -p "\${pid}" -o comm= 2>/dev/null || true
+}
+
+is_owned_forward_process() {
+  local pid="\${1}"
+  local namespace="\${2}"
+  local resource="\${3}"
+  local local_port="\${4}"
+  local remote_port="\${5}"
+  local command
+  local process_name
+  command="$(process_command_for_pid "\${pid}")"
+  process_name="$(process_name_for_pid "\${pid}")"
+
+  case "\${process_name}" in
+    *kubectl) ;;
+    *) return 1 ;;
+  esac
+
+  case "\${command}" in
+    *"kubectl --context \${PROFILE} -n \${namespace} port-forward \${resource} \${local_port}:\${remote_port}"*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+handle_non_owned_forward_pid() {
+  local name="\${1}"
+  local pid="\${2}"
+  local pid_file="\${3}"
+  local local_port="\${4}"
+  echo "\${name}: stale pid file pointed at non-owned live pid \${pid}; removing ownership record \${pid_file}"
+  rm -f "\${pid_file}"
+
+  if is_port_accepting "\${local_port}"; then
+    echo "\${name}: port occupied by non-owned process on local port \${local_port}"
+    return 1
+  fi
+
+  return 0
+}
+
+terminate_forward_process() {
+  local name="\${1}"
+  local pid="\${2}"
+  local namespace="\${3}"
+  local resource="\${4}"
+  local local_port="\${5}"
+  local remote_port="\${6}"
+
+  if [[ -z "\${pid}" ]]; then
+    return 0
+  fi
+
+  if is_pid_running "\${pid}" && ! is_owned_forward_process "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+    echo "\${name}: refusing to terminate non-owned live pid \${pid}"
+    return 1
+  fi
+
+  if is_pid_running "\${pid}"; then
+    kill "\${pid}" >/dev/null 2>&1 || true
+    for attempt in {1..20}; do
+      if ! is_pid_running "\${pid}"; then
+        break
+      fi
+      sleep 0.25
+    done
+  fi
+
+  if is_pid_running "\${pid}"; then
+    kill -KILL "\${pid}" >/dev/null 2>&1 || true
+    for attempt in {1..20}; do
+      if ! is_pid_running "\${pid}"; then
+        break
+      fi
+      sleep 0.25
+    done
+  fi
+
+  if is_pid_running "\${pid}"; then
+    echo "\${name}: failed to stop owned port-forward pid \${pid}"
+    return 1
+  fi
+
+  for attempt in {1..20}; do
+    if ! is_port_accepting "\${local_port}"; then
+      return 0
+    fi
+    sleep 0.25
+  done
+
+  echo "\${name}: owned port-forward pid \${pid} stopped, but local port \${local_port} is still accepting connections"
+  return 1
+}
+
+start_forward() {
+  local name="\${1}"
+  local pid_file
+  pid_file="$(pid_file_for "\${name}")"
+  read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
+
+  if [[ -f "\${pid_file}" ]]; then
+    local existing_pid
+    existing_pid="$(cat "\${pid_file}")"
+    if is_pid_running "\${existing_pid}"; then
+      if ! is_owned_forward_process "\${existing_pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+        handle_non_owned_forward_pid "\${name}" "\${existing_pid}" "\${pid_file}" "\${local_port}" || return 1
+      elif is_port_accepting "\${local_port}"; then
+        echo "\${name}: running (pid \${existing_pid})"
+        return 0
+      else
+        echo "\${name}: stale running pid \${existing_pid} was not accepting local port \${local_port}; restarting"
+        terminate_forward_process "\${name}" "\${existing_pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
+        rm -f "\${pid_file}"
+      fi
+    else
+      rm -f "\${pid_file}"
+    fi
+  fi
+
+  if [[ "\${namespace}" == "${SUPABASE_NAMESPACE}" && "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
+    echo "\${name}: skipped (Supabase Kubernetes disabled)"
+    return 0
+  fi
+
+  if ! kubectl --context "\${PROFILE}" -n "\${namespace}" get "\${resource}" >/dev/null 2>&1; then
+    echo "\${name}: target \${namespace}/\${resource} not found"
+    return 1
+  fi
+
+  nohup kubectl --context "\${PROFILE}" -n "\${namespace}" port-forward "\${resource}" "\${local_port}:\${remote_port}" >"\${STATE_DIR}/\${PROFILE}-\${name}.log" 2>&1 &
+  local pid="$!"
+  echo "\${pid}" > "\${pid_file}"
+
+  for attempt in {1..40}; do
+    if ! is_pid_running "\${pid}"; then
+      echo "\${name}: failed to start local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
+      print_forward_log_tail "\${name}"
+      rm -f "\${pid_file}"
+      return 1
+    fi
+    if is_port_accepting "\${local_port}"; then
+      echo "\${name}: started (pid \${pid}, local port \${local_port})"
+      return 0
+    fi
+    sleep 0.5
+  done
+
+  echo "\${name}: did not become ready on local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
+  print_forward_log_tail "\${name}"
+  terminate_forward_process "\${name}" "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
+  rm -f "\${pid_file}"
+  return 1
+}
+
+stop_forward() {
+  local name="\${1}"
+  local pid_file
+  pid_file="$(pid_file_for "\${name}")"
+  read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
+  if [[ ! -f "\${pid_file}" ]]; then
+    echo "\${name}: stopped"
+    return 0
+  fi
+
+  local pid
+  pid="$(cat "\${pid_file}")"
+  if is_pid_running "\${pid}" && ! is_owned_forward_process "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+    handle_non_owned_forward_pid "\${name}" "\${pid}" "\${pid_file}" "\${local_port}" || return 1
+    echo "\${name}: stopped"
+    return 0
+  fi
+
+  terminate_forward_process "\${name}" "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
+  rm -f "\${pid_file}"
+  echo "\${name}: stopped"
+}
+
+status_forward() {
+  local name="\${1}"
+  local pid_file
+  pid_file="$(pid_file_for "\${name}")"
+  if [[ ! -f "\${pid_file}" ]]; then
+    echo "\${name}: stopped"
+    return 0
+  fi
+
+  local pid
+  pid="$(cat "\${pid_file}")"
+  if is_pid_running "\${pid}"; then
+    read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
+    if ! is_owned_forward_process "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+      echo "\${name}: stale_pid_non_owned=\${pid}"
+      rm -f "\${pid_file}"
+      return 0
+    fi
+    if is_port_accepting "\${local_port}"; then
+      echo "\${name}: running pid=\${pid} url=127.0.0.1:\${local_port} target=\${namespace}/\${resource}:\${remote_port}"
+      return 0
+    fi
+    echo "\${name}: not ready pid=\${pid} url=127.0.0.1:\${local_port} target=\${namespace}/\${resource}:\${remote_port}"
+    return 0
+  fi
+
+  echo "\${name}: crashed stale_pid=\${pid}"
+  rm -f "\${pid_file}"
+}
+
+for_each_forward() {
+  local action="\${1}"
+  "\${action}_forward" app
+  if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
+    "\${action}_forward" supabase-gateway
+    "\${action}_forward" studio
+    "\${action}_forward" db-migration
+  fi
+}
+
+ACTION="\${1:-start}"
+NAME="\${2:-all}"
+
+case "\${ACTION}:\${NAME}" in
+  start:all) for_each_forward start ;;
+  stop:all) for_each_forward stop ;;
+  status:all) for_each_forward status ;;
+  start:*) start_forward "\${NAME}" ;;
+  stop:*) stop_forward "\${NAME}" ;;
+  status:*) status_forward "\${NAME}" ;;
+  *)
+    echo "Usage: ./scripts/port-forward.sh {start|stop|status} {app|supabase-gateway|studio|db-migration|all}"
+    exit 1
+    ;;
+esac
+`;
+}
+
+function getDownScript(appSlug: string): string {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+APP_SLUG="${appSlug}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
 
 if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set -a
@@ -988,40 +3283,58 @@ if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set +a
 fi
 
-NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
-LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-18080}"
-REMOTE_PORT="\${APP_PORT_FORWARD_REMOTE_PORT:-80}"
-
-if ! command -v kubectl >/dev/null 2>&1; then
-  echo "kubectl is required but not installed."
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
   exit 1
 fi
 
-if ! kubectl get namespace "\${NAMESPACE}" >/dev/null 2>&1; then
-  echo "Namespace '\${NAMESPACE}' was not found."
-  echo "Run ./scripts/up.sh to create infrastructure first."
+"\${SCRIPT_DIR}/port-forward.sh" stop all >/dev/null || true
+
+if command -v minikube >/dev/null 2>&1; then
+  minikube stop -p "\${PROFILE}"
+else
+  echo "minikube is required but not installed."
   exit 1
 fi
 
-if ! kubectl -n "\${NAMESPACE}" get service app-runtime >/dev/null 2>&1; then
-  echo "Service 'app-runtime' was not found in namespace '\${NAMESPACE}'."
-  echo "Run ./scripts/up.sh to apply runtime resources."
-  exit 1
-fi
-
-echo "Forwarding app-runtime from namespace '\${NAMESPACE}' to http://127.0.0.1:\${LOCAL_PORT}"
-echo "Press Ctrl+C to stop."
-kubectl -n "\${NAMESPACE}" port-forward service/app-runtime "\${LOCAL_PORT}:\${REMOTE_PORT}"
+echo "Stopped Minikube profile '\${PROFILE}'. Persistent data remains in the profile."
 `;
 }
 
-function getDownScript(): string {
+function getResetScript(args: {
+  appSlug: string;
+  supabaseKubernetesEnabled: boolean;
+  providerNamespaces: readonly string[];
+}): string {
+  const { appSlug, supabaseKubernetesEnabled, providerNamespaces } = args;
+  const resetNamespaces = [
+    APP_NAMESPACE,
+    ...(supabaseKubernetesEnabled ? [SUPABASE_NAMESPACE] : []),
+    ...providerNamespaces,
+  ];
+  const resetNamespaceCommands = resetNamespaces
+    .map(
+      (
+        namespace,
+      ) => `kubectl --context "\${PROFILE}" delete namespace ${namespace} --ignore-not-found
+kubectl --context "\${PROFILE}" apply -f "\${K8S_DIR}/namespaces/${namespace}.yaml"`,
+    )
+    .join('\n');
+  const resetScope = `Kubernetes namespaces ${resetNamespaces.join(', ')}`;
+  const resetDataDescription = `reset.sh deletes and recreates namespaces ${resetNamespaces.join(
+    ', ',
+  )}. This resets app workloads and provider-owned data in those namespaces. It does not delete the Minikube profile.`;
+  const completionDescription = `Reset namespaces ${resetNamespaces.join(', ')}`;
+
   return `#!/usr/bin/env bash
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
 K8S_DIR="\${ROOT_DIR}/k8s"
+APP_SLUG="${appSlug}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
+CONFIRM="\${ANKH_RESET_CONFIRM:-}"
 
 if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set -a
@@ -1030,1507 +3343,251 @@ if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set +a
 fi
 
-kubectl delete -k "\${K8S_DIR}" --ignore-not-found
-echo "Minikube infrastructure removed."
-`;
-}
-
-function getSupabaseProfileChecksumSql(profileModel: ResolvedProfileModel): string {
-  return `do $$
-declare
-  actual_hash text;
-  actual_table_name text;
-begin
-  if to_regclass('ankhorage_internal.generated_schema_state') is null then
-    raise exception 'missing ankhorage_internal.generated_schema_state';
-  end if;
-
-  select content_hash, table_name
-    into actual_hash, actual_table_name
-    from ankhorage_internal.generated_schema_state
-    where artifact_key = 'auth.profile';
-
-  if actual_hash is null then
-    raise exception 'missing generated schema state for auth.profile';
-  end if;
-
-  if actual_table_name <> '${escapeSqlLiteral(profileModel.table)}' then
-    raise exception 'generated schema state table mismatch for auth.profile: expected %, found %', '${escapeSqlLiteral(profileModel.table)}', actual_table_name;
-  end if;
-
-  if actual_hash <> '${escapeSqlLiteral(profileModel.desiredStateHash)}' then
-    raise exception 'stale generated schema state for auth.profile: expected %, found %', '${escapeSqlLiteral(profileModel.desiredStateHash)}', actual_hash;
-  end if;
-end;
-$$;`;
-}
-
-function getSupabaseProfileDisabledGuardSql(): string {
-  return `do $$
-declare
-  has_profile_state boolean := false;
-begin
-  if to_regclass('ankhorage_internal.generated_schema_state') is not null then
-    execute
-      'select exists (
-         select 1
-         from ankhorage_internal.generated_schema_state
-         where artifact_key = $1
-       )'
-      into has_profile_state
-      using 'auth.profile';
-  end if;
-
-  if has_profile_state then
-    raise exception 'manifest auth.profile.table was removed but local generated auth.profile state still exists; reset local Supabase or add an explicit cleanup migration';
-  end if;
-end;
-$$;`;
-}
-
-function getSupabaseProfileVerificationSql(profileModel: ResolvedProfileModel): string {
-  const configuredColumns = profileModel.columns.map((column) => column.column);
-  const configuredArray = getSqlTextArray(configuredColumns);
-  const managedArray = getSqlTextArray(MANAGED_PROFILE_COLUMNS);
-  const updateGrantArray = getSqlTextArray(configuredColumns);
-  const protectedUpdateColumnsArray = getSqlTextArray(['id', 'created_at', 'updated_at', 'role']);
-  const table = escapeSqlLiteral(profileModel.table);
-  const selectPolicy = escapeSqlLiteral(`${profileModel.table}_select_own`);
-  const updatePolicy = escapeSqlLiteral(`${profileModel.table}_update_own`);
-  const triggerName = escapeSqlLiteral(`on_auth_user_created_${profileModel.table}`);
-  const functionName = escapeSqlLiteral(`handle_new_${profileModel.table}_user`);
-  const triggerCheck =
-    profileModel.createStrategy === 'trigger'
-      ? `  if not exists (
-    select 1
-    from pg_trigger t
-    join pg_class rel on rel.oid = t.tgrelid
-    join pg_namespace rel_ns on rel_ns.oid = rel.relnamespace
-    join pg_proc fn on fn.oid = t.tgfoid
-    join pg_namespace fn_ns on fn_ns.oid = fn.pronamespace
-    where rel_ns.nspname = 'auth'
-      and rel.relname = 'users'
-      and t.tgname = '${triggerName}'
-      and not t.tgisinternal
-      and t.tgenabled = 'O'
-      and (t.tgtype::integer & 1) = 1
-      and (t.tgtype::integer & 4) = 4
-      and (t.tgtype::integer & (2 | 8 | 16 | 32)) = 0
-      and fn_ns.nspname = 'public'
-      and fn.proname = '${functionName}'
-  ) then
-    raise exception 'missing generated new-user profile trigger';
-  end if;`
-      : `  if exists (
-    select 1
-    from pg_trigger t
-    join pg_class rel on rel.oid = t.tgrelid
-    join pg_namespace rel_ns on rel_ns.oid = rel.relnamespace
-    where rel_ns.nspname = 'auth'
-      and rel.relname = 'users'
-      and t.tgname = '${triggerName}'
-      and not t.tgisinternal
-  ) then
-    raise exception 'generated new-user profile trigger exists but createStrategy is not trigger';
-  end if;`;
-
-  return `do $$
-declare
-  profile_table constant text := '${table}';
-  configured_columns constant text[] := ${configuredArray};
-  managed_columns constant text[] := ${managedArray};
-  expected_column text;
-begin
-  if to_regclass('auth.users') is null then
-    raise exception 'missing auth.users';
-  end if;
-
-  if to_regclass('public.users') is not null then
-    raise exception 'reserved conflicting identity table public.users exists';
-  end if;
-
-  if to_regclass(format('public.%I', profile_table)) is null then
-    raise exception 'missing configured profile table public.%', profile_table;
-  end if;
-
-  if not exists (
-    select 1
-    from pg_constraint c
-    where c.conrelid = format('public.%I', profile_table)::regclass
-      and c.contype = 'p'
-      and c.conkey = array[
-        (
-          select a.attnum
-          from pg_attribute a
-          where a.attrelid = format('public.%I', profile_table)::regclass
-            and a.attname = 'id'
-            and not a.attisdropped
-        )
-      ]::smallint[]
-  ) then
-    raise exception 'profile table primary key must be exactly id';
-  end if;
-
-  if not exists (
-    select 1
-    from pg_constraint c
-    where c.conrelid = format('public.%I', profile_table)::regclass
-      and c.confrelid = 'auth.users'::regclass
-      and c.contype = 'f'
-      and c.confdeltype = 'c'
-      and c.conkey = array[
-        (
-          select a.attnum
-          from pg_attribute a
-          where a.attrelid = format('public.%I', profile_table)::regclass
-            and a.attname = 'id'
-            and not a.attisdropped
-        )
-      ]::smallint[]
-      and c.confkey = array[
-        (
-          select a.attnum
-          from pg_attribute a
-          where a.attrelid = 'auth.users'::regclass
-            and a.attname = 'id'
-            and not a.attisdropped
-        )
-      ]::smallint[]
-  ) then
-    raise exception 'profile id must reference auth.users(id) with cascade delete';
-  end if;
-
-  if not exists (
-    select 1
-    from information_schema.columns c
-    where c.table_schema = 'public'
-      and c.table_name = profile_table
-      and c.column_name = 'id'
-      and c.udt_name = 'uuid'
-      and c.is_nullable = 'NO'
-  ) then
-    raise exception 'profile id column must be uuid not null';
-  end if;
-
-  if not exists (
-    select 1
-    from information_schema.columns c
-    where c.table_schema = 'public'
-      and c.table_name = profile_table
-      and c.column_name = 'created_at'
-      and c.data_type = 'timestamp with time zone'
-      and c.is_nullable = 'NO'
-      and c.column_default = 'now()'
-  ) then
-    raise exception 'profile created_at column must be timestamptz not null default now()';
-  end if;
-
-  if not exists (
-    select 1
-    from information_schema.columns c
-    where c.table_schema = 'public'
-      and c.table_name = profile_table
-      and c.column_name = 'updated_at'
-      and c.data_type = 'timestamp with time zone'
-      and c.is_nullable = 'NO'
-      and c.column_default = 'now()'
-  ) then
-    raise exception 'profile updated_at column must be timestamptz not null default now()';
-  end if;
-
-  foreach expected_column in array configured_columns loop
-    if not exists (
-      select 1
-      from information_schema.columns c
-      where c.table_schema = 'public'
-        and c.table_name = profile_table
-        and c.column_name = expected_column
-        and c.data_type = 'text'
-    ) then
-      raise exception 'missing configured managed profile column %', expected_column;
-    end if;
-  end loop;
-
-  foreach expected_column in array managed_columns loop
-    if not expected_column = any(configured_columns) and exists (
-      select 1
-      from information_schema.columns c
-      where c.table_schema = 'public'
-        and c.table_name = profile_table
-        and c.column_name = expected_column
-    ) then
-      raise exception 'stale managed profile column % exists', expected_column;
-    end if;
-  end loop;
-
-  if exists (
-    select 1
-    from information_schema.columns
-    where table_schema = 'public'
-      and table_name = profile_table
-      and column_name = 'role'
-  ) then
-    raise exception 'generated role column must not exist';
-  end if;
-
-  if not exists (
-    select 1
-    from pg_class c
-    join pg_namespace n on n.oid = c.relnamespace
-    where n.nspname = 'public'
-      and c.relname = profile_table
-      and c.relrowsecurity
-  ) then
-    raise exception 'profile table RLS is not enabled';
-  end if;
-
-  if not exists (
-    select 1
-    from pg_policy p
-    join pg_class c on c.oid = p.polrelid
-    join pg_namespace n on n.oid = c.relnamespace
-    where n.nspname = 'public'
-      and c.relname = profile_table
-      and p.polname = '${selectPolicy}'
-      and p.polcmd = 'r'
-      and p.polroles = array['authenticated'::regrole]::oid[]
-      and regexp_replace(lower(pg_get_expr(p.polqual, p.polrelid)), '[[:space:]()]', '', 'g') in (
-        'auth.uid=id',
-        'auth.uid=' || profile_table || '.id',
-        'selectauth.uidasuid=id',
-        'selectauth.uidasuid=' || profile_table || '.id'
-      )
-      and p.polwithcheck is null
-  ) then
-    raise exception 'own-profile SELECT policy is missing or has unsafe definition';
-  end if;
-
-  if not exists (
-    select 1
-    from pg_policy p
-    join pg_class c on c.oid = p.polrelid
-    join pg_namespace n on n.oid = c.relnamespace
-    where n.nspname = 'public'
-      and c.relname = profile_table
-      and p.polname = '${updatePolicy}'
-      and p.polcmd = 'w'
-      and p.polroles = array['authenticated'::regrole]::oid[]
-      and regexp_replace(lower(pg_get_expr(p.polqual, p.polrelid)), '[[:space:]()]', '', 'g') in (
-        'auth.uid=id',
-        'auth.uid=' || profile_table || '.id',
-        'selectauth.uidasuid=id',
-        'selectauth.uidasuid=' || profile_table || '.id'
-      )
-      and regexp_replace(lower(pg_get_expr(p.polwithcheck, p.polrelid)), '[[:space:]()]', '', 'g') in (
-        'auth.uid=id',
-        'auth.uid=' || profile_table || '.id',
-        'selectauth.uidasuid=id',
-        'selectauth.uidasuid=' || profile_table || '.id'
-      )
-  ) then
-    raise exception 'own-profile UPDATE policy is missing or has unsafe definition';
-  end if;
-
-  if exists (
-    select 1
-    from pg_policy p
-    join pg_class c on c.oid = p.polrelid
-    join pg_namespace n on n.oid = c.relnamespace
-    where n.nspname = 'public'
-      and c.relname = profile_table
-      and p.polname not in ('${selectPolicy}', '${updatePolicy}')
-  ) then
-    raise exception 'unexpected profile table RLS policy exists';
-  end if;
-
-  if has_any_column_privilege('anon', format('public.%I', profile_table), 'SELECT')
-    or has_any_column_privilege('anon', format('public.%I', profile_table), 'INSERT')
-    or has_any_column_privilege('anon', format('public.%I', profile_table), 'UPDATE')
-    or has_any_column_privilege('anon', format('public.%I', profile_table), 'REFERENCES')
-    or has_table_privilege('anon', format('public.%I', profile_table), 'DELETE') then
-    raise exception 'anon must not have profile table privileges';
-  end if;
-
-  if not has_table_privilege('authenticated', format('public.%I', profile_table), 'SELECT') then
-    raise exception 'authenticated role must have profile table SELECT privilege';
-  end if;
-
-  if has_any_column_privilege('authenticated', format('public.%I', profile_table), 'INSERT')
-    or has_any_column_privilege('authenticated', format('public.%I', profile_table), 'REFERENCES')
-    or has_table_privilege('authenticated', format('public.%I', profile_table), 'DELETE') then
-    raise exception 'authenticated role must not have profile table INSERT, DELETE, or REFERENCES privilege';
-  end if;
-
-  foreach expected_column in array ${updateGrantArray} loop
-    if not has_column_privilege('authenticated', format('public.%I', profile_table), expected_column, 'UPDATE') then
-      raise exception 'authenticated role is missing UPDATE privilege on configured profile column %', expected_column;
-    end if;
-  end loop;
-
-  foreach expected_column in array (
-    select array_agg(c.column_name::text order by c.ordinal_position)
-    from information_schema.columns c
-    where c.table_schema = 'public'
-      and c.table_name = profile_table
-  ) loop
-    if not expected_column = any(configured_columns)
-      and has_column_privilege('authenticated', format('public.%I', profile_table), expected_column, 'UPDATE') then
-      raise exception 'authenticated role has unexpected UPDATE privilege on profile column %', expected_column;
-    end if;
-  end loop;
-
-  foreach expected_column in array ${protectedUpdateColumnsArray} loop
-    if exists (
-      select 1
-      from information_schema.columns c
-      where c.table_schema = 'public'
-        and c.table_name = profile_table
-        and c.column_name = expected_column
-    ) and has_column_privilege('authenticated', format('public.%I', profile_table), expected_column, 'UPDATE') then
-      raise exception 'authenticated role must not have UPDATE privilege on protected profile column %', expected_column;
-    end if;
-  end loop;
-
-${triggerCheck}
-
-  if '${profileModel.createStrategy}' = 'trigger' then
-    if not exists (
-      select 1
-      from pg_proc p
-      join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname = 'public'
-        and p.proname = '${functionName}'
-        and p.prosecdef
-        and p.prorettype = 'trigger'::regtype
-        and p.proconfig @> array['search_path=pg_catalog, pg_temp']
-    ) then
-      raise exception 'generated trigger function is missing required SECURITY DEFINER properties';
-    end if;
-
-    if exists (
-      select 1
-      from pg_proc p
-      join pg_namespace n on n.oid = p.pronamespace
-      cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) acl
-      where n.nspname = 'public'
-        and p.proname = '${functionName}'
-        and acl.privilege_type = 'EXECUTE'
-        and (
-          acl.grantee = 0
-          or acl.grantee = 'anon'::regrole
-          or acl.grantee = 'authenticated'::regrole
-        )
-    ) then
-      raise exception 'generated trigger function execute privilege must be revoked from PUBLIC, anon, and authenticated';
-    end if;
-  end if;
-end;
-$$;`;
-}
-
-function getStatusScript(args: {
-  defaultNamespace: string;
-  supabaseProjectId: string | null;
-  supabaseLocalEnabled: boolean;
-  profileModel: ResolvedProfileModel;
-}): string {
-  const { defaultNamespace, supabaseProjectId, supabaseLocalEnabled, profileModel } = args;
-  const profileStatusSql = profileModel.enabled ? getSupabaseProfileChecksumSql(profileModel) : '';
-  const profileVerificationSql = profileModel.enabled
-    ? getSupabaseProfileVerificationSql(profileModel)
-    : '';
-
-  return `#!/usr/bin/env bash
-set -euo pipefail
-
-SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
-
-if [[ -f "\${ROOT_DIR}/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source "\${ROOT_DIR}/.env"
-  set +a
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
+  exit 1
 fi
 
-NAMESPACE="\${ANKH_NAMESPACE:-${defaultNamespace}}"
-AUTH_RUNTIME_MODE="\${AUTH_RUNTIME_MODE:-local}"
-SUPABASE_LOCAL_ENABLED="\${SUPABASE_LOCAL_ENABLED:-${supabaseLocalEnabled ? 'true' : 'false'}}"
-SUPABASE_SECRET_SYNC_ENABLED="\${SUPABASE_SECRET_SYNC_ENABLED:-true}"
-SUPABASE_PROJECT_DIR="\${SUPABASE_PROJECT_DIR:-\${ROOT_DIR}}"
-EXPECTED_SUPABASE_PROJECT_ID="${supabaseProjectId ?? ''}"
-SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
-SUPABASE_PROFILE_RECONCILE_FILE="\${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"
-export EXPECTED_SUPABASE_PROJECT_ID
-
-reject_supabase_project_id_override() {
-  if [[ -n "\${SUPABASE_PROJECT_ID:-}" ]]; then
-    echo "SUPABASE_PROJECT_ID must not be set for generated local Infra scripts."
-    echo "Unset SUPABASE_PROJECT_ID and use supabase/config.toml project_id instead."
-    return 1
-  fi
-
-  unset SUPABASE_PROJECT_ID
-}
-
-require_expected_supabase_project_identity() {
-  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
-    echo "Cannot run local Supabase infrastructure: expected Supabase project identity is empty."
-    echo "Regenerate Infra with appManifest.metadata.slug for Supabase-backed local services."
-    return 1
-  fi
-}
+if [[ "\${CONFIRM}" != "\${APP_SLUG}" ]]; then
+  echo "Refusing reset. Set ANKH_RESET_CONFIRM=\${APP_SLUG} to reset ${resetScope} inside profile '\${PROFILE}'."
+  echo "${resetDataDescription}"
+  exit 1
+fi
 
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "kubectl is required but not installed."
   exit 1
 fi
 
-if ! kubectl config current-context >/dev/null 2>&1; then
-  echo "No active kubectl context is configured."
-  echo "Run ./scripts/up.sh to start Minikube and apply manifests."
-  exit 1
-fi
-
-if ! kubectl cluster-info >/dev/null 2>&1; then
-  CONTEXT="$(kubectl config current-context 2>/dev/null || echo "unknown")"
-  echo "Cannot reach Kubernetes API server for context '\${CONTEXT}'."
-  echo "Run ./scripts/up.sh or verify your kubeconfig context."
-  exit 1
-fi
-
-if ! kubectl get namespace "\${NAMESPACE}" >/dev/null 2>&1; then
-  echo "Namespace '\${NAMESPACE}' was not found in the current cluster."
-  echo "Run ./scripts/up.sh to create it and apply resources."
-  exit 1
-fi
-
-kubectl get all -n "\${NAMESPACE}"
-
-echo
-echo "Runtime auth checks:"
-echo "- AUTH_RUNTIME_MODE=\${AUTH_RUNTIME_MODE}"
-echo "- SUPABASE_SECRET_SYNC_ENABLED=\${SUPABASE_SECRET_SYNC_ENABLED}"
-
-if kubectl -n "\${NAMESPACE}" get configmap app-runtime-auth-env >/dev/null 2>&1; then
-  echo "- configmap/app-runtime-auth-env: present"
-else
-  echo "- configmap/app-runtime-auth-env: missing"
-fi
-
-if [[ "\${SUPABASE_SECRET_SYNC_ENABLED}" == "true" ]]; then
-  if kubectl -n "\${NAMESPACE}" get secret supabase-auth-secrets >/dev/null 2>&1; then
-    echo "- secret/supabase-auth-secrets: present"
-
-    has_secret_key() {
-      local key="$1"
-      local value
-      value="$(kubectl -n "\${NAMESPACE}" get secret supabase-auth-secrets -o "jsonpath={.data.\${key}}" 2>/dev/null || true)"
-      [[ -n "\${value}" ]]
-    }
-
-    required_secret_keys=(
-      SUPABASE_URL
-      SUPABASE_ANON_KEY
-      SUPABASE_SERVICE_ROLE_KEY
-      SUPABASE_JWT_SECRET
-      EXPO_PUBLIC_SUPABASE_URL
-      EXPO_PUBLIC_SUPABASE_ANON_KEY
-    )
-
-    for key in "\${required_secret_keys[@]}"; do
-      if has_secret_key "\${key}"; then
-        echo "  - \${key}: present"
-      else
-        echo "  - \${key}: missing"
-      fi
-    done
-  else
-    echo "- secret/supabase-auth-secrets: missing"
-  fi
-else
-  echo "- secret/supabase-auth-secrets: skipped (SUPABASE_SECRET_SYNC_ENABLED=false)"
-fi
-
-version_ge() {
-  local actual="$1"
-  local minimum="$2"
-
-  local actual_major actual_minor actual_patch
-  local minimum_major minimum_minor minimum_patch
-  IFS=. read -r actual_major actual_minor actual_patch <<< "\${actual}"
-  IFS=. read -r minimum_major minimum_minor minimum_patch <<< "\${minimum}"
-
-  actual_major="\${actual_major:-0}"
-  actual_minor="\${actual_minor:-0}"
-  actual_patch="\${actual_patch:-0}"
-  minimum_major="\${minimum_major:-0}"
-  minimum_minor="\${minimum_minor:-0}"
-  minimum_patch="\${minimum_patch:-0}"
-
-  (( actual_major > minimum_major )) && return 0
-  (( actual_major < minimum_major )) && return 1
-  (( actual_minor > minimum_minor )) && return 0
-  (( actual_minor < minimum_minor )) && return 1
-  (( actual_patch >= minimum_patch ))
-}
-
-require_supabase_cli_capabilities() {
-  if ! command -v supabase >/dev/null 2>&1; then
-    echo "supabase CLI is required for local schema status checks."
-    echo "Install or upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
-    return 1
-  fi
-
-  local version
-  version="$(supabase --version | awk '{print $NF}')"
-  if ! version_ge "\${version}" "2.106.0"; then
-    echo "supabase CLI >= 2.106.0 is required; found \${version}."
-    echo "Upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
-    return 1
-  fi
-
-  if ! supabase status --help 2>/dev/null | grep -Fq -- "--workdir"; then
-    echo "supabase CLI does not support required global --workdir flag."
-    return 1
-  fi
-
-  if ! supabase migration up --help 2>/dev/null | grep -Fq -- "--local"; then
-    echo "supabase CLI does not support required migration up --local command."
-    return 1
-  fi
-
-  if ! command -v psql >/dev/null 2>&1; then
-    echo "psql is required for local schema status checks."
-    return 1
-  fi
-}
-
-read_env_value() {
-  local source="$1"
-  local key="$2"
-  local line
-  line="$(printf '%s\\n' "\${source}" | awk -v key="\${key}" '
-    $0 ~ "^(export[[:space:]]+)?" key "=" {print}
-  ' | tail -n1)"
-
-  if [[ -z "\${line}" ]]; then
-    echo ""
-    return
-  fi
-
-  line="\${line#export }"
-  line="\${line#\${key}=}"
-  line="\${line%\\"}"
-  line="\${line#\\"}"
-  printf '%s' "\${line}"
-}
-
-run_supabase_sql() {
-  local sql="$1"
-  local label="$2"
-  local tmp_file
-  tmp_file="$(mktemp)"
-  printf '%s\\n' "\${sql}" > "\${tmp_file}"
-
-  if psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${tmp_file}" >/dev/null; then
-    rm -f "\${tmp_file}"
-    return 0
-  fi
-
-  rm -f "\${tmp_file}"
-  echo "- \${label}: failed"
-  return 1
-}
-
-validate_supabase_project_identity() {
-  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
-
-  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
-    return 0
-  fi
-
-  if [[ ! -f "\${config_file}" ]]; then
-    echo "- local Supabase project identity: config missing at \${config_file}"
-    return 1
-  fi
-
-  if ! command -v python3 >/dev/null 2>&1; then
-    echo "- local Supabase project identity: python3 is required to read \${config_file}"
-    return 1
-  fi
-
-  python3 - "\${config_file}" <<'PY'
-import os
-import re
-import sys
-
-
-def read_top_level_project_id(config_path):
-    key_re = re.compile(r'^\\s*project_id\\s*=\\s*(.*?)\\s*(?:#.*)?$')
-    section_re = re.compile(r'^\\s*\\[[^\\]]+\\]\\s*$')
-
-    with open(config_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            if section_re.match(line):
-                return None
-            match = key_re.match(line)
-            if not match:
-                continue
-            raw = match.group(1).strip()
-            quoted = re.match(r'^["\\']([^"\\']*)["\\']$', raw)
-            return quoted.group(1) if quoted else raw
-
-    return None
-
-
-expected = os.environ['EXPECTED_SUPABASE_PROJECT_ID']
-actual = read_top_level_project_id(sys.argv[1])
-
-if actual == expected:
-    raise SystemExit(0)
-
-found = 'missing' if actual is None else f'"{actual}"'
-print('Supabase project identity mismatch.', file=sys.stderr)
-print(f'Expected "{expected}", found {found}.', file=sys.stderr)
-print('Destroy the invalid local stack and run Infra Up again.', file=sys.stderr)
-raise SystemExit(1)
-PY
-}
-
-check_immutable_migrations_applied() {
-  local migrations_dir="\${SUPABASE_PROJECT_DIR}/supabase/migrations"
-  local applied_versions
-  applied_versions="$(psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -Atc "select version from supabase_migrations.schema_migrations" 2>/dev/null || true)"
-
-  if [[ -z "\${applied_versions}" ]]; then
-    applied_versions=""
-  fi
-
-  if [[ ! -d "\${migrations_dir}" ]]; then
-    return 0
-  fi
-
-  local file
-  local version
-  local pending=0
-  for file in "\${migrations_dir}"/*.sql; do
-    [[ -e "\${file}" ]] || continue
-    version="$(basename "\${file}")"
-    version="\${version%%_*}"
-    if ! printf '%s\\n' "\${applied_versions}" | grep -Fxq "\${version}"; then
-      echo "- immutable migrations: pending \${file}"
-      pending=1
-    fi
-  done
-
-  return "\${pending}"
-}
-
-if [[ "\${AUTH_RUNTIME_MODE}" == "local" && "\${SUPABASE_LOCAL_ENABLED}" == "true" ]]; then
-  echo
-  echo "Local Supabase database checks:"
-  status_failed=0
-
-  if ! require_expected_supabase_project_identity; then
-    status_failed=1
-  elif ! reject_supabase_project_id_override; then
-    status_failed=1
-  elif require_supabase_cli_capabilities; then
-    if ! validate_supabase_project_identity; then
-      status_failed=1
-    elif supabase --workdir "\${SUPABASE_PROJECT_DIR}" status >/dev/null 2>&1; then
-      STATUS_ENV="$(supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env)"
-      SUPABASE_DB_URL="$(read_env_value "\${STATUS_ENV}" DB_URL)"
-      if [[ -z "\${SUPABASE_DB_URL}" ]]; then
-        echo "- immutable migrations: status unavailable (DB_URL missing from supabase status)"
-        status_failed=1
-      elif check_immutable_migrations_applied; then
-        echo "- immutable migrations: applied"
-      else
-        echo "- immutable migrations: pending"
-        status_failed=1
-      fi
-
-      if [[ "\${SUPABASE_PROFILE_ENABLED}" == "true" ]]; then
-        if [[ -f "\${SUPABASE_PROFILE_RECONCILE_FILE}" ]]; then
-          PROFILE_STATUS_SQL=$(cat <<'SQL'
-${profileStatusSql}
-SQL
-)
-          PROFILE_VERIFY_SQL=$(cat <<'SQL'
-${profileVerificationSql}
-SQL
-)
-
-          if run_supabase_sql "\${PROFILE_STATUS_SQL}" "profile reconciliation"; then
-            echo "- profile reconciliation: applied, checksum matches"
-          else
-            echo "- profile reconciliation: pending or stale"
-            status_failed=1
-          fi
-
-          if run_supabase_sql "\${PROFILE_VERIFY_SQL}" "profile schema"; then
-            echo "- profile schema: verified"
-          else
-            echo "- profile schema: drift detected"
-            status_failed=1
-          fi
-        else
-          echo "- profile reconciliation: generated file missing at \${SUPABASE_PROFILE_RECONCILE_FILE}"
-          echo "- profile schema: not verified"
-          status_failed=1
-        fi
-      else
-        PROFILE_DISABLED_SQL=$(cat <<'SQL'
-${getSupabaseProfileDisabledGuardSql()}
-SQL
-)
-        if run_supabase_sql "\${PROFILE_DISABLED_SQL}" "profile disabled-state"; then
-          echo "- profile reconciliation: skipped (no profile table configured)"
-          echo "- profile schema: skipped (no profile table configured)"
-        else
-          echo "- profile reconciliation: stale generated state exists for removed profile table"
-          echo "- profile schema: not verified"
-          status_failed=1
-        fi
-      fi
-    else
-      echo "- local Supabase stack: not running or not reachable from \${SUPABASE_PROJECT_DIR}"
-      status_failed=1
-    fi
-  else
-    status_failed=1
-  fi
-
-  if [[ "\${status_failed}" -ne 0 ]]; then
-    exit "\${status_failed}"
-  fi
-fi
+"\${SCRIPT_DIR}/port-forward.sh" stop all >/dev/null || true
+${resetNamespaceCommands}
+echo "${completionDescription} for profile '\${PROFILE}'. Run ./scripts/up.sh to recreate runtime secrets, migrations, forwards, and app rollout."
 `;
 }
 
-function getSupabaseLocalEnvScript(args: {
-  supabaseProjectId: string | null;
-  supabaseLocalPorts: SupabaseLocalPorts;
+function getDestroyScript(appSlug: string): string {
+  return `#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
+APP_SLUG="${appSlug}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
+
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "\${ROOT_DIR}/.env"
+  set +a
+fi
+
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
+  exit 1
+fi
+
+"\${SCRIPT_DIR}/port-forward.sh" stop all >/dev/null || true
+minikube delete -p "\${PROFILE}"
+echo "Deleted Minikube profile '\${PROFILE}'."
+`;
+}
+
+function getStatusScript(args: {
+  appSlug: string;
+  supabaseKubernetesEnabled: boolean;
   profileModel: ResolvedProfileModel;
+  supabaseHostPorts: SupabaseHostPorts;
+  providerNamespaces: readonly string[];
+  providerLifecycle: readonly MinikubeProviderLifecycle[];
 }): string {
-  const { supabaseProjectId, supabaseLocalPorts, profileModel } = args;
-  const profileStatusSql = profileModel.enabled ? getSupabaseProfileChecksumSql(profileModel) : '';
-  const profileVerificationSql = profileModel.enabled
-    ? getSupabaseProfileVerificationSql(profileModel)
-    : '';
+  const {
+    appSlug,
+    supabaseKubernetesEnabled,
+    profileModel,
+    supabaseHostPorts,
+    providerNamespaces,
+    providerLifecycle,
+  } = args;
+  const namespaces = [
+    APP_NAMESPACE,
+    ...(supabaseKubernetesEnabled ? [SUPABASE_NAMESPACE] : []),
+    ...providerNamespaces,
+  ].join(' ');
+  const providerStatusScript = getProviderStatusScript(providerLifecycle);
 
   return `#!/usr/bin/env bash
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "\${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "\${SCRIPT_DIR}/.." && pwd)"
-ENV_FILE="\${ROOT_DIR}/.env"
-ENV_EXAMPLE_FILE="\${ROOT_DIR}/.env.example"
+APP_SLUG="${appSlug}"
+PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
+SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
+SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
 
-if [[ -f "\${ENV_FILE}" ]]; then
+if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set -a
   # shellcheck disable=SC1090
-  source "\${ENV_FILE}"
+  source "\${ROOT_DIR}/.env"
   set +a
 fi
+SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
 
-APP_SOURCE_DIR="\${APP_SOURCE_DIR:-$(cd "\${ROOT_DIR}/../.." && pwd)}"
-SUPABASE_PROJECT_DIR="\${SUPABASE_PROJECT_DIR:-\${ROOT_DIR}}"
-EXPECTED_SUPABASE_PROJECT_ID="${supabaseProjectId ?? ''}"
-APP_SUPABASE_ENV_FILE="\${APP_SUPABASE_ENV_FILE:-\${APP_SOURCE_DIR}/.env.local}"
-SUPABASE_PROFILE_ENABLED="${profileModel.enabled ? 'true' : 'false'}"
-SUPABASE_PROFILE_RECONCILE_FILE="\${SUPABASE_PROJECT_DIR}/supabase/generated/auth_profiles.sql"
-export EXPECTED_SUPABASE_PROJECT_ID
-
-reject_supabase_project_id_override() {
-  if [[ -n "\${SUPABASE_PROJECT_ID:-}" ]]; then
-    echo "SUPABASE_PROJECT_ID must not be set for generated local Infra scripts."
-    echo "Unset SUPABASE_PROJECT_ID and use supabase/config.toml project_id instead."
-    exit 1
-  fi
-
-  unset SUPABASE_PROJECT_ID
-}
-
-require_expected_supabase_project_identity() {
-  if [[ -z "\${EXPECTED_SUPABASE_PROJECT_ID}" ]]; then
-    echo "Cannot run local Supabase infrastructure: expected Supabase project identity is empty."
-    echo "Regenerate Infra with appManifest.metadata.slug for Supabase-backed local services."
-    exit 1
-  fi
-}
-
-SUPABASE_LOCAL_PORT_BASE="\${SUPABASE_LOCAL_PORT_BASE:-${supabaseLocalPorts.base}}"
-SUPABASE_LOCAL_SHADOW_PORT="\${SUPABASE_LOCAL_SHADOW_PORT:-\${SUPABASE_LOCAL_PORT_BASE}}"
-SUPABASE_LOCAL_API_PORT="\${SUPABASE_LOCAL_API_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 1))}"
-SUPABASE_LOCAL_DB_PORT="\${SUPABASE_LOCAL_DB_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 2))}"
-SUPABASE_LOCAL_STUDIO_PORT="\${SUPABASE_LOCAL_STUDIO_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 3))}"
-SUPABASE_LOCAL_INBUCKET_PORT="\${SUPABASE_LOCAL_INBUCKET_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 4))}"
-SUPABASE_LOCAL_ANALYTICS_PORT="\${SUPABASE_LOCAL_ANALYTICS_PORT:-$((SUPABASE_LOCAL_PORT_BASE + 5))}"
-export SUPABASE_LOCAL_PORT_BASE
-export SUPABASE_LOCAL_SHADOW_PORT
-export SUPABASE_LOCAL_API_PORT
-export SUPABASE_LOCAL_DB_PORT
-export SUPABASE_LOCAL_STUDIO_PORT
-export SUPABASE_LOCAL_INBUCKET_PORT
-export SUPABASE_LOCAL_ANALYTICS_PORT
-version_ge() {
-  local actual="$1"
-  local minimum="$2"
-
-  local actual_major actual_minor actual_patch
-  local minimum_major minimum_minor minimum_patch
-  IFS=. read -r actual_major actual_minor actual_patch <<< "\${actual}"
-  IFS=. read -r minimum_major minimum_minor minimum_patch <<< "\${minimum}"
-
-  actual_major="\${actual_major:-0}"
-  actual_minor="\${actual_minor:-0}"
-  actual_patch="\${actual_patch:-0}"
-  minimum_major="\${minimum_major:-0}"
-  minimum_minor="\${minimum_minor:-0}"
-  minimum_patch="\${minimum_patch:-0}"
-
-  (( actual_major > minimum_major )) && return 0
-  (( actual_major < minimum_major )) && return 1
-  (( actual_minor > minimum_minor )) && return 0
-  (( actual_minor < minimum_minor )) && return 1
-  (( actual_patch >= minimum_patch ))
-}
-
-require_supabase_cli_capabilities() {
-  if ! command -v supabase >/dev/null 2>&1; then
-    echo "supabase CLI is required but not installed."
-    echo "Install or upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
-    exit 1
-  fi
-
-  if ! command -v python3 >/dev/null 2>&1; then
-    echo "python3 is required to reconcile supabase/config.toml before local Supabase startup."
-    exit 1
-  fi
-
-  local version
-  version="$(supabase --version | awk '{print $NF}')"
-  if ! version_ge "\${version}" "2.106.0"; then
-    echo "supabase CLI >= 2.106.0 is required; found \${version}."
-    echo "Upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
-    exit 1
-  fi
-
-  if ! supabase status --help 2>/dev/null | grep -Fq -- "--workdir"; then
-    echo "supabase CLI does not support required global --workdir flag."
-    echo "Upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
-    exit 1
-  fi
-
-  if ! supabase migration up --help 2>/dev/null | grep -Fq -- "--local"; then
-    echo "supabase CLI does not support required migration up --local command."
-    echo "Upgrade: https://supabase.com/docs/guides/local-development/cli/getting-started"
-    exit 1
-  fi
-
-  if ! command -v psql >/dev/null 2>&1; then
-    echo "psql is required but not installed."
-    exit 1
-  fi
-}
-
-format_command() {
-  printf '%q ' "$@"
-}
-
-run_checked_command() {
-  local label="$1"
-  local sql_file="$2"
-  shift 2
-  local status
-  set +e
-  "$@"
-  status=$?
-  set -e
-
-  if [[ "\${status}" -ne 0 ]]; then
-    echo "\${label} failed."
-    if [[ -n "\${sql_file}" ]]; then
-      echo "SQL file: \${sql_file}"
-    fi
-    echo "Supabase project workdir: \${SUPABASE_PROJECT_DIR}"
-    echo "Command: $(format_command "$@")"
-    echo "Exit status: \${status}"
-    exit "\${status}"
-  fi
-}
-
-run_checked_sql_file() {
-  local label="$1"
-  local sql_file="$2"
-  run_checked_command \
-    "\${label}" \
-    "\${sql_file}" \
-    psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -q -f "\${sql_file}"
-}
-
-require_expected_supabase_project_identity
-reject_supabase_project_id_override
-require_supabase_cli_capabilities
-
-if [[ ! -d "\${SUPABASE_PROJECT_DIR}" ]]; then
-  echo "Supabase project directory does not exist: \${SUPABASE_PROJECT_DIR}"
+if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
+  echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
   exit 1
 fi
 
-configure_supabase_local_ports() {
-  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
-
-  python3 - "\${config_file}" <<'PY'
-import os
-import re
-import sys
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class Patch:
-    section: str
-    key: str
-    value: str
-
-
-def _env_required(name):
-    value = os.environ.get(name)
-    if value is None or value == "":
-        raise RuntimeError(f"Missing required env var: {name}")
-    return value
-
-
-def _is_section_header(line):
-    return re.match(r"^\\s*\\[[^\\]]+\\]\\s*$", line) is not None
-
-
-def _section_name(line):
-    match = re.match(r"^\\s*\\[([^\\]]+)\\]\\s*$", line)
-    return match.group(1) if match else None
-
-
-def _patch_section(lines, section, key, value):
-    current_section = None
-    section_start = None
-
-    for i, line in enumerate(lines):
-        if _is_section_header(line):
-            current_section = _section_name(line)
-            if current_section == section and section_start is None:
-                section_start = i
-
-    if section_start is None:
-        if lines and not lines[-1].endswith("\\n"):
-            lines[-1] = lines[-1] + "\\n"
-        if lines and lines[-1].strip() != "":
-            lines.append("\\n")
-        lines.append(f"[{section}]\\n")
-        lines.append(f"{key} = {value}\\n")
-        return lines
-
-    section_end = len(lines)
-    for j in range(section_start + 1, len(lines)):
-        if _is_section_header(lines[j]):
-            section_end = j
-            break
-
-    key_re = re.compile(rf"^(\\s*){re.escape(key)}\\s*=\\s*(.*?)(\\s*(#.*)?)?$")
-    for k in range(section_start + 1, section_end):
-        match = key_re.match(lines[k])
-        if match:
-            indent = match.group(1) or ""
-            trailing = match.group(3) or ""
-            suffix = trailing.rstrip("\\n")
-            lines[k] = f"{indent}{key} = {value}{suffix}\\n"
-            return lines
-
-    insert_at = section_end
-    while insert_at > section_start + 1 and lines[insert_at - 1].strip() == "":
-        insert_at -= 1
-    lines.insert(insert_at, f"{key} = {value}\\n")
-    return lines
-
-
-def main():
-    if len(sys.argv) != 2:
-        raise RuntimeError("Usage: patch_config.py <supabase/config.toml>")
-
-    config_path = sys.argv[1]
-    with open(config_path, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    patches = [
-        Patch("api", "port", _env_required("SUPABASE_LOCAL_API_PORT")),
-        Patch("db", "port", _env_required("SUPABASE_LOCAL_DB_PORT")),
-        Patch("db", "shadow_port", _env_required("SUPABASE_LOCAL_SHADOW_PORT")),
-        Patch("studio", "port", _env_required("SUPABASE_LOCAL_STUDIO_PORT")),
-        Patch("inbucket", "port", _env_required("SUPABASE_LOCAL_INBUCKET_PORT")),
-        Patch("analytics", "port", _env_required("SUPABASE_LOCAL_ANALYTICS_PORT")),
-    ]
-
-    for p in patches:
-        lines = _patch_section(lines, p.section, p.key, p.value)
-
-    with open(config_path, "w", encoding="utf-8") as f:
-        f.writelines(lines)
-
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
-PY
-}
-
-write_supabase_project_identity_for_new_config() {
-  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
-
-  require_expected_supabase_project_identity
-
-  if ! command -v python3 >/dev/null 2>&1; then
-    echo "python3 is required to write Supabase project_id in \${config_file}."
-    exit 1
-  fi
-
-  python3 - "\${config_file}" <<'PY'
-import os
-import re
-import sys
-
-
-def write_top_level_project_id(config_path, expected):
-    key_re = re.compile(r'^(\\s*)project_id\\s*=\\s*(.*?)(\\s*(#.*)?)?$')
-    section_re = re.compile(r'^\\s*\\[[^\\]]+\\]\\s*$')
-
-    with open(config_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-
-    section_start = len(lines)
-    for i, line in enumerate(lines):
-        if section_re.match(line):
-            section_start = i
-            break
-
-    for i in range(section_start):
-        match = key_re.match(lines[i])
-        if not match:
-            continue
-        indent = match.group(1) or ''
-        trailing = (match.group(3) or '').rstrip('\\n')
-        lines[i] = f'{indent}project_id = "{expected}"{trailing}\\n'
-        break
-    else:
-        insert_at = section_start
-        lines.insert(insert_at, f'project_id = "{expected}"\\n')
-
-    with open(config_path, 'w', encoding='utf-8') as f:
-        f.writelines(lines)
-
-
-write_top_level_project_id(sys.argv[1], os.environ['EXPECTED_SUPABASE_PROJECT_ID'])
-PY
-}
-
-validate_supabase_project_identity() {
-  local config_file="\${SUPABASE_PROJECT_DIR}/supabase/config.toml"
-
-  require_expected_supabase_project_identity
-
-  if [[ ! -f "\${config_file}" ]]; then
-    echo "Supabase project identity mismatch."
-    printf 'Expected "%s", found missing.\n' "\${EXPECTED_SUPABASE_PROJECT_ID}"
-    echo "The existing local Supabase project belongs to a different identity."
-    echo "Destroy the invalid local stack and its project-owned resources, then run Infra Up again."
-    exit 1
-  fi
-
-  if ! command -v python3 >/dev/null 2>&1; then
-    echo "python3 is required to read Supabase project_id in \${config_file}."
-    exit 1
-  fi
-
-  python3 - "\${config_file}" <<'PY'
-import os
-import re
-import sys
-
-
-def read_top_level_project_id(config_path):
-    key_re = re.compile(r'^\\s*project_id\\s*=\\s*(.*?)\\s*(?:#.*)?$')
-    section_re = re.compile(r'^\\s*\\[[^\\]]+\\]\\s*$')
-
-    with open(config_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            if section_re.match(line):
-                return None
-            match = key_re.match(line)
-            if not match:
-                continue
-            raw = match.group(1).strip()
-            quoted = re.match(r'^["\\']([^"\\']*)["\\']$', raw)
-            return quoted.group(1) if quoted else raw
-
-    return None
-
-
-expected = os.environ['EXPECTED_SUPABASE_PROJECT_ID']
-actual = read_top_level_project_id(sys.argv[1])
-
-if actual == expected:
-    raise SystemExit(0)
-
-found = 'missing' if actual is None else f'"{actual}"'
-print('Supabase project identity mismatch.', file=sys.stderr)
-print(f'Expected "{expected}", found {found}.', file=sys.stderr)
-print('The existing local Supabase project belongs to a different identity.', file=sys.stderr)
-print('Destroy the invalid local stack and its project-owned resources, then run Infra Up again.', file=sys.stderr)
-raise SystemExit(1)
-PY
-}
-
-assert_supabase_local_ports_available() {
-  local project_label="\${EXPECTED_SUPABASE_PROJECT_ID}"
-
-  ANKH_PROJECT_LABEL="\${project_label}" python3 - <<'PY'
-import os
-import socket
-import sys
-
-
-PORT_KEYS = [
-    "SUPABASE_LOCAL_SHADOW_PORT",
-    "SUPABASE_LOCAL_API_PORT",
-    "SUPABASE_LOCAL_DB_PORT",
-    "SUPABASE_LOCAL_STUDIO_PORT",
-    "SUPABASE_LOCAL_INBUCKET_PORT",
-    "SUPABASE_LOCAL_ANALYTICS_PORT",
-]
-
-
-def read_port(key):
-    value = os.environ.get(key, "")
-    try:
-        port = int(value)
-    except ValueError:
-        raise RuntimeError(f"{key} must be an integer, got {value!r}") from None
-
-    if port < 1 or port > 65535:
-        raise RuntimeError(f"{key} must be between 1 and 65535, got {port}")
-
-    return port
-
-
-def can_bind(port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        try:
-            sock.bind(("0.0.0.0", port))
-        except OSError:
-            return False
-    return True
-
-
-def main():
-    project_label = os.environ.get("ANKH_PROJECT_LABEL", "unknown")
-    ports = [(key, read_port(key)) for key in PORT_KEYS]
-
-    seen = {}
-    duplicates = []
-    for key, port in ports:
-      existing = seen.get(port)
-      if existing is not None:
-        duplicates.append((key, existing, port))
-      else:
-        seen[port] = key
-
-    blocked = [(key, port) for key, port in ports if not can_bind(port)]
-
-    if not duplicates and not blocked:
-        return 0
-
-    print(f"Supabase local port preflight failed for project '{project_label}'.", file=sys.stderr)
-
-    for key, existing, port in duplicates:
-        print(f"- {key} duplicates {existing} on port {port}.", file=sys.stderr)
-
-    for key, port in blocked:
-        print(f"- {key}={port} is already in use on this host.", file=sys.stderr)
-
-    print("Override SUPABASE_LOCAL_PORT_BASE or the specific SUPABASE_LOCAL_*_PORT values in infra/minikube/.env and retry.", file=sys.stderr)
-    return 1
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
-PY
-}
-
-if [[ ! -f "\${SUPABASE_PROJECT_DIR}/supabase/config.toml" ]]; then
-  echo "No supabase/config.toml found in \${SUPABASE_PROJECT_DIR}. Initializing Supabase project..."
-  supabase --workdir "\${SUPABASE_PROJECT_DIR}" init --yes >/dev/null
-  write_supabase_project_identity_for_new_config
+echo "Infra status for profile: \${PROFILE}"
+
+if ! command -v minikube >/dev/null 2>&1; then
+  echo "- minikube: missing"
+  exit 1
 fi
 
-validate_supabase_project_identity
-configure_supabase_local_ports
+HOST_STATUS="$(minikube -p "\${PROFILE}" status --format='{{.Host}}' 2>/dev/null || true)"
+echo "- minikube host: \${HOST_STATUS:-missing}"
 
-STATUS_ENV="$(
-  supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env 2>/dev/null || true
-)"
+if [[ "\${HOST_STATUS}" != "Running" ]]; then
+  echo "- cluster: stopped"
+  "\${SCRIPT_DIR}/port-forward.sh" status all || true
+  exit 0
+fi
 
-read_env_value() {
-  local key="$1"
-  local line
-  line="$(printf '%s\\n' "\${STATUS_ENV}" | awk -v key="\${key}" '
-    $0 ~ "^(export[[:space:]]+)?" key "=" {print}
-  ' | tail -n1)"
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "- kubectl: missing"
+  exit 1
+fi
 
-  if [[ -z "\${line}" ]]; then
-    echo ""
-    return
+check_secret_key() {
+  local secret="\${1}"
+  local key="\${2}"
+  local encoded
+  encoded="$(kubectl --context "\${PROFILE}" -n ${SUPABASE_NAMESPACE} get secret "\${secret}" -o "jsonpath={.data.\${key}}" 2>/dev/null || true)"
+  if [[ -n "\${encoded}" ]]; then
+    echo "- secret/\${secret}:\${key}: present"
+  else
+    echo "- secret/\${secret}:\${key}: missing"
   fi
-
-  line="\${line#export }"
-  line="\${line#\${key}=}"
-  line="\${line%\\"}"
-  line="\${line#\\"}"
-  printf '%s' "\${line}"
 }
 
-check_immutable_migrations_applied() {
-  local migrations_dir="\${SUPABASE_PROJECT_DIR}/supabase/migrations"
-  local applied_versions
-  applied_versions="$(psql "\${SUPABASE_DB_URL}" -v ON_ERROR_STOP=1 -Atc "select version from supabase_migrations.schema_migrations" 2>/dev/null || true)"
+postgres_query() {
+  local sql="\${1}"
+  kubectl --context "\${PROFILE}" -n ${SUPABASE_NAMESPACE} exec deployment/postgres -- psql -U postgres -d postgres -Atq -c "\${sql}" 2>/dev/null || true
+}
 
-  if [[ -z "\${applied_versions}" ]]; then
-    applied_versions=""
+for namespace in ${namespaces}; do
+  if kubectl --context "\${PROFILE}" get namespace "\${namespace}" >/dev/null 2>&1; then
+    echo "- namespace/\${namespace}: present"
+    kubectl --context "\${PROFILE}" -n "\${namespace}" get pods
+  else
+    echo "- namespace/\${namespace}: missing"
   fi
+done
 
-  if [[ ! -d "\${migrations_dir}" ]]; then
-    return 0
-  fi
+if kubectl --context "\${PROFILE}" -n ${APP_NAMESPACE} get deployment app-runtime >/dev/null 2>&1; then
+  kubectl --context "\${PROFILE}" -n ${APP_NAMESPACE} rollout status deployment/app-runtime --timeout=5s >/dev/null 2>&1 && echo "- app-runtime: ready" || echo "- app-runtime: not ready"
+fi
 
-  local file
-  local version
-  local pending=0
-  for file in "\${migrations_dir}"/*.sql; do
-    [[ -e "\${file}" ]] || continue
-    version="$(basename "\${file}")"
-    version="\${version%%_*}"
-    if ! printf '%s\\n' "\${applied_versions}" | grep -Fxq "\${version}"; then
-      echo "Pending immutable Supabase migration: \${file}"
-      pending=1
+${providerStatusScript}
+
+if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
+  for deployment in postgres auth rest realtime storage gateway studio; do
+    if kubectl --context "\${PROFILE}" -n ${SUPABASE_NAMESPACE} get deployment "\${deployment}" >/dev/null 2>&1; then
+      kubectl --context "\${PROFILE}" -n ${SUPABASE_NAMESPACE} rollout status "deployment/\${deployment}" --timeout=5s >/dev/null 2>&1 && echo "- supabase/\${deployment}: ready" || echo "- supabase/\${deployment}: not ready"
+    else
+      echo "- supabase/\${deployment}: missing"
     fi
   done
 
-  return "\${pending}"
-}
+  for key in POSTGRES_PASSWORD JWT_SECRET SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY SECRET_KEY_BASE REALTIME_DB_ENC_KEY PG_META_CRYPTO_KEY; do
+    check_secret_key supabase-runtime-secrets "\${key}"
+  done
 
-start_supabase_local_stack() {
-  if supabase --workdir "\${SUPABASE_PROJECT_DIR}" start >/dev/null; then
-    return 0
+  db_check="$(postgres_query 'select 1')"
+  if [[ "\${db_check}" == "1" ]]; then
+    echo "- postgres connectivity: ok"
+  else
+    echo "- postgres connectivity: failed"
   fi
 
-  echo "Supabase local start failed. Stopping stale local stack and retrying once..."
-  supabase --workdir "\${SUPABASE_PROJECT_DIR}" stop --no-backup >/dev/null 2>&1 || true
-
-  if supabase --workdir "\${SUPABASE_PROJECT_DIR}" start >/dev/null; then
-    return 0
+  migration_count="$(postgres_query "select count(*) from supabase_migrations.schema_migrations" || true)"
+  if [[ "\${migration_count}" =~ ^[0-9]+$ ]]; then
+    echo "- migration history: \${migration_count} applied"
+  else
+    echo "- migration history: unavailable"
   fi
 
-  echo "Supabase local start failed after retry."
-  return 1
-}
-
-if [[ -z "\${STATUS_ENV}" ]]; then
-  validate_supabase_project_identity
-  assert_supabase_local_ports_available
-  echo "Supabase local stack not detected. Starting with 'supabase start'..."
-  start_supabase_local_stack
-  STATUS_ENV="$(supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env)"
-fi
-
-SUPABASE_DB_URL="$(read_env_value DB_URL)"
-if [[ -z "\${SUPABASE_DB_URL}" ]]; then
-  echo "Unable to read DB_URL from 'supabase status -o env'."
-  exit 1
-fi
-
-echo "Applying pending immutable Supabase migrations..."
-validate_supabase_project_identity
-run_checked_command \
-  "Immutable Supabase migration application" \
-  "" \
-  supabase --workdir "\${SUPABASE_PROJECT_DIR}" migration up --local
-
-if ! check_immutable_migrations_applied; then
-  echo "Immutable Supabase migration application did not apply every local migration."
-  exit 1
-fi
-
-if [[ "\${SUPABASE_PROFILE_ENABLED}" == "true" ]]; then
-  if [[ ! -f "\${SUPABASE_PROFILE_RECONCILE_FILE}" ]]; then
-    echo "Generated profile reconciliation file is missing: \${SUPABASE_PROFILE_RECONCILE_FILE}"
-    exit 1
+  if [[ "\${SUPABASE_PROFILE_ENABLED}" == "true" ]]; then
+    profile_state="$(postgres_query "select count(*) from ankhorage_internal.generated_schema_state where artifact_key = 'auth.profile'" || true)"
+    if [[ "\${profile_state}" =~ ^[1-9][0-9]*$ ]]; then
+      echo "- profile reconciliation: applied"
+    else
+      echo "- profile reconciliation: missing"
+    fi
+  else
+    state_table="$(postgres_query "select to_regclass('ankhorage_internal.generated_schema_state') is not null" || true)"
+    if [[ "\${state_table}" != "t" ]]; then
+      echo "- profile reconciliation: disabled"
+    else
+      profile_state="$(postgres_query "select coalesce((select case when table_name is null then 'stale-state-missing-table-name' when to_regclass(format('public.%I', table_name)) is null then 'stale-state-missing-table:' || table_name else 'stale-state-table-present:' || table_name end from ankhorage_internal.generated_schema_state where artifact_key = 'auth.profile'), 'disabled')" || true)"
+      if [[ "\${profile_state}" == "disabled" ]]; then
+        echo "- profile reconciliation: disabled"
+      else
+        echo "- profile reconciliation: unexpected \${profile_state}"
+      fi
+    fi
   fi
 
-  echo "Applying generated profile reconciliation..."
-  run_checked_sql_file \
-    "Generated profile reconciliation" \
-    "\${SUPABASE_PROFILE_RECONCILE_FILE}"
+  vault_state="$(postgres_query "select exists(select 1 from pg_namespace where nspname = 'vault')" || true)"
+  if [[ "\${vault_state}" == "t" ]]; then
+    echo "- vault schema: present"
+  else
+    echo "- vault schema: absent"
+  fi
 
-  PROFILE_STATUS_SQL=$(cat <<'SQL'
-${profileStatusSql}
-SQL
-)
-  PROFILE_VERIFY_SQL=$(cat <<'SQL'
-${profileVerificationSql}
-SQL
-)
-
-  PROFILE_STATUS_FILE="$(mktemp)"
-  PROFILE_VERIFY_FILE="$(mktemp)"
-  printf '%s\\n' "\${PROFILE_STATUS_SQL}" > "\${PROFILE_STATUS_FILE}"
-  printf '%s\\n' "\${PROFILE_VERIFY_SQL}" > "\${PROFILE_VERIFY_FILE}"
-
-  run_checked_sql_file \
-    "Generated profile reconciliation checksum verification" \
-    "\${PROFILE_STATUS_FILE}"
-  run_checked_sql_file \
-    "Generated profile schema verification" \
-    "\${PROFILE_VERIFY_FILE}"
-
-  rm -f "\${PROFILE_STATUS_FILE}" "\${PROFILE_VERIFY_FILE}"
-  echo "Generated profile reconciliation applied and schema verified."
-else
-  PROFILE_DISABLED_FILE="$(mktemp)"
-  cat > "\${PROFILE_DISABLED_FILE}" <<'SQL'
-${getSupabaseProfileDisabledGuardSql()}
-SQL
-  run_checked_sql_file \
-    "Generated profile disabled-state verification" \
-    "\${PROFILE_DISABLED_FILE}"
-  rm -f "\${PROFILE_DISABLED_FILE}"
+  if command -v curl >/dev/null 2>&1; then
+    public_url="\${SUPABASE_PUBLIC_URL:-http://127.0.0.1:\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT}}"
+    if curl -fsS "\${public_url}/auth/v1/health" >/dev/null 2>&1; then
+      echo "- supabase public endpoint: ok (\${public_url})"
+    else
+      echo "- supabase public endpoint: unavailable (\${public_url})"
+    fi
+  fi
 fi
 
-STATUS_ENV="$(supabase --workdir "\${SUPABASE_PROJECT_DIR}" status -o env)"
-
-API_URL="$(read_env_value API_URL)"
-ANON_KEY="$(read_env_value ANON_KEY)"
-SERVICE_ROLE_KEY="$(read_env_value SERVICE_ROLE_KEY)"
-JWT_SECRET="$(read_env_value JWT_SECRET)"
-
-if [[ -z "\${API_URL}" || -z "\${ANON_KEY}" || -z "\${SERVICE_ROLE_KEY}" || -z "\${JWT_SECRET}" ]]; then
-  echo "Unable to read required Supabase values from 'supabase status -o env'."
-  echo "Expected API_URL, ANON_KEY, SERVICE_ROLE_KEY, JWT_SECRET."
-  exit 1
-fi
-
-upsert_env() {
-  local file="$1"
-  local key="$2"
-  local value="$3"
-  local tmp_file
-  tmp_file="$(mktemp)"
-
-  awk -v key="\${key}" -v value="\${value}" '
-    BEGIN { replaced = 0 }
-    index($0, key "=") == 1 {
-      print key "=" value
-      replaced = 1
-      next
-    }
-    { print }
-    END {
-      if (replaced == 0) {
-        print key "=" value
-      }
-    }
-  ' "\${file}" > "\${tmp_file}"
-
-  mv "\${tmp_file}" "\${file}"
-}
-
-if [[ ! -f "\${ENV_FILE}" ]]; then
-  cp "\${ENV_EXAMPLE_FILE}" "\${ENV_FILE}"
-fi
-
-if [[ ! -f "\${APP_SUPABASE_ENV_FILE}" ]]; then
-  touch "\${APP_SUPABASE_ENV_FILE}"
-fi
-
-upsert_env "\${ENV_FILE}" "SUPABASE_SECRET_SYNC_ENABLED" "true"
-upsert_env "\${ENV_FILE}" "SUPABASE_URL" "\${API_URL}"
-upsert_env "\${ENV_FILE}" "SUPABASE_ANON_KEY" "\${ANON_KEY}"
-upsert_env "\${ENV_FILE}" "SUPABASE_SERVICE_ROLE_KEY" "\${SERVICE_ROLE_KEY}"
-upsert_env "\${ENV_FILE}" "SUPABASE_JWT_SECRET" "\${JWT_SECRET}"
-upsert_env "\${ENV_FILE}" "EXPO_PUBLIC_SUPABASE_URL" "\${API_URL}"
-upsert_env "\${ENV_FILE}" "EXPO_PUBLIC_SUPABASE_ANON_KEY" "\${ANON_KEY}"
-upsert_env "\${ENV_FILE}" "SUPABASE_PROJECT_DIR" "\${SUPABASE_PROJECT_DIR}"
-upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_PORT_BASE" "\${SUPABASE_LOCAL_PORT_BASE}"
-upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_SHADOW_PORT" "\${SUPABASE_LOCAL_SHADOW_PORT}"
-upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_API_PORT" "\${SUPABASE_LOCAL_API_PORT}"
-upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_DB_PORT" "\${SUPABASE_LOCAL_DB_PORT}"
-upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_STUDIO_PORT" "\${SUPABASE_LOCAL_STUDIO_PORT}"
-upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_INBUCKET_PORT" "\${SUPABASE_LOCAL_INBUCKET_PORT}"
-upsert_env "\${ENV_FILE}" "SUPABASE_LOCAL_ANALYTICS_PORT" "\${SUPABASE_LOCAL_ANALYTICS_PORT}"
-
-upsert_env "\${APP_SUPABASE_ENV_FILE}" "EXPO_PUBLIC_SUPABASE_URL" "\${API_URL}"
-upsert_env "\${APP_SUPABASE_ENV_FILE}" "EXPO_PUBLIC_SUPABASE_ANON_KEY" "\${ANON_KEY}"
-upsert_env "\${APP_SUPABASE_ENV_FILE}" "SUPABASE_URL" "\${API_URL}"
-upsert_env "\${APP_SUPABASE_ENV_FILE}" "SUPABASE_ANON_KEY" "\${ANON_KEY}"
-
-echo "Updated \${ENV_FILE} with local Supabase credentials from \${SUPABASE_PROJECT_DIR}."
-echo "Updated \${APP_SUPABASE_ENV_FILE} with Expo Supabase credentials for local app runs."
-echo "If Expo is already running, restart it to pick up updated EXPO_PUBLIC_* variables."
-echo "Next: run ./scripts/up.sh to sync Kubernetes secrets and apply infrastructure."
+"\${SCRIPT_DIR}/port-forward.sh" status all || true
 `;
 }
 
-function getDefaultAppImage(namespace: string): string {
-  return `ankh/${namespace}:dev`;
+function getDefaultAppImage(appSlug: string): string {
+  return `ankh/${appSlug}:dev`;
 }
 
-function resolveSupabaseLocalPorts(namespace: string): SupabaseLocalPorts {
-  const base =
-    SUPABASE_LOCAL_PORT_BASE +
-    resolveSupabaseLocalPortBucket(namespace) * SUPABASE_LOCAL_PORT_BUCKET_SIZE;
-
+function resolveSupabaseHostPorts(appSlug: string): SupabaseHostPorts {
+  const base = PORT_BASE + resolvePortBucket(appSlug) * PORT_BUCKET_SIZE;
   return {
-    base,
-    shadow: base,
-    api: base + 1,
-    db: base + 2,
-    studio: base + 3,
-    inbucket: base + 4,
-    analytics: base + 5,
+    app: base,
+    gateway: base + 1,
+    studio: base + 2,
+    db: base + 3,
   };
 }
 
-function resolveSupabaseLocalPortBucket(namespace: string): number {
-  const rawBucket = hashProjectId(namespace) - hashProjectId(SUPABASE_LOCAL_PORT_REFERENCE_PROJECT);
-  return (rawBucket + SUPABASE_LOCAL_PORT_BUCKET_COUNT) % SUPABASE_LOCAL_PORT_BUCKET_COUNT;
+function resolvePortBucket(appSlug: string): number {
+  const rawBucket = hashSlug(appSlug) - hashSlug(PORT_REFERENCE_SLUG);
+  return (rawBucket + PORT_BUCKET_COUNT) % PORT_BUCKET_COUNT;
 }
 
-function hashProjectId(value: string): number {
-  const source = value.trim().length > 0 ? value.trim() : 'app';
+function hashSlug(value: string): number {
   let hash = 0;
-
-  for (const char of source) {
-    hash = (hash * 31 + char.charCodeAt(0)) % SUPABASE_LOCAL_PORT_BUCKET_COUNT;
+  for (const char of value) {
+    hash = (hash * 31 + char.charCodeAt(0)) % PORT_BUCKET_COUNT;
   }
-
   return hash;
 }
 
-function getSqlTextArray(values: readonly string[]): string {
-  return `array[${values.map((value) => `'${escapeSqlLiteral(value)}'`).join(', ')}]::text[]`;
-}
-
-function escapeSqlLiteral(value: string): string {
-  return value.replaceAll("'", "''");
+function escapeYamlDoubleQuoted(value: string): string {
+  return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }
