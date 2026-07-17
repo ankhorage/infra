@@ -3021,13 +3021,73 @@ print_forward_log_tail() {
   fi
 }
 
+process_command_for_pid() {
+  local pid="\${1}"
+  ps -p "\${pid}" -o command= 2>/dev/null || true
+}
+
+process_name_for_pid() {
+  local pid="\${1}"
+  ps -p "\${pid}" -o comm= 2>/dev/null || true
+}
+
+is_owned_forward_process() {
+  local pid="\${1}"
+  local namespace="\${2}"
+  local resource="\${3}"
+  local local_port="\${4}"
+  local remote_port="\${5}"
+  local command
+  local process_name
+  command="$(process_command_for_pid "\${pid}")"
+  process_name="$(process_name_for_pid "\${pid}")"
+
+  case "\${process_name}" in
+    *kubectl) ;;
+    *) return 1 ;;
+  esac
+
+  case "\${command}" in
+    *"kubectl --context \${PROFILE} -n \${namespace} port-forward \${resource} \${local_port}:\${remote_port}"*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+handle_non_owned_forward_pid() {
+  local name="\${1}"
+  local pid="\${2}"
+  local pid_file="\${3}"
+  local local_port="\${4}"
+  echo "\${name}: stale pid file pointed at non-owned live pid \${pid}; removing ownership record \${pid_file}"
+  rm -f "\${pid_file}"
+
+  if is_port_accepting "\${local_port}"; then
+    echo "\${name}: port occupied by non-owned process on local port \${local_port}"
+    return 1
+  fi
+
+  return 0
+}
+
 terminate_forward_process() {
   local name="\${1}"
   local pid="\${2}"
-  local local_port="\${3}"
+  local namespace="\${3}"
+  local resource="\${4}"
+  local local_port="\${5}"
+  local remote_port="\${6}"
 
   if [[ -z "\${pid}" ]]; then
     return 0
+  fi
+
+  if is_pid_running "\${pid}" && ! is_owned_forward_process "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+    echo "\${name}: refusing to terminate non-owned live pid \${pid}"
+    return 1
   fi
 
   if is_pid_running "\${pid}"; then
@@ -3076,14 +3136,19 @@ start_forward() {
     local existing_pid
     existing_pid="$(cat "\${pid_file}")"
     if is_pid_running "\${existing_pid}"; then
-      if is_port_accepting "\${local_port}"; then
+      if ! is_owned_forward_process "\${existing_pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+        handle_non_owned_forward_pid "\${name}" "\${existing_pid}" "\${pid_file}" "\${local_port}" || return 1
+      elif is_port_accepting "\${local_port}"; then
         echo "\${name}: running (pid \${existing_pid})"
         return 0
+      else
+        echo "\${name}: stale running pid \${existing_pid} was not accepting local port \${local_port}; restarting"
+        terminate_forward_process "\${name}" "\${existing_pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
+        rm -f "\${pid_file}"
       fi
-      echo "\${name}: stale running pid \${existing_pid} was not accepting local port \${local_port}; restarting"
-      terminate_forward_process "\${name}" "\${existing_pid}" "\${local_port}" || return 1
+    else
+      rm -f "\${pid_file}"
     fi
-    rm -f "\${pid_file}"
   fi
 
   if [[ "\${namespace}" == "${SUPABASE_NAMESPACE}" && "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
@@ -3116,7 +3181,7 @@ start_forward() {
 
   echo "\${name}: did not become ready on local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
   print_forward_log_tail "\${name}"
-  terminate_forward_process "\${name}" "\${pid}" "\${local_port}" || return 1
+  terminate_forward_process "\${name}" "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
   rm -f "\${pid_file}"
   return 1
 }
@@ -3133,7 +3198,13 @@ stop_forward() {
 
   local pid
   pid="$(cat "\${pid_file}")"
-  terminate_forward_process "\${name}" "\${pid}" "\${local_port}" || return 1
+  if is_pid_running "\${pid}" && ! is_owned_forward_process "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+    handle_non_owned_forward_pid "\${name}" "\${pid}" "\${pid_file}" "\${local_port}" || return 1
+    echo "\${name}: stopped"
+    return 0
+  fi
+
+  terminate_forward_process "\${name}" "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
   rm -f "\${pid_file}"
   echo "\${name}: stopped"
 }
@@ -3151,6 +3222,11 @@ status_forward() {
   pid="$(cat "\${pid_file}")"
   if is_pid_running "\${pid}"; then
     read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
+    if ! is_owned_forward_process "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}"; then
+      echo "\${name}: stale_pid_non_owned=\${pid}"
+      rm -f "\${pid_file}"
+      return 0
+    fi
     if is_port_accepting "\${local_port}"; then
       echo "\${name}: running pid=\${pid} url=127.0.0.1:\${local_port} target=\${namespace}/\${resource}:\${remote_port}"
       return 0

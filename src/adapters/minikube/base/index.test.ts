@@ -394,9 +394,23 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(portForwardScript).toContain('did not become ready on local port');
     expect(portForwardScript).toContain('not ready pid=');
     expect(portForwardScript).toContain('terminate_forward_process()');
+    expect(portForwardScript).toContain('ps -p "${pid}" -o command=');
+    expect(portForwardScript).toContain('ps -p "${pid}" -o comm=');
+    expect(portForwardScript).toContain('is_owned_forward_process()');
+    expect(portForwardScript).toContain(
+      '*"kubectl --context ${PROFILE} -n ${namespace} port-forward ${resource} ${local_port}:${remote_port}"*',
+    );
     expect(portForwardScript).toContain('kill -KILL "${pid}"');
     expect(portForwardScript).toContain('failed to stop owned port-forward pid');
     expect(portForwardScript).toContain('local port ${local_port} is still accepting connections');
+    expect(portForwardScript).toContain('refusing to terminate non-owned live pid');
+    expect(portForwardScript).toContain(
+      'stale pid file pointed at non-owned live pid ${pid}; removing ownership record ${pid_file}',
+    );
+    expect(portForwardScript).toContain(
+      'port occupied by non-owned process on local port ${local_port}',
+    );
+    expect(portForwardScript).toContain('stale_pid_non_owned=${pid}');
     expect(statusScript).toContain('port-forward.sh" status all');
     expect(upScript).toContain('set -Eeuo pipefail');
     expect(upScript).toContain('trap cleanup_failed_up ERR');

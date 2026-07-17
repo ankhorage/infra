@@ -94,6 +94,9 @@
     "format:check": "ankhorage-prettier --check .",
     "prepack": "bun run build",
     "test": "bun test src",
+    "test:e2e": "bun run test:e2e:supabase",
+    "test:e2e:minikube": "ANKH_MINIKUBE_ISOLATION=1 bun test src/adapters/minikube/base/twoAppIsolation.integration.test.ts",
+    "test:e2e:supabase": "ANKH_MINIKUBE_SUPABASE_ISOLATION=1 bun test src/adapters/minikube/base/twoAppIsolation.integration.test.ts",
     "typecheck": "bun x tsc --noEmit -p tsconfig.json",
     "version-packages": "changeset version"
   },
