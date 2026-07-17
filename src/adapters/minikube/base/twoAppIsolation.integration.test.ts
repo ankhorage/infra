@@ -1,5 +1,6 @@
 import { execFile as execFileCallback } from 'node:child_process';
 import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { createServer, type Server } from 'node:net';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
@@ -56,8 +57,16 @@ describe('generated Minikube two-app isolation', () => {
     'runs two generated Supabase-backed profiles without shared runtime state',
     async () => {
       const root = await mkdtemp(path.join(process.cwd(), '.tmp-minikube-supabase-isolation-'));
-      const first = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-a', 18281);
-      const second = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-b', 18282);
+      const first = await createGeneratedSupabaseApp(
+        root,
+        'ankh-isolation-supa-a',
+        await reserveSupabaseHostPorts(),
+      );
+      const second = await createGeneratedSupabaseApp(
+        root,
+        'ankh-isolation-supa-b',
+        await reserveSupabaseHostPorts(),
+      );
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
@@ -143,7 +152,18 @@ function generateAppOnlyInfrastructure(slug: string) {
   });
 }
 
-async function createGeneratedSupabaseApp(root: string, slug: string, appPort: number) {
+interface GeneratedSupabaseHostPorts {
+  readonly app: number;
+  readonly gateway: number;
+  readonly studio: number;
+  readonly db: number;
+}
+
+async function createGeneratedSupabaseApp(
+  root: string,
+  slug: string,
+  hostPorts: GeneratedSupabaseHostPorts,
+) {
   const appRoot = path.join(root, slug);
   const minikubeRoot = path.join(appRoot, 'infra', 'minikube');
   const exportRoot = path.join(appRoot, '.ankh', 'web-export');
@@ -172,12 +192,65 @@ async function createGeneratedSupabaseApp(root: string, slug: string, appPort: n
       'APP_BUILD_ENABLED=false',
       'APP_WEB_EXPORT_DIR=.ankh/web-export',
       'APP_IMAGE_SYNC_STRATEGY=docker-load',
-      `APP_PORT_FORWARD_LOCAL_PORT=${appPort}`,
+      `APP_PORT_FORWARD_LOCAL_PORT=${hostPorts.app}`,
+      `SUPABASE_GATEWAY_FORWARD_LOCAL_PORT=${hostPorts.gateway}`,
+      `SUPABASE_STUDIO_FORWARD_LOCAL_PORT=${hostPorts.studio}`,
+      `SUPABASE_DB_FORWARD_LOCAL_PORT=${hostPorts.db}`,
       '',
     ].join('\n'),
   );
 
   return { appRoot, dockerImage, minikubeRoot, slug };
+}
+
+async function reserveSupabaseHostPorts(): Promise<GeneratedSupabaseHostPorts> {
+  const servers = await Promise.all([
+    listenOnEphemeralPort(),
+    listenOnEphemeralPort(),
+    listenOnEphemeralPort(),
+    listenOnEphemeralPort(),
+  ]);
+  try {
+    const ports = servers.map((server) => {
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        throw new Error('Expected TCP server address with an assigned port.');
+      }
+      return address.port;
+    });
+    return {
+      app: ports[0],
+      gateway: ports[1],
+      studio: ports[2],
+      db: ports[3],
+    };
+  } finally {
+    await Promise.all(servers.map(closeServer));
+  }
+}
+
+async function listenOnEphemeralPort(): Promise<Server> {
+  const server = createServer();
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      server.off('error', reject);
+      resolve();
+    });
+  });
+  return server;
+}
+
+async function closeServer(server: Server): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    server.close((error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve();
+    });
+  });
 }
 
 function generateSupabaseInfrastructure(slug: string) {

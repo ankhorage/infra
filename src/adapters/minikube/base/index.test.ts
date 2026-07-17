@@ -389,11 +389,16 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(portForwardScript).toContain('service/postgres');
     expect(portForwardScript).toContain('${PROFILE}-${1}.pid');
     expect(portForwardScript).toContain('crashed stale_pid');
+    expect(portForwardScript).toContain('is_port_accepting()');
+    expect(portForwardScript).toContain('recent kubectl port-forward log');
+    expect(portForwardScript).toContain('did not become ready on local port');
+    expect(portForwardScript).toContain('not ready pid=');
     expect(statusScript).toContain('port-forward.sh" status all');
     expect(upScript).toContain('set -Eeuo pipefail');
     expect(upScript).toContain('trap cleanup_failed_up ERR');
     expect(upScript).toContain('start supabase-gateway');
     expect(upScript).toContain('start db-migration');
+    expect(upScript).toContain('Failed to start db-migration port-forward for Supabase bootstrap.');
     expect(upScript.indexOf('trap cleanup_failed_up ERR')).toBeLessThan(
       upScript.indexOf('require_command minikube'),
     );

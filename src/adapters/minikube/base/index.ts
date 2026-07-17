@@ -2635,7 +2635,11 @@ wait_for_supabase_database() {
   fi
 
   require_command psql
-  "\${PORT_FORWARD_SCRIPT}" start db-migration >/dev/null
+  if ! "\${PORT_FORWARD_SCRIPT}" start db-migration; then
+    echo "Failed to start db-migration port-forward for Supabase bootstrap."
+    "\${PORT_FORWARD_SCRIPT}" status db-migration || true
+    exit 1
+  fi
   for attempt in {1..60}; do
     if PGPASSWORD="\${POSTGRES_PASSWORD}" psql -h 127.0.0.1 -p "\${SUPABASE_DB_FORWARD_LOCAL_PORT}" -U postgres -d postgres -v ON_ERROR_STOP=1 -Atq -c 'select 1' >/dev/null 2>&1; then
       return 0
@@ -3003,21 +3007,40 @@ is_pid_running() {
   [[ -n "\${pid}" ]] && kill -0 "\${pid}" >/dev/null 2>&1
 }
 
+is_port_accepting() {
+  local port="\${1}"
+  (echo >/dev/tcp/127.0.0.1/"\${port}") >/dev/null 2>&1
+}
+
+print_forward_log_tail() {
+  local name="\${1}"
+  local log_file="\${STATE_DIR}/\${PROFILE}-\${name}.log"
+  if [[ -s "\${log_file}" ]]; then
+    echo "\${name}: recent kubectl port-forward log:"
+    tail -n 20 "\${log_file}"
+  fi
+}
+
 start_forward() {
   local name="\${1}"
   local pid_file
   pid_file="$(pid_file_for "\${name}")"
+  read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
+
   if [[ -f "\${pid_file}" ]]; then
     local existing_pid
     existing_pid="$(cat "\${pid_file}")"
     if is_pid_running "\${existing_pid}"; then
-      echo "\${name}: running (pid \${existing_pid})"
-      return 0
+      if is_port_accepting "\${local_port}"; then
+        echo "\${name}: running (pid \${existing_pid})"
+        return 0
+      fi
+      echo "\${name}: stale running pid \${existing_pid} was not accepting local port \${local_port}; restarting"
+      kill "\${existing_pid}" >/dev/null 2>&1 || true
     fi
     rm -f "\${pid_file}"
   fi
 
-  read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
   if [[ "\${namespace}" == "${SUPABASE_NAMESPACE}" && "\${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then
     echo "\${name}: skipped (Supabase Kubernetes disabled)"
     return 0
@@ -3031,13 +3054,26 @@ start_forward() {
   nohup kubectl --context "\${PROFILE}" -n "\${namespace}" port-forward "\${resource}" "\${local_port}:\${remote_port}" >"\${STATE_DIR}/\${PROFILE}-\${name}.log" 2>&1 &
   local pid="$!"
   echo "\${pid}" > "\${pid_file}"
-  sleep 1
-  if ! is_pid_running "\${pid}"; then
-    echo "\${name}: failed to start; see \${STATE_DIR}/\${PROFILE}-\${name}.log"
-    rm -f "\${pid_file}"
-    return 1
-  fi
-  echo "\${name}: started (pid \${pid}, local port \${local_port})"
+
+  for attempt in {1..40}; do
+    if ! is_pid_running "\${pid}"; then
+      echo "\${name}: failed to start local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
+      print_forward_log_tail "\${name}"
+      rm -f "\${pid_file}"
+      return 1
+    fi
+    if is_port_accepting "\${local_port}"; then
+      echo "\${name}: started (pid \${pid}, local port \${local_port})"
+      return 0
+    fi
+    sleep 0.5
+  done
+
+  echo "\${name}: did not become ready on local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
+  print_forward_log_tail "\${name}"
+  kill "\${pid}" >/dev/null 2>&1 || true
+  rm -f "\${pid_file}"
+  return 1
 }
 
 stop_forward() {
@@ -3071,7 +3107,11 @@ status_forward() {
   pid="$(cat "\${pid_file}")"
   if is_pid_running "\${pid}"; then
     read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
-    echo "\${name}: running pid=\${pid} url=127.0.0.1:\${local_port} target=\${namespace}/\${resource}:\${remote_port}"
+    if is_port_accepting "\${local_port}"; then
+      echo "\${name}: running pid=\${pid} url=127.0.0.1:\${local_port} target=\${namespace}/\${resource}:\${remote_port}"
+      return 0
+    fi
+    echo "\${name}: not ready pid=\${pid} url=127.0.0.1:\${local_port} target=\${namespace}/\${resource}:\${remote_port}"
     return 0
   fi
 
