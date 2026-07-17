@@ -393,6 +393,10 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(portForwardScript).toContain('recent kubectl port-forward log');
     expect(portForwardScript).toContain('did not become ready on local port');
     expect(portForwardScript).toContain('not ready pid=');
+    expect(portForwardScript).toContain('terminate_forward_process()');
+    expect(portForwardScript).toContain('kill -KILL "${pid}"');
+    expect(portForwardScript).toContain('failed to stop owned port-forward pid');
+    expect(portForwardScript).toContain('local port ${local_port} is still accepting connections');
     expect(statusScript).toContain('port-forward.sh" status all');
     expect(upScript).toContain('set -Eeuo pipefail');
     expect(upScript).toContain('trap cleanup_failed_up ERR');

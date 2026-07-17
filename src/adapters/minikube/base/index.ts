@@ -3021,6 +3021,51 @@ print_forward_log_tail() {
   fi
 }
 
+terminate_forward_process() {
+  local name="\${1}"
+  local pid="\${2}"
+  local local_port="\${3}"
+
+  if [[ -z "\${pid}" ]]; then
+    return 0
+  fi
+
+  if is_pid_running "\${pid}"; then
+    kill "\${pid}" >/dev/null 2>&1 || true
+    for attempt in {1..20}; do
+      if ! is_pid_running "\${pid}"; then
+        break
+      fi
+      sleep 0.25
+    done
+  fi
+
+  if is_pid_running "\${pid}"; then
+    kill -KILL "\${pid}" >/dev/null 2>&1 || true
+    for attempt in {1..20}; do
+      if ! is_pid_running "\${pid}"; then
+        break
+      fi
+      sleep 0.25
+    done
+  fi
+
+  if is_pid_running "\${pid}"; then
+    echo "\${name}: failed to stop owned port-forward pid \${pid}"
+    return 1
+  fi
+
+  for attempt in {1..20}; do
+    if ! is_port_accepting "\${local_port}"; then
+      return 0
+    fi
+    sleep 0.25
+  done
+
+  echo "\${name}: owned port-forward pid \${pid} stopped, but local port \${local_port} is still accepting connections"
+  return 1
+}
+
 start_forward() {
   local name="\${1}"
   local pid_file
@@ -3036,7 +3081,7 @@ start_forward() {
         return 0
       fi
       echo "\${name}: stale running pid \${existing_pid} was not accepting local port \${local_port}; restarting"
-      kill "\${existing_pid}" >/dev/null 2>&1 || true
+      terminate_forward_process "\${name}" "\${existing_pid}" "\${local_port}" || return 1
     fi
     rm -f "\${pid_file}"
   fi
@@ -3071,7 +3116,7 @@ start_forward() {
 
   echo "\${name}: did not become ready on local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
   print_forward_log_tail "\${name}"
-  kill "\${pid}" >/dev/null 2>&1 || true
+  terminate_forward_process "\${name}" "\${pid}" "\${local_port}" || return 1
   rm -f "\${pid_file}"
   return 1
 }
@@ -3080,6 +3125,7 @@ stop_forward() {
   local name="\${1}"
   local pid_file
   pid_file="$(pid_file_for "\${name}")"
+  read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
   if [[ ! -f "\${pid_file}" ]]; then
     echo "\${name}: stopped"
     return 0
@@ -3087,9 +3133,7 @@ stop_forward() {
 
   local pid
   pid="$(cat "\${pid_file}")"
-  if is_pid_running "\${pid}"; then
-    kill "\${pid}" >/dev/null 2>&1 || true
-  fi
+  terminate_forward_process "\${name}" "\${pid}" "\${local_port}" || return 1
   rm -f "\${pid_file}"
   echo "\${name}: stopped"
 }

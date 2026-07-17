@@ -57,16 +57,12 @@ describe('generated Minikube two-app isolation', () => {
     'runs two generated Supabase-backed profiles without shared runtime state',
     async () => {
       const root = await mkdtemp(path.join(process.cwd(), '.tmp-minikube-supabase-isolation-'));
-      const first = await createGeneratedSupabaseApp(
-        root,
-        'ankh-isolation-supa-a',
-        await reserveSupabaseHostPorts(),
-      );
-      const second = await createGeneratedSupabaseApp(
-        root,
-        'ankh-isolation-supa-b',
-        await reserveSupabaseHostPorts(),
-      );
+      const [firstPorts, secondPorts] = await reserveSupabaseHostPortSets(2);
+      if (!firstPorts || !secondPorts) {
+        throw new Error('Expected two reserved Supabase host port sets.');
+      }
+      const first = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-a', firstPorts);
+      const second = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-b', secondPorts);
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
@@ -203,13 +199,10 @@ async function createGeneratedSupabaseApp(
   return { appRoot, dockerImage, minikubeRoot, slug };
 }
 
-async function reserveSupabaseHostPorts(): Promise<GeneratedSupabaseHostPorts> {
-  const servers = await Promise.all([
-    listenOnEphemeralPort(),
-    listenOnEphemeralPort(),
-    listenOnEphemeralPort(),
-    listenOnEphemeralPort(),
-  ]);
+async function reserveSupabaseHostPortSets(count: number): Promise<GeneratedSupabaseHostPorts[]> {
+  const servers = await Promise.all(
+    Array.from({ length: count * 4 }, () => listenOnEphemeralPort()),
+  );
   try {
     const ports = servers.map((server) => {
       const address = server.address();
@@ -218,12 +211,21 @@ async function reserveSupabaseHostPorts(): Promise<GeneratedSupabaseHostPorts> {
       }
       return address.port;
     });
-    return {
-      app: ports[0],
-      gateway: ports[1],
-      studio: ports[2],
-      db: ports[3],
-    };
+    if (new Set(ports).size !== ports.length) {
+      throw new Error('Expected every generated Supabase host port to be unique.');
+    }
+
+    return Array.from({ length: count }, (_, index) => {
+      const offset = index * 4;
+      const app = ports[offset];
+      const gateway = ports[offset + 1];
+      const studio = ports[offset + 2];
+      const db = ports[offset + 3];
+      if (!app || !gateway || !studio || !db) {
+        throw new Error('Expected a complete Supabase host port set.');
+      }
+      return { app, gateway, studio, db };
+    });
   } finally {
     await Promise.all(servers.map(closeServer));
   }
