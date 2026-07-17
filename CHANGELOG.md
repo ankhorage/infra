@@ -1,5 +1,12 @@
 # @ankhorage/infra
 
+## 1.0.1
+
+### Patch Changes
+
+- efa43ed: Write generated Supabase browser env values into the app `.env.local` during Minikube Infra
+  Up so local Expo auth clients receive the gateway URL and anon key.
+
 ## 1.0.0
 
 ### Major Changes
