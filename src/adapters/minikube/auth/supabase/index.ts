@@ -178,6 +178,11 @@ Your app runtime deployment should import both:
 - \`app-runtime-auth-env\` (configMap)
 - \`supabase-public-runtime\` (secret)
 
+For local Expo/Metro development, \`scripts/up.sh\` also writes the same browser-safe
+\`EXPO_PUBLIC_SUPABASE_URL\` and \`EXPO_PUBLIC_SUPABASE_ANON_KEY\` values to
+\`\${APP_SOURCE_DIR}/.env.local\`, preserving unrelated entries. Restart Expo after
+Infra Up so those public values are embedded into the client bundle.
+
 Example deployment fragment:
 
 \`\`\`yaml
@@ -215,8 +220,8 @@ ${profileSection}
 ## Runtime Secrets
 
 When Supabase is enabled, \`scripts/up.sh\` creates/updates \`Secret/supabase-public-runtime\`
-with browser-safe values for the app namespace. Privileged Supabase runtime secrets remain in
-the \`supabase\` namespace.
+with browser-safe values for the app namespace and mirrors the Expo public values into the
+app \`.env.local\`. Privileged Supabase runtime secrets remain in the \`supabase\` namespace.
 `;
 }
 

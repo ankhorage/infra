@@ -69,6 +69,11 @@ The app namespace receives only browser-safe Supabase URL and anon key material 
 `Secret/supabase-public-runtime`. Privileged Supabase runtime credentials remain in
 `Secret/supabase-runtime-secrets` in namespace `supabase`.
 
+For local Expo/Metro development, `up.sh` also mirrors only the browser-safe
+`EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` values into the generated
+app root `.env.local`, preserving unrelated entries. Restart Expo after Infra Up so the
+client bundle sees the refreshed public Supabase values.
+
 ## Practical Selector Rule
 
 When building config UI or pickers, only show currently supported values from adapter-owned
