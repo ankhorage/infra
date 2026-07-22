@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 1.0.2
+
+### Patch Changes
+
+- aba801b: Preserve the browser-visible forwarded origin when generated app nginx redirects canonical static routes such as `/products` to `/products/`.
+
 ## 1.0.1
 
 ### Patch Changes
