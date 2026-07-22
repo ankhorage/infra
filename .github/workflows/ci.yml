@@ -38,7 +38,8 @@ jobs:
       - name: Run lint
         run: |
           if node -e "const p=require('./package.json'); process.exit(p.scripts?.lint ? 0 : 1)"; then
-            bun run lint 2>&1 | tail -n 40
+            set -o pipefail
+            bun run lint 2>&1 | tail -n 60
           else
             echo "No lint script found; skipping."
           fi
@@ -46,7 +47,8 @@ jobs:
       - name: Run format check
         run: |
           if node -e "const p=require('./package.json'); process.exit(p.scripts?.['format:check'] ? 0 : 1)"; then
-            bun run format:check
+            set -o pipefail
+            bun run format:check 2>&1 | tail -n 60
           else
             echo "No format:check script found; skipping."
           fi
