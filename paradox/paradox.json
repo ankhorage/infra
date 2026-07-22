@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v1.0.0",
+      "value": "v1.0.1",
       "color": "cb3837"
     },
     {
@@ -77,13 +77,25 @@
     }
   ],
   "config": null,
-  "entrypoints": ["src/index.ts"],
+  "entrypoints": [
+    "src/index.ts"
+  ],
   "modules": [
     {
       "path": "package.json",
       "isEntrypoint": false,
       "dependencies": [],
       "exports": []
+    },
+    {
+      "path": "src/adapters/minikube/appRuntimeServing.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/types.ts"
+      ],
+      "exports": [
+        "preserveForwardedAppOrigin"
+      ]
     },
     {
       "path": "src/adapters/minikube/auth/index.ts",
@@ -93,7 +105,9 @@
         "src/adapters/minikube/contracts.ts",
         "src/types.ts"
       ],
-      "exports": ["generateAuthProviderArtifacts"]
+      "exports": [
+        "generateAuthProviderArtifacts"
+      ]
     },
     {
       "path": "src/adapters/minikube/auth/supabase/index.ts",
@@ -103,12 +117,16 @@
         "src/adapters/minikube/contracts.ts",
         "src/types.ts"
       ],
-      "exports": ["generateSupabaseAuthArtifacts"]
+      "exports": [
+        "generateSupabaseAuthArtifacts"
+      ]
     },
     {
       "path": "src/adapters/minikube/auth/supabase/profile.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
+      "dependencies": [
+        "src/types.ts"
+      ],
       "exports": [
         "getSupabaseProfileReconciliation",
         "ResolvedProfileModel",
@@ -118,8 +136,13 @@
     {
       "path": "src/adapters/minikube/authz/cerbos/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/adapters/minikube/contracts.ts", "src/types.ts"],
-      "exports": ["generateCerbosAuthzArtifacts"]
+      "dependencies": [
+        "src/adapters/minikube/contracts.ts",
+        "src/types.ts"
+      ],
+      "exports": [
+        "generateCerbosAuthzArtifacts"
+      ]
     },
     {
       "path": "src/adapters/minikube/authz/index.ts",
@@ -129,7 +152,9 @@
         "src/adapters/minikube/contracts.ts",
         "src/types.ts"
       ],
-      "exports": ["generateAuthorizationArtifacts"]
+      "exports": [
+        "generateAuthorizationArtifacts"
+      ]
     },
     {
       "path": "src/adapters/minikube/base/index.ts",
@@ -139,18 +164,28 @@
         "src/adapters/minikube/contracts.ts",
         "src/types.ts"
       ],
-      "exports": ["APP_NAMESPACE", "generateMinikubeBaseArtifacts"]
+      "exports": [
+        "APP_NAMESPACE",
+        "generateMinikubeBaseArtifacts"
+      ]
     },
     {
       "path": "src/adapters/minikube/contracts.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
-      "exports": ["emptyMinikubeArtifacts", "MinikubeAdapterArtifacts", "MinikubeProviderLifecycle"]
+      "dependencies": [
+        "src/types.ts"
+      ],
+      "exports": [
+        "emptyMinikubeArtifacts",
+        "MinikubeAdapterArtifacts",
+        "MinikubeProviderLifecycle"
+      ]
     },
     {
       "path": "src/adapters/minikube/index.ts",
       "isEntrypoint": false,
       "dependencies": [
+        "src/adapters/minikube/appRuntimeServing.ts",
         "src/adapters/minikube/auth/index.ts",
         "src/adapters/minikube/authz/index.ts",
         "src/adapters/minikube/base/index.ts",
@@ -159,7 +194,9 @@
         "src/apiArtifacts.ts",
         "src/types.ts"
       ],
-      "exports": ["generateMinikubeInfra"]
+      "exports": [
+        "generateMinikubeInfra"
+      ]
     },
     {
       "path": "src/adapters/minikube/secrets/index.ts",
@@ -169,13 +206,21 @@
         "src/adapters/minikube/secrets/supabase-vault/index.ts",
         "src/types.ts"
       ],
-      "exports": ["generateSecretStoreArtifacts"]
+      "exports": [
+        "generateSecretStoreArtifacts"
+      ]
     },
     {
       "path": "src/adapters/minikube/secrets/supabase-vault/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/adapters/minikube/contracts.ts", "src/types.ts"],
-      "exports": ["generateSupabaseVaultSecretStoreArtifacts", "SUPABASE_VAULT_MIGRATION_PATH"]
+      "dependencies": [
+        "src/adapters/minikube/contracts.ts",
+        "src/types.ts"
+      ],
+      "exports": [
+        "generateSupabaseVaultSecretStoreArtifacts",
+        "SUPABASE_VAULT_MIGRATION_PATH"
+      ]
     },
     {
       "path": "src/adapters/minikube/storage/index.ts",
@@ -185,43 +230,78 @@
         "src/adapters/minikube/storage/supabase/index.ts",
         "src/types.ts"
       ],
-      "exports": ["generateStorageArtifacts"]
+      "exports": [
+        "generateStorageArtifacts"
+      ]
     },
     {
       "path": "src/adapters/minikube/storage/supabase/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/adapters/minikube/contracts.ts"],
-      "exports": ["generateSupabaseStorageArtifacts"]
+      "dependencies": [
+        "src/adapters/minikube/contracts.ts"
+      ],
+      "exports": [
+        "generateSupabaseStorageArtifacts"
+      ]
     },
     {
       "path": "src/apiArtifacts.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/apis.ts"],
-      "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
+      "dependencies": [
+        "src/apis.ts"
+      ],
+      "exports": [
+        "ApiInfrastructureArtifacts",
+        "generateApiInfrastructureArtifacts"
+      ]
     },
     {
       "path": "src/apis.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
-      "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
+      "dependencies": [
+        "src/types.ts"
+      ],
+      "exports": [
+        "ApiInfrastructureArtifacts",
+        "generateApiInfrastructureArtifacts"
+      ]
     },
     {
       "path": "src/cli/bin.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/commandContext.ts", "src/commands.ts"],
-      "exports": ["InfraCliOptions", "runCli"]
+      "dependencies": [
+        "src/commandContext.ts",
+        "src/commands.ts"
+      ],
+      "exports": [
+        "InfraCliOptions",
+        "runCli"
+      ]
     },
     {
       "path": "src/cli/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/commands.ts", "src/packageMetadata.ts"],
-      "exports": ["createInfraRuntimeProvider", "CreateInfraRuntimeProviderOptions", "default"]
+      "dependencies": [
+        "src/commands.ts",
+        "src/packageMetadata.ts"
+      ],
+      "exports": [
+        "createInfraRuntimeProvider",
+        "CreateInfraRuntimeProviderOptions",
+        "default"
+      ]
     },
     {
       "path": "src/commandContext.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/packageMetadata.ts"],
-      "exports": ["createDefaultCommandContext", "InfraCommandContext", "InfraCommandRunResult"]
+      "dependencies": [
+        "src/packageMetadata.ts"
+      ],
+      "exports": [
+        "createDefaultCommandContext",
+        "InfraCommandContext",
+        "InfraCommandRunResult"
+      ]
     },
     {
       "path": "src/commands.ts",
@@ -251,7 +331,10 @@
     {
       "path": "src/index.ts",
       "isEntrypoint": true,
-      "dependencies": ["src/adapters/minikube/index.ts", "src/types.ts"],
+      "dependencies": [
+        "src/adapters/minikube/index.ts",
+        "src/types.ts"
+      ],
       "exports": [
         "ApiInfrastructureArtifacts",
         "createInfraSecretStoreAdapter",
@@ -277,8 +360,12 @@
     {
       "path": "src/infraValidation.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
-      "exports": ["validateInfraSupport"]
+      "dependencies": [
+        "src/types.ts"
+      ],
+      "exports": [
+        "validateInfraSupport"
+      ]
     },
     {
       "path": "src/metadata/index.ts",
@@ -295,7 +382,9 @@
     {
       "path": "src/packageMetadata.ts",
       "isEntrypoint": false,
-      "dependencies": ["package.json"],
+      "dependencies": [
+        "package.json"
+      ],
       "exports": [
         "INFRA_CAPABILITIES",
         "INFRA_COMMAND_CATEGORY",
@@ -308,12 +397,18 @@
       "path": "src/project.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["ResolvedInfraProject", "resolveInfraProject"]
+      "exports": [
+        "ResolvedInfraProject",
+        "resolveInfraProject"
+      ]
     },
     {
       "path": "src/projectInfrastructure.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/index.ts", "src/infraValidation.ts"],
+      "dependencies": [
+        "src/index.ts",
+        "src/infraValidation.ts"
+      ],
       "exports": [
         "InfraSyncResult",
         "resolveProjectFile",
@@ -324,7 +419,9 @@
     {
       "path": "src/runtime.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/commandContext.ts"],
+      "dependencies": [
+        "src/commandContext.ts"
+      ],
       "exports": [
         "InfraLifecycleScript",
         "InfraScriptExecutionError",
@@ -335,7 +432,9 @@
     {
       "path": "src/secretStore.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
+      "dependencies": [
+        "src/types.ts"
+      ],
       "exports": [
         "createInfraSecretStoreAdapter",
         "CreateInfraSecretStoreAdapterInput",
@@ -345,7 +444,9 @@
     {
       "path": "src/testSupport.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/commandContext.ts"],
+      "dependencies": [
+        "src/commandContext.ts"
+      ],
       "exports": [
         "CapturedCommandContext",
         "createAppManifest",
@@ -386,8 +487,12 @@
         "line": 11,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["GeneratedInfrastructureFile"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "GeneratedInfrastructureFile"
+      ],
       "signatures": [],
       "members": [
         {
@@ -419,8 +524,12 @@
         "line": 26,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["CreateInfraSecretStoreAdapterInput"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "CreateInfraSecretStoreAdapterInput"
+      ],
       "signatures": [
         {
           "label": "(input: CreateInfraSecretStoreAdapterInput) => SecretStoreAdapter | null",
@@ -451,8 +560,13 @@
         "line": 14,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["InfraManifestInput", "InfraSecretStoreProviders"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "InfraManifestInput",
+        "InfraSecretStoreProviders"
+      ],
       "signatures": [],
       "members": [
         {
@@ -484,8 +598,12 @@
         "line": 12,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["ApiInfrastructureArtifacts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "ApiInfrastructureArtifacts"
+      ],
       "signatures": [
         {
           "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => ApiInfrastructureArtifacts",
@@ -516,7 +634,9 @@
         "line": 59,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -534,7 +654,9 @@
         "line": 3,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -574,7 +696,9 @@
         "line": 12,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -614,8 +738,13 @@
         "line": 31,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["InfraGenerationInput", "InfrastructureGenerationResult"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "InfraGenerationInput",
+        "InfrastructureGenerationResult"
+      ],
       "signatures": [
         {
           "label": "(input: InfraGenerationInput) => InfrastructureGenerationResult",
@@ -646,7 +775,9 @@
         "line": 35,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraManifestInput",
         "InfrastructureGenerationOptions",
@@ -688,7 +819,9 @@
         "line": 62,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -721,8 +854,13 @@
         "line": 44,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["InfraManifestInput", "InfrastructureGenerationOptions"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "InfraManifestInput",
+        "InfrastructureGenerationOptions"
+      ],
       "signatures": [],
       "members": [
         {
@@ -761,7 +899,9 @@
         "line": 57,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -779,7 +919,9 @@
         "line": 58,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -797,7 +939,9 @@
         "line": 80,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -815,7 +959,9 @@
         "line": 10,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -841,7 +987,9 @@
         "line": 18,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -874,7 +1022,9 @@
         "line": 30,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -907,7 +1057,9 @@
         "line": 23,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "GeneratedInfrastructureFile",
         "GeneratedPackageDependency",
@@ -958,7 +1110,9 @@
         "line": 60,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -967,6 +1121,24 @@
   ],
   "components": [],
   "sourceFunctions": [
+    {
+      "name": "preserveForwardedAppOrigin",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/appRuntimeServing.ts",
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "name": "addRelativeRedirectPolicy",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/appRuntimeServing.ts",
+        "line": 28,
+        "column": 1
+      }
+    },
     {
       "name": "generateAuthProviderArtifacts",
       "description": null,
@@ -1809,7 +1981,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 16,
+        "line": 17,
         "column": 1
       }
     },
@@ -1818,7 +1990,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 106,
+        "line": 109,
         "column": 1
       }
     },
@@ -1827,7 +1999,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 121,
+        "line": 124,
         "column": 1
       }
     },
@@ -1836,7 +2008,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 135,
+        "line": 138,
         "column": 1
       }
     },
@@ -1845,7 +2017,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 151,
+        "line": 154,
         "column": 1
       }
     },
@@ -1854,7 +2026,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 167,
+        "line": 170,
         "column": 1
       }
     },
@@ -3024,6 +3196,11 @@
         "sourcePath": "src/metadata/index.ts"
       },
       {
+        "fromPath": "src/adapters/minikube/appRuntimeServing.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/appRuntimeServing.ts"
+      },
+      {
         "fromPath": "src/adapters/minikube/contracts.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/adapters/minikube/contracts.ts"
@@ -3036,6 +3213,11 @@
       {
         "fromPath": "src/adapters/minikube/index.ts",
         "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/index.ts",
+        "toPath": "src/adapters/minikube/appRuntimeServing.ts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -3984,6 +4166,12 @@
         "sourcePath": "src/cli/index.ts"
       },
       {
+        "fromSymbol": "src/adapters/minikube/appRuntimeServing.ts",
+        "toSymbol": "addRelativeRedirectPolicy",
+        "callExpression": "addRelativeRedirectPolicy",
+        "sourcePath": "src/adapters/minikube/appRuntimeServing.ts"
+      },
+      {
         "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "validateCanonicalAppSlug",
         "callExpression": "validateCanonicalAppSlug",
@@ -4023,6 +4211,12 @@
         "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "unique",
         "callExpression": "unique",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "generateMinikubeInfra",
+        "toSymbol": "preserveForwardedAppOrigin",
+        "callExpression": "preserveForwardedAppOrigin",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {

@@ -8,10 +8,10 @@ Source: `src/apis.ts:11:1`
 
 ### Members
 
-| Name     | Kind     | Type                                     | Required | Description |
-| -------- | -------- | ---------------------------------------- | -------- | ----------- |
-| files    | property | `readonly GeneratedInfrastructureFile[]` | yes      |             |
-| warnings | property | `readonly string[]`                      | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| files | property | `readonly GeneratedInfrastructureFile[]` | yes |  |
+| warnings | property | `readonly string[]` | yes |  |
 
 ## createInfraSecretStoreAdapter
 
@@ -33,10 +33,10 @@ Source: `src/secretStore.ts:14:1`
 
 ### Members
 
-| Name      | Kind     | Type                                      | Required | Description |
-| --------- | -------- | ----------------------------------------- | -------- | ----------- |
-| manifest  | property | `Pick<InfraManifestInput, "secretStore">` | yes      |             |
-| providers | property | `InfraSecretStoreProviders`               | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| manifest | property | `Pick<InfraManifestInput, "secretStore">` | yes |  |
+| providers | property | `InfraSecretStoreProviders` | yes |  |
 
 ## generateApiInfrastructureArtifacts
 
@@ -64,11 +64,11 @@ Source: `src/types.ts:3:1`
 
 ### Members
 
-| Name       | Kind     | Type                   | Required | Description |
-| ---------- | -------- | ---------------------- | -------- | ----------- |
-| content    | property | `string`               | yes      |             |
-| executable | property | `boolean \| undefined` | no       |             |
-| path       | property | `string`               | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| content | property | `string` | yes |  |
+| executable | property | `boolean \| undefined` | no |  |
+| path | property | `string` | yes |  |
 
 ## GeneratedPackageDependency
 
@@ -78,11 +78,11 @@ Source: `src/types.ts:12:1`
 
 ### Members
 
-| Name    | Kind     | Type     | Required | Description |
-| ------- | -------- | -------- | -------- | ----------- |
-| name    | property | `string` | yes      |             |
-| reason  | property | `string` | yes      |             |
-| version | property | `string` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| name | property | `string` | yes |  |
+| reason | property | `string` | yes |  |
+| version | property | `string` | yes |  |
 
 ## generateInfra
 
@@ -117,10 +117,10 @@ Source: `src/types.ts:62:1`
 
 ### Members
 
-| Name     | Kind     | Type        | Required | Description |
-| -------- | -------- | ----------- | -------- | ----------- |
-| message  | property | `string`    | yes      |             |
-| severity | property | `"warning"` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| message | property | `string` | yes |  |
+| severity | property | `"warning"` | yes |  |
 
 ## InfraGenerationInput
 
@@ -130,11 +130,11 @@ Source: `src/types.ts:44:1`
 
 ### Members
 
-| Name       | Kind     | Type                                           | Required | Description |
-| ---------- | -------- | ---------------------------------------------- | -------- | ----------- |
-| manifest   | property | `InfraManifestInput`                           | yes      |             |
-| options    | property | `InfrastructureGenerationOptions \| undefined` | no       |             |
-| outputRoot | property | `string \| undefined`                          | no       |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| manifest | property | `InfraManifestInput` | yes |  |
+| options | property | `InfrastructureGenerationOptions \| undefined` | no |  |
+| outputRoot | property | `string \| undefined` | no |  |
 
 ## InfraGenerationOptions
 
@@ -162,9 +162,9 @@ Source: `src/secretStore.ts:10:1`
 
 ### Members
 
-| Name          | Kind     | Type                                       | Required | Description |
-| ------------- | -------- | ------------------------------------------ | -------- | ----------- |
-| supabaseVault | property | `SupabaseVaultAdapterOptions \| undefined` | no       |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| supabaseVault | property | `SupabaseVaultAdapterOptions \| undefined` | no |  |
 
 ## InfrastructureGenerationMeta
 
@@ -174,10 +174,10 @@ Source: `src/types.ts:18:1`
 
 ### Members
 
-| Name      | Kind     | Type                                                                                                     | Required | Description |
-| --------- | -------- | -------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| providers | property | `readonly string[]`                                                                                      | yes      |             |
-| target    | property | `import("/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| providers | property | `readonly string[]` | yes |  |
+| target | property | `import("/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes |  |
 
 ## InfrastructureGenerationOptions
 
@@ -187,10 +187,10 @@ Source: `src/types.ts:30:1`
 
 ### Members
 
-| Name          | Kind     | Type                                                                                                        | Required | Description |
-| ------------- | -------- | ----------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| appManifest   | property | `Pick<AppManifest, "data" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
-| namespaceHint | property | `string \| undefined`                                                                                       | no       |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| appManifest | property | `Pick<AppManifest, "data" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no |  |
+| namespaceHint | property | `string \| undefined` | no |  |
 
 ## InfrastructureGenerationResult
 
@@ -200,12 +200,12 @@ Source: `src/types.ts:23:1`
 
 ### Members
 
-| Name         | Kind     | Type                                     | Required | Description |
-| ------------ | -------- | ---------------------------------------- | -------- | ----------- |
-| dependencies | property | `readonly GeneratedPackageDependency[]`  | yes      |             |
-| files        | property | `readonly GeneratedInfrastructureFile[]` | yes      |             |
-| meta         | property | `InfrastructureGenerationMeta`           | yes      |             |
-| warnings     | property | `readonly string[]`                      | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| dependencies | property | `readonly GeneratedPackageDependency[]` | yes |  |
+| files | property | `readonly GeneratedInfrastructureFile[]` | yes |  |
+| meta | property | `InfrastructureGenerationMeta` | yes |  |
+| warnings | property | `readonly string[]` | yes |  |
 
 ## PackageDependency
 
