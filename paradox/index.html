@@ -199,16 +199,6 @@
               <button
                 class="nav-button"
                 type="button"
-                data-target="src/adapters/minikube/appRuntimeServing.ts"
-              >
-                src/adapters/minikube/appRuntimeServing.ts
-                <small>2 functions</small>
-              </button>
-            </li>
-            <li>
-              <button
-                class="nav-button"
-                type="button"
                 data-target="src/adapters/minikube/auth/index.ts"
               >
                 src/adapters/minikube/auth/index.ts
@@ -409,7 +399,7 @@
             <div class="summary">
               <div><strong>19</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>30</strong><span class="muted">modules</span></div>
+              <div><strong>29</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -425,15 +415,6 @@
               <p class="muted">Referenced module</p>
               <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
               <p><strong>Exports:</strong> <span class="empty">None</span></p>
-            </article>
-            <article
-              class="item"
-              data-search="src/adapters/minikube/appRuntimeServing.ts src/types.ts preserveForwardedAppOrigin"
-            >
-              <h3>src/adapters/minikube/appRuntimeServing.ts</h3>
-              <p class="muted">Referenced module</p>
-              <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
-              <p><strong>Exports:</strong> <code>preserveForwardedAppOrigin</code></p>
             </article>
             <article
               class="item"
@@ -528,14 +509,12 @@
             </article>
             <article
               class="item"
-              data-search="src/adapters/minikube/index.ts src/adapters/minikube/appRuntimeServing.ts src/adapters/minikube/auth/index.ts src/adapters/minikube/authz/index.ts src/adapters/minikube/base/index.ts src/adapters/minikube/secrets/index.ts src/adapters/minikube/storage/index.ts src/apiArtifacts.ts src/types.ts generateMinikubeInfra"
+              data-search="src/adapters/minikube/index.ts src/adapters/minikube/auth/index.ts src/adapters/minikube/authz/index.ts src/adapters/minikube/base/index.ts src/adapters/minikube/secrets/index.ts src/adapters/minikube/storage/index.ts src/apiArtifacts.ts src/types.ts generateMinikubeInfra"
             >
               <h3>src/adapters/minikube/index.ts</h3>
               <p class="muted">Referenced module</p>
               <p>
-                <strong>Dependencies:</strong>
-                <code>src/adapters/minikube/appRuntimeServing.ts</code>,
-                <code>src/adapters/minikube/auth/index.ts</code>,
+                <strong>Dependencies:</strong> <code>src/adapters/minikube/auth/index.ts</code>,
                 <code>src/adapters/minikube/authz/index.ts</code>,
                 <code>src/adapters/minikube/base/index.ts</code>,
                 <code>src/adapters/minikube/secrets/index.ts</code>,
@@ -1542,9 +1521,6 @@
                 entrypoint_src_index_ts[&quot;src/index.ts&quot;] package__ankhorage_infra --&gt;
                 entrypoint_src_index_ts module_package_json[&quot;package.json&quot;]
                 package__ankhorage_infra -.-&gt; module_package_json
-                module_src_adapters_minikube_appRuntimeServing_ts[&quot;src/adapters/minikube/appRuntimeServing.ts&quot;]
-                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_appRuntimeServing_ts
-                module_src_adapters_minikube_appRuntimeServing_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
@@ -1587,8 +1563,6 @@
                 module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_index_ts
-                module_src_adapters_minikube_index_ts --&gt;
-                module_src_adapters_minikube_appRuntimeServing_ts
                 module_src_adapters_minikube_index_ts --&gt;
                 module_src_adapters_minikube_auth_index_ts module_src_adapters_minikube_index_ts
                 --&gt; module_src_adapters_minikube_authz_index_ts
@@ -1679,9 +1653,6 @@ graph TD
   package__ankhorage_infra --&gt; entrypoint_src_index_ts
   module_package_json[&quot;package.json&quot;]
   package__ankhorage_infra -.-&gt; module_package_json
-  module_src_adapters_minikube_appRuntimeServing_ts[&quot;src/adapters/minikube/appRuntimeServing.ts&quot;]
-  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_appRuntimeServing_ts
-  module_src_adapters_minikube_appRuntimeServing_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
@@ -1714,7 +1685,6 @@ graph TD
   module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_index_ts[&quot;src/adapters/minikube/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_index_ts
-  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_appRuntimeServing_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_auth_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_authz_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_base_index_ts
@@ -1804,7 +1774,6 @@ graph TD
               <p class="muted"><code>diagrams/module-relationships.mmd</code></p>
               <div class="mermaid">
                 graph LR module_package_json[&quot;package.json&quot;]
-                module_src_adapters_minikube_appRuntimeServing_ts[&quot;src/adapters/minikube/appRuntimeServing.ts&quot;]
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
@@ -1833,7 +1802,6 @@ graph TD
                 module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
                 module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
                 module_src_types_ts[&quot;src/types.ts&quot;]
-                module_src_adapters_minikube_appRuntimeServing_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_index_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
@@ -1858,8 +1826,6 @@ graph TD
                 module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_base_index_ts
                 --&gt; module_src_types_ts module_src_adapters_minikube_contracts_ts --&gt;
                 module_src_types_ts module_src_adapters_minikube_index_ts --&gt;
-                module_src_adapters_minikube_appRuntimeServing_ts
-                module_src_adapters_minikube_index_ts --&gt;
                 module_src_adapters_minikube_auth_index_ts module_src_adapters_minikube_index_ts
                 --&gt; module_src_adapters_minikube_authz_index_ts
                 module_src_adapters_minikube_index_ts --&gt;
@@ -1907,7 +1873,6 @@ graph TD
                 <pre>
 graph LR
   module_package_json[&quot;package.json&quot;]
-  module_src_adapters_minikube_appRuntimeServing_ts[&quot;src/adapters/minikube/appRuntimeServing.ts&quot;]
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
@@ -1936,7 +1901,6 @@ graph LR
   module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
   module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
   module_src_types_ts[&quot;src/types.ts&quot;]
-  module_src_adapters_minikube_appRuntimeServing_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_types_ts
@@ -1953,7 +1917,6 @@ graph LR
   module_src_adapters_minikube_base_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_base_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_contracts_ts --&gt; module_src_types_ts
-  module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_appRuntimeServing_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_auth_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_authz_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_base_index_ts
@@ -2001,7 +1964,6 @@ graph LR
               <p class="muted"><code>diagrams/export-graph.mmd</code></p>
               <div class="mermaid">
                 graph LR module_package_json[&quot;package.json&quot;]
-                module_src_adapters_minikube_appRuntimeServing_ts[&quot;src/adapters/minikube/appRuntimeServing.ts&quot;]
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
@@ -2088,7 +2050,6 @@ graph LR
                 <pre>
 graph LR
   module_package_json[&quot;package.json&quot;]
-  module_src_adapters_minikube_appRuntimeServing_ts[&quot;src/adapters/minikube/appRuntimeServing.ts&quot;]
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
@@ -2275,32 +2236,6 @@ sequenceDiagram
 </pre
                 >
               </details>
-            </article>
-          </section>
-        </section>
-        <section
-          id="view-src-adapters-minikube-appruntimeserving-ts"
-          class="view"
-          data-view="src/adapters/minikube/appRuntimeServing.ts"
-          hidden
-        >
-          <section class="panel">
-            <h2>src/adapters/minikube/appRuntimeServing.ts</h2>
-            <article
-              class="item"
-              data-search="preserveForwardedAppOrigin src/adapters/minikube/appRuntimeServing.ts "
-            >
-              <h3>preserveForwardedAppOrigin</h3>
-              <p class="muted"><code>src/adapters/minikube/appRuntimeServing.ts:7:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article
-              class="item"
-              data-search="addRelativeRedirectPolicy src/adapters/minikube/appRuntimeServing.ts "
-            >
-              <h3>addRelativeRedirectPolicy</h3>
-              <p class="muted"><code>src/adapters/minikube/appRuntimeServing.ts:28:1</code></p>
-              <p class="empty">No description available.</p>
             </article>
           </section>
         </section>
@@ -3008,17 +2943,17 @@ sequenceDiagram
               data-search="getPortForwardScript src/adapters/minikube/base/index.ts "
             >
               <h3>getPortForwardScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:2973:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:2974:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getDownScript src/adapters/minikube/base/index.ts ">
               <h3>getDownScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3308:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3309:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getResetScript src/adapters/minikube/base/index.ts ">
               <h3>getResetScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3342:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3343:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3026,7 +2961,7 @@ sequenceDiagram
               data-search="getDestroyScript src/adapters/minikube/base/index.ts "
             >
               <h3>getDestroyScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3406:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3407:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3034,7 +2969,7 @@ sequenceDiagram
               data-search="getStatusScript src/adapters/minikube/base/index.ts "
             >
               <h3>getStatusScript</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3433:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3434:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3042,7 +2977,7 @@ sequenceDiagram
               data-search="getDefaultAppImage src/adapters/minikube/base/index.ts "
             >
               <h3>getDefaultAppImage</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3602:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3603:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3050,7 +2985,7 @@ sequenceDiagram
               data-search="resolveSupabaseHostPorts src/adapters/minikube/base/index.ts "
             >
               <h3>resolveSupabaseHostPorts</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3606:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3607:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3058,12 +2993,12 @@ sequenceDiagram
               data-search="resolvePortBucket src/adapters/minikube/base/index.ts "
             >
               <h3>resolvePortBucket</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3616:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3617:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="hashSlug src/adapters/minikube/base/index.ts ">
               <h3>hashSlug</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3621:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3622:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3071,7 +3006,7 @@ sequenceDiagram
               data-search="escapeYamlDoubleQuoted src/adapters/minikube/base/index.ts "
             >
               <h3>escapeYamlDoubleQuoted</h3>
-              <p class="muted"><code>src/adapters/minikube/base/index.ts:3629:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/base/index.ts:3630:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -3107,22 +3042,22 @@ sequenceDiagram
               data-search="generateMinikubeInfra src/adapters/minikube/index.ts "
             >
               <h3>generateMinikubeInfra</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:17:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:16:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectProviders src/adapters/minikube/index.ts ">
               <h3>collectProviders</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:109:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:106:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectDependencies src/adapters/minikube/index.ts ">
               <h3>collectDependencies</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:124:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:121:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectWarnings src/adapters/minikube/index.ts ">
               <h3>collectWarnings</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:138:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:135:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3130,12 +3065,12 @@ sequenceDiagram
               data-search="validateCanonicalAppSlug src/adapters/minikube/index.ts "
             >
               <h3>validateCanonicalAppSlug</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:154:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:151:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="unique src/adapters/minikube/index.ts ">
               <h3>unique</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:170:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:167:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>

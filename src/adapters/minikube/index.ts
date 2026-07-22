@@ -5,7 +5,6 @@ import type {
   InfrastructureGenerationOptions,
   InfrastructureGenerationResult,
 } from '../../types';
-import { preserveForwardedAppOrigin } from './appRuntimeServing';
 import { generateAuthProviderArtifacts } from './auth';
 import { generateAuthorizationArtifacts } from './authz';
 import { APP_NAMESPACE, generateMinikubeBaseArtifacts } from './base';
@@ -68,16 +67,14 @@ export function generateMinikubeInfra(
     ...secretStoreArtifacts.envEntries,
   ]);
 
-  const baseFiles = preserveForwardedAppOrigin(
-    generateMinikubeBaseArtifacts({
-      manifest,
-      appSlug,
-      extraResources,
-      providerNamespaces,
-      providerLifecycle,
-      extraEnvEntries,
-    }),
-  );
+  const baseFiles = generateMinikubeBaseArtifacts({
+    manifest,
+    appSlug,
+    extraResources,
+    providerNamespaces,
+    providerLifecycle,
+    extraEnvEntries,
+  });
 
   const warnings = unique([
     ...collectWarnings(manifest),

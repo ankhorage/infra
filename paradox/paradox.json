@@ -86,12 +86,6 @@
       "exports": []
     },
     {
-      "path": "src/adapters/minikube/appRuntimeServing.ts",
-      "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
-      "exports": ["preserveForwardedAppOrigin"]
-    },
-    {
       "path": "src/adapters/minikube/auth/index.ts",
       "isEntrypoint": false,
       "dependencies": [
@@ -157,7 +151,6 @@
       "path": "src/adapters/minikube/index.ts",
       "isEntrypoint": false,
       "dependencies": [
-        "src/adapters/minikube/appRuntimeServing.ts",
         "src/adapters/minikube/auth/index.ts",
         "src/adapters/minikube/authz/index.ts",
         "src/adapters/minikube/base/index.ts",
@@ -975,24 +968,6 @@
   "components": [],
   "sourceFunctions": [
     {
-      "name": "preserveForwardedAppOrigin",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/appRuntimeServing.ts",
-        "line": 7,
-        "column": 1
-      }
-    },
-    {
-      "name": "addRelativeRedirectPolicy",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/adapters/minikube/appRuntimeServing.ts",
-        "line": 28,
-        "column": 1
-      }
-    },
-    {
       "name": "generateAuthProviderArtifacts",
       "description": null,
       "sourceLocation": {
@@ -1735,7 +1710,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2973,
+        "line": 2974,
         "column": 1
       }
     },
@@ -1744,7 +1719,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3308,
+        "line": 3309,
         "column": 1
       }
     },
@@ -1753,7 +1728,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3342,
+        "line": 3343,
         "column": 1
       }
     },
@@ -1762,7 +1737,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3406,
+        "line": 3407,
         "column": 1
       }
     },
@@ -1771,7 +1746,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3433,
+        "line": 3434,
         "column": 1
       }
     },
@@ -1780,7 +1755,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3602,
+        "line": 3603,
         "column": 1
       }
     },
@@ -1789,7 +1764,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3606,
+        "line": 3607,
         "column": 1
       }
     },
@@ -1798,7 +1773,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3616,
+        "line": 3617,
         "column": 1
       }
     },
@@ -1807,7 +1782,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3621,
+        "line": 3622,
         "column": 1
       }
     },
@@ -1816,7 +1791,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3629,
+        "line": 3630,
         "column": 1
       }
     },
@@ -1834,7 +1809,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 17,
+        "line": 16,
         "column": 1
       }
     },
@@ -1843,7 +1818,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 109,
+        "line": 106,
         "column": 1
       }
     },
@@ -1852,7 +1827,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 124,
+        "line": 121,
         "column": 1
       }
     },
@@ -1861,7 +1836,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 138,
+        "line": 135,
         "column": 1
       }
     },
@@ -1870,7 +1845,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 154,
+        "line": 151,
         "column": 1
       }
     },
@@ -1879,7 +1854,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 170,
+        "line": 167,
         "column": 1
       }
     },
@@ -3049,11 +3024,6 @@
         "sourcePath": "src/metadata/index.ts"
       },
       {
-        "fromPath": "src/adapters/minikube/appRuntimeServing.ts",
-        "toPath": "src/types.ts",
-        "sourcePath": "src/adapters/minikube/appRuntimeServing.ts"
-      },
-      {
         "fromPath": "src/adapters/minikube/contracts.ts",
         "toPath": "src/types.ts",
         "sourcePath": "src/adapters/minikube/contracts.ts"
@@ -3066,11 +3036,6 @@
       {
         "fromPath": "src/adapters/minikube/index.ts",
         "toPath": "src/types.ts",
-        "sourcePath": "src/adapters/minikube/index.ts"
-      },
-      {
-        "fromPath": "src/adapters/minikube/index.ts",
-        "toPath": "src/adapters/minikube/appRuntimeServing.ts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -4019,12 +3984,6 @@
         "sourcePath": "src/cli/index.ts"
       },
       {
-        "fromSymbol": "src/adapters/minikube/appRuntimeServing.ts",
-        "toSymbol": "addRelativeRedirectPolicy",
-        "callExpression": "addRelativeRedirectPolicy",
-        "sourcePath": "src/adapters/minikube/appRuntimeServing.ts"
-      },
-      {
         "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "validateCanonicalAppSlug",
         "callExpression": "validateCanonicalAppSlug",
@@ -4064,12 +4023,6 @@
         "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "unique",
         "callExpression": "unique",
-        "sourcePath": "src/adapters/minikube/index.ts"
-      },
-      {
-        "fromSymbol": "generateMinikubeInfra",
-        "toSymbol": "preserveForwardedAppOrigin",
-        "callExpression": "preserveForwardedAppOrigin",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
