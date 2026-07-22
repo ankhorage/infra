@@ -20,7 +20,9 @@ export function preserveForwardedAppOrigin(
   });
 
   if (!appImageDockerfileFound) {
-    throw new Error(`Missing generated app image Dockerfile: ${APP_IMAGE_DOCKERFILE_PATH}`);
+    throw new Error(
+      `Missing generated app image Dockerfile: ${APP_IMAGE_DOCKERFILE_PATH}`,
+    );
   }
 
   return normalizedFiles;
@@ -31,7 +33,9 @@ function addRelativeRedirectPolicy(dockerfile: string): string {
 
   const listenDirective = `${NGINX_LISTEN_DIRECTIVE}\n`;
   if (!dockerfile.includes(listenDirective)) {
-    throw new Error('Generated app nginx config is missing its expected listen directive.');
+    throw new Error(
+      'Generated app nginx config is missing its expected listen directive.',
+    );
   }
 
   return dockerfile.replace(
