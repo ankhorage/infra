@@ -2952,6 +2952,7 @@ function getAppImageDockerfile(): string {
 RUN cat <<'EOF' > /etc/nginx/conf.d/default.conf
 server {
   listen 8080;
+  absolute_redirect off;
   server_name _;
   root /usr/share/nginx/html;
   index index.html;
