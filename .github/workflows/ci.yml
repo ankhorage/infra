@@ -35,20 +35,30 @@ jobs:
             echo "No build script found; skipping."
           fi
 
-      - name: Run lint
+      - name: Capture lint output
         run: |
-          if node -e "const p=require('./package.json'); process.exit(p.scripts?.lint ? 0 : 1)"; then
-            set -o pipefail
-            bun run lint 2>&1 | tail -n 60
-          else
-            echo "No lint script found; skipping."
+          set +e
+          bun run lint > lint.log 2>&1
+          status=$?
+          echo "LINT_STATUS=${status}" >> "${GITHUB_ENV}"
+          exit 0
+
+      - name: Upload lint output
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-output
+          path: lint.log
+
+      - name: Enforce lint result
+        run: |
+          if [[ "${LINT_STATUS}" != "0" ]]; then
+            exit "${LINT_STATUS}"
           fi
 
       - name: Run format check
         run: |
           if node -e "const p=require('./package.json'); process.exit(p.scripts?.['format:check'] ? 0 : 1)"; then
-            set -o pipefail
-            bun run format:check 2>&1 | tail -n 60
+            bun run format:check
           else
             echo "No format:check script found; skipping."
           fi
