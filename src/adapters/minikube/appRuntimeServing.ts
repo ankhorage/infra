@@ -7,25 +7,24 @@ const NGINX_RELATIVE_REDIRECT_DIRECTIVE = '  absolute_redirect off;';
 export function preserveForwardedAppOrigin(
   files: readonly GeneratedInfrastructureFile[],
 ): GeneratedInfrastructureFile[] {
-  let appImageDockerfileFound = false;
+  const appImageDockerfileIndex = files.findIndex(
+    (file) => file.path === APP_IMAGE_DOCKERFILE_PATH,
+  );
 
-  const normalizedFiles = files.map((file) => {
-    if (file.path !== APP_IMAGE_DOCKERFILE_PATH) return file;
-
-    appImageDockerfileFound = true;
-    return {
-      ...file,
-      content: addRelativeRedirectPolicy(file.content),
-    };
-  });
-
-  if (!appImageDockerfileFound) {
+  if (appImageDockerfileIndex < 0) {
     throw new Error(
       `Missing generated app image Dockerfile: ${APP_IMAGE_DOCKERFILE_PATH}`,
     );
   }
 
-  return normalizedFiles;
+  return files.map((file, index) =>
+    index === appImageDockerfileIndex
+      ? {
+          ...file,
+          content: addRelativeRedirectPolicy(file.content),
+        }
+      : file,
+  );
 }
 
 function addRelativeRedirectPolicy(dockerfile: string): string {
