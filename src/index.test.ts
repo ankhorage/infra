@@ -85,7 +85,8 @@ describe('generateInfrastructure', () => {
     expect(upScript).not.toContain('SUPABASE_RUNTIME_ENABLED="${SUPABASE_RUNTIME_ENABLED');
     expect(upScript).toContain('minikube start -p "${PROFILE}"');
     expect(upScript).toContain('kubectl --context "${PROFILE}" apply -k "${K8S_DIR}"');
-    expect(upScript).toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
+    expect(upScript).toContain('supabase --yes migration up --db-url "${SUPABASE_DB_URL}"');
+    expect(upScript).not.toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
     expect(upScript).toContain('create secret generic supabase-runtime-secrets');
     expect(upScript).toContain('create secret generic supabase-public-runtime');
     expect(upScript).toContain('rollout status deployment/app-runtime --timeout=180s');

@@ -25,7 +25,7 @@ when provided by caller.
 
 ## Runtime Scripts
 
-- `scripts/up.sh`: starts `minikube -p <slug>`, applies manifests, waits for Supabase, runs migrations with `supabase migration up --db-url "$SUPABASE_DB_URL"`, builds/loads the app image, and starts slug-owned port-forwards.
+- `scripts/up.sh`: starts `minikube -p <slug>`, applies manifests, waits for Supabase, runs migrations with `supabase --yes migration up --db-url "$SUPABASE_DB_URL"`, builds/loads the app image, and starts slug-owned port-forwards.
 - `scripts/down.sh`: stops slug-owned port-forwards, then runs `minikube stop -p <slug>`. Persistent profile data remains.
 - `scripts/reset.sh`: requires `ANKH_RESET_CONFIRM=<slug>` and deletes/recreates namespaces `app` and `supabase`, including Supabase DB and Storage PVC data. It does not delete the Minikube profile.
 - `scripts/destroy.sh`: stops slug-owned port-forwards and runs `minikube delete -p <slug>`.
@@ -37,7 +37,7 @@ when provided by caller.
 
 Runtime ownership is Kubernetes. Migration authoring/history remains Supabase migration
 files. Migration execution targets the Kubernetes Postgres endpoint via
-`supabase migration up --db-url "$SUPABASE_DB_URL"`.
+`supabase --yes migration up --db-url "$SUPABASE_DB_URL"`.
 
 The generated manifests are based on the current official Supabase self-hosting Docker
 topology, service documentation, environment-variable contracts, and pinned official

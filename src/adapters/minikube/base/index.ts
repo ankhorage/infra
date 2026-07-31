@@ -3,6 +3,7 @@ import type { InfraManifestInput } from '../../../types';
 import type { ResolvedProfileModel } from '../auth/supabase/profile';
 import { resolveSupabaseProfileModel } from '../auth/supabase/profile';
 import type { MinikubeProviderLifecycle } from '../contracts';
+import { getSupabaseMigrationCommandScript } from './supabaseMigrations';
 
 export const APP_NAMESPACE = 'app';
 const SUPABASE_NAMESPACE = 'supabase';
@@ -379,7 +380,7 @@ host-level Supabase Compose runtime.
 
 ## Lifecycle Semantics
 
-- \`up.sh\`: starts \`minikube -p ${appSlug}\`, deploys provider namespaces, runs migrations with \`supabase migration up --db-url "$SUPABASE_DB_URL"\`, starts slug-owned port-forwards, and deploys the app runtime.
+- \`up.sh\`: starts \`minikube -p ${appSlug}\`, deploys provider namespaces, runs migrations with \`supabase --yes migration up --db-url "$SUPABASE_DB_URL"\`, starts slug-owned port-forwards, and deploys the app runtime.
 - \`down.sh\`: stops slug-owned port-forwards, then stops \`minikube -p ${appSlug}\`. Persistent data remains in the profile.
 - \`reset.sh\`: requires \`ANKH_RESET_CONFIRM=${appSlug}\`; ${resetDescription}. It does not delete the Minikube profile.
 - \`destroy.sh\`: deletes only \`minikube -p ${appSlug}\`.
@@ -392,7 +393,7 @@ ${resourceLines}
 
 Supabase runtime ownership is Kubernetes. Migration authoring/history remains Supabase
 migration files. Migration execution targets the Kubernetes Postgres endpoint through
-\`supabase migration up --db-url "$SUPABASE_DB_URL"\`.
+\`supabase --yes migration up --db-url "$SUPABASE_DB_URL"\`.
 
 Supabase manifests are generated from the current official Supabase self-hosting Docker
 topology, service documentation, environment-variable contracts, and pinned official images.
@@ -2266,6 +2267,7 @@ function getUpScript(args: {
     oauthProviders,
     secretStoreProvider,
   });
+  const supabaseMigrationCommand = getSupabaseMigrationCommandScript();
 
   return `#!/usr/bin/env bash
 set -Eeuo pipefail
@@ -2621,7 +2623,7 @@ run_supabase_migrations() {
     require_command supabase
     (
       cd "\${ROOT_DIR}"
-      supabase migration up --db-url "\${SUPABASE_DB_URL}"
+${indentShellBlock(supabaseMigrationCommand, 6)}
     )
   fi
 }
