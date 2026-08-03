@@ -69,10 +69,22 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
     const readme = getFile(result.files, 'infra/minikube/README.md');
 
-    expect(upScript).toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
+    const migrationFunction = upScript.slice(
+      upScript.indexOf('run_supabase_migrations()'),
+      upScript.indexOf('reconcile_supabase_profile()'),
+    );
+
+    expect(migrationFunction).toContain(
+      'SUPABASE_TELEMETRY_DISABLED=1 supabase --yes migration up --db-url "${SUPABASE_DB_URL}"',
+    );
+    expect(migrationFunction).not.toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
+    expect(migrationFunction).toContain('echo "Applying pending Supabase migrations..."');
+    expect(migrationFunction).toContain('echo "Supabase migrations applied."');
     expect(upScript).toContain('export SUPABASE_DB_URL PGSSLMODE=disable');
     expect(upScript).not.toContain('migration up --local');
     expect(upScript).toContain('cd "${ROOT_DIR}"');
+    expect(migrationFunction).toContain('if [[ "${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then');
+    expect(migrationFunction).toContain('if [[ -d "${ROOT_DIR}/supabase/migrations" ]]; then');
     expect(upScript).toContain('set_required_env_default POSTGRES_PASSWORD "$(random_hex 32)"');
     expect(upScript).not.toContain('set_env_default POSTGRES_PASSWORD "$(random_base64');
     expect(upScript).toContain(
@@ -80,6 +92,30 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     );
     expect(upScript).toContain('bootstrap_supabase_database');
     expect(readme).toContain('Migration authoring/history remains Supabase');
+  });
+
+  test('preserves Supabase-disabled migration behavior', () => {
+    const result = generateInfrastructure(
+      {
+        deployment: {
+          target: 'minikube',
+          monitoring: false,
+        },
+        plugins: [],
+      },
+      {
+        appManifest: createAppManifest('frontend-only'),
+      },
+    );
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    const migrationFunction = upScript.slice(
+      upScript.indexOf('run_supabase_migrations()'),
+      upScript.indexOf('reconcile_supabase_profile()'),
+    );
+
+    expect(upScript).toContain('SUPABASE_RUNTIME_ENABLED="false"');
+    expect(migrationFunction).toContain('if [[ "${SUPABASE_RUNTIME_ENABLED}" != "true" ]]; then');
+    expect(migrationFunction).toContain('return 0');
   });
 
   test('lists and generates Supabase Kubernetes bootstrap and gateway contract files', () => {
