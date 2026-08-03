@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 1.0.3
+
+### Patch Changes
+
+- 9ab757e: Prevent generated Supabase migration lifecycles from waiting indefinitely on blocked CLI telemetry, and report visible migration progress.
+
 ## 1.0.2
 
 ### Patch Changes
