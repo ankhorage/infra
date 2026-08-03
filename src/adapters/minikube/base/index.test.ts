@@ -75,7 +75,7 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     );
 
     expect(migrationFunction).toContain(
-      'supabase --yes migration up --db-url "${SUPABASE_DB_URL}"',
+      'SUPABASE_TELEMETRY_DISABLED=1 supabase --yes migration up --db-url "${SUPABASE_DB_URL}"',
     );
     expect(migrationFunction).not.toContain('supabase migration up --db-url "${SUPABASE_DB_URL}"');
     expect(migrationFunction).toContain('echo "Applying pending Supabase migrations..."');

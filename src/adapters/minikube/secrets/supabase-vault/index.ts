@@ -115,7 +115,8 @@ ${SUPABASE_VAULT_MIGRATION_PATH}
 \`\`\`
 
 is applied by the Kubernetes-owned Supabase migration lifecycle during \`scripts/up.sh\`
-with \`supabase --yes migration up --db-url "$SUPABASE_DB_URL"\`.
+with command-scoped CLI telemetry disabled around
+\`supabase --yes migration up --db-url "$SUPABASE_DB_URL"\`.
 
 ## Security boundary
 

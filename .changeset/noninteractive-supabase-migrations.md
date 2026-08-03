@@ -2,4 +2,4 @@
 '@ankhorage/infra': patch
 ---
 
-Run generated Supabase migrations non-interactively and report visible migration lifecycle progress.
+Prevent generated Supabase migration lifecycles from waiting indefinitely on blocked CLI telemetry, and report visible migration progress.

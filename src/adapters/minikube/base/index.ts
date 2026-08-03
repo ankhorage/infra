@@ -380,7 +380,7 @@ host-level Supabase Compose runtime.
 
 ## Lifecycle Semantics
 
-- \`up.sh\`: starts \`minikube -p ${appSlug}\`, deploys provider namespaces, runs migrations with \`supabase --yes migration up --db-url "$SUPABASE_DB_URL"\`, starts slug-owned port-forwards, and deploys the app runtime.
+- \`up.sh\`: starts \`minikube -p ${appSlug}\`, deploys provider namespaces, runs migrations with CLI telemetry disabled for that command, starts slug-owned port-forwards, and deploys the app runtime.
 - \`down.sh\`: stops slug-owned port-forwards, then stops \`minikube -p ${appSlug}\`. Persistent data remains in the profile.
 - \`reset.sh\`: requires \`ANKH_RESET_CONFIRM=${appSlug}\`; ${resetDescription}. It does not delete the Minikube profile.
 - \`destroy.sh\`: deletes only \`minikube -p ${appSlug}\`.
@@ -393,7 +393,13 @@ ${resourceLines}
 
 Supabase runtime ownership is Kubernetes. Migration authoring/history remains Supabase
 migration files. Migration execution targets the Kubernetes Postgres endpoint through
-\`supabase --yes migration up --db-url "$SUPABASE_DB_URL"\`.
+\`SUPABASE_TELEMETRY_DISABLED=1 supabase --yes migration up --db-url "$SUPABASE_DB_URL"\`.
+The migration process does not require stdin. \`--yes\` remains defense in depth for future
+CLI prompts; it is not the hang fix. Command-scoped telemetry disable avoids the unbounded
+telemetry shutdown in Supabase CLI 2.106.0 when PostHog is blocked, without changing the
+user's persistent telemetry preference. Migration failures stop \`up.sh\`, and the completion
+message is printed only after a zero exit status. No migration deadline is added; using a
+current Supabase CLI remains recommended.
 
 Supabase manifests are generated from the current official Supabase self-hosting Docker
 topology, service documentation, environment-variable contracts, and pinned official images.
