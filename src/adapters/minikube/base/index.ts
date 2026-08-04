@@ -424,6 +424,13 @@ Pinned images:
 - Studio: \`http://127.0.0.1:${supabaseHostPorts.studio}\`
 - DB migration endpoint: \`127.0.0.1:${supabaseHostPorts.db}\`
 
+## App Image Export
+
+\`build-app-image.sh\` clears the Expo/Metro bundler cache before every web export. Expo
+inlines \`EXPO_PUBLIC_*\` values into the browser bundle, so cache invalidation ensures a
+rotated browser-safe Supabase URL or anon key replaces the previous value before the Docker
+image is built. Privileged Supabase credentials are not written to the app's public env file.
+
 ## Runtime Conventions
 
 - Monitoring requested: \`${monitoringEnabled ? 'true' : 'false'}\`
@@ -2930,7 +2937,7 @@ fi
 
 (
   cd "\${APP_SOURCE_DIR}"
-  bunx expo export --platform web --output-dir "\${APP_WEB_EXPORT_DIR}"
+  bunx expo export --platform web --clear --output-dir "\${APP_WEB_EXPORT_DIR}"
 )
 
 if [[ "\${APP_WEB_EXPORT_DIR}" = /* ]]; then

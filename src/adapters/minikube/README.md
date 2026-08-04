@@ -55,7 +55,9 @@ official Supabase Kubernetes distribution.
 
 - Default app image: `ankh/<slug>:dev`.
 - By default `up.sh` triggers `build-app-image.sh` (`APP_BUILD_ENABLED=true`) before apply.
-- `build-app-image.sh` runs `bunx expo export --platform web`, then builds via `app-image/Dockerfile`.
+- `build-app-image.sh` runs `bunx expo export --platform web --clear`, then builds via
+  `app-image/Dockerfile`. Clearing the Expo/Metro cache ensures rotated `EXPO_PUBLIC_*`
+  values replace cached transforms before the browser bundle and Docker image are created.
 - `up.sh` syncs runtime image using `APP_IMAGE_SYNC_STRATEGY`:
   - `docker-load` (default): loads existing local Docker image into the app profile.
   - `minikube-build`: builds exported web artifacts directly into the profile image store.
@@ -80,6 +82,10 @@ For local Expo/Metro development, `up.sh` also mirrors only the browser-safe
 `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` values into the generated
 app root `.env.local`, preserving unrelated entries. Restart Expo after Infra Up so the
 client bundle sees the refreshed public Supabase values.
+
+Only browser-safe `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` values are
+eligible for client bundling. Service-role and other privileged Supabase credentials remain
+outside the app public environment and must never be referenced through `EXPO_PUBLIC_*` names.
 
 ## Practical Selector Rule
 
