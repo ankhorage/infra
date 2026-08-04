@@ -374,6 +374,8 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
       appManifest: createAppManifest('books'),
     });
     const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    const buildScript = getFile(result.files, 'infra/minikube/scripts/build-app-image.sh');
+    const readme = getFile(result.files, 'infra/minikube/README.md');
 
     expect(upScript).toContain('sync_app_public_supabase_env()');
     expect(upScript).toContain('local app_env_file="${APP_SOURCE_DIR}/.env.local"');
@@ -388,6 +390,12 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
       upScript.indexOf('if [[ "${APP_BUILD_ENABLED}" == "true" ]]'),
     );
     expect(upScript).not.toContain('SUPABASE_SERVICE_ROLE_KEY" "${SUPABASE_SERVICE_ROLE_KEY}"');
+    expect(buildScript).toContain(
+      'bunx expo export --platform web --clear --output-dir "${APP_WEB_EXPORT_DIR}"',
+    );
+    expect(readme).toContain(
+      '`build-app-image.sh` clears the Expo/Metro bundler cache before every web export.',
+    );
   });
 
   test('starts Supabase schema owners before app migrations and profile reconciliation', () => {
