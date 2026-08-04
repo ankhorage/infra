@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 1.0.5
+
+### Patch Changes
+
+- f566fef: Update SUPABASE-VAULT
+
 ## 1.0.4
 
 ### Patch Changes
