@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 1.0.4
+
+### Patch Changes
+
+- 434d4da: Clear the Expo/Metro export cache before building generated Minikube app images so rotated browser-safe Supabase credentials replace stale values in the client bundle.
+
 ## 1.0.3
 
 ### Patch Changes
