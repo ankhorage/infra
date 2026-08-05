@@ -1,9 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 
-import {
-  getLocalAuthRedirectPatterns,
-  resolveAuthRedirectConfiguration,
-} from './authRedirects';
+import { getLocalAuthRedirectPatterns, resolveAuthRedirectConfiguration } from './authRedirects';
 
 describe('resolveAuthRedirectConfiguration', () => {
   test('derives an exact provider callback and local browser callback policy', () => {
@@ -16,9 +13,7 @@ describe('resolveAuthRedirectConfiguration', () => {
       nativeRedirectUris: ['ankh-demo://auth/callback'],
     });
 
-    expect(config.providerCallbackUrl).toBe(
-      'http://127.0.0.1:18081/auth/v1/callback',
-    );
+    expect(config.providerCallbackUrl).toBe('http://127.0.0.1:18081/auth/v1/callback');
     expect(config.siteUrl).toBe('http://127.0.0.1:18080');
     expect(config.redirectAllowList).toEqual([
       'http://127.0.0.1:18080',
