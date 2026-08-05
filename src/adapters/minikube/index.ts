@@ -12,6 +12,7 @@ import { generateSecretStoreArtifacts } from './secrets';
 import { generateStorageArtifacts } from './storage';
 
 const CANONICAL_PROJECT_SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/;
+const BUILT_IN_NAMESPACES = new Set([APP_NAMESPACE, 'supabase']);
 
 export function generateMinikubeInfra(
   manifest: InfraManifestInput,
@@ -59,7 +60,7 @@ export function generateMinikubeInfra(
   ];
   const providerNamespaces = unique([
     ...providerLifecycle.map((contribution) => contribution.namespace),
-  ]);
+  ]).filter((providerNamespace) => !BUILT_IN_NAMESPACES.has(providerNamespace));
   const extraEnvEntries = unique([
     ...authArtifacts.envEntries,
     ...authzArtifacts.envEntries,

@@ -9,6 +9,14 @@ import type {
 export type { ApiInfrastructureArtifacts } from './apiArtifacts';
 export { generateApiInfrastructureArtifacts } from './apiArtifacts';
 export {
+  type AuthRedirectConfiguration,
+  type AuthRedirectEnvironment,
+  getLocalAuthRedirectPatterns,
+  normalizeAuthCallbackRoute,
+  resolveAuthRedirectConfiguration,
+  type ResolveAuthRedirectConfigurationInput,
+} from './authRedirects';
+export {
   createInfraSecretStoreAdapter,
   type CreateInfraSecretStoreAdapterInput,
   type InfraSecretStoreProviders,
