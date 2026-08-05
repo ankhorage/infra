@@ -47,10 +47,7 @@ export function resolveAuthRedirectConfiguration(
 
 export function getLocalAuthRedirectPatterns(callbackRoute: string): readonly string[] {
   const normalizedRoute = normalizeCallbackRoute(callbackRoute);
-  return [
-    `http://127.0.0.1:*${normalizedRoute}`,
-    `http://localhost:*${normalizedRoute}`,
-  ];
+  return [`http://127.0.0.1:*${normalizedRoute}`, `http://localhost:*${normalizedRoute}`];
 }
 
 export function normalizeAuthCallbackRoute(callbackRoute: string): string {
