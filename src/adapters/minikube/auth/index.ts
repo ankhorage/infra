@@ -1,5 +1,6 @@
 import type { InfraManifestInput } from '../../../types';
 import { emptyMinikubeArtifacts, type MinikubeAdapterArtifacts } from '../contracts';
+import { generateSupabaseOAuthRuntimeArtifacts } from './oauthRuntime';
 import { generateSupabaseAuthArtifacts } from './supabase';
 
 export function generateAuthProviderArtifacts(args: {
@@ -19,5 +20,17 @@ export function generateAuthProviderArtifacts(args: {
     );
   }
 
-  return generateSupabaseAuthArtifacts({ manifest, namespace });
+  const providerArtifacts = generateSupabaseAuthArtifacts({ manifest, namespace });
+  const oauthArtifacts = generateSupabaseOAuthRuntimeArtifacts(manifest);
+
+  return {
+    files: [...providerArtifacts.files, ...oauthArtifacts.files],
+    resources: [...providerArtifacts.resources, ...oauthArtifacts.resources],
+    providerLifecycle: [
+      ...providerArtifacts.providerLifecycle,
+      ...oauthArtifacts.providerLifecycle,
+    ],
+    envEntries: [...providerArtifacts.envEntries, ...oauthArtifacts.envEntries],
+    warnings: [...providerArtifacts.warnings, ...oauthArtifacts.warnings],
+  };
 }
