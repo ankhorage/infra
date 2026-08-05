@@ -1,20 +1,10 @@
-import {
-  getLocalAuthRedirectPatterns,
-  normalizeAuthCallbackRoute,
-} from '../../../../authRedirects';
 import type { InfraManifestInput } from '../../../../types';
-import type { MinikubeAdapterArtifacts, MinikubeProviderLifecycle } from '../../contracts';
+import type { MinikubeAdapterArtifacts } from '../../contracts';
 import {
   getSupabaseProfileReconciliation,
   type ResolvedProfileModel,
   resolveSupabaseProfileModel,
 } from './profile';
-
-interface SupabaseOAuthRuntimeModel {
-  callbackRoute: string;
-  envPrefixes: readonly string[];
-  localRedirectPatterns: readonly string[];
-}
 
 export function generateSupabaseAuthArtifacts(args: {
   manifest: InfraManifestInput;
@@ -31,7 +21,6 @@ export function generateSupabaseAuthArtifacts(args: {
   const authzKind = manifest.auth?.authorization?.kind ?? 'RBAC';
   const authFieldModel = resolveAuthFieldModel(manifest);
   const profileModel = resolveSupabaseProfileModel(manifest);
-  const oauthRuntime = resolveOAuthRuntimeModel(manifest);
 
   const warnings: string[] = [];
   if (scope !== 'global') {
@@ -74,14 +63,14 @@ export function generateSupabaseAuthArtifacts(args: {
         : []),
       {
         path: `${docsRoot}/supabase-runtime-wiring.md`,
-        content: getSupabaseRuntimeWiringGuide(profileModel, oauthRuntime),
+        content: getSupabaseRuntimeWiringGuide(profileModel),
       },
     ],
     resources: [
       `${resourceRoot}/supabase-auth.configmap.yaml`,
       `${resourceRoot}/app-runtime-auth.env.configmap.yaml`,
     ],
-    providerLifecycle: oauthRuntime ? [getOAuthProviderLifecycle(oauthRuntime)] : [],
+    providerLifecycle: [],
     envEntries: ['EXPO_PUBLIC_SUPABASE_URL=', 'EXPO_PUBLIC_SUPABASE_ANON_KEY='],
     warnings,
   };
@@ -154,10 +143,7 @@ data:
 `;
 }
 
-function getSupabaseRuntimeWiringGuide(
-  profileModel: ResolvedProfileModel,
-  oauthRuntime: SupabaseOAuthRuntimeModel | null,
-) {
+function getSupabaseRuntimeWiringGuide(profileModel: ResolvedProfileModel) {
   const profileSection = profileModel.enabled
     ? `
 ## App Profile Table
@@ -172,25 +158,6 @@ The generated profile reconciliation:
 - allows signed-in users to read and update their own profile row
 - drops stale Ankhorage-managed profile columns that are no longer configured
 - creates a trigger for new auth users when \`AUTH_PROFILE_CREATE_STRATEGY=trigger\`
-`
-    : '';
-  const oauthSection = oauthRuntime
-    ? `
-## OAuth Redirect Reconciliation
-
-The provider callback is always derived from the active project gateway as
-\`\${API_EXTERNAL_URL%/}/callback\`, which resolves to the project-owned
-\`/auth/v1/callback\` endpoint. GoTrue-to-app redirects use the configured callback route
-\`${oauthRuntime.callbackRoute}\`.
-
-Local Minikube reconciliation adds only callback-scoped loopback patterns:
-
-${oauthRuntime.localRedirectPatterns.map((pattern) => `- \`${pattern}\``).join('\n')}
-
-Native callback URIs may be supplied through \`OAUTH_NATIVE_REDIRECT_URLS\`. The generated
-provider lifecycle writes only redirect metadata, never OAuth client secrets. It updates the
-GoTrue deployment environment, forces \`deployment/auth\` to restart, and waits up to 600
-seconds for the rollout. A failed rollout stops Infra Up before its success message.
 `
     : '';
 
@@ -249,123 +216,13 @@ with \`optional: true\` for auth sources.
 - \`SUPABASE_ANON_KEY\`
 - \`EXPO_PUBLIC_SUPABASE_URL\`
 - \`EXPO_PUBLIC_SUPABASE_ANON_KEY\`
-${profileSection}${oauthSection}
+${profileSection}
 ## Runtime Secrets
 
 When Supabase is enabled, \`scripts/up.sh\` creates/updates \`Secret/supabase-public-runtime\`
 with browser-safe values for the app namespace and mirrors the Expo public values into the
 app \`.env.local\`. Privileged Supabase runtime secrets remain in the \`supabase\` namespace.
 `;
-}
-
-function resolveOAuthRuntimeModel(manifest: InfraManifestInput): SupabaseOAuthRuntimeModel | null {
-  const oauth = manifest.auth?.oauth;
-  if (!oauth?.enabled) return null;
-
-  const providers = oauth.providers.filter((provider) => provider.enabled !== false);
-  if (providers.length === 0) return null;
-
-  const callbackRoute = normalizeAuthCallbackRoute(oauth.callbackRoute ?? '/auth/callback');
-  const envPrefixes = providers.map((provider) => {
-    const prefix = provider.id
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9]+/gu, '_')
-      .replace(/^_+|_+$/gu, '');
-    if (!prefix) {
-      throw new Error(`OAuth provider "${provider.id}" cannot be mapped to GoTrue environment keys.`);
-    }
-    return prefix;
-  });
-
-  return {
-    callbackRoute,
-    envPrefixes,
-    localRedirectPatterns: getLocalAuthRedirectPatterns(callbackRoute),
-  };
-}
-
-function getOAuthProviderLifecycle(
-  oauthRuntime: SupabaseOAuthRuntimeModel,
-): MinikubeProviderLifecycle {
-  return {
-    id: 'supabase-auth',
-    namespace: 'supabase',
-    endpoints: [],
-    readinessChecks: [
-      {
-        label: 'GoTrue',
-        namespace: 'supabase',
-        resource: 'deployment/auth',
-        timeoutSeconds: 600,
-      },
-    ],
-    migrationCommands: [],
-    reconciliationCommands: [
-      {
-        label: 'OAuth redirect and runtime rollout reconciliation',
-        command: getOAuthRuntimeReconciliationCommand(oauthRuntime),
-      },
-    ],
-    statusChecks: [
-      {
-        label: 'OAuth redirect configuration',
-        command: getOAuthRuntimeStatusCommand(oauthRuntime),
-      },
-    ],
-  };
-}
-
-function getOAuthRuntimeReconciliationCommand(oauthRuntime: SupabaseOAuthRuntimeModel): string {
-  const localPatterns = oauthRuntime.localRedirectPatterns.join(',');
-  const providerRedirectAssignments = oauthRuntime.envPrefixes
-    .map(
-      (prefix) =>
-        `GOTRUE_EXTERNAL_${prefix}_REDIRECT_URI="\${oauth_provider_callback}"`,
-    )
-    .join(' \\\n  ');
-  const providerExports = oauthRuntime.envPrefixes
-    .map(
-      (prefix) => `export GOTRUE_EXTERNAL_${prefix}_REDIRECT_URI="\${oauth_provider_callback}"
-write_env_value GOTRUE_EXTERNAL_${prefix}_REDIRECT_URI "\${oauth_provider_callback}"`,
-    )
-    .join('\n');
-
-  return `oauth_callback_route='${oauthRuntime.callbackRoute}'
-oauth_callback_path="\${oauth_callback_route#/}"
-oauth_site_url="\${SITE_URL%/}"
-oauth_provider_callback="\${API_EXTERNAL_URL%/}/callback"
-oauth_redirect_allow_list="\${oauth_site_url},\${oauth_site_url}/\${oauth_callback_path},${localPatterns}"
-if [[ -n "\${OAUTH_NATIVE_REDIRECT_URLS:-}" ]]; then
-  oauth_redirect_allow_list="\${oauth_redirect_allow_list},\${OAUTH_NATIVE_REDIRECT_URLS}"
-fi
-export ADDITIONAL_REDIRECT_URLS="\${oauth_redirect_allow_list}"
-write_env_value ADDITIONAL_REDIRECT_URLS "\${oauth_redirect_allow_list}"
-${providerExports}
-kubectl --context "\${PROFILE}" -n supabase set env deployment/auth \\
-  API_EXTERNAL_URL="\${API_EXTERNAL_URL}" \\
-  GOTRUE_SITE_URL="\${SITE_URL}" \\
-  GOTRUE_URI_ALLOW_LIST="\${oauth_redirect_allow_list}" \\
-  GOTRUE_JWT_ISSUER="\${API_EXTERNAL_URL}" \\
-  ${providerRedirectAssignments} >/dev/null
-kubectl --context "\${PROFILE}" -n supabase rollout restart deployment/auth >/dev/null
-kubectl --context "\${PROFILE}" -n supabase rollout status deployment/auth --timeout=600s`;
-}
-
-function getOAuthRuntimeStatusCommand(oauthRuntime: SupabaseOAuthRuntimeModel): string {
-  return `oauth_callback_route='${oauthRuntime.callbackRoute}'
-oauth_callback_path="\${oauth_callback_route#/}"
-if [[ -n "\${API_EXTERNAL_URL:-}" ]]; then
-  echo "- provider supabase-auth/provider-callback: \${API_EXTERNAL_URL%/}/callback"
-else
-  echo "- provider supabase-auth/provider-callback: unavailable"
-fi
-if [[ -n "\${SITE_URL:-}" ]]; then
-  echo "- provider supabase-auth/app-callback: \${SITE_URL%/}/\${oauth_callback_path}"
-else
-  echo "- provider supabase-auth/app-callback: unavailable"
-fi
-echo "- provider supabase-auth/local-callback-patterns: ${oauthRuntime.localRedirectPatterns.join(',')}"`;
 }
 
 const DEFAULT_SIGN_IN_IDENTIFIERS = ['email'];
