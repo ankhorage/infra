@@ -13,8 +13,8 @@ export {
   type AuthRedirectEnvironment,
   getLocalAuthRedirectPatterns,
   normalizeAuthCallbackRoute,
-  type ResolveAuthRedirectConfigurationInput,
   resolveAuthRedirectConfiguration,
+  type ResolveAuthRedirectConfigurationInput,
 } from './authRedirects';
 export {
   createInfraSecretStoreAdapter,
