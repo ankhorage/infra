@@ -1,7 +1,4 @@
-import {
-  getLocalAuthRedirectPatterns,
-  normalizeAuthCallbackRoute,
-} from '../../../authRedirects';
+import { getLocalAuthRedirectPatterns, normalizeAuthCallbackRoute } from '../../../authRedirects';
 import type { InfraManifestInput } from '../../../types';
 import type { MinikubeAdapterArtifacts, MinikubeProviderLifecycle } from '../contracts';
 
