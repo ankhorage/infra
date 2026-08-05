@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 1.1.0
+
+### Minor Changes
+
+- bd82fe0: Add canonical environment-aware Auth redirect configuration and reconcile Minikube GoTrue callback settings through a forced, bounded deployment rollout.
+
 ## 1.0.6
 
 ### Patch Changes
