@@ -30,11 +30,7 @@ test('keeps multiple provider redirect assignments as separate shell arguments',
     (file) => file.path === 'infra/minikube/scripts/up.sh',
   )?.content;
 
-  expect(upScript).toContain(
-    'GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI="${oauth_provider_callback}"',
-  );
-  expect(upScript).toContain(
-    'GOTRUE_EXTERNAL_APPLE_REDIRECT_URI="${oauth_provider_callback}"',
-  );
+  expect(upScript).toContain('GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI="${oauth_provider_callback}"');
+  expect(upScript).toContain('GOTRUE_EXTERNAL_APPLE_REDIRECT_URI="${oauth_provider_callback}"');
   expect(upScript).not.toContain('\\  GOTRUE_EXTERNAL_APPLE_REDIRECT_URI');
 });
