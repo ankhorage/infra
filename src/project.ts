@@ -1,4 +1,4 @@
-import type { AppManifest, NavigatorSpec } from '@ankhorage/contracts';
+import { APP_CATEGORIES, type AppManifest, type NavigatorSpec } from '@ankhorage/contracts';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -70,6 +70,7 @@ function createFallbackManifest(projectId: string): AppManifest {
       name: projectId,
       slug: projectId,
       version: '0.0.0',
+      category: 'developer_tools',
       themeId: 'default',
     },
     themes: [],
@@ -187,6 +188,7 @@ function isAppManifestMetadata(value: unknown): value is AppManifest['metadata']
     typeof value.name === 'string' &&
     typeof value.slug === 'string' &&
     typeof value.version === 'string' &&
+    APP_CATEGORIES.some((category) => category === value.category) &&
     typeof value.themeId === 'string' &&
     (value.created === undefined || typeof value.created === 'string') &&
     (value.updated === undefined || typeof value.updated === 'string')
