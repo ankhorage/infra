@@ -123,9 +123,11 @@ describe('generated API database bridge', () => {
 
     expect(migration?.content).toContain('alter table "app"."products" enable row level security;');
     expect(migration?.content).not.toContain('create policy');
-    expect(result.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'unsupported-policy', severity: 'warning' }),
-    );
+    expect(
+      result.diagnostics.some(
+        (diagnostic) => diagnostic.code === 'unsupported-policy' && diagnostic.severity === 'warning',
+      ),
+    ).toBe(true);
   });
 
   test('returns structured diagnostics and no partial artifacts for invalid definitions', () => {
@@ -156,16 +158,13 @@ describe('generated API database bridge', () => {
         },
       },
     });
+    const diagnosticCodes = result.diagnostics.map((diagnostic) => diagnostic.code);
 
     expect(result.files).toEqual([]);
-    expect(result.diagnostics.map((diagnostic) => diagnostic.code)).toEqual(
-      expect.arrayContaining([
-        'invalid-identifier',
-        'invalid-primary-key',
-        'duplicate-field',
-        'invalid-seed',
-      ]),
-    );
+    expect(diagnosticCodes).toContain('invalid-identifier');
+    expect(diagnosticCodes).toContain('invalid-primary-key');
+    expect(diagnosticCodes).toContain('duplicate-field');
+    expect(diagnosticCodes).toContain('invalid-seed');
   });
 
   test('rejects two generated resources targeting the same database table', () => {
@@ -188,9 +187,11 @@ describe('generated API database bridge', () => {
     });
 
     expect(result.files).toEqual([]);
-    expect(result.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'duplicate-target', severity: 'error' }),
-    );
+    expect(
+      result.diagnostics.some(
+        (diagnostic) => diagnostic.code === 'duplicate-target' && diagnostic.severity === 'error',
+      ),
+    ).toBe(true);
   });
 
   test('integrates generated DB artifacts without generating an API service workload', () => {
