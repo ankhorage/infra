@@ -6,8 +6,12 @@ import type {
   InfrastructureGenerationResult,
 } from './types';
 
-export type { ApiInfrastructureArtifacts } from './apiArtifacts';
-export { generateApiInfrastructureArtifacts } from './apiArtifacts';
+export {
+  type GeneratedApiDatabaseArtifacts,
+  type GeneratedApiDatabaseDiagnostic,
+  type GeneratedApiDatabaseDiagnosticCode,
+  generateGeneratedApiDatabaseArtifacts,
+} from './generatedApiDatabase';
 export {
   type AuthRedirectConfiguration,
   type AuthRedirectEnvironment,
