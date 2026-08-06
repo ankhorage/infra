@@ -19,7 +19,8 @@ export type GeneratedApiDatabaseDiagnosticCode =
   | 'invalid-primary-key'
   | 'invalid-seed'
   | 'registry-id-mismatch'
-  | 'unsupported-policy';
+  | 'unsupported-policy'
+  | 'unsupported-provider';
 
 export interface GeneratedApiDatabaseDiagnostic {
   readonly code: GeneratedApiDatabaseDiagnosticCode;
@@ -122,7 +123,7 @@ function validateGeneratedApiDatabaseState(
 
   if (databaseProvider !== 'supabase') {
     diagnostics.push({
-      code: 'invalid-identifier',
+      code: 'unsupported-provider',
       severity: 'error',
       apiId: contexts[0]?.api.id ?? 'generated-api',
       path: 'infra.database.provider',
@@ -146,7 +147,14 @@ function validateGeneratedApiDatabaseState(
     const { api, resource } = context;
     const resourceIds = resourceIdsByApi.get(api.id) ?? new Set<string>();
     if (resourceIds.has(resource.id)) {
-      diagnostics.push(resourceDiagnostic(context, 'duplicate-resource-id', 'id', `Resource ID '${resource.id}' is duplicated.`));
+      diagnostics.push(
+        resourceDiagnostic(
+          context,
+          'duplicate-resource-id',
+          'id',
+          `Resource ID '${resource.id}' is duplicated.`,
+        ),
+      );
     }
     resourceIds.add(resource.id);
     resourceIdsByApi.set(api.id, resourceIds);
@@ -325,12 +333,19 @@ function resourceDiagnostic(
 function isCompatibleDefault(field: DbFieldDefinition): boolean {
   const value = field.defaultValue;
   if (value === undefined || value === null) return true;
-  if (field.type === 'boolean') return typeof value === 'boolean';
-  if (field.type === 'number') return typeof value === 'number' && Number.isFinite(value);
-  if (field.type === 'text' || field.type === 'datetime' || field.type === 'uuid') {
-    return typeof value === 'string';
+
+  switch (field.type) {
+    case 'boolean':
+      return typeof value === 'boolean';
+    case 'number':
+      return typeof value === 'number' && Number.isFinite(value);
+    case 'text':
+    case 'datetime':
+    case 'uuid':
+      return typeof value === 'string';
+    case 'json':
+      return true;
   }
-  return field.type === 'json';
 }
 
 function createSeedEntry(context: GeneratedResourceContext): GeneratedSeedEntry {
@@ -368,9 +383,10 @@ function generateMigrationSql(contexts: readonly GeneratedResourceContext[]): st
     const columns = context.resource.collection.fields.map((field) =>
       formatColumn(field, field.name === context.resource.collection.primaryKey),
     );
-    const rls = (context.resource.policies?.length ?? 0) > 0
-      ? [`alter table ${schema}.${table} enable row level security;`]
-      : [];
+    const rls =
+      (context.resource.policies?.length ?? 0) > 0
+        ? [`alter table ${schema}.${table} enable row level security;`]
+        : [];
 
     return [
       `create schema if not exists ${schema};`,
@@ -411,9 +427,10 @@ function createSeedStatements(entry: GeneratedSeedEntry): readonly string[] {
   const values = entry.records
     .map((record) => `(${columns.map((column) => formatValue(record[column])).join(', ')})`)
     .join(',\n  ');
-  const conflict = entry.collection.primaryKey === undefined
-    ? 'on conflict do nothing'
-    : `on conflict (${quoteIdentifier(entry.collection.primaryKey)}) do nothing`;
+  const conflict =
+    entry.collection.primaryKey === undefined
+      ? 'on conflict do nothing'
+      : `on conflict (${quoteIdentifier(entry.collection.primaryKey)}) do nothing`;
 
   return [
     `insert into ${schema}.${table} (${columns.map(quoteIdentifier).join(', ')}) values\n  ${values}\n${conflict};`,
