@@ -86,6 +86,7 @@ export function createAppManifest(
       name: projectId,
       slug: projectId,
       version: '1.0.0',
+      category: 'developer_tools',
       themeId: 'default',
     },
     themes: [],
