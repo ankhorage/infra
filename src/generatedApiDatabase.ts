@@ -282,11 +282,7 @@ function validateSeeds(
       const requiresNonNullValue = field.required === true || field.name === primaryKey;
 
       if (value === undefined) {
-        if (
-          requiresNonNullValue &&
-          field.defaultValue === undefined &&
-          !generatedUuidPrimaryKey
-        ) {
+        if (requiresNonNullValue && field.defaultValue === undefined && !generatedUuidPrimaryKey) {
           diagnostics.push(
             resourceDiagnostic(
               context,
@@ -463,9 +459,7 @@ function createSeedStatements(entry: GeneratedSeedEntry): readonly string[] {
   const values = entry.records
     .map(
       (record) =>
-        `(${fields
-          .map((field) => formatSeedValue(field, record[field.name]))
-          .join(', ')})`,
+        `(${fields.map((field) => formatSeedValue(field, record[field.name])).join(', ')})`,
     )
     .join(',\n  ');
   const conflict =
