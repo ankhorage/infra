@@ -12,6 +12,7 @@ describe('Supabase OAuth runtime reconciliation', () => {
     const command = lifecycle?.reconciliationCommands[0]?.command ?? '';
     const statusCommand = lifecycle?.statusChecks[0]?.command ?? '';
     const guide = getFile(artifacts.files, 'infra/minikube/auth/oauth-runtime.md');
+    const normalizedGuide = guide.replace(/\s+/gu, ' ');
 
     expect(lifecycle?.id).toBe('supabase-auth');
     expect(lifecycle?.namespace).toBe('supabase');
@@ -42,9 +43,9 @@ describe('Supabase OAuth runtime reconciliation', () => {
     expect(command).not.toContain('GOTRUE_EXTERNAL_GOOGLE_SECRET=');
     expect(statusCommand).toContain('provider supabase-auth/provider-callback');
     expect(statusCommand).toContain('provider supabase-auth/app-callback');
-    expect(guide).toContain('Supabase OAuth Runtime Reconciliation');
-    expect(guide).toContain('re-syncs the canonical Supabase runtime');
-    expect(guide).toContain('A failed rollout stops Infra Up before its success message.');
+    expect(normalizedGuide).toContain('Supabase OAuth Runtime Reconciliation');
+    expect(normalizedGuide).toContain('re-syncs the canonical Supabase runtime');
+    expect(normalizedGuide).toContain('A failed rollout stops Infra Up before its success message.');
   });
 
   test('keeps Auth deployment environment declarative across reconciliation', () => {
