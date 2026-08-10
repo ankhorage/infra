@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 2.0.0
+
+### Major Changes
+
+- a4dda40: Consume the canonical generated API desired-state contract, generate deterministic Supabase/Postgres database artifacts, and remove the obsolete generated API handler/OpenAPI artifact surface.
+
 ## 1.1.0
 
 ### Minor Changes
