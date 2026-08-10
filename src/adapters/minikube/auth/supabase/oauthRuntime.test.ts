@@ -12,6 +12,7 @@ describe('Supabase OAuth runtime reconciliation', () => {
     const command = lifecycle?.reconciliationCommands[0]?.command ?? '';
     const statusCommand = lifecycle?.statusChecks[0]?.command ?? '';
     const guide = getFile(artifacts.files, 'infra/minikube/auth/oauth-runtime.md');
+    const normalizedGuide = guide.replace(/\s+/gu, ' ');
 
     expect(lifecycle?.id).toBe('supabase-auth');
     expect(lifecycle?.namespace).toBe('supabase');
@@ -28,10 +29,11 @@ describe('Supabase OAuth runtime reconciliation', () => {
     expect(command).toContain('http://localhost:*/auth/callback');
     expect(command).toContain('OAUTH_NATIVE_REDIRECT_URLS');
     expect(command).toContain('GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI="${oauth_provider_callback}"');
-    expect(command).toContain('GOTRUE_URI_ALLOW_LIST="${oauth_redirect_allow_list}"');
+    expect(command).toContain('sync_supabase_secrets');
+    expect(command).not.toContain('set env deployment/auth');
     expect(command).toContain('rollout restart deployment/auth');
     expect(command).toContain('rollout status deployment/auth --timeout=600s');
-    expect(command.indexOf('set env deployment/auth')).toBeLessThan(
+    expect(command.indexOf('sync_supabase_secrets')).toBeLessThan(
       command.indexOf('rollout restart deployment/auth'),
     );
     expect(command.indexOf('rollout restart deployment/auth')).toBeLessThan(
@@ -41,15 +43,19 @@ describe('Supabase OAuth runtime reconciliation', () => {
     expect(command).not.toContain('GOTRUE_EXTERNAL_GOOGLE_SECRET=');
     expect(statusCommand).toContain('provider supabase-auth/provider-callback');
     expect(statusCommand).toContain('provider supabase-auth/app-callback');
-    expect(guide).toContain('Supabase OAuth Runtime Reconciliation');
-    expect(guide).toContain('A failed rollout stops Infra Up before its success message.');
+    expect(normalizedGuide).toContain('Supabase OAuth Runtime Reconciliation');
+    expect(normalizedGuide).toContain('re-syncs the canonical Supabase runtime');
+    expect(normalizedGuide).toContain(
+      'A failed rollout stops Infra Up before its success message.',
+    );
   });
 
-  test('integrates reconciliation after generated runtime resources without duplicate namespaces', () => {
+  test('keeps Auth deployment environment declarative across reconciliation', () => {
     const result = generateInfrastructure(createOAuthManifest(), {
       appManifest: createAppManifest('oauth-app'),
     });
     const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    const authManifest = getFile(result.files, 'infra/minikube/k8s/supabase/auth.yaml');
     const kustomization = getFile(result.files, 'infra/minikube/k8s/kustomization.yaml');
     const statusScript = getFile(result.files, 'infra/minikube/scripts/status.sh');
 
@@ -57,15 +63,20 @@ describe('Supabase OAuth runtime reconciliation', () => {
     expect(upScript).toContain(
       'Running provider supabase-auth OAuth redirect and runtime rollout reconciliation.',
     );
-    expect(upScript).toContain(
+    expect(upScript).not.toContain(
       'kubectl --context "${PROFILE}" -n supabase set env deployment/auth',
     );
+    expect(upScript).toContain('sync_supabase_secrets');
     expect(upScript).toContain(
       'kubectl --context "${PROFILE}" -n supabase rollout restart deployment/auth',
     );
     expect(upScript).toContain(
       'kubectl --context "${PROFILE}" -n supabase rollout status deployment/auth --timeout=600s',
     );
+    expect(authManifest).toContain('name: API_EXTERNAL_URL\n              valueFrom:');
+    expect(authManifest).toContain('name: GOTRUE_SITE_URL\n              valueFrom:');
+    expect(authManifest).toContain('name: GOTRUE_URI_ALLOW_LIST\n              valueFrom:');
+    expect(authManifest).toContain('name: GOTRUE_JWT_ISSUER\n              valueFrom:');
     expect(upScript.lastIndexOf('run_provider_reconciliation')).toBeLessThan(
       upScript.lastIndexOf('echo "Minikube infrastructure for \'${PROFILE}\' is running."'),
     );

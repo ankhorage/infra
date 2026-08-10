@@ -98,9 +98,6 @@ function getOAuthProviderLifecycle(
 
 function getOAuthRuntimeReconciliationCommand(oauthRuntime: SupabaseOAuthRuntimeModel): string {
   const localPatterns = oauthRuntime.localRedirectPatterns.join(',');
-  const providerRedirectAssignments = oauthRuntime.envPrefixes
-    .map((prefix) => `GOTRUE_EXTERNAL_${prefix}_REDIRECT_URI="\${oauth_provider_callback}"`)
-    .join(' ');
   const providerExports = oauthRuntime.envPrefixes
     .map(
       (prefix) => `export GOTRUE_EXTERNAL_${prefix}_REDIRECT_URI="\${oauth_provider_callback}"
@@ -119,12 +116,7 @@ fi
 export ADDITIONAL_REDIRECT_URLS="\${oauth_redirect_allow_list}"
 write_env_value ADDITIONAL_REDIRECT_URLS "\${oauth_redirect_allow_list}"
 ${providerExports}
-kubectl --context "\${PROFILE}" -n supabase set env deployment/auth \\
-  API_EXTERNAL_URL="\${API_EXTERNAL_URL}" \\
-  GOTRUE_SITE_URL="\${SITE_URL}" \\
-  GOTRUE_URI_ALLOW_LIST="\${oauth_redirect_allow_list}" \\
-  GOTRUE_JWT_ISSUER="\${API_EXTERNAL_URL}" \\
-  ${providerRedirectAssignments} >/dev/null
+sync_supabase_secrets
 kubectl --context "\${PROFILE}" -n supabase rollout restart deployment/auth >/dev/null
 kubectl --context "\${PROFILE}" -n supabase rollout status deployment/auth --timeout=600s`;
 }
@@ -162,8 +154,10 @@ Local Minikube reconciliation adds only callback-scoped loopback patterns:
 ${localPatterns}
 
 Native callback URIs may be supplied through \`OAUTH_NATIVE_REDIRECT_URLS\`. The generated
-provider lifecycle writes only redirect metadata, never OAuth client secrets. It updates the
-GoTrue deployment environment, forces \`deployment/auth\` to restart, and waits up to 600
-seconds for the rollout. A failed rollout stops Infra Up before its success message.
+provider lifecycle persists redirect metadata, re-syncs the canonical Supabase runtime
+ConfigMap and Secret sources, then forces \`deployment/auth\` to restart and waits up to 600
+seconds for the rollout. OAuth credential values remain sourced from trusted secret resolution
+and are never embedded in generated files. A failed rollout stops Infra Up before its success
+message.
 `;
 }
