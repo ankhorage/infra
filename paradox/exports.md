@@ -1,17 +1,25 @@
 # Public API
 
-## ApiInfrastructureArtifacts
+## AuthRedirectConfiguration
 
 Kind: `type`
-Module: `src/apis.ts`
-Source: `src/apis.ts:11:1`
+Module: `src/authRedirects.ts`
+Source: `src/authRedirects.ts:12:1`
 
 ### Members
 
-| Name     | Kind     | Type                                     | Required | Description |
-| -------- | -------- | ---------------------------------------- | -------- | ----------- |
-| files    | property | `readonly GeneratedInfrastructureFile[]` | yes      |             |
-| warnings | property | `readonly string[]`                      | yes      |             |
+| Name                        | Kind     | Type                | Required | Description |
+| --------------------------- | -------- | ------------------- | -------- | ----------- |
+| providerCallbackUrl         | property | `string`            | yes      |             |
+| redirectAllowList           | property | `readonly string[]` | yes      |             |
+| serializedRedirectAllowList | property | `string`            | yes      |             |
+| siteUrl                     | property | `string`            | yes      |             |
+
+## AuthRedirectEnvironment
+
+Kind: `unknown`
+Module: `src/authRedirects.ts`
+Source: `src/authRedirects.ts:1:1`
 
 ## createInfraSecretStoreAdapter
 
@@ -38,17 +46,41 @@ Source: `src/secretStore.ts:14:1`
 | manifest  | property | `Pick<InfraManifestInput, "secretStore">` | yes      |             |
 | providers | property | `InfraSecretStoreProviders`               | yes      |             |
 
-## generateApiInfrastructureArtifacts
+## GeneratedApiDatabaseArtifacts
 
-Kind: `function`
-Module: `src/apiArtifacts.ts`
-Source: `src/apiArtifacts.ts:12:1`
+Kind: `type`
+Module: `src/generatedApiDatabase.ts`
+Source: `src/generatedApiDatabase.ts:34:1`
 
-### Signatures
+### Members
 
-- `(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => ApiInfrastructureArtifacts`
-  - args: `{ readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }`
-  - returns: `ApiInfrastructureArtifacts`
+| Name        | Kind     | Type                                        | Required | Description |
+| ----------- | -------- | ------------------------------------------- | -------- | ----------- |
+| diagnostics | property | `readonly GeneratedApiDatabaseDiagnostic[]` | yes      |             |
+| files       | property | `readonly GeneratedInfrastructureFile[]`    | yes      |             |
+
+## GeneratedApiDatabaseDiagnostic
+
+Kind: `type`
+Module: `src/generatedApiDatabase.ts`
+Source: `src/generatedApiDatabase.ts:25:1`
+
+### Members
+
+| Name       | Kind     | Type                                 | Required | Description |
+| ---------- | -------- | ------------------------------------ | -------- | ----------- |
+| apiId      | property | `string`                             | yes      |             |
+| code       | property | `GeneratedApiDatabaseDiagnosticCode` | yes      |             |
+| message    | property | `string`                             | yes      |             |
+| path       | property | `string \| undefined`                | no       |             |
+| resourceId | property | `string \| undefined`                | no       |             |
+| severity   | property | `"error" \| "warning"`               | yes      |             |
+
+## GeneratedApiDatabaseDiagnosticCode
+
+Kind: `unknown`
+Module: `src/generatedApiDatabase.ts`
+Source: `src/generatedApiDatabase.ts:13:1`
 
 ## GeneratedFile
 
@@ -84,11 +116,23 @@ Source: `src/types.ts:12:1`
 | reason  | property | `string` | yes      |             |
 | version | property | `string` | yes      |             |
 
+## generateGeneratedApiDatabaseArtifacts
+
+Kind: `function`
+Module: `src/generatedApiDatabase.ts`
+Source: `src/generatedApiDatabase.ts:55:1`
+
+### Signatures
+
+- `(args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) => GeneratedApiDatabaseArtifacts`
+  - args: `{ readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }`
+  - returns: `GeneratedApiDatabaseArtifacts`
+
 ## generateInfra
 
 Kind: `function`
 Module: `src/index.ts`
-Source: `src/index.ts:31:1`
+Source: `src/index.ts:43:1`
 
 ### Signatures
 
@@ -100,7 +144,7 @@ Source: `src/index.ts:31:1`
 
 Kind: `function`
 Module: `src/index.ts`
-Source: `src/index.ts:35:1`
+Source: `src/index.ts:47:1`
 
 ### Signatures
 
@@ -108,6 +152,18 @@ Source: `src/index.ts:35:1`
   - manifest: `InfraManifestInput`
   - options: `InfrastructureGenerationOptions` (optional)
   - returns: `InfrastructureGenerationResult`
+
+## getLocalAuthRedirectPatterns
+
+Kind: `function`
+Module: `src/authRedirects.ts`
+Source: `src/authRedirects.ts:48:1`
+
+### Signatures
+
+- `(callbackRoute: string) => readonly string[]`
+  - callbackRoute: `string`
+  - returns: `readonly string[]`
 
 ## InfraDiagnostic
 
@@ -187,10 +243,10 @@ Source: `src/types.ts:30:1`
 
 ### Members
 
-| Name          | Kind     | Type                                                                                                        | Required | Description |
-| ------------- | -------- | ----------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| appManifest   | property | `Pick<AppManifest, "data" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
-| namespaceHint | property | `string \| undefined`                                                                                       | no       |             |
+| Name          | Kind     | Type                                                                                                                 | Required | Description |
+| ------------- | -------- | -------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| appManifest   | property | `Pick<AppManifest, "generatedApis" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
+| namespaceHint | property | `string \| undefined`                                                                                                | no       |             |
 
 ## InfrastructureGenerationResult
 
@@ -207,8 +263,49 @@ Source: `src/types.ts:23:1`
 | meta         | property | `InfrastructureGenerationMeta`           | yes      |             |
 | warnings     | property | `readonly string[]`                      | yes      |             |
 
+## normalizeAuthCallbackRoute
+
+Kind: `function`
+Module: `src/authRedirects.ts`
+Source: `src/authRedirects.ts:53:1`
+
+### Signatures
+
+- `(callbackRoute: string) => string`
+  - callbackRoute: `string`
+  - returns: `string`
+
 ## PackageDependency
 
 Kind: `unknown`
 Module: `src/types.ts`
 Source: `src/types.ts:60:1`
+
+## resolveAuthRedirectConfiguration
+
+Kind: `function`
+Module: `src/authRedirects.ts`
+Source: `src/authRedirects.ts:19:1`
+
+### Signatures
+
+- `(input: ResolveAuthRedirectConfigurationInput) => AuthRedirectConfiguration`
+  - input: `ResolveAuthRedirectConfigurationInput`
+  - returns: `AuthRedirectConfiguration`
+
+## ResolveAuthRedirectConfigurationInput
+
+Kind: `type`
+Module: `src/authRedirects.ts`
+Source: `src/authRedirects.ts:3:1`
+
+### Members
+
+| Name               | Kind     | Type                             | Required | Description |
+| ------------------ | -------- | -------------------------------- | -------- | ----------- |
+| callbackRoute      | property | `string`                         | yes      |             |
+| environment        | property | `AuthRedirectEnvironment`        | yes      |             |
+| gatewayOrigin      | property | `string`                         | yes      |             |
+| nativeRedirectUris | property | `readonly string[] \| undefined` | no       |             |
+| siteOrigin         | property | `string`                         | yes      |             |
+| webOrigins         | property | `readonly string[] \| undefined` | no       |             |

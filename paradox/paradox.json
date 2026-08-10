@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v1.0.4",
+      "value": "v1.1.0",
       "color": "cb3837"
     },
     {
@@ -89,11 +89,22 @@
       "path": "src/adapters/minikube/auth/index.ts",
       "isEntrypoint": false,
       "dependencies": [
+        "src/adapters/minikube/auth/oauthRuntime.ts",
         "src/adapters/minikube/auth/supabase/index.ts",
         "src/adapters/minikube/contracts.ts",
         "src/types.ts"
       ],
       "exports": ["generateAuthProviderArtifacts"]
+    },
+    {
+      "path": "src/adapters/minikube/auth/oauthRuntime.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/adapters/minikube/contracts.ts",
+        "src/authRedirects.ts",
+        "src/types.ts"
+      ],
+      "exports": ["generateSupabaseOAuthRuntimeArtifacts"]
     },
     {
       "path": "src/adapters/minikube/auth/supabase/index.ts",
@@ -163,7 +174,7 @@
         "src/adapters/minikube/base/index.ts",
         "src/adapters/minikube/secrets/index.ts",
         "src/adapters/minikube/storage/index.ts",
-        "src/apiArtifacts.ts",
+        "src/generatedApiDatabase.ts",
         "src/types.ts"
       ],
       "exports": ["generateMinikubeInfra"]
@@ -201,16 +212,17 @@
       "exports": ["generateSupabaseStorageArtifacts"]
     },
     {
-      "path": "src/apiArtifacts.ts",
+      "path": "src/authRedirects.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/apis.ts"],
-      "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
-    },
-    {
-      "path": "src/apis.ts",
-      "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
-      "exports": ["ApiInfrastructureArtifacts", "generateApiInfrastructureArtifacts"]
+      "dependencies": [],
+      "exports": [
+        "AuthRedirectConfiguration",
+        "AuthRedirectEnvironment",
+        "getLocalAuthRedirectPatterns",
+        "normalizeAuthCallbackRoute",
+        "resolveAuthRedirectConfiguration",
+        "ResolveAuthRedirectConfigurationInput"
+      ]
     },
     {
       "path": "src/cli/bin.ts",
@@ -256,19 +268,35 @@
       ]
     },
     {
+      "path": "src/generatedApiDatabase.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types.ts"],
+      "exports": [
+        "GeneratedApiDatabaseArtifacts",
+        "GeneratedApiDatabaseDiagnostic",
+        "GeneratedApiDatabaseDiagnosticCode",
+        "generateGeneratedApiDatabaseArtifacts"
+      ]
+    },
+    {
       "path": "src/index.ts",
       "isEntrypoint": true,
       "dependencies": ["src/adapters/minikube/index.ts", "src/types.ts"],
       "exports": [
-        "ApiInfrastructureArtifacts",
+        "AuthRedirectConfiguration",
+        "AuthRedirectEnvironment",
         "createInfraSecretStoreAdapter",
         "CreateInfraSecretStoreAdapterInput",
-        "generateApiInfrastructureArtifacts",
+        "GeneratedApiDatabaseArtifacts",
+        "GeneratedApiDatabaseDiagnostic",
+        "GeneratedApiDatabaseDiagnosticCode",
         "GeneratedFile",
         "GeneratedInfrastructureFile",
         "GeneratedPackageDependency",
+        "generateGeneratedApiDatabaseArtifacts",
         "generateInfra",
         "generateInfrastructure",
+        "getLocalAuthRedirectPatterns",
         "InfraDiagnostic",
         "InfraGenerationInput",
         "InfraGenerationOptions",
@@ -278,7 +306,10 @@
         "InfrastructureGenerationMeta",
         "InfrastructureGenerationOptions",
         "InfrastructureGenerationResult",
-        "PackageDependency"
+        "normalizeAuthCallbackRoute",
+        "PackageDependency",
+        "resolveAuthRedirectConfiguration",
+        "ResolveAuthRedirectConfigurationInput"
       ]
     },
     {
@@ -382,36 +413,68 @@
   ],
   "exports": [
     {
-      "name": "ApiInfrastructureArtifacts",
+      "name": "AuthRedirectConfiguration",
       "description": null,
       "isReadme": false,
       "examples": [],
       "kind": "type",
-      "modulePath": "src/apis.ts",
+      "modulePath": "src/authRedirects.ts",
       "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 11,
+        "filePath": "src/authRedirects.ts",
+        "line": 12,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["GeneratedInfrastructureFile"],
+      "relatedSymbols": [],
       "signatures": [],
       "members": [
         {
-          "name": "files",
+          "name": "providerCallbackUrl",
           "kind": "property",
-          "type": "readonly GeneratedInfrastructureFile[]",
+          "type": "string",
           "required": true,
           "description": null
         },
         {
-          "name": "warnings",
+          "name": "redirectAllowList",
           "kind": "property",
           "type": "readonly string[]",
           "required": true,
           "description": null
+        },
+        {
+          "name": "serializedRedirectAllowList",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "siteUrl",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
         }
       ],
+      "structuredRows": []
+    },
+    {
+      "name": "AuthRedirectEnvironment",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "unknown",
+      "modulePath": "src/authRedirects.ts",
+      "sourceLocation": {
+        "filePath": "src/authRedirects.ts",
+        "line": 1,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
       "structuredRows": []
     },
     {
@@ -480,34 +543,114 @@
       "structuredRows": []
     },
     {
-      "name": "generateApiInfrastructureArtifacts",
+      "name": "GeneratedApiDatabaseArtifacts",
       "description": null,
       "isReadme": false,
       "examples": [],
-      "kind": "function",
-      "modulePath": "src/apiArtifacts.ts",
+      "kind": "type",
+      "modulePath": "src/generatedApiDatabase.ts",
       "sourceLocation": {
-        "filePath": "src/apiArtifacts.ts",
-        "line": 12,
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 34,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["ApiInfrastructureArtifacts"],
-      "signatures": [
+      "relatedSymbols": ["GeneratedApiDatabaseDiagnostic", "GeneratedInfrastructureFile"],
+      "signatures": [],
+      "members": [
         {
-          "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => ApiInfrastructureArtifacts",
-          "parameters": [
-            {
-              "name": "args",
-              "type": "{ readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }",
-              "required": true,
-              "description": null
-            }
-          ],
-          "returnType": "ApiInfrastructureArtifacts",
-          "returnDescription": null
+          "name": "diagnostics",
+          "kind": "property",
+          "type": "readonly GeneratedApiDatabaseDiagnostic[]",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "files",
+          "kind": "property",
+          "type": "readonly GeneratedInfrastructureFile[]",
+          "required": true,
+          "description": null
         }
       ],
+      "structuredRows": []
+    },
+    {
+      "name": "GeneratedApiDatabaseDiagnostic",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/generatedApiDatabase.ts",
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 25,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["GeneratedApiDatabaseDiagnosticCode"],
+      "signatures": [],
+      "members": [
+        {
+          "name": "apiId",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "code",
+          "kind": "property",
+          "type": "GeneratedApiDatabaseDiagnosticCode",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "message",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "path",
+          "kind": "property",
+          "type": "string | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "resourceId",
+          "kind": "property",
+          "type": "string | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "severity",
+          "kind": "property",
+          "type": "\"error\" | \"warning\"",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "GeneratedApiDatabaseDiagnosticCode",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "unknown",
+      "modulePath": "src/generatedApiDatabase.ts",
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 13,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
       "members": [],
       "structuredRows": []
     },
@@ -610,6 +753,38 @@
       "structuredRows": []
     },
     {
+      "name": "generateGeneratedApiDatabaseArtifacts",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/generatedApiDatabase.ts",
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 55,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["GeneratedApiDatabaseArtifacts"],
+      "signatures": [
+        {
+          "label": "(args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) => GeneratedApiDatabaseArtifacts",
+          "parameters": [
+            {
+              "name": "args",
+              "type": "{ readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "GeneratedApiDatabaseArtifacts",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
       "name": "generateInfra",
       "description": null,
       "isReadme": false,
@@ -618,7 +793,7 @@
       "modulePath": "src/index.ts",
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 31,
+        "line": 43,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -650,7 +825,7 @@
       "modulePath": "src/index.ts",
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 35,
+        "line": 47,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -677,6 +852,38 @@
             }
           ],
           "returnType": "InfrastructureGenerationResult",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "getLocalAuthRedirectPatterns",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/authRedirects.ts",
+      "sourceLocation": {
+        "filePath": "src/authRedirects.ts",
+        "line": 48,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [
+        {
+          "label": "(callbackRoute: string) => readonly string[]",
+          "parameters": [
+            {
+              "name": "callbackRoute",
+              "type": "string",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "readonly string[]",
           "returnDescription": null
         }
       ],
@@ -888,7 +1095,7 @@
         {
           "name": "appManifest",
           "kind": "property",
-          "type": "Pick<AppManifest, \"data\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+          "type": "Pick<AppManifest, \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
           "required": false,
           "description": null
         },
@@ -954,6 +1161,38 @@
       "structuredRows": []
     },
     {
+      "name": "normalizeAuthCallbackRoute",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/authRedirects.ts",
+      "sourceLocation": {
+        "filePath": "src/authRedirects.ts",
+        "line": 53,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [
+        {
+          "label": "(callbackRoute: string) => string",
+          "parameters": [
+            {
+              "name": "callbackRoute",
+              "type": "string",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "string",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
       "name": "PackageDependency",
       "description": null,
       "isReadme": false,
@@ -970,6 +1209,99 @@
       "signatures": [],
       "members": [],
       "structuredRows": []
+    },
+    {
+      "name": "resolveAuthRedirectConfiguration",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/authRedirects.ts",
+      "sourceLocation": {
+        "filePath": "src/authRedirects.ts",
+        "line": 19,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["AuthRedirectConfiguration", "ResolveAuthRedirectConfigurationInput"],
+      "signatures": [
+        {
+          "label": "(input: ResolveAuthRedirectConfigurationInput) => AuthRedirectConfiguration",
+          "parameters": [
+            {
+              "name": "input",
+              "type": "ResolveAuthRedirectConfigurationInput",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "AuthRedirectConfiguration",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "ResolveAuthRedirectConfigurationInput",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/authRedirects.ts",
+      "sourceLocation": {
+        "filePath": "src/authRedirects.ts",
+        "line": 3,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["AuthRedirectEnvironment"],
+      "signatures": [],
+      "members": [
+        {
+          "name": "callbackRoute",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "environment",
+          "kind": "property",
+          "type": "AuthRedirectEnvironment",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "gatewayOrigin",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "nativeRedirectUris",
+          "kind": "property",
+          "type": "readonly string[] | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "siteOrigin",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "webOrigins",
+          "kind": "property",
+          "type": "readonly string[] | undefined",
+          "required": false,
+          "description": null
+        }
+      ],
+      "structuredRows": []
     }
   ],
   "components": [],
@@ -979,7 +1311,61 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/index.ts",
-        "line": 5,
+        "line": 6,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSupabaseOAuthRuntimeArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveOAuthRuntimeModel",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "line": 39,
+        "column": 1
+      }
+    },
+    {
+      "name": "getOAuthProviderLifecycle",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "line": 68,
+        "column": 1
+      }
+    },
+    {
+      "name": "getOAuthRuntimeReconciliationCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "line": 99,
+        "column": 1
+      }
+    },
+    {
+      "name": "getOAuthRuntimeStatusCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "line": 132,
+        "column": 1
+      }
+    },
+    {
+      "name": "getOAuthRuntimeGuide",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "line": 148,
         "column": 1
       }
     },
@@ -1825,7 +2211,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 16,
+        "line": 17,
         "column": 1
       }
     },
@@ -1834,7 +2220,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 106,
+        "line": 120,
         "column": 1
       }
     },
@@ -1843,7 +2229,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 121,
+        "line": 135,
         "column": 1
       }
     },
@@ -1852,7 +2238,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 135,
+        "line": 149,
         "column": 1
       }
     },
@@ -1861,7 +2247,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 151,
+        "line": 165,
         "column": 1
       }
     },
@@ -1870,7 +2256,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 167,
+        "line": 181,
         "column": 1
       }
     },
@@ -1974,317 +2360,74 @@
       }
     },
     {
-      "name": "generateApiInfrastructureArtifacts",
+      "name": "resolveAuthRedirectConfiguration",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apiArtifacts.ts",
-        "line": 12,
+        "filePath": "src/authRedirects.ts",
+        "line": 19,
         "column": 1
       }
     },
     {
-      "name": "makeGeneratedApiHandlersLintSafe",
+      "name": "getLocalAuthRedirectPatterns",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apiArtifacts.ts",
-        "line": 28,
+        "filePath": "src/authRedirects.ts",
+        "line": 48,
         "column": 1
       }
     },
     {
-      "name": "replaceGeneratedSnippet",
+      "name": "normalizeAuthCallbackRoute",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apiArtifacts.ts",
-        "line": 93,
+        "filePath": "src/authRedirects.ts",
+        "line": 53,
         "column": 1
       }
     },
     {
-      "name": "generateApiInfrastructureArtifacts",
+      "name": "normalizeCallbackRoute",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 72,
+        "filePath": "src/authRedirects.ts",
+        "line": 57,
         "column": 1
       }
     },
     {
-      "name": "listGeneratedApis",
+      "name": "normalizeWebOrigin",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 137,
+        "filePath": "src/authRedirects.ts",
+        "line": 71,
         "column": 1
       }
     },
     {
-      "name": "isGeneratedApiWithCollectionResource",
+      "name": "normalizeNativeRedirectUri",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 148,
+        "filePath": "src/authRedirects.ts",
+        "line": 85,
         "column": 1
       }
     },
     {
-      "name": "createSeedManifest",
+      "name": "parseUrl",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 154,
+        "filePath": "src/authRedirects.ts",
+        "line": 98,
         "column": 1
       }
     },
     {
-      "name": "materializeSeedRecords",
+      "name": "unique",
       "description": null,
       "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 164,
-        "column": 1
-      }
-    },
-    {
-      "name": "createSeedWarnings",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 186,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateReadme",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 206,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateResourcesTs",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 217,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateApiTs",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 225,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateApiHandlersTs",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 233,
-        "column": 1
-      }
-    },
-    {
-      "name": "createApiOperations",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 244,
-        "column": 1
-      }
-    },
-    {
-      "name": "createOpenApi",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 254,
-        "column": 1
-      }
-    },
-    {
-      "name": "addOpenApiOperation",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 289,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateSupabaseMigrationSql",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 299,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateCreateTableSql",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 315,
-        "column": 1
-      }
-    },
-    {
-      "name": "collectSqlFields",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 325,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateSupabaseSeedSql",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 339,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateSeedInsertStatements",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 350,
-        "column": 1
-      }
-    },
-    {
-      "name": "collectSeedColumns",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 375,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatSqlColumn",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 400,
-        "column": 1
-      }
-    },
-    {
-      "name": "mapSqlFieldType",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 409,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatSqlDefaultValue",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 426,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatSqlValue",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 446,
-        "column": 1
-      }
-    },
-    {
-      "name": "stringifyJsonValue",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 470,
-        "column": 1
-      }
-    },
-    {
-      "name": "quoteSqlIdentifier",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 478,
-        "column": 1
-      }
-    },
-    {
-      "name": "escapeSqlString",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 482,
-        "column": 1
-      }
-    },
-    {
-      "name": "createPrimaryKeyRegistry",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 486,
-        "column": 1
-      }
-    },
-    {
-      "name": "findPrimaryKeyField",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 494,
-        "column": 1
-      }
-    },
-    {
-      "name": "createDeterministicSeedUuid",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 505,
-        "column": 1
-      }
-    },
-    {
-      "name": "hashHex",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 513,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatCollectionName",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 524,
-        "column": 1
-      }
-    },
-    {
-      "name": "joinApiPath",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/apis.ts",
-        "line": 530,
+        "filePath": "src/authRedirects.ts",
+        "line": 111,
         "column": 1
       }
     },
@@ -2487,11 +2630,227 @@
       }
     },
     {
+      "name": "generateGeneratedApiDatabaseArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 55,
+        "column": 1
+      }
+    },
+    {
+      "name": "listGeneratedResources",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 103,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateGeneratedApiDatabaseState",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 115,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateFields",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 204,
+        "column": 1
+      }
+    },
+    {
+      "name": "validatePrimaryKey",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 236,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateSeeds",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 256,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateIdentifier",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 299,
+        "column": 1
+      }
+    },
+    {
+      "name": "resourceDiagnostic",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 316,
+        "column": 1
+      }
+    },
+    {
+      "name": "isCompatibleDefault",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 333,
+        "column": 1
+      }
+    },
+    {
+      "name": "createSeedEntry",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 351,
+        "column": 1
+      }
+    },
+    {
+      "name": "materializeSeedRecord",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 360,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateMigrationSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 379,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateSeedSql",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 408,
+        "column": 1
+      }
+    },
+    {
+      "name": "createSeedStatements",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 417,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatColumn",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 440,
+        "column": 1
+      }
+    },
+    {
+      "name": "mapFieldType",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 448,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatDefault",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 457,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 465,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateReadme",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 473,
+        "column": 1
+      }
+    },
+    {
+      "name": "jsonFile",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 484,
+        "column": 1
+      }
+    },
+    {
+      "name": "quoteIdentifier",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 488,
+        "column": 1
+      }
+    },
+    {
+      "name": "escapeString",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 492,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDeterministicSeedUuid",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 496,
+        "column": 1
+      }
+    },
+    {
+      "name": "hashHex",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 503,
+        "column": 1
+      }
+    },
+    {
       "name": "generateInfra",
       "description": null,
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 31,
+        "line": 43,
         "column": 1
       }
     },
@@ -2500,7 +2859,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 35,
+        "line": 47,
         "column": 1
       }
     },
@@ -2572,7 +2931,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 94,
+        "line": 95,
         "column": 1
       }
     },
@@ -2581,7 +2940,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 122,
+        "line": 123,
         "column": 1
       }
     },
@@ -2590,7 +2949,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 140,
+        "line": 141,
         "column": 1
       }
     },
@@ -2599,7 +2958,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 150,
+        "line": 151,
         "column": 1
       }
     },
@@ -2608,7 +2967,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 168,
+        "line": 169,
         "column": 1
       }
     },
@@ -2617,7 +2976,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 184,
+        "line": 185,
         "column": 1
       }
     },
@@ -2626,7 +2985,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 196,
+        "line": 198,
         "column": 1
       }
     },
@@ -2635,7 +2994,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 200,
+        "line": 202,
         "column": 1
       }
     },
@@ -2644,7 +3003,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 209,
+        "line": 211,
         "column": 1
       }
     },
@@ -2653,7 +3012,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 217,
+        "line": 219,
         "column": 1
       }
     },
@@ -2662,7 +3021,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 226,
+        "line": 228,
         "column": 1
       }
     },
@@ -2671,7 +3030,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 230,
+        "line": 232,
         "column": 1
       }
     },
@@ -2680,7 +3039,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 239,
+        "line": 241,
         "column": 1
       }
     },
@@ -2689,7 +3048,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 248,
+        "line": 250,
         "column": 1
       }
     },
@@ -2884,9 +3243,9 @@
     },
     {
       "kind": "export",
-      "name": "generateApiInfrastructureArtifacts",
-      "sourcePath": "src/apiArtifacts.ts",
-      "symbolName": "generateApiInfrastructureArtifacts",
+      "name": "generateGeneratedApiDatabaseArtifacts",
+      "sourcePath": "src/generatedApiDatabase.ts",
+      "symbolName": "generateGeneratedApiDatabaseArtifacts",
       "description": null,
       "isReadme": false
     },
@@ -2905,20 +3264,34 @@
       "symbolName": "generateInfrastructure",
       "description": null,
       "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "getLocalAuthRedirectPatterns",
+      "sourcePath": "src/authRedirects.ts",
+      "symbolName": "getLocalAuthRedirectPatterns",
+      "description": null,
+      "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "normalizeAuthCallbackRoute",
+      "sourcePath": "src/authRedirects.ts",
+      "symbolName": "normalizeAuthCallbackRoute",
+      "description": null,
+      "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "resolveAuthRedirectConfiguration",
+      "sourcePath": "src/authRedirects.ts",
+      "symbolName": "resolveAuthRedirectConfiguration",
+      "description": null,
+      "isReadme": false
     }
   ],
   "graphs": {
     "imports": [
-      {
-        "fromPath": "src/apiArtifacts.ts",
-        "toPath": "src/apis.ts",
-        "sourcePath": "src/apiArtifacts.ts"
-      },
-      {
-        "fromPath": "src/apis.ts",
-        "toPath": "src/types.ts",
-        "sourcePath": "src/apis.ts"
-      },
       {
         "fromPath": "src/commandContext.ts",
         "toPath": "src/packageMetadata.ts",
@@ -2955,6 +3328,11 @@
         "sourcePath": "src/commands.ts"
       },
       {
+        "fromPath": "src/generatedApiDatabase.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
         "fromPath": "src/index.ts",
         "toPath": "src/adapters/minikube/index.ts",
         "sourcePath": "src/index.ts"
@@ -2966,7 +3344,12 @@
       },
       {
         "fromPath": "src/index.ts",
-        "toPath": "src/apiArtifacts.ts",
+        "toPath": "src/authRedirects.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/generatedApiDatabase.ts",
         "sourcePath": "src/index.ts"
       },
       {
@@ -3046,7 +3429,7 @@
       },
       {
         "fromPath": "src/adapters/minikube/index.ts",
-        "toPath": "src/apiArtifacts.ts",
+        "toPath": "src/generatedApiDatabase.ts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -3091,8 +3474,28 @@
       },
       {
         "fromPath": "src/adapters/minikube/auth/index.ts",
+        "toPath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/index.ts",
         "toPath": "src/adapters/minikube/auth/supabase/index.ts",
         "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "toPath": "src/authRedirects.ts",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
       },
       {
         "fromPath": "src/adapters/minikube/authz/index.ts",
@@ -3207,232 +3610,64 @@
     ],
     "calls": [
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "generateRawApiInfrastructureArtifacts",
-        "callExpression": "generateRawApiInfrastructureArtifacts",
-        "sourcePath": "src/apiArtifacts.ts"
+        "fromSymbol": "resolveAuthRedirectConfiguration",
+        "toSymbol": "normalizeWebOrigin",
+        "callExpression": "normalizeWebOrigin",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "src/apiArtifacts.ts",
-        "toSymbol": "makeGeneratedApiHandlersLintSafe",
-        "callExpression": "makeGeneratedApiHandlersLintSafe",
-        "sourcePath": "src/apiArtifacts.ts"
+        "fromSymbol": "resolveAuthRedirectConfiguration",
+        "toSymbol": "normalizeCallbackRoute",
+        "callExpression": "normalizeCallbackRoute",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "makeGeneratedApiHandlersLintSafe",
-        "toSymbol": "replaceGeneratedSnippet",
-        "callExpression": "replaceGeneratedSnippet",
-        "sourcePath": "src/apiArtifacts.ts"
+        "fromSymbol": "resolveAuthRedirectConfiguration",
+        "toSymbol": "unique",
+        "callExpression": "unique",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "listGeneratedApis",
-        "callExpression": "listGeneratedApis",
-        "sourcePath": "src/apis.ts"
+        "fromSymbol": "src/authRedirects.ts",
+        "toSymbol": "normalizeWebOrigin",
+        "callExpression": "normalizeWebOrigin",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "createSeedManifest",
-        "callExpression": "createSeedManifest",
-        "sourcePath": "src/apis.ts"
+        "fromSymbol": "src/authRedirects.ts",
+        "toSymbol": "normalizeNativeRedirectUri",
+        "callExpression": "normalizeNativeRedirectUri",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "generateSupabaseMigrationSql",
-        "callExpression": "generateSupabaseMigrationSql",
-        "sourcePath": "src/apis.ts"
+        "fromSymbol": "resolveAuthRedirectConfiguration",
+        "toSymbol": "getLocalAuthRedirectPatterns",
+        "callExpression": "getLocalAuthRedirectPatterns",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "generateSupabaseSeedSql",
-        "callExpression": "generateSupabaseSeedSql",
-        "sourcePath": "src/apis.ts"
+        "fromSymbol": "getLocalAuthRedirectPatterns",
+        "toSymbol": "normalizeCallbackRoute",
+        "callExpression": "normalizeCallbackRoute",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "generateReadme",
-        "callExpression": "generateReadme",
-        "sourcePath": "src/apis.ts"
+        "fromSymbol": "normalizeAuthCallbackRoute",
+        "toSymbol": "normalizeCallbackRoute",
+        "callExpression": "normalizeCallbackRoute",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "generateResourcesTs",
-        "callExpression": "generateResourcesTs",
-        "sourcePath": "src/apis.ts"
+        "fromSymbol": "normalizeWebOrigin",
+        "toSymbol": "parseUrl",
+        "callExpression": "parseUrl",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "generateApiTs",
-        "callExpression": "generateApiTs",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "generateApiHandlersTs",
-        "callExpression": "generateApiHandlersTs",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "createOpenApi",
-        "callExpression": "createOpenApi",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toSymbol": "createSeedWarnings",
-        "callExpression": "createSeedWarnings",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "materializeSeedRecords",
-        "callExpression": "materializeSeedRecords",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "materializeSeedRecords",
-        "toSymbol": "findPrimaryKeyField",
-        "callExpression": "findPrimaryKeyField",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "createDeterministicSeedUuid",
-        "callExpression": "createDeterministicSeedUuid",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "findPrimaryKeyField",
-        "callExpression": "findPrimaryKeyField",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "formatCollectionName",
-        "callExpression": "formatCollectionName",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateApiHandlersTs",
-        "toSymbol": "createPrimaryKeyRegistry",
-        "callExpression": "createPrimaryKeyRegistry",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "joinApiPath",
-        "callExpression": "joinApiPath",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "createOpenApi",
-        "toSymbol": "createApiOperations",
-        "callExpression": "createApiOperations",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "createOpenApi",
-        "toSymbol": "addOpenApiOperation",
-        "callExpression": "addOpenApiOperation",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "quoteSqlIdentifier",
-        "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "generateCreateTableSql",
-        "callExpression": "generateCreateTableSql",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateCreateTableSql",
-        "toSymbol": "quoteSqlIdentifier",
-        "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateCreateTableSql",
-        "toSymbol": "collectSqlFields",
-        "callExpression": "collectSqlFields",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "formatSqlColumn",
-        "callExpression": "formatSqlColumn",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "generateSeedInsertStatements",
-        "callExpression": "generateSeedInsertStatements",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateSeedInsertStatements",
-        "toSymbol": "collectSeedColumns",
-        "callExpression": "collectSeedColumns",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "generateSeedInsertStatements",
-        "toSymbol": "quoteSqlIdentifier",
-        "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "src/apis.ts",
-        "toSymbol": "formatSqlValue",
-        "callExpression": "formatSqlValue",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "formatSqlColumn",
-        "toSymbol": "formatSqlDefaultValue",
-        "callExpression": "formatSqlDefaultValue",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "formatSqlColumn",
-        "toSymbol": "quoteSqlIdentifier",
-        "callExpression": "quoteSqlIdentifier",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "formatSqlColumn",
-        "toSymbol": "mapSqlFieldType",
-        "callExpression": "mapSqlFieldType",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "formatSqlDefaultValue",
-        "toSymbol": "escapeSqlString",
-        "callExpression": "escapeSqlString",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "formatSqlValue",
-        "toSymbol": "escapeSqlString",
-        "callExpression": "escapeSqlString",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "formatSqlValue",
-        "toSymbol": "stringifyJsonValue",
-        "callExpression": "stringifyJsonValue",
-        "sourcePath": "src/apis.ts"
-      },
-      {
-        "fromSymbol": "createDeterministicSeedUuid",
-        "toSymbol": "hashHex",
-        "callExpression": "hashHex",
-        "sourcePath": "src/apis.ts"
+        "fromSymbol": "normalizeNativeRedirectUri",
+        "toSymbol": "parseUrl",
+        "callExpression": "parseUrl",
+        "sourcePath": "src/authRedirects.ts"
       },
       {
         "fromSymbol": "runInfraCommand",
@@ -3619,6 +3854,192 @@
         "toSymbol": "getErrorMessage",
         "callExpression": "getErrorMessage",
         "sourcePath": "src/commands.ts"
+      },
+      {
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toSymbol": "listGeneratedResources",
+        "callExpression": "listGeneratedResources",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toSymbol": "validateGeneratedApiDatabaseState",
+        "callExpression": "validateGeneratedApiDatabaseState",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toSymbol": "jsonFile",
+        "callExpression": "jsonFile",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toSymbol": "generateMigrationSql",
+        "callExpression": "generateMigrationSql",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toSymbol": "generateSeedSql",
+        "callExpression": "generateSeedSql",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toSymbol": "generateReadme",
+        "callExpression": "generateReadme",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateGeneratedApiDatabaseState",
+        "toSymbol": "resourceDiagnostic",
+        "callExpression": "resourceDiagnostic",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateGeneratedApiDatabaseState",
+        "toSymbol": "validateIdentifier",
+        "callExpression": "validateIdentifier",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateGeneratedApiDatabaseState",
+        "toSymbol": "validateFields",
+        "callExpression": "validateFields",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateGeneratedApiDatabaseState",
+        "toSymbol": "validatePrimaryKey",
+        "callExpression": "validatePrimaryKey",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateGeneratedApiDatabaseState",
+        "toSymbol": "validateSeeds",
+        "callExpression": "validateSeeds",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateFields",
+        "toSymbol": "validateIdentifier",
+        "callExpression": "validateIdentifier",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateFields",
+        "toSymbol": "resourceDiagnostic",
+        "callExpression": "resourceDiagnostic",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateFields",
+        "toSymbol": "isCompatibleDefault",
+        "callExpression": "isCompatibleDefault",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validatePrimaryKey",
+        "toSymbol": "validateIdentifier",
+        "callExpression": "validateIdentifier",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validatePrimaryKey",
+        "toSymbol": "resourceDiagnostic",
+        "callExpression": "resourceDiagnostic",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "src/generatedApiDatabase.ts",
+        "toSymbol": "resourceDiagnostic",
+        "callExpression": "resourceDiagnostic",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "validateIdentifier",
+        "toSymbol": "resourceDiagnostic",
+        "callExpression": "resourceDiagnostic",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "src/generatedApiDatabase.ts",
+        "toSymbol": "materializeSeedRecord",
+        "callExpression": "materializeSeedRecord",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "materializeSeedRecord",
+        "toSymbol": "createDeterministicSeedUuid",
+        "callExpression": "createDeterministicSeedUuid",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "src/generatedApiDatabase.ts",
+        "toSymbol": "quoteIdentifier",
+        "callExpression": "quoteIdentifier",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "src/generatedApiDatabase.ts",
+        "toSymbol": "formatColumn",
+        "callExpression": "formatColumn",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "src/generatedApiDatabase.ts",
+        "toSymbol": "createSeedStatements",
+        "callExpression": "createSeedStatements",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "createSeedStatements",
+        "toSymbol": "quoteIdentifier",
+        "callExpression": "quoteIdentifier",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "src/generatedApiDatabase.ts",
+        "toSymbol": "formatValue",
+        "callExpression": "formatValue",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatColumn",
+        "toSymbol": "formatDefault",
+        "callExpression": "formatDefault",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatColumn",
+        "toSymbol": "quoteIdentifier",
+        "callExpression": "quoteIdentifier",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatColumn",
+        "toSymbol": "mapFieldType",
+        "callExpression": "mapFieldType",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatDefault",
+        "toSymbol": "formatValue",
+        "callExpression": "formatValue",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatValue",
+        "toSymbol": "escapeString",
+        "callExpression": "escapeString",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "createDeterministicSeedUuid",
+        "toSymbol": "hashHex",
+        "callExpression": "hashHex",
+        "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
         "fromSymbol": "generateInfra",
@@ -4036,8 +4457,8 @@
       },
       {
         "fromSymbol": "generateMinikubeInfra",
-        "toSymbol": "generateApiInfrastructureArtifacts",
-        "callExpression": "generateApiInfrastructureArtifacts",
+        "toSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "callExpression": "generateGeneratedApiDatabaseArtifacts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -4081,6 +4502,54 @@
         "toSymbol": "generateSupabaseAuthArtifacts",
         "callExpression": "generateSupabaseAuthArtifacts",
         "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromSymbol": "generateAuthProviderArtifacts",
+        "toSymbol": "generateSupabaseOAuthRuntimeArtifacts",
+        "callExpression": "generateSupabaseOAuthRuntimeArtifacts",
+        "sourcePath": "src/adapters/minikube/auth/index.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "resolveOAuthRuntimeModel",
+        "callExpression": "resolveOAuthRuntimeModel",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "getOAuthRuntimeGuide",
+        "callExpression": "getOAuthRuntimeGuide",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromSymbol": "generateSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "getOAuthProviderLifecycle",
+        "callExpression": "getOAuthProviderLifecycle",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromSymbol": "resolveOAuthRuntimeModel",
+        "toSymbol": "normalizeAuthCallbackRoute",
+        "callExpression": "normalizeAuthCallbackRoute",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromSymbol": "resolveOAuthRuntimeModel",
+        "toSymbol": "getLocalAuthRedirectPatterns",
+        "callExpression": "getLocalAuthRedirectPatterns",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromSymbol": "getOAuthProviderLifecycle",
+        "toSymbol": "getOAuthRuntimeReconciliationCommand",
+        "callExpression": "getOAuthRuntimeReconciliationCommand",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromSymbol": "getOAuthProviderLifecycle",
+        "toSymbol": "getOAuthRuntimeStatusCommand",
+        "callExpression": "getOAuthRuntimeStatusCommand",
+        "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
       },
       {
         "fromSymbol": "generateAuthorizationArtifacts",
@@ -4818,19 +5287,44 @@
         "sourcePath": "src/index.ts"
       },
       {
-        "fromSymbol": "ApiInfrastructureArtifacts",
+        "fromSymbol": "resolveAuthRedirectConfiguration",
+        "toType": "AuthRedirectConfiguration",
+        "sourcePath": "src/authRedirects.ts"
+      },
+      {
+        "fromSymbol": "resolveAuthRedirectConfiguration",
+        "toType": "ResolveAuthRedirectConfigurationInput",
+        "sourcePath": "src/authRedirects.ts"
+      },
+      {
+        "fromSymbol": "ResolveAuthRedirectConfigurationInput",
+        "toType": "AuthRedirectEnvironment",
+        "sourcePath": "src/authRedirects.ts"
+      },
+      {
+        "fromSymbol": "GeneratedApiDatabaseArtifacts",
+        "toType": "GeneratedApiDatabaseDiagnostic",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "GeneratedApiDatabaseArtifacts",
         "toType": "GeneratedInfrastructureFile",
-        "sourcePath": "src/apis.ts"
+        "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toType": "ApiInfrastructureArtifacts",
-        "sourcePath": "src/apiArtifacts.ts"
+        "fromSymbol": "GeneratedApiDatabaseDiagnostic",
+        "toType": "GeneratedApiDatabaseDiagnosticCode",
+        "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
-        "fromSymbol": "generateApiInfrastructureArtifacts",
-        "toType": "AppDataManifest",
-        "sourcePath": "src/apiArtifacts.ts"
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toType": "GeneratedApiDatabaseArtifacts",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
+        "toType": "GeneratedApiRegistry",
+        "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
         "fromSymbol": "createInfraSecretStoreAdapter",

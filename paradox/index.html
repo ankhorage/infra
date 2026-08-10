@@ -209,6 +209,16 @@
               <button
                 class="nav-button"
                 type="button"
+                data-target="src/adapters/minikube/auth/oauthRuntime.ts"
+              >
+                src/adapters/minikube/auth/oauthRuntime.ts
+                <small>6 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
                 data-target="src/adapters/minikube/auth/supabase/index.ts"
               >
                 src/adapters/minikube/auth/supabase/index.ts
@@ -322,15 +332,9 @@
               </button>
             </li>
             <li>
-              <button class="nav-button" type="button" data-target="src/apiArtifacts.ts">
-                src/apiArtifacts.ts
-                <small>3 functions</small>
-              </button>
-            </li>
-            <li>
-              <button class="nav-button" type="button" data-target="src/apis.ts">
-                src/apis.ts
-                <small>32 functions</small>
+              <button class="nav-button" type="button" data-target="src/authRedirects.ts">
+                src/authRedirects.ts
+                <small>8 functions</small>
               </button>
             </li>
             <li>
@@ -355,6 +359,12 @@
               <button class="nav-button" type="button" data-target="src/commands.ts">
                 src/commands.ts
                 <small>17 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/generatedApiDatabase.ts">
+                src/generatedApiDatabase.ts
+                <small>24 functions</small>
               </button>
             </li>
             <li>
@@ -407,9 +417,9 @@
           <section class="panel">
             <h2>Package overview</h2>
             <div class="summary">
-              <div><strong>19</strong><span class="muted">public exports</span></div>
+              <div><strong>27</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>30</strong><span class="muted">modules</span></div>
+              <div><strong>31</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -428,16 +438,29 @@
             </article>
             <article
               class="item"
-              data-search="src/adapters/minikube/auth/index.ts src/adapters/minikube/auth/supabase/index.ts src/adapters/minikube/contracts.ts src/types.ts generateAuthProviderArtifacts"
+              data-search="src/adapters/minikube/auth/index.ts src/adapters/minikube/auth/oauthRuntime.ts src/adapters/minikube/auth/supabase/index.ts src/adapters/minikube/contracts.ts src/types.ts generateAuthProviderArtifacts"
             >
               <h3>src/adapters/minikube/auth/index.ts</h3>
               <p class="muted">Referenced module</p>
               <p>
                 <strong>Dependencies:</strong>
+                <code>src/adapters/minikube/auth/oauthRuntime.ts</code>,
                 <code>src/adapters/minikube/auth/supabase/index.ts</code>,
                 <code>src/adapters/minikube/contracts.ts</code>, <code>src/types.ts</code>
               </p>
               <p><strong>Exports:</strong> <code>generateAuthProviderArtifacts</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/auth/oauthRuntime.ts src/adapters/minikube/contracts.ts src/authRedirects.ts src/types.ts generateSupabaseOAuthRuntimeArtifacts"
+            >
+              <h3>src/adapters/minikube/auth/oauthRuntime.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/adapters/minikube/contracts.ts</code>,
+                <code>src/authRedirects.ts</code>, <code>src/types.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>generateSupabaseOAuthRuntimeArtifacts</code></p>
             </article>
             <article
               class="item"
@@ -529,7 +552,7 @@
             </article>
             <article
               class="item"
-              data-search="src/adapters/minikube/index.ts src/adapters/minikube/auth/index.ts src/adapters/minikube/authz/index.ts src/adapters/minikube/base/index.ts src/adapters/minikube/secrets/index.ts src/adapters/minikube/storage/index.ts src/apiArtifacts.ts src/types.ts generateMinikubeInfra"
+              data-search="src/adapters/minikube/index.ts src/adapters/minikube/auth/index.ts src/adapters/minikube/authz/index.ts src/adapters/minikube/base/index.ts src/adapters/minikube/secrets/index.ts src/adapters/minikube/storage/index.ts src/generatedApiDatabase.ts src/types.ts generateMinikubeInfra"
             >
               <h3>src/adapters/minikube/index.ts</h3>
               <p class="muted">Referenced module</p>
@@ -539,7 +562,7 @@
                 <code>src/adapters/minikube/base/index.ts</code>,
                 <code>src/adapters/minikube/secrets/index.ts</code>,
                 <code>src/adapters/minikube/storage/index.ts</code>,
-                <code>src/apiArtifacts.ts</code>, <code>src/types.ts</code>
+                <code>src/generatedApiDatabase.ts</code>, <code>src/types.ts</code>
               </p>
               <p><strong>Exports:</strong> <code>generateMinikubeInfra</code></p>
             </article>
@@ -595,26 +618,17 @@
             </article>
             <article
               class="item"
-              data-search="src/apiArtifacts.ts src/apis.ts ApiInfrastructureArtifacts generateApiInfrastructureArtifacts"
+              data-search="src/authRedirects.ts AuthRedirectConfiguration AuthRedirectEnvironment getLocalAuthRedirectPatterns normalizeAuthCallbackRoute resolveAuthRedirectConfiguration ResolveAuthRedirectConfigurationInput"
             >
-              <h3>src/apiArtifacts.ts</h3>
+              <h3>src/authRedirects.ts</h3>
               <p class="muted">Referenced module</p>
-              <p><strong>Dependencies:</strong> <code>src/apis.ts</code></p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
               <p>
-                <strong>Exports:</strong> <code>ApiInfrastructureArtifacts</code>,
-                <code>generateApiInfrastructureArtifacts</code>
-              </p>
-            </article>
-            <article
-              class="item"
-              data-search="src/apis.ts src/types.ts ApiInfrastructureArtifacts generateApiInfrastructureArtifacts"
-            >
-              <h3>src/apis.ts</h3>
-              <p class="muted">Referenced module</p>
-              <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
-              <p>
-                <strong>Exports:</strong> <code>ApiInfrastructureArtifacts</code>,
-                <code>generateApiInfrastructureArtifacts</code>
+                <strong>Exports:</strong> <code>AuthRedirectConfiguration</code>,
+                <code>AuthRedirectEnvironment</code>, <code>getLocalAuthRedirectPatterns</code>,
+                <code>normalizeAuthCallbackRoute</code>,
+                <code>resolveAuthRedirectConfiguration</code>,
+                <code>ResolveAuthRedirectConfigurationInput</code>
               </p>
             </article>
             <article
@@ -679,7 +693,21 @@
             </article>
             <article
               class="item"
-              data-search="src/index.ts src/adapters/minikube/index.ts src/types.ts ApiInfrastructureArtifacts createInfraSecretStoreAdapter CreateInfraSecretStoreAdapterInput generateApiInfrastructureArtifacts GeneratedFile GeneratedInfrastructureFile GeneratedPackageDependency generateInfra generateInfrastructure InfraDiagnostic InfraGenerationInput InfraGenerationOptions InfraGenerationResult InfraManifestInput InfraSecretStoreProviders InfrastructureGenerationMeta InfrastructureGenerationOptions InfrastructureGenerationResult PackageDependency"
+              data-search="src/generatedApiDatabase.ts src/types.ts GeneratedApiDatabaseArtifacts GeneratedApiDatabaseDiagnostic GeneratedApiDatabaseDiagnosticCode generateGeneratedApiDatabaseArtifacts"
+            >
+              <h3>src/generatedApiDatabase.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/types.ts</code></p>
+              <p>
+                <strong>Exports:</strong> <code>GeneratedApiDatabaseArtifacts</code>,
+                <code>GeneratedApiDatabaseDiagnostic</code>,
+                <code>GeneratedApiDatabaseDiagnosticCode</code>,
+                <code>generateGeneratedApiDatabaseArtifacts</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/index.ts src/adapters/minikube/index.ts src/types.ts AuthRedirectConfiguration AuthRedirectEnvironment createInfraSecretStoreAdapter CreateInfraSecretStoreAdapterInput GeneratedApiDatabaseArtifacts GeneratedApiDatabaseDiagnostic GeneratedApiDatabaseDiagnosticCode GeneratedFile GeneratedInfrastructureFile GeneratedPackageDependency generateGeneratedApiDatabaseArtifacts generateInfra generateInfrastructure getLocalAuthRedirectPatterns InfraDiagnostic InfraGenerationInput InfraGenerationOptions InfraGenerationResult InfraManifestInput InfraSecretStoreProviders InfrastructureGenerationMeta InfrastructureGenerationOptions InfrastructureGenerationResult normalizeAuthCallbackRoute PackageDependency resolveAuthRedirectConfiguration ResolveAuthRedirectConfigurationInput"
             >
               <h3>src/index.ts</h3>
               <p class="muted">Configured entrypoint</p>
@@ -688,18 +716,24 @@
                 <code>src/types.ts</code>
               </p>
               <p>
-                <strong>Exports:</strong> <code>ApiInfrastructureArtifacts</code>,
-                <code>createInfraSecretStoreAdapter</code>,
+                <strong>Exports:</strong> <code>AuthRedirectConfiguration</code>,
+                <code>AuthRedirectEnvironment</code>, <code>createInfraSecretStoreAdapter</code>,
                 <code>CreateInfraSecretStoreAdapterInput</code>,
-                <code>generateApiInfrastructureArtifacts</code>, <code>GeneratedFile</code>,
+                <code>GeneratedApiDatabaseArtifacts</code>,
+                <code>GeneratedApiDatabaseDiagnostic</code>,
+                <code>GeneratedApiDatabaseDiagnosticCode</code>, <code>GeneratedFile</code>,
                 <code>GeneratedInfrastructureFile</code>, <code>GeneratedPackageDependency</code>,
-                <code>generateInfra</code>, <code>generateInfrastructure</code>,
+                <code>generateGeneratedApiDatabaseArtifacts</code>, <code>generateInfra</code>,
+                <code>generateInfrastructure</code>, <code>getLocalAuthRedirectPatterns</code>,
                 <code>InfraDiagnostic</code>, <code>InfraGenerationInput</code>,
                 <code>InfraGenerationOptions</code>, <code>InfraGenerationResult</code>,
                 <code>InfraManifestInput</code>, <code>InfraSecretStoreProviders</code>,
                 <code>InfrastructureGenerationMeta</code>,
                 <code>InfrastructureGenerationOptions</code>,
-                <code>InfrastructureGenerationResult</code>, <code>PackageDependency</code>
+                <code>InfrastructureGenerationResult</code>,
+                <code>normalizeAuthCallbackRoute</code>, <code>PackageDependency</code>,
+                <code>resolveAuthRedirectConfiguration</code>,
+                <code>ResolveAuthRedirectConfigurationInput</code>
               </p>
             </article>
             <article
@@ -826,26 +860,159 @@
             <h2>Public API</h2>
 
             <section>
-              <h3>src/apiArtifacts.ts</h3>
+              <h3>src/authRedirects.ts</h3>
               <article
                 class="item"
-                id="symbol-generateapiinfrastructureartifacts"
-                data-search="generateApiInfrastructureArtifacts function src/apiArtifacts.ts  ApiInfrastructureArtifacts (args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) =&gt; ApiInfrastructureArtifacts"
+                id="symbol-authredirectconfiguration"
+                data-search="AuthRedirectConfiguration type src/authRedirects.ts "
               >
-                <h4>generateApiInfrastructureArtifacts</h4>
-                <p class="muted">function • <code>src/apiArtifacts.ts:12:1</code></p>
+                <h4>AuthRedirectConfiguration</h4>
+                <p class="muted">type • <code>src/authRedirects.ts:12:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>providerCallbackUrl</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>redirectAllowList</code></td>
+                      <td>property</td>
+                      <td><code>readonly string[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>serializedRedirectAllowList</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>siteUrl</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-authredirectenvironment"
+                data-search="AuthRedirectEnvironment unknown src/authRedirects.ts "
+              >
+                <h4>AuthRedirectEnvironment</h4>
+                <p class="muted">unknown • <code>src/authRedirects.ts:1:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+              </article>
+              <article
+                class="item"
+                id="symbol-getlocalauthredirectpatterns"
+                data-search="getLocalAuthRedirectPatterns function src/authRedirects.ts  (callbackRoute: string) =&gt; readonly string[]"
+              >
+                <h4>getLocalAuthRedirectPatterns</h4>
+                <p class="muted">function • <code>src/authRedirects.ts:48:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+                <div>
+                  <h5>Signature</h5>
+                  <pre>(callbackRoute: string) =&gt; readonly string[]</pre>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>callbackRoute</code></td>
+                        <td><code>string</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p><strong>Returns:</strong> <code>readonly string[]</code></p>
+                </div>
+              </article>
+              <article
+                class="item"
+                id="symbol-normalizeauthcallbackroute"
+                data-search="normalizeAuthCallbackRoute function src/authRedirects.ts  (callbackRoute: string) =&gt; string"
+              >
+                <h4>normalizeAuthCallbackRoute</h4>
+                <p class="muted">function • <code>src/authRedirects.ts:53:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+                <div>
+                  <h5>Signature</h5>
+                  <pre>(callbackRoute: string) =&gt; string</pre>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>callbackRoute</code></td>
+                        <td><code>string</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p><strong>Returns:</strong> <code>string</code></p>
+                </div>
+              </article>
+              <article
+                class="item"
+                id="symbol-resolveauthredirectconfiguration"
+                data-search="resolveAuthRedirectConfiguration function src/authRedirects.ts  AuthRedirectConfiguration ResolveAuthRedirectConfigurationInput (input: ResolveAuthRedirectConfigurationInput) =&gt; AuthRedirectConfiguration"
+              >
+                <h4>resolveAuthRedirectConfiguration</h4>
+                <p class="muted">function • <code>src/authRedirects.ts:19:1</code></p>
 
                 <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
                 <div>
                   <strong>Related symbols:</strong>
                   <ul class="chips">
-                    <li class="chip">ApiInfrastructureArtifacts</li>
+                    <li class="chip">AuthRedirectConfiguration</li>
+                    <li class="chip">ResolveAuthRedirectConfigurationInput</li>
                   </ul>
                 </div>
                 <div>
                   <h5>Signature</h5>
                   <pre>
-(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) =&gt; ApiInfrastructureArtifacts</pre
+(input: ResolveAuthRedirectConfigurationInput) =&gt; AuthRedirectConfiguration</pre
                   >
                   <table>
                     <thead>
@@ -858,36 +1025,104 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td><code>args</code></td>
-                        <td>
-                          <code
-                            >{ readonly data: AppDataManifest | undefined; readonly
-                            databaseProvider: string | undefined; }</code
-                          >
-                        </td>
+                        <td><code>input</code></td>
+                        <td><code>ResolveAuthRedirectConfigurationInput</code></td>
                         <td>yes</td>
                         <td></td>
                       </tr>
                     </tbody>
                   </table>
-                  <p><strong>Returns:</strong> <code>ApiInfrastructureArtifacts</code></p>
+                  <p><strong>Returns:</strong> <code>AuthRedirectConfiguration</code></p>
                 </div>
               </article>
-            </section>
-            <section>
-              <h3>src/apis.ts</h3>
               <article
                 class="item"
-                id="symbol-apiinfrastructureartifacts"
-                data-search="ApiInfrastructureArtifacts type src/apis.ts  GeneratedInfrastructureFile"
+                id="symbol-resolveauthredirectconfigurationinput"
+                data-search="ResolveAuthRedirectConfigurationInput type src/authRedirects.ts  AuthRedirectEnvironment"
               >
-                <h4>ApiInfrastructureArtifacts</h4>
-                <p class="muted">type • <code>src/apis.ts:11:1</code></p>
+                <h4>ResolveAuthRedirectConfigurationInput</h4>
+                <p class="muted">type • <code>src/authRedirects.ts:3:1</code></p>
 
                 <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
                 <div>
                   <strong>Related symbols:</strong>
                   <ul class="chips">
+                    <li class="chip">AuthRedirectEnvironment</li>
+                  </ul>
+                </div>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>callbackRoute</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>environment</code></td>
+                      <td>property</td>
+                      <td><code>AuthRedirectEnvironment</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>gatewayOrigin</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>nativeRedirectUris</code></td>
+                      <td>property</td>
+                      <td><code>readonly string[] | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>siteOrigin</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>webOrigins</code></td>
+                      <td>property</td>
+                      <td><code>readonly string[] | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </article>
+            </section>
+            <section>
+              <h3>src/generatedApiDatabase.ts</h3>
+              <article
+                class="item"
+                id="symbol-generatedapidatabaseartifacts"
+                data-search="GeneratedApiDatabaseArtifacts type src/generatedApiDatabase.ts  GeneratedApiDatabaseDiagnostic GeneratedInfrastructureFile"
+              >
+                <h4>GeneratedApiDatabaseArtifacts</h4>
+                <p class="muted">type • <code>src/generatedApiDatabase.ts:34:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">GeneratedApiDatabaseDiagnostic</li>
                     <li class="chip">GeneratedInfrastructureFile</li>
                   </ul>
                 </div>
@@ -904,21 +1139,150 @@
                   </thead>
                   <tbody>
                     <tr>
+                      <td><code>diagnostics</code></td>
+                      <td>property</td>
+                      <td><code>readonly GeneratedApiDatabaseDiagnostic[]</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
                       <td><code>files</code></td>
                       <td>property</td>
                       <td><code>readonly GeneratedInfrastructureFile[]</code></td>
                       <td>yes</td>
                       <td></td>
                     </tr>
+                  </tbody>
+                </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-generatedapidatabasediagnostic"
+                data-search="GeneratedApiDatabaseDiagnostic type src/generatedApiDatabase.ts  GeneratedApiDatabaseDiagnosticCode"
+              >
+                <h4>GeneratedApiDatabaseDiagnostic</h4>
+                <p class="muted">type • <code>src/generatedApiDatabase.ts:25:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">GeneratedApiDatabaseDiagnosticCode</li>
+                  </ul>
+                </div>
+
+                <table>
+                  <thead>
                     <tr>
-                      <td><code>warnings</code></td>
+                      <th>Member</th>
+                      <th>Kind</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>apiId</code></td>
                       <td>property</td>
-                      <td><code>readonly string[]</code></td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>code</code></td>
+                      <td>property</td>
+                      <td><code>GeneratedApiDatabaseDiagnosticCode</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>message</code></td>
+                      <td>property</td>
+                      <td><code>string</code></td>
+                      <td>yes</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>path</code></td>
+                      <td>property</td>
+                      <td><code>string | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>resourceId</code></td>
+                      <td>property</td>
+                      <td><code>string | undefined</code></td>
+                      <td>no</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><code>severity</code></td>
+                      <td>property</td>
+                      <td><code>&quot;error&quot; | &quot;warning&quot;</code></td>
                       <td>yes</td>
                       <td></td>
                     </tr>
                   </tbody>
                 </table>
+              </article>
+              <article
+                class="item"
+                id="symbol-generatedapidatabasediagnosticcode"
+                data-search="GeneratedApiDatabaseDiagnosticCode unknown src/generatedApiDatabase.ts "
+              >
+                <h4>GeneratedApiDatabaseDiagnosticCode</h4>
+                <p class="muted">unknown • <code>src/generatedApiDatabase.ts:13:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+              </article>
+              <article
+                class="item"
+                id="symbol-generategeneratedapidatabaseartifacts"
+                data-search="generateGeneratedApiDatabaseArtifacts function src/generatedApiDatabase.ts  GeneratedApiDatabaseArtifacts (args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) =&gt; GeneratedApiDatabaseArtifacts"
+              >
+                <h4>generateGeneratedApiDatabaseArtifacts</h4>
+                <p class="muted">function • <code>src/generatedApiDatabase.ts:55:1</code></p>
+
+                <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+                <div>
+                  <strong>Related symbols:</strong>
+                  <ul class="chips">
+                    <li class="chip">GeneratedApiDatabaseArtifacts</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Signature</h5>
+                  <pre>
+(args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) =&gt; GeneratedApiDatabaseArtifacts</pre
+                  >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>args</code></td>
+                        <td>
+                          <code
+                            >{ readonly generatedApis: GeneratedApiRegistry | undefined; readonly
+                            databaseProvider: string | undefined; }</code
+                          >
+                        </td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p><strong>Returns:</strong> <code>GeneratedApiDatabaseArtifacts</code></p>
+                </div>
               </article>
             </section>
             <section>
@@ -929,7 +1293,7 @@
                 data-search="generateInfra function src/index.ts  InfraGenerationInput InfrastructureGenerationResult (input: InfraGenerationInput) =&gt; InfrastructureGenerationResult"
               >
                 <h4>generateInfra</h4>
-                <p class="muted">function • <code>src/index.ts:31:1</code></p>
+                <p class="muted">function • <code>src/index.ts:43:1</code></p>
 
                 <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
                 <div>
@@ -969,7 +1333,7 @@
                 data-search="generateInfrastructure function src/index.ts  InfraManifestInput InfrastructureGenerationOptions InfrastructureGenerationResult (manifest: InfraManifestInput, options?: InfrastructureGenerationOptions) =&gt; InfrastructureGenerationResult"
               >
                 <h4>generateInfrastructure</h4>
-                <p class="muted">function • <code>src/index.ts:35:1</code></p>
+                <p class="muted">function • <code>src/index.ts:47:1</code></p>
 
                 <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
                 <div>
@@ -1433,7 +1797,7 @@
                       <td>property</td>
                       <td>
                         <code
-                          >Pick&lt;AppManifest, &quot;data&quot; | &quot;infra&quot; |
+                          >Pick&lt;AppManifest, &quot;generatedApis&quot; | &quot;infra&quot; |
                           &quot;metadata&quot; | &quot;navigator&quot; | &quot;screens&quot; |
                           &quot;settings&quot;&gt; | undefined</code
                         >
@@ -1544,10 +1908,18 @@
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_auth_oauthRuntime_ts
+                module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_index_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_auth_index_ts
                 --&gt; module_src_types_ts
+                module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
+                module_src_adapters_minikube_auth_oauthRuntime_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_authRedirects_ts
+                module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_supabase_index_ts
                 module_src_adapters_minikube_auth_supabase_index_ts --&gt;
@@ -1596,8 +1968,8 @@
                 --&gt; module_src_adapters_minikube_secrets_index_ts
                 module_src_adapters_minikube_index_ts --&gt;
                 module_src_adapters_minikube_storage_index_ts module_src_adapters_minikube_index_ts
-                --&gt; module_src_apiArtifacts_ts module_src_adapters_minikube_index_ts --&gt;
-                module_src_types_ts
+                --&gt; module_src_generatedApiDatabase_ts module_src_adapters_minikube_index_ts
+                --&gt; module_src_types_ts
                 module_src_adapters_minikube_secrets_index_ts[&quot;src/adapters/minikube/secrets/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_secrets_index_ts
                 module_src_adapters_minikube_secrets_index_ts --&gt;
@@ -1624,13 +1996,11 @@
                 module_src_adapters_minikube_storage_supabase_index_ts
                 module_src_adapters_minikube_storage_supabase_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts
-                module_src_apiArtifacts_ts[&quot;src/apiArtifacts.ts&quot;] package__ankhorage_infra
-                -.-&gt; module_src_apiArtifacts_ts module_src_apiArtifacts_ts --&gt;
-                module_src_apis_ts module_src_apis_ts[&quot;src/apis.ts&quot;]
-                package__ankhorage_infra -.-&gt; module_src_apis_ts module_src_apis_ts --&gt;
-                module_src_types_ts module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
-                package__ankhorage_infra -.-&gt; module_src_cli_bin_ts module_src_cli_bin_ts --&gt;
-                module_src_commandContext_ts module_src_cli_bin_ts --&gt; module_src_commands_ts
+                module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_authRedirects_ts
+                module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;] package__ankhorage_infra -.-&gt;
+                module_src_cli_bin_ts module_src_cli_bin_ts --&gt; module_src_commandContext_ts
+                module_src_cli_bin_ts --&gt; module_src_commands_ts
                 module_src_cli_index_ts[&quot;src/cli/index.ts&quot;] package__ankhorage_infra
                 -.-&gt; module_src_cli_index_ts module_src_cli_index_ts --&gt;
                 module_src_commands_ts module_src_cli_index_ts --&gt; module_src_packageMetadata_ts
@@ -1643,9 +2013,12 @@
                 --&gt; module_src_packageMetadata_ts module_src_commands_ts --&gt;
                 module_src_project_ts module_src_commands_ts --&gt;
                 module_src_projectInfrastructure_ts module_src_commands_ts --&gt;
-                module_src_runtime_ts module_src_index_ts[&quot;src/index.ts&quot;]
-                module_src_index_ts --&gt; module_src_adapters_minikube_index_ts module_src_index_ts
-                --&gt; module_src_types_ts
+                module_src_runtime_ts
+                module_src_generatedApiDatabase_ts[&quot;src/generatedApiDatabase.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_generatedApiDatabase_ts
+                module_src_generatedApiDatabase_ts --&gt; module_src_types_ts
+                module_src_index_ts[&quot;src/index.ts&quot;] module_src_index_ts --&gt;
+                module_src_adapters_minikube_index_ts module_src_index_ts --&gt; module_src_types_ts
                 module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_infraValidation_ts
                 module_src_infraValidation_ts --&gt; module_src_types_ts
@@ -1680,9 +2053,15 @@ graph TD
   package__ankhorage_infra -.-&gt; module_package_json
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_authRedirects_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_supabase_index_ts
   module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_adapters_minikube_auth_supabase_profile_ts
@@ -1718,7 +2097,7 @@ graph TD
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_base_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_secrets_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_storage_index_ts
-  module_src_adapters_minikube_index_ts --&gt; module_src_apiArtifacts_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_generatedApiDatabase_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_secrets_index_ts[&quot;src/adapters/minikube/secrets/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_secrets_index_ts
@@ -1737,12 +2116,8 @@ graph TD
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
-  module_src_apiArtifacts_ts[&quot;src/apiArtifacts.ts&quot;]
-  package__ankhorage_infra -.-&gt; module_src_apiArtifacts_ts
-  module_src_apiArtifacts_ts --&gt; module_src_apis_ts
-  module_src_apis_ts[&quot;src/apis.ts&quot;]
-  package__ankhorage_infra -.-&gt; module_src_apis_ts
-  module_src_apis_ts --&gt; module_src_types_ts
+  module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_authRedirects_ts
   module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_cli_bin_ts
   module_src_cli_bin_ts --&gt; module_src_commandContext_ts
@@ -1762,6 +2137,9 @@ graph TD
   module_src_commands_ts --&gt; module_src_project_ts
   module_src_commands_ts --&gt; module_src_projectInfrastructure_ts
   module_src_commands_ts --&gt; module_src_runtime_ts
+  module_src_generatedApiDatabase_ts[&quot;src/generatedApiDatabase.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_generatedApiDatabase_ts
+  module_src_generatedApiDatabase_ts --&gt; module_src_types_ts
   module_src_index_ts[&quot;src/index.ts&quot;]
   module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
   module_src_index_ts --&gt; module_src_types_ts
@@ -1803,6 +2181,7 @@ graph TD
               <div class="mermaid">
                 graph LR module_package_json[&quot;package.json&quot;]
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+                module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
                 module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -1815,12 +2194,12 @@ graph TD
                 module_src_adapters_minikube_secrets_supabase_vault_index_ts[&quot;src/adapters/minikube/secrets/supabase-vault/index.ts&quot;]
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-                module_src_apiArtifacts_ts[&quot;src/apiArtifacts.ts&quot;]
-                module_src_apis_ts[&quot;src/apis.ts&quot;]
+                module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
                 module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
                 module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
                 module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
                 module_src_commands_ts[&quot;src/commands.ts&quot;]
+                module_src_generatedApiDatabase_ts[&quot;src/generatedApiDatabase.ts&quot;]
                 module_src_index_ts[&quot;src/index.ts&quot;]
                 module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
                 module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
@@ -1832,11 +2211,17 @@ graph TD
                 module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
                 module_src_types_ts[&quot;src/types.ts&quot;]
                 module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_auth_oauthRuntime_ts
+                module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_index_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_auth_index_ts
-                --&gt; module_src_types_ts module_src_adapters_minikube_auth_supabase_index_ts
-                --&gt; module_src_adapters_minikube_auth_supabase_profile_ts
+                --&gt; module_src_types_ts module_src_adapters_minikube_auth_oauthRuntime_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_authRedirects_ts
+                module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_auth_supabase_index_ts --&gt;
+                module_src_adapters_minikube_auth_supabase_profile_ts
                 module_src_adapters_minikube_auth_supabase_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts
                 module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
@@ -1864,8 +2249,8 @@ graph TD
                 --&gt; module_src_adapters_minikube_secrets_index_ts
                 module_src_adapters_minikube_index_ts --&gt;
                 module_src_adapters_minikube_storage_index_ts module_src_adapters_minikube_index_ts
-                --&gt; module_src_apiArtifacts_ts module_src_adapters_minikube_index_ts --&gt;
-                module_src_types_ts module_src_adapters_minikube_secrets_index_ts --&gt;
+                --&gt; module_src_generatedApiDatabase_ts module_src_adapters_minikube_index_ts
+                --&gt; module_src_types_ts module_src_adapters_minikube_secrets_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts
                 module_src_adapters_minikube_secrets_index_ts --&gt;
                 module_src_adapters_minikube_secrets_supabase_vault_index_ts
@@ -1879,19 +2264,19 @@ graph TD
                 module_src_adapters_minikube_storage_supabase_index_ts
                 module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_storage_supabase_index_ts --&gt;
-                module_src_adapters_minikube_contracts_ts module_src_apiArtifacts_ts --&gt;
-                module_src_apis_ts module_src_apis_ts --&gt; module_src_types_ts
-                module_src_cli_bin_ts --&gt; module_src_commandContext_ts module_src_cli_bin_ts
-                --&gt; module_src_commands_ts module_src_cli_index_ts --&gt; module_src_commands_ts
-                module_src_cli_index_ts --&gt; module_src_packageMetadata_ts
-                module_src_commandContext_ts --&gt; module_src_packageMetadata_ts
-                module_src_commands_ts --&gt; module_src_commandContext_ts module_src_commands_ts
-                --&gt; module_src_infraValidation_ts module_src_commands_ts --&gt;
+                module_src_adapters_minikube_contracts_ts module_src_cli_bin_ts --&gt;
+                module_src_commandContext_ts module_src_cli_bin_ts --&gt; module_src_commands_ts
+                module_src_cli_index_ts --&gt; module_src_commands_ts module_src_cli_index_ts --&gt;
+                module_src_packageMetadata_ts module_src_commandContext_ts --&gt;
+                module_src_packageMetadata_ts module_src_commands_ts --&gt;
+                module_src_commandContext_ts module_src_commands_ts --&gt;
+                module_src_infraValidation_ts module_src_commands_ts --&gt;
                 module_src_packageMetadata_ts module_src_commands_ts --&gt; module_src_project_ts
                 module_src_commands_ts --&gt; module_src_projectInfrastructure_ts
-                module_src_commands_ts --&gt; module_src_runtime_ts module_src_index_ts --&gt;
-                module_src_adapters_minikube_index_ts module_src_index_ts --&gt; module_src_types_ts
-                module_src_infraValidation_ts --&gt; module_src_types_ts
+                module_src_commands_ts --&gt; module_src_runtime_ts
+                module_src_generatedApiDatabase_ts --&gt; module_src_types_ts module_src_index_ts
+                --&gt; module_src_adapters_minikube_index_ts module_src_index_ts --&gt;
+                module_src_types_ts module_src_infraValidation_ts --&gt; module_src_types_ts
                 module_src_packageMetadata_ts --&gt; module_package_json
                 module_src_projectInfrastructure_ts --&gt; module_src_index_ts
                 module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
@@ -1905,6 +2290,7 @@ graph TD
 graph LR
   module_package_json[&quot;package.json&quot;]
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+  module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
   module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -1917,12 +2303,12 @@ graph LR
   module_src_adapters_minikube_secrets_supabase_vault_index_ts[&quot;src/adapters/minikube/secrets/supabase-vault/index.ts&quot;]
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-  module_src_apiArtifacts_ts[&quot;src/apiArtifacts.ts&quot;]
-  module_src_apis_ts[&quot;src/apis.ts&quot;]
+  module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
   module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
   module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
   module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
   module_src_commands_ts[&quot;src/commands.ts&quot;]
+  module_src_generatedApiDatabase_ts[&quot;src/generatedApiDatabase.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
   module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
   module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
@@ -1933,9 +2319,13 @@ graph LR
   module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
   module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
   module_src_types_ts[&quot;src/types.ts&quot;]
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_authRedirects_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_adapters_minikube_auth_supabase_profile_ts
   module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
@@ -1955,7 +2345,7 @@ graph LR
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_base_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_secrets_index_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_adapters_minikube_storage_index_ts
-  module_src_adapters_minikube_index_ts --&gt; module_src_apiArtifacts_ts
+  module_src_adapters_minikube_index_ts --&gt; module_src_generatedApiDatabase_ts
   module_src_adapters_minikube_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_secrets_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_secrets_index_ts --&gt; module_src_adapters_minikube_secrets_supabase_vault_index_ts
@@ -1966,8 +2356,6 @@ graph LR
   module_src_adapters_minikube_storage_index_ts --&gt; module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
-  module_src_apiArtifacts_ts --&gt; module_src_apis_ts
-  module_src_apis_ts --&gt; module_src_types_ts
   module_src_cli_bin_ts --&gt; module_src_commandContext_ts
   module_src_cli_bin_ts --&gt; module_src_commands_ts
   module_src_cli_index_ts --&gt; module_src_commands_ts
@@ -1979,6 +2367,7 @@ graph LR
   module_src_commands_ts --&gt; module_src_project_ts
   module_src_commands_ts --&gt; module_src_projectInfrastructure_ts
   module_src_commands_ts --&gt; module_src_runtime_ts
+  module_src_generatedApiDatabase_ts --&gt; module_src_types_ts
   module_src_index_ts --&gt; module_src_adapters_minikube_index_ts
   module_src_index_ts --&gt; module_src_types_ts
   module_src_infraValidation_ts --&gt; module_src_types_ts
@@ -1998,6 +2387,7 @@ graph LR
               <div class="mermaid">
                 graph LR module_package_json[&quot;package.json&quot;]
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+                module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
                 module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -2010,12 +2400,12 @@ graph LR
                 module_src_adapters_minikube_secrets_supabase_vault_index_ts[&quot;src/adapters/minikube/secrets/supabase-vault/index.ts&quot;]
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-                module_src_apiArtifacts_ts[&quot;src/apiArtifacts.ts&quot;]
-                module_src_apis_ts[&quot;src/apis.ts&quot;]
+                module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
                 module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
                 module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
                 module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
                 module_src_commands_ts[&quot;src/commands.ts&quot;]
+                module_src_generatedApiDatabase_ts[&quot;src/generatedApiDatabase.ts&quot;]
                 module_src_index_ts[&quot;src/index.ts&quot;]
                 module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
                 module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
@@ -2026,9 +2416,10 @@ graph LR
                 module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
                 module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
                 module_src_types_ts[&quot;src/types.ts&quot;]
-                export_ApiInfrastructureArtifacts[&quot;ApiInfrastructureArtifacts&quot;]
-                module_src_apis_ts --&gt; export_ApiInfrastructureArtifacts
-                export_ApiInfrastructureArtifacts -.-&gt; export_GeneratedInfrastructureFile
+                export_AuthRedirectConfiguration[&quot;AuthRedirectConfiguration&quot;]
+                module_src_authRedirects_ts --&gt; export_AuthRedirectConfiguration
+                export_AuthRedirectEnvironment[&quot;AuthRedirectEnvironment&quot;]
+                module_src_authRedirects_ts --&gt; export_AuthRedirectEnvironment
                 export_createInfraSecretStoreAdapter[&quot;createInfraSecretStoreAdapter&quot;]
                 module_src_secretStore_ts --&gt; export_createInfraSecretStoreAdapter
                 export_createInfraSecretStoreAdapter -.-&gt;
@@ -2037,23 +2428,37 @@ graph LR
                 module_src_secretStore_ts --&gt; export_CreateInfraSecretStoreAdapterInput
                 export_CreateInfraSecretStoreAdapterInput -.-&gt; export_InfraManifestInput
                 export_CreateInfraSecretStoreAdapterInput -.-&gt; export_InfraSecretStoreProviders
-                export_generateApiInfrastructureArtifacts[&quot;generateApiInfrastructureArtifacts&quot;]
-                module_src_apiArtifacts_ts --&gt; export_generateApiInfrastructureArtifacts
-                export_generateApiInfrastructureArtifacts -.-&gt; export_ApiInfrastructureArtifacts
+                export_GeneratedApiDatabaseArtifacts[&quot;GeneratedApiDatabaseArtifacts&quot;]
+                module_src_generatedApiDatabase_ts --&gt; export_GeneratedApiDatabaseArtifacts
+                export_GeneratedApiDatabaseArtifacts -.-&gt; export_GeneratedApiDatabaseDiagnostic
+                export_GeneratedApiDatabaseArtifacts -.-&gt; export_GeneratedInfrastructureFile
+                export_GeneratedApiDatabaseDiagnostic[&quot;GeneratedApiDatabaseDiagnostic&quot;]
+                module_src_generatedApiDatabase_ts --&gt; export_GeneratedApiDatabaseDiagnostic
+                export_GeneratedApiDatabaseDiagnostic -.-&gt;
+                export_GeneratedApiDatabaseDiagnosticCode
+                export_GeneratedApiDatabaseDiagnosticCode[&quot;GeneratedApiDatabaseDiagnosticCode&quot;]
+                module_src_generatedApiDatabase_ts --&gt; export_GeneratedApiDatabaseDiagnosticCode
                 export_GeneratedFile[&quot;GeneratedFile&quot;] module_src_types_ts --&gt;
                 export_GeneratedFile
                 export_GeneratedInfrastructureFile[&quot;GeneratedInfrastructureFile&quot;]
                 module_src_types_ts --&gt; export_GeneratedInfrastructureFile
                 export_GeneratedPackageDependency[&quot;GeneratedPackageDependency&quot;]
                 module_src_types_ts --&gt; export_GeneratedPackageDependency
-                export_generateInfra[&quot;generateInfra&quot;] module_src_index_ts --&gt;
-                export_generateInfra export_generateInfra -.-&gt; export_InfraGenerationInput
-                export_generateInfra -.-&gt; export_InfrastructureGenerationResult
+                export_generateGeneratedApiDatabaseArtifacts[&quot;generateGeneratedApiDatabaseArtifacts&quot;]
+                module_src_generatedApiDatabase_ts --&gt;
+                export_generateGeneratedApiDatabaseArtifacts
+                export_generateGeneratedApiDatabaseArtifacts -.-&gt;
+                export_GeneratedApiDatabaseArtifacts export_generateInfra[&quot;generateInfra&quot;]
+                module_src_index_ts --&gt; export_generateInfra export_generateInfra -.-&gt;
+                export_InfraGenerationInput export_generateInfra -.-&gt;
+                export_InfrastructureGenerationResult
                 export_generateInfrastructure[&quot;generateInfrastructure&quot;]
                 module_src_index_ts --&gt; export_generateInfrastructure
                 export_generateInfrastructure -.-&gt; export_InfraManifestInput
                 export_generateInfrastructure -.-&gt; export_InfrastructureGenerationOptions
                 export_generateInfrastructure -.-&gt; export_InfrastructureGenerationResult
+                export_getLocalAuthRedirectPatterns[&quot;getLocalAuthRedirectPatterns&quot;]
+                module_src_authRedirects_ts --&gt; export_getLocalAuthRedirectPatterns
                 export_InfraDiagnostic[&quot;InfraDiagnostic&quot;] module_src_types_ts --&gt;
                 export_InfraDiagnostic export_InfraGenerationInput[&quot;InfraGenerationInput&quot;]
                 module_src_types_ts --&gt; export_InfraGenerationInput export_InfraGenerationInput
@@ -2076,8 +2481,18 @@ graph LR
                 export_InfrastructureGenerationResult -.-&gt; export_GeneratedInfrastructureFile
                 export_InfrastructureGenerationResult -.-&gt; export_GeneratedPackageDependency
                 export_InfrastructureGenerationResult -.-&gt; export_InfrastructureGenerationMeta
+                export_normalizeAuthCallbackRoute[&quot;normalizeAuthCallbackRoute&quot;]
+                module_src_authRedirects_ts --&gt; export_normalizeAuthCallbackRoute
                 export_PackageDependency[&quot;PackageDependency&quot;] module_src_types_ts --&gt;
                 export_PackageDependency
+                export_resolveAuthRedirectConfiguration[&quot;resolveAuthRedirectConfiguration&quot;]
+                module_src_authRedirects_ts --&gt; export_resolveAuthRedirectConfiguration
+                export_resolveAuthRedirectConfiguration -.-&gt; export_AuthRedirectConfiguration
+                export_resolveAuthRedirectConfiguration -.-&gt;
+                export_ResolveAuthRedirectConfigurationInput
+                export_ResolveAuthRedirectConfigurationInput[&quot;ResolveAuthRedirectConfigurationInput&quot;]
+                module_src_authRedirects_ts --&gt; export_ResolveAuthRedirectConfigurationInput
+                export_ResolveAuthRedirectConfigurationInput -.-&gt; export_AuthRedirectEnvironment
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -2085,6 +2500,7 @@ graph LR
 graph LR
   module_package_json[&quot;package.json&quot;]
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
+  module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
   module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
@@ -2097,12 +2513,12 @@ graph LR
   module_src_adapters_minikube_secrets_supabase_vault_index_ts[&quot;src/adapters/minikube/secrets/supabase-vault/index.ts&quot;]
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
-  module_src_apiArtifacts_ts[&quot;src/apiArtifacts.ts&quot;]
-  module_src_apis_ts[&quot;src/apis.ts&quot;]
+  module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
   module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
   module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
   module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
   module_src_commands_ts[&quot;src/commands.ts&quot;]
+  module_src_generatedApiDatabase_ts[&quot;src/generatedApiDatabase.ts&quot;]
   module_src_index_ts[&quot;src/index.ts&quot;]
   module_src_infraValidation_ts[&quot;src/infraValidation.ts&quot;]
   module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
@@ -2113,9 +2529,10 @@ graph LR
   module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
   module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
   module_src_types_ts[&quot;src/types.ts&quot;]
-  export_ApiInfrastructureArtifacts[&quot;ApiInfrastructureArtifacts&quot;]
-  module_src_apis_ts --&gt; export_ApiInfrastructureArtifacts
-  export_ApiInfrastructureArtifacts -.-&gt; export_GeneratedInfrastructureFile
+  export_AuthRedirectConfiguration[&quot;AuthRedirectConfiguration&quot;]
+  module_src_authRedirects_ts --&gt; export_AuthRedirectConfiguration
+  export_AuthRedirectEnvironment[&quot;AuthRedirectEnvironment&quot;]
+  module_src_authRedirects_ts --&gt; export_AuthRedirectEnvironment
   export_createInfraSecretStoreAdapter[&quot;createInfraSecretStoreAdapter&quot;]
   module_src_secretStore_ts --&gt; export_createInfraSecretStoreAdapter
   export_createInfraSecretStoreAdapter -.-&gt; export_CreateInfraSecretStoreAdapterInput
@@ -2123,15 +2540,24 @@ graph LR
   module_src_secretStore_ts --&gt; export_CreateInfraSecretStoreAdapterInput
   export_CreateInfraSecretStoreAdapterInput -.-&gt; export_InfraManifestInput
   export_CreateInfraSecretStoreAdapterInput -.-&gt; export_InfraSecretStoreProviders
-  export_generateApiInfrastructureArtifacts[&quot;generateApiInfrastructureArtifacts&quot;]
-  module_src_apiArtifacts_ts --&gt; export_generateApiInfrastructureArtifacts
-  export_generateApiInfrastructureArtifacts -.-&gt; export_ApiInfrastructureArtifacts
+  export_GeneratedApiDatabaseArtifacts[&quot;GeneratedApiDatabaseArtifacts&quot;]
+  module_src_generatedApiDatabase_ts --&gt; export_GeneratedApiDatabaseArtifacts
+  export_GeneratedApiDatabaseArtifacts -.-&gt; export_GeneratedApiDatabaseDiagnostic
+  export_GeneratedApiDatabaseArtifacts -.-&gt; export_GeneratedInfrastructureFile
+  export_GeneratedApiDatabaseDiagnostic[&quot;GeneratedApiDatabaseDiagnostic&quot;]
+  module_src_generatedApiDatabase_ts --&gt; export_GeneratedApiDatabaseDiagnostic
+  export_GeneratedApiDatabaseDiagnostic -.-&gt; export_GeneratedApiDatabaseDiagnosticCode
+  export_GeneratedApiDatabaseDiagnosticCode[&quot;GeneratedApiDatabaseDiagnosticCode&quot;]
+  module_src_generatedApiDatabase_ts --&gt; export_GeneratedApiDatabaseDiagnosticCode
   export_GeneratedFile[&quot;GeneratedFile&quot;]
   module_src_types_ts --&gt; export_GeneratedFile
   export_GeneratedInfrastructureFile[&quot;GeneratedInfrastructureFile&quot;]
   module_src_types_ts --&gt; export_GeneratedInfrastructureFile
   export_GeneratedPackageDependency[&quot;GeneratedPackageDependency&quot;]
   module_src_types_ts --&gt; export_GeneratedPackageDependency
+  export_generateGeneratedApiDatabaseArtifacts[&quot;generateGeneratedApiDatabaseArtifacts&quot;]
+  module_src_generatedApiDatabase_ts --&gt; export_generateGeneratedApiDatabaseArtifacts
+  export_generateGeneratedApiDatabaseArtifacts -.-&gt; export_GeneratedApiDatabaseArtifacts
   export_generateInfra[&quot;generateInfra&quot;]
   module_src_index_ts --&gt; export_generateInfra
   export_generateInfra -.-&gt; export_InfraGenerationInput
@@ -2141,6 +2567,8 @@ graph LR
   export_generateInfrastructure -.-&gt; export_InfraManifestInput
   export_generateInfrastructure -.-&gt; export_InfrastructureGenerationOptions
   export_generateInfrastructure -.-&gt; export_InfrastructureGenerationResult
+  export_getLocalAuthRedirectPatterns[&quot;getLocalAuthRedirectPatterns&quot;]
+  module_src_authRedirects_ts --&gt; export_getLocalAuthRedirectPatterns
   export_InfraDiagnostic[&quot;InfraDiagnostic&quot;]
   module_src_types_ts --&gt; export_InfraDiagnostic
   export_InfraGenerationInput[&quot;InfraGenerationInput&quot;]
@@ -2164,8 +2592,17 @@ graph LR
   export_InfrastructureGenerationResult -.-&gt; export_GeneratedInfrastructureFile
   export_InfrastructureGenerationResult -.-&gt; export_GeneratedPackageDependency
   export_InfrastructureGenerationResult -.-&gt; export_InfrastructureGenerationMeta
+  export_normalizeAuthCallbackRoute[&quot;normalizeAuthCallbackRoute&quot;]
+  module_src_authRedirects_ts --&gt; export_normalizeAuthCallbackRoute
   export_PackageDependency[&quot;PackageDependency&quot;]
   module_src_types_ts --&gt; export_PackageDependency
+  export_resolveAuthRedirectConfiguration[&quot;resolveAuthRedirectConfiguration&quot;]
+  module_src_authRedirects_ts --&gt; export_resolveAuthRedirectConfiguration
+  export_resolveAuthRedirectConfiguration -.-&gt; export_AuthRedirectConfiguration
+  export_resolveAuthRedirectConfiguration -.-&gt; export_ResolveAuthRedirectConfigurationInput
+  export_ResolveAuthRedirectConfigurationInput[&quot;ResolveAuthRedirectConfigurationInput&quot;]
+  module_src_authRedirects_ts --&gt; export_ResolveAuthRedirectConfigurationInput
+  export_ResolveAuthRedirectConfigurationInput -.-&gt; export_AuthRedirectEnvironment
 </pre
                 >
               </details>
@@ -2272,6 +2709,123 @@ sequenceDiagram
                 >
               </details>
             </article>
+            <article
+              class="item"
+              data-search="getLocalAuthRedirectPatterns sequence diagrams/sequences/get-local-auth-redirect-patterns.mmd"
+            >
+              <h3>getLocalAuthRedirectPatterns sequence</h3>
+              <p class="muted">
+                <code>diagrams/sequences/get-local-auth-redirect-patterns.mmd</code>
+              </p>
+              <div class="mermaid">
+                sequenceDiagram participant participant_getLocalAuthRedirectPatterns as
+                getLocalAuthRedirectPatterns participant participant_normalizeCallbackRoute as
+                normalizeCallbackRoute
+                participant_getLocalAuthRedirectPatterns-&gt;&gt;participant_normalizeCallbackRoute:
+                normalizeCallbackRoute()
+                participant_normalizeCallbackRoute--&gt;&gt;participant_getLocalAuthRedirectPatterns:
+                return
+              </div>
+              <details>
+                <summary>View Mermaid source</summary>
+                <pre>
+sequenceDiagram
+  participant participant_getLocalAuthRedirectPatterns as getLocalAuthRedirectPatterns
+  participant participant_normalizeCallbackRoute as normalizeCallbackRoute
+  participant_getLocalAuthRedirectPatterns-&gt;&gt;participant_normalizeCallbackRoute: normalizeCallbackRoute()
+  participant_normalizeCallbackRoute--&gt;&gt;participant_getLocalAuthRedirectPatterns: return
+</pre
+                >
+              </details>
+            </article>
+            <article
+              class="item"
+              data-search="normalizeAuthCallbackRoute sequence diagrams/sequences/normalize-auth-callback-route.mmd"
+            >
+              <h3>normalizeAuthCallbackRoute sequence</h3>
+              <p class="muted"><code>diagrams/sequences/normalize-auth-callback-route.mmd</code></p>
+              <div class="mermaid">
+                sequenceDiagram participant participant_normalizeAuthCallbackRoute as
+                normalizeAuthCallbackRoute participant participant_normalizeCallbackRoute as
+                normalizeCallbackRoute
+                participant_normalizeAuthCallbackRoute-&gt;&gt;participant_normalizeCallbackRoute:
+                normalizeCallbackRoute()
+                participant_normalizeCallbackRoute--&gt;&gt;participant_normalizeAuthCallbackRoute:
+                return
+              </div>
+              <details>
+                <summary>View Mermaid source</summary>
+                <pre>
+sequenceDiagram
+  participant participant_normalizeAuthCallbackRoute as normalizeAuthCallbackRoute
+  participant participant_normalizeCallbackRoute as normalizeCallbackRoute
+  participant_normalizeAuthCallbackRoute-&gt;&gt;participant_normalizeCallbackRoute: normalizeCallbackRoute()
+  participant_normalizeCallbackRoute--&gt;&gt;participant_normalizeAuthCallbackRoute: return
+</pre
+                >
+              </details>
+            </article>
+            <article
+              class="item"
+              data-search="resolveAuthRedirectConfiguration sequence diagrams/sequences/resolve-auth-redirect-configuration.mmd"
+            >
+              <h3>resolveAuthRedirectConfiguration sequence</h3>
+              <p class="muted">
+                <code>diagrams/sequences/resolve-auth-redirect-configuration.mmd</code>
+              </p>
+              <div class="mermaid">
+                sequenceDiagram participant participant_getLocalAuthRedirectPatterns as
+                getLocalAuthRedirectPatterns participant participant_normalizeCallbackRoute as
+                normalizeCallbackRoute participant participant_normalizeWebOrigin as
+                normalizeWebOrigin participant participant_parseUrl as parseUrl participant
+                participant_resolveAuthRedirectConfiguration as resolveAuthRedirectConfiguration
+                participant participant_unique as unique
+                participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_normalizeWebOrigin:
+                normalizeWebOrigin() participant_normalizeWebOrigin-&gt;&gt;participant_parseUrl:
+                parseUrl() participant_parseUrl--&gt;&gt;participant_normalizeWebOrigin: return
+                participant_normalizeWebOrigin--&gt;&gt;participant_resolveAuthRedirectConfiguration:
+                return
+                participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_normalizeCallbackRoute:
+                normalizeCallbackRoute()
+                participant_normalizeCallbackRoute--&gt;&gt;participant_resolveAuthRedirectConfiguration:
+                return participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_unique:
+                unique() participant_unique--&gt;&gt;participant_resolveAuthRedirectConfiguration:
+                return
+                participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_getLocalAuthRedirectPatterns:
+                getLocalAuthRedirectPatterns()
+                participant_getLocalAuthRedirectPatterns-&gt;&gt;participant_normalizeCallbackRoute:
+                normalizeCallbackRoute()
+                participant_normalizeCallbackRoute--&gt;&gt;participant_getLocalAuthRedirectPatterns:
+                return
+                participant_getLocalAuthRedirectPatterns--&gt;&gt;participant_resolveAuthRedirectConfiguration:
+                return
+              </div>
+              <details>
+                <summary>View Mermaid source</summary>
+                <pre>
+sequenceDiagram
+  participant participant_getLocalAuthRedirectPatterns as getLocalAuthRedirectPatterns
+  participant participant_normalizeCallbackRoute as normalizeCallbackRoute
+  participant participant_normalizeWebOrigin as normalizeWebOrigin
+  participant participant_parseUrl as parseUrl
+  participant participant_resolveAuthRedirectConfiguration as resolveAuthRedirectConfiguration
+  participant participant_unique as unique
+  participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_normalizeWebOrigin: normalizeWebOrigin()
+  participant_normalizeWebOrigin-&gt;&gt;participant_parseUrl: parseUrl()
+  participant_parseUrl--&gt;&gt;participant_normalizeWebOrigin: return
+  participant_normalizeWebOrigin--&gt;&gt;participant_resolveAuthRedirectConfiguration: return
+  participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_normalizeCallbackRoute: normalizeCallbackRoute()
+  participant_normalizeCallbackRoute--&gt;&gt;participant_resolveAuthRedirectConfiguration: return
+  participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_unique: unique()
+  participant_unique--&gt;&gt;participant_resolveAuthRedirectConfiguration: return
+  participant_resolveAuthRedirectConfiguration-&gt;&gt;participant_getLocalAuthRedirectPatterns: getLocalAuthRedirectPatterns()
+  participant_getLocalAuthRedirectPatterns-&gt;&gt;participant_normalizeCallbackRoute: normalizeCallbackRoute()
+  participant_normalizeCallbackRoute--&gt;&gt;participant_getLocalAuthRedirectPatterns: return
+  participant_getLocalAuthRedirectPatterns--&gt;&gt;participant_resolveAuthRedirectConfiguration: return
+</pre
+                >
+              </details>
+            </article>
           </section>
         </section>
         <section
@@ -2287,7 +2841,65 @@ sequenceDiagram
               data-search="generateAuthProviderArtifacts src/adapters/minikube/auth/index.ts "
             >
               <h3>generateAuthProviderArtifacts</h3>
-              <p class="muted"><code>src/adapters/minikube/auth/index.ts:5:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/auth/index.ts:6:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-auth-oauthruntime-ts"
+          class="view"
+          data-view="src/adapters/minikube/auth/oauthRuntime.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/auth/oauthRuntime.ts</h2>
+            <article
+              class="item"
+              data-search="generateSupabaseOAuthRuntimeArtifacts src/adapters/minikube/auth/oauthRuntime.ts "
+            >
+              <h3>generateSupabaseOAuthRuntimeArtifacts</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/oauthRuntime.ts:11:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="resolveOAuthRuntimeModel src/adapters/minikube/auth/oauthRuntime.ts "
+            >
+              <h3>resolveOAuthRuntimeModel</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/oauthRuntime.ts:39:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getOAuthProviderLifecycle src/adapters/minikube/auth/oauthRuntime.ts "
+            >
+              <h3>getOAuthProviderLifecycle</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/oauthRuntime.ts:68:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getOAuthRuntimeReconciliationCommand src/adapters/minikube/auth/oauthRuntime.ts "
+            >
+              <h3>getOAuthRuntimeReconciliationCommand</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/oauthRuntime.ts:99:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getOAuthRuntimeStatusCommand src/adapters/minikube/auth/oauthRuntime.ts "
+            >
+              <h3>getOAuthRuntimeStatusCommand</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/oauthRuntime.ts:132:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getOAuthRuntimeGuide src/adapters/minikube/auth/oauthRuntime.ts "
+            >
+              <h3>getOAuthRuntimeGuide</h3>
+              <p class="muted"><code>src/adapters/minikube/auth/oauthRuntime.ts:148:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -3095,22 +3707,22 @@ sequenceDiagram
               data-search="generateMinikubeInfra src/adapters/minikube/index.ts "
             >
               <h3>generateMinikubeInfra</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:16:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:17:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectProviders src/adapters/minikube/index.ts ">
               <h3>collectProviders</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:106:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:120:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectDependencies src/adapters/minikube/index.ts ">
               <h3>collectDependencies</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:121:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:135:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectWarnings src/adapters/minikube/index.ts ">
               <h3>collectWarnings</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:135:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:149:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3118,12 +3730,12 @@ sequenceDiagram
               data-search="validateCanonicalAppSlug src/adapters/minikube/index.ts "
             >
               <h3>validateCanonicalAppSlug</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:151:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:165:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="unique src/adapters/minikube/index.ts ">
               <h3>unique</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:167:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:181:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -3266,193 +3878,55 @@ sequenceDiagram
             </article>
           </section>
         </section>
-        <section id="view-src-apiartifacts-ts" class="view" data-view="src/apiArtifacts.ts" hidden>
+        <section
+          id="view-src-authredirects-ts"
+          class="view"
+          data-view="src/authRedirects.ts"
+          hidden
+        >
           <section class="panel">
-            <h2>src/apiArtifacts.ts</h2>
+            <h2>src/authRedirects.ts</h2>
             <article
               class="item"
-              data-search="generateApiInfrastructureArtifacts src/apiArtifacts.ts "
+              data-search="resolveAuthRedirectConfiguration src/authRedirects.ts "
             >
-              <h3>generateApiInfrastructureArtifacts</h3>
-              <p class="muted"><code>src/apiArtifacts.ts:12:1</code></p>
+              <h3>resolveAuthRedirectConfiguration</h3>
+              <p class="muted"><code>src/authRedirects.ts:19:1</code></p>
               <p class="empty">No description available.</p>
             </article>
-            <article
-              class="item"
-              data-search="makeGeneratedApiHandlersLintSafe src/apiArtifacts.ts "
-            >
-              <h3>makeGeneratedApiHandlersLintSafe</h3>
-              <p class="muted"><code>src/apiArtifacts.ts:28:1</code></p>
+            <article class="item" data-search="getLocalAuthRedirectPatterns src/authRedirects.ts ">
+              <h3>getLocalAuthRedirectPatterns</h3>
+              <p class="muted"><code>src/authRedirects.ts:48:1</code></p>
               <p class="empty">No description available.</p>
             </article>
-            <article class="item" data-search="replaceGeneratedSnippet src/apiArtifacts.ts ">
-              <h3>replaceGeneratedSnippet</h3>
-              <p class="muted"><code>src/apiArtifacts.ts:93:1</code></p>
+            <article class="item" data-search="normalizeAuthCallbackRoute src/authRedirects.ts ">
+              <h3>normalizeAuthCallbackRoute</h3>
+              <p class="muted"><code>src/authRedirects.ts:53:1</code></p>
               <p class="empty">No description available.</p>
             </article>
-          </section>
-        </section>
-        <section id="view-src-apis-ts" class="view" data-view="src/apis.ts" hidden>
-          <section class="panel">
-            <h2>src/apis.ts</h2>
-            <article class="item" data-search="generateApiInfrastructureArtifacts src/apis.ts ">
-              <h3>generateApiInfrastructureArtifacts</h3>
-              <p class="muted"><code>src/apis.ts:72:1</code></p>
+            <article class="item" data-search="normalizeCallbackRoute src/authRedirects.ts ">
+              <h3>normalizeCallbackRoute</h3>
+              <p class="muted"><code>src/authRedirects.ts:57:1</code></p>
               <p class="empty">No description available.</p>
             </article>
-            <article class="item" data-search="listGeneratedApis src/apis.ts ">
-              <h3>listGeneratedApis</h3>
-              <p class="muted"><code>src/apis.ts:137:1</code></p>
+            <article class="item" data-search="normalizeWebOrigin src/authRedirects.ts ">
+              <h3>normalizeWebOrigin</h3>
+              <p class="muted"><code>src/authRedirects.ts:71:1</code></p>
               <p class="empty">No description available.</p>
             </article>
-            <article class="item" data-search="isGeneratedApiWithCollectionResource src/apis.ts ">
-              <h3>isGeneratedApiWithCollectionResource</h3>
-              <p class="muted"><code>src/apis.ts:148:1</code></p>
+            <article class="item" data-search="normalizeNativeRedirectUri src/authRedirects.ts ">
+              <h3>normalizeNativeRedirectUri</h3>
+              <p class="muted"><code>src/authRedirects.ts:85:1</code></p>
               <p class="empty">No description available.</p>
             </article>
-            <article class="item" data-search="createSeedManifest src/apis.ts ">
-              <h3>createSeedManifest</h3>
-              <p class="muted"><code>src/apis.ts:154:1</code></p>
+            <article class="item" data-search="parseUrl src/authRedirects.ts ">
+              <h3>parseUrl</h3>
+              <p class="muted"><code>src/authRedirects.ts:98:1</code></p>
               <p class="empty">No description available.</p>
             </article>
-            <article class="item" data-search="materializeSeedRecords src/apis.ts ">
-              <h3>materializeSeedRecords</h3>
-              <p class="muted"><code>src/apis.ts:164:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="createSeedWarnings src/apis.ts ">
-              <h3>createSeedWarnings</h3>
-              <p class="muted"><code>src/apis.ts:186:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateReadme src/apis.ts ">
-              <h3>generateReadme</h3>
-              <p class="muted"><code>src/apis.ts:206:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateResourcesTs src/apis.ts ">
-              <h3>generateResourcesTs</h3>
-              <p class="muted"><code>src/apis.ts:217:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateApiTs src/apis.ts ">
-              <h3>generateApiTs</h3>
-              <p class="muted"><code>src/apis.ts:225:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateApiHandlersTs src/apis.ts ">
-              <h3>generateApiHandlersTs</h3>
-              <p class="muted"><code>src/apis.ts:233:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="createApiOperations src/apis.ts ">
-              <h3>createApiOperations</h3>
-              <p class="muted"><code>src/apis.ts:244:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="createOpenApi src/apis.ts ">
-              <h3>createOpenApi</h3>
-              <p class="muted"><code>src/apis.ts:254:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="addOpenApiOperation src/apis.ts ">
-              <h3>addOpenApiOperation</h3>
-              <p class="muted"><code>src/apis.ts:289:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateSupabaseMigrationSql src/apis.ts ">
-              <h3>generateSupabaseMigrationSql</h3>
-              <p class="muted"><code>src/apis.ts:299:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateCreateTableSql src/apis.ts ">
-              <h3>generateCreateTableSql</h3>
-              <p class="muted"><code>src/apis.ts:315:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="collectSqlFields src/apis.ts ">
-              <h3>collectSqlFields</h3>
-              <p class="muted"><code>src/apis.ts:325:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateSupabaseSeedSql src/apis.ts ">
-              <h3>generateSupabaseSeedSql</h3>
-              <p class="muted"><code>src/apis.ts:339:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="generateSeedInsertStatements src/apis.ts ">
-              <h3>generateSeedInsertStatements</h3>
-              <p class="muted"><code>src/apis.ts:350:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="collectSeedColumns src/apis.ts ">
-              <h3>collectSeedColumns</h3>
-              <p class="muted"><code>src/apis.ts:375:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="formatSqlColumn src/apis.ts ">
-              <h3>formatSqlColumn</h3>
-              <p class="muted"><code>src/apis.ts:400:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="mapSqlFieldType src/apis.ts ">
-              <h3>mapSqlFieldType</h3>
-              <p class="muted"><code>src/apis.ts:409:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="formatSqlDefaultValue src/apis.ts ">
-              <h3>formatSqlDefaultValue</h3>
-              <p class="muted"><code>src/apis.ts:426:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="formatSqlValue src/apis.ts ">
-              <h3>formatSqlValue</h3>
-              <p class="muted"><code>src/apis.ts:446:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="stringifyJsonValue src/apis.ts ">
-              <h3>stringifyJsonValue</h3>
-              <p class="muted"><code>src/apis.ts:470:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="quoteSqlIdentifier src/apis.ts ">
-              <h3>quoteSqlIdentifier</h3>
-              <p class="muted"><code>src/apis.ts:478:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="escapeSqlString src/apis.ts ">
-              <h3>escapeSqlString</h3>
-              <p class="muted"><code>src/apis.ts:482:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="createPrimaryKeyRegistry src/apis.ts ">
-              <h3>createPrimaryKeyRegistry</h3>
-              <p class="muted"><code>src/apis.ts:486:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="findPrimaryKeyField src/apis.ts ">
-              <h3>findPrimaryKeyField</h3>
-              <p class="muted"><code>src/apis.ts:494:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="createDeterministicSeedUuid src/apis.ts ">
-              <h3>createDeterministicSeedUuid</h3>
-              <p class="muted"><code>src/apis.ts:505:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="hashHex src/apis.ts ">
-              <h3>hashHex</h3>
-              <p class="muted"><code>src/apis.ts:513:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="formatCollectionName src/apis.ts ">
-              <h3>formatCollectionName</h3>
-              <p class="muted"><code>src/apis.ts:524:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="joinApiPath src/apis.ts ">
-              <h3>joinApiPath</h3>
-              <p class="muted"><code>src/apis.ts:530:1</code></p>
+            <article class="item" data-search="unique src/authRedirects.ts ">
+              <h3>unique</h3>
+              <p class="muted"><code>src/authRedirects.ts:111:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -3592,17 +4066,156 @@ sequenceDiagram
             </article>
           </section>
         </section>
+        <section
+          id="view-src-generatedapidatabase-ts"
+          class="view"
+          data-view="src/generatedApiDatabase.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/generatedApiDatabase.ts</h2>
+            <article
+              class="item"
+              data-search="generateGeneratedApiDatabaseArtifacts src/generatedApiDatabase.ts "
+            >
+              <h3>generateGeneratedApiDatabaseArtifacts</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:55:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="listGeneratedResources src/generatedApiDatabase.ts ">
+              <h3>listGeneratedResources</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:103:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="validateGeneratedApiDatabaseState src/generatedApiDatabase.ts "
+            >
+              <h3>validateGeneratedApiDatabaseState</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:115:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="validateFields src/generatedApiDatabase.ts ">
+              <h3>validateFields</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:204:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="validatePrimaryKey src/generatedApiDatabase.ts ">
+              <h3>validatePrimaryKey</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:236:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="validateSeeds src/generatedApiDatabase.ts ">
+              <h3>validateSeeds</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:256:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="validateIdentifier src/generatedApiDatabase.ts ">
+              <h3>validateIdentifier</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:299:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="resourceDiagnostic src/generatedApiDatabase.ts ">
+              <h3>resourceDiagnostic</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:316:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="isCompatibleDefault src/generatedApiDatabase.ts ">
+              <h3>isCompatibleDefault</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:333:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createSeedEntry src/generatedApiDatabase.ts ">
+              <h3>createSeedEntry</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:351:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="materializeSeedRecord src/generatedApiDatabase.ts ">
+              <h3>materializeSeedRecord</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:360:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateMigrationSql src/generatedApiDatabase.ts ">
+              <h3>generateMigrationSql</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:379:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateSeedSql src/generatedApiDatabase.ts ">
+              <h3>generateSeedSql</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:408:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createSeedStatements src/generatedApiDatabase.ts ">
+              <h3>createSeedStatements</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:417:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatColumn src/generatedApiDatabase.ts ">
+              <h3>formatColumn</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:440:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="mapFieldType src/generatedApiDatabase.ts ">
+              <h3>mapFieldType</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:448:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatDefault src/generatedApiDatabase.ts ">
+              <h3>formatDefault</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:457:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="formatValue src/generatedApiDatabase.ts ">
+              <h3>formatValue</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:465:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="generateReadme src/generatedApiDatabase.ts ">
+              <h3>generateReadme</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:473:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="jsonFile src/generatedApiDatabase.ts ">
+              <h3>jsonFile</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:484:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="quoteIdentifier src/generatedApiDatabase.ts ">
+              <h3>quoteIdentifier</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:488:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="escapeString src/generatedApiDatabase.ts ">
+              <h3>escapeString</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:492:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="createDeterministicSeedUuid src/generatedApiDatabase.ts "
+            >
+              <h3>createDeterministicSeedUuid</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:496:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="hashHex src/generatedApiDatabase.ts ">
+              <h3>hashHex</h3>
+              <p class="muted"><code>src/generatedApiDatabase.ts:503:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
         <section id="view-src-index-ts" class="view" data-view="src/index.ts" hidden>
           <section class="panel">
             <h2>src/index.ts</h2>
             <article class="item" data-search="generateInfra src/index.ts ">
               <h3>generateInfra</h3>
-              <p class="muted"><code>src/index.ts:31:1</code></p>
+              <p class="muted"><code>src/index.ts:43:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="generateInfrastructure src/index.ts ">
               <h3>generateInfrastructure</h3>
-              <p class="muted"><code>src/index.ts:35:1</code></p>
+              <p class="muted"><code>src/index.ts:47:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -3657,72 +4270,72 @@ sequenceDiagram
             </article>
             <article class="item" data-search="readProjectManifest src/project.ts ">
               <h3>readProjectManifest</h3>
-              <p class="muted"><code>src/project.ts:94:1</code></p>
+              <p class="muted"><code>src/project.ts:95:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="findWorkspaceRoot src/project.ts ">
               <h3>findWorkspaceRoot</h3>
-              <p class="muted"><code>src/project.ts:122:1</code></p>
+              <p class="muted"><code>src/project.ts:123:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="inferProjectId src/project.ts ">
               <h3>inferProjectId</h3>
-              <p class="muted"><code>src/project.ts:140:1</code></p>
+              <p class="muted"><code>src/project.ts:141:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="validateExplicitProjectId src/project.ts ">
               <h3>validateExplicitProjectId</h3>
-              <p class="muted"><code>src/project.ts:150:1</code></p>
+              <p class="muted"><code>src/project.ts:151:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isAppManifest src/project.ts ">
               <h3>isAppManifest</h3>
-              <p class="muted"><code>src/project.ts:168:1</code></p>
+              <p class="muted"><code>src/project.ts:169:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isAppManifestMetadata src/project.ts ">
               <h3>isAppManifestMetadata</h3>
-              <p class="muted"><code>src/project.ts:184:1</code></p>
+              <p class="muted"><code>src/project.ts:185:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isInfraManifestRecord src/project.ts ">
               <h3>isInfraManifestRecord</h3>
-              <p class="muted"><code>src/project.ts:196:1</code></p>
+              <p class="muted"><code>src/project.ts:198:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isNavigatorSpec src/project.ts ">
               <h3>isNavigatorSpec</h3>
-              <p class="muted"><code>src/project.ts:200:1</code></p>
+              <p class="muted"><code>src/project.ts:202:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isSettingsRecord src/project.ts ">
               <h3>isSettingsRecord</h3>
-              <p class="muted"><code>src/project.ts:209:1</code></p>
+              <p class="muted"><code>src/project.ts:211:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isLocalizationRecord src/project.ts ">
               <h3>isLocalizationRecord</h3>
-              <p class="muted"><code>src/project.ts:217:1</code></p>
+              <p class="muted"><code>src/project.ts:219:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isRecord src/project.ts ">
               <h3>isRecord</h3>
-              <p class="muted"><code>src/project.ts:226:1</code></p>
+              <p class="muted"><code>src/project.ts:228:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isDirectory src/project.ts ">
               <h3>isDirectory</h3>
-              <p class="muted"><code>src/project.ts:230:1</code></p>
+              <p class="muted"><code>src/project.ts:232:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="pathExists src/project.ts ">
               <h3>pathExists</h3>
-              <p class="muted"><code>src/project.ts:239:1</code></p>
+              <p class="muted"><code>src/project.ts:241:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getErrorMessage src/project.ts ">
               <h3>getErrorMessage</h3>
-              <p class="muted"><code>src/project.ts:248:1</code></p>
+              <p class="muted"><code>src/project.ts:250:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
