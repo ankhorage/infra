@@ -51,6 +51,7 @@ interface GeneratedSeedEntry {
 
 const DEFAULT_DATABASE_SCHEMA = 'public';
 const SQL_IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function generateGeneratedApiDatabaseArtifacts(args: {
   readonly generatedApis: GeneratedApiRegistry | undefined;
@@ -275,20 +276,50 @@ function validateSeeds(
     }
 
     for (const field of fields.values()) {
+      const value = record[field.name];
       const generatedUuidPrimaryKey =
-        field.name === primaryKey && field.type === 'uuid' && record[field.name] === undefined;
-      if (
-        field.required === true &&
-        field.defaultValue === undefined &&
-        record[field.name] === undefined &&
-        !generatedUuidPrimaryKey
-      ) {
+        field.name === primaryKey && field.type === 'uuid' && value === undefined;
+      const requiresNonNullValue = field.required === true || field.name === primaryKey;
+
+      if (value === undefined) {
+        if (
+          requiresNonNullValue &&
+          field.defaultValue === undefined &&
+          !generatedUuidPrimaryKey
+        ) {
+          diagnostics.push(
+            resourceDiagnostic(
+              context,
+              'invalid-seed',
+              `seed.${index}.${field.name}`,
+              `Seed record is missing required field '${field.name}'.`,
+            ),
+          );
+        }
+        continue;
+      }
+
+      if (value === null) {
+        if (requiresNonNullValue) {
+          diagnostics.push(
+            resourceDiagnostic(
+              context,
+              'invalid-seed',
+              `seed.${index}.${field.name}`,
+              `Seed field '${field.name}' cannot be null.`,
+            ),
+          );
+        }
+        continue;
+      }
+
+      if (!isCompatibleFieldValue(field, value)) {
         diagnostics.push(
           resourceDiagnostic(
             context,
             'invalid-seed',
             `seed.${index}.${field.name}`,
-            `Seed record is missing required field '${field.name}'.`,
+            `Seed value for '${field.name}' is incompatible with field type '${field.type}'.`,
           ),
         );
       }
@@ -333,16 +364,21 @@ function resourceDiagnostic(
 function isCompatibleDefault(field: DbFieldDefinition): boolean {
   const value = field.defaultValue;
   if (value === undefined || value === null) return true;
+  return isCompatibleFieldValue(field, value);
+}
 
+function isCompatibleFieldValue(field: DbFieldDefinition, value: DataContractValue): boolean {
   switch (field.type) {
     case 'boolean':
       return typeof value === 'boolean';
     case 'number':
       return typeof value === 'number' && Number.isFinite(value);
     case 'text':
-    case 'datetime':
-    case 'uuid':
       return typeof value === 'string';
+    case 'datetime':
+      return typeof value === 'string' && Number.isFinite(Date.parse(value));
+    case 'uuid':
+      return typeof value === 'string' && UUID_RE.test(value);
     case 'json':
       return true;
   }
@@ -417,15 +453,20 @@ function generateSeedSql(entries: readonly GeneratedSeedEntry[]): string {
 function createSeedStatements(entry: GeneratedSeedEntry): readonly string[] {
   if (entry.records.length === 0) return [];
 
-  const columns = entry.collection.fields
-    .map((field) => field.name)
-    .filter((fieldName) => entry.records.some((record) => record[fieldName] !== undefined));
-  if (columns.length === 0) return [];
+  const fields = entry.collection.fields.filter((field) =>
+    entry.records.some((record) => record[field.name] !== undefined),
+  );
+  if (fields.length === 0) return [];
 
   const schema = quoteIdentifier(entry.collection.schema ?? DEFAULT_DATABASE_SCHEMA);
   const table = quoteIdentifier(entry.collection.name);
   const values = entry.records
-    .map((record) => `(${columns.map((column) => formatValue(record[column])).join(', ')})`)
+    .map(
+      (record) =>
+        `(${fields
+          .map((field) => formatSeedValue(field, record[field.name]))
+          .join(', ')})`,
+    )
     .join(',\n  ');
   const conflict =
     entry.collection.primaryKey === undefined
@@ -433,8 +474,13 @@ function createSeedStatements(entry: GeneratedSeedEntry): readonly string[] {
       : `on conflict (${quoteIdentifier(entry.collection.primaryKey)}) do nothing`;
 
   return [
-    `insert into ${schema}.${table} (${columns.map(quoteIdentifier).join(', ')}) values\n  ${values}\n${conflict};`,
+    `insert into ${schema}.${table} (${fields.map((field) => quoteIdentifier(field.name)).join(', ')}) values\n  ${values}\n${conflict};`,
   ];
+}
+
+function formatSeedValue(field: DbFieldDefinition, value: DataContractValue | undefined): string {
+  if (value === undefined) return 'default';
+  return formatFieldValue(field, value);
 }
 
 function formatColumn(field: DbFieldDefinition, primaryKey: boolean): string {
@@ -459,11 +505,19 @@ function formatDefault(field: DbFieldDefinition, primaryKey: boolean): string {
     return ' default gen_random_uuid()';
   }
   if (field.defaultValue === undefined) return '';
-  return ` default ${formatValue(field.defaultValue)}`;
+  return ` default ${formatFieldValue(field, field.defaultValue)}`;
 }
 
-function formatValue(value: DataContractValue | undefined): string {
-  if (value === undefined || value === null) return 'null';
+function formatFieldValue(field: DbFieldDefinition, value: DataContractValue): string {
+  if (value === null) return 'null';
+  if (field.type === 'json') {
+    return `'${escapeString(JSON.stringify(value))}'::jsonb`;
+  }
+  return formatValue(value);
+}
+
+function formatValue(value: DataContractValue): string {
+  if (value === null) return 'null';
   if (typeof value === 'string') return `'${escapeString(value)}'`;
   if (typeof value === 'number') return Number.isFinite(value) ? String(value) : 'null';
   if (typeof value === 'boolean') return value ? 'true' : 'false';
