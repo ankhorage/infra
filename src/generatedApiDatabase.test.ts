@@ -199,6 +199,130 @@ describe('generated API database bridge', () => {
     ).toBe(true);
   });
 
+  test('rejects seed values that do not match collection field types', () => {
+    const { catalog } = createGeneratedApis();
+    expect(catalog).toBeDefined();
+    if (catalog === undefined) return;
+
+    const [products] = catalog.resources;
+    expect(products).toBeDefined();
+    if (products === undefined) return;
+
+    const result = generateGeneratedApiDatabaseArtifacts({
+      databaseProvider: 'supabase',
+      generatedApis: {
+        catalog: {
+          ...catalog,
+          resources: [{ ...products, seed: [{ name: 'Broken product', price: 'free' }] }],
+        },
+      },
+    });
+
+    expect(result.files).toEqual([]);
+    expect(
+      result.diagnostics.some(
+        (diagnostic) =>
+          diagnostic.code === 'invalid-seed' && diagnostic.path?.endsWith('seed.0.price') === true,
+      ),
+    ).toBe(true);
+  });
+
+  test('rejects null seed values for required fields and primary keys', () => {
+    const { catalog } = createGeneratedApis();
+    expect(catalog).toBeDefined();
+    if (catalog === undefined) return;
+
+    const [products] = catalog.resources;
+    expect(products).toBeDefined();
+    if (products === undefined) return;
+
+    const result = generateGeneratedApiDatabaseArtifacts({
+      databaseProvider: 'supabase',
+      generatedApis: {
+        catalog: {
+          ...catalog,
+          resources: [{ ...products, seed: [{ id: null, name: null }] }],
+        },
+      },
+    });
+    const invalidSeedPaths = result.diagnostics
+      .filter((diagnostic) => diagnostic.code === 'invalid-seed')
+      .map((diagnostic) => diagnostic.path);
+
+    expect(result.files).toEqual([]);
+    expect(invalidSeedPaths).toContain('generatedApis.catalog.resources.products.seed.0.id');
+    expect(invalidSeedPaths).toContain('generatedApis.catalog.resources.products.seed.0.name');
+  });
+
+  test('uses SQL DEFAULT when seed records omit a column that another record supplies', () => {
+    const generatedApis: GeneratedApiRegistry = {
+      defaults: {
+        id: 'defaults',
+        protocol: 'rest',
+        basePath: '/api/defaults',
+        database: { id: 'db', kind: 'database' },
+        resources: [
+          {
+            id: 'items',
+            path: '/items',
+            operations: ['list'],
+            collection: {
+              name: 'items',
+              fields: [
+                { name: 'name', type: 'text', required: true },
+                { name: 'active', type: 'boolean', required: true, defaultValue: true },
+              ],
+            },
+            seed: [{ name: 'A' }, { name: 'B', active: false }],
+          },
+        ],
+      },
+    };
+    const result = generateGeneratedApiDatabaseArtifacts({
+      databaseProvider: 'supabase',
+      generatedApis,
+    });
+    const seedSql = result.files.find((file) => file.path.endsWith('001_generated_api_seed.sql'));
+
+    expect(result.diagnostics).toEqual([]);
+    expect(seedSql?.content).toContain("('A', default),\n  ('B', false)");
+    expect(seedSql?.content).not.toContain("('A', null)");
+  });
+
+  test('rejects invalid UUID and datetime defaults before SQL generation', () => {
+    const generatedApis: GeneratedApiRegistry = {
+      invalidDefaults: {
+        id: 'invalidDefaults',
+        protocol: 'rest',
+        basePath: '/api/defaults',
+        database: { id: 'db', kind: 'database' },
+        resources: [
+          {
+            id: 'items',
+            path: '/items',
+            operations: ['list'],
+            collection: {
+              name: 'items',
+              fields: [
+                { name: 'external_id', type: 'uuid', defaultValue: 'banana' },
+                { name: 'created_at', type: 'datetime', defaultValue: 'not-a-date' },
+              ],
+            },
+          },
+        ],
+      },
+    };
+    const result = generateGeneratedApiDatabaseArtifacts({
+      databaseProvider: 'supabase',
+      generatedApis,
+    });
+
+    expect(result.files).toEqual([]);
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.code === 'invalid-default')).toHaveLength(
+      2,
+    );
+  });
+
   test('integrates generated DB artifacts without generating an API service workload', () => {
     const infra: InfraManifestInput = {
       deployment: { target: 'minikube', monitoring: false },
