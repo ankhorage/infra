@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant participant_getLocalAuthRedirectPatterns as getLocalAuthRedirectPatterns
+  participant participant_normalizeCallbackRoute as normalizeCallbackRoute
+  participant participant_normalizeWebOrigin as normalizeWebOrigin
+  participant participant_parseUrl as parseUrl
+  participant participant_resolveAuthRedirectConfiguration as resolveAuthRedirectConfiguration
+  participant participant_unique as unique
+  participant_resolveAuthRedirectConfiguration->>participant_normalizeWebOrigin: normalizeWebOrigin()
+  participant_normalizeWebOrigin->>participant_parseUrl: parseUrl()
+  participant_parseUrl-->>participant_normalizeWebOrigin: return
+  participant_normalizeWebOrigin-->>participant_resolveAuthRedirectConfiguration: return
+  participant_resolveAuthRedirectConfiguration->>participant_normalizeCallbackRoute: normalizeCallbackRoute()
+  participant_normalizeCallbackRoute-->>participant_resolveAuthRedirectConfiguration: return
+  participant_resolveAuthRedirectConfiguration->>participant_unique: unique()
+  participant_unique-->>participant_resolveAuthRedirectConfiguration: return
+  participant_resolveAuthRedirectConfiguration->>participant_getLocalAuthRedirectPatterns: getLocalAuthRedirectPatterns()
+  participant_getLocalAuthRedirectPatterns->>participant_normalizeCallbackRoute: normalizeCallbackRoute()
+  participant_normalizeCallbackRoute-->>participant_getLocalAuthRedirectPatterns: return
+  participant_getLocalAuthRedirectPatterns-->>participant_resolveAuthRedirectConfiguration: return

@@ -7,12 +7,6 @@ import type {
 } from './types';
 
 export {
-  type GeneratedApiDatabaseArtifacts,
-  type GeneratedApiDatabaseDiagnostic,
-  type GeneratedApiDatabaseDiagnosticCode,
-  generateGeneratedApiDatabaseArtifacts,
-} from './generatedApiDatabase';
-export {
   type AuthRedirectConfiguration,
   type AuthRedirectEnvironment,
   getLocalAuthRedirectPatterns,
@@ -20,6 +14,12 @@ export {
   resolveAuthRedirectConfiguration,
   type ResolveAuthRedirectConfigurationInput,
 } from './authRedirects';
+export {
+  type GeneratedApiDatabaseArtifacts,
+  type GeneratedApiDatabaseDiagnostic,
+  type GeneratedApiDatabaseDiagnosticCode,
+  generateGeneratedApiDatabaseArtifacts,
+} from './generatedApiDatabase';
 export {
   createInfraSecretStoreAdapter,
   type CreateInfraSecretStoreAdapterInput,

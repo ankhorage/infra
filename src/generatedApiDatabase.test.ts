@@ -74,7 +74,9 @@ describe('generated API database bridge', () => {
       generatedApis: createGeneratedApis(),
       databaseProvider: 'supabase',
     });
-    const migration = result.files.find((file) => file.path.endsWith('001_generated_api_resources.sql'));
+    const migration = result.files.find((file) =>
+      file.path.endsWith('001_generated_api_resources.sql'),
+    );
 
     expect(migration?.content).toContain('create schema if not exists "app";');
     expect(migration?.content).toContain('create table if not exists "app"."products"');
@@ -102,7 +104,7 @@ describe('generated API database bridge', () => {
 
   test('enables RLS for explicit policy intent without inventing SQL policies', () => {
     const generatedApis = createGeneratedApis();
-    const catalog = generatedApis.catalog;
+    const { catalog } = generatedApis;
     expect(catalog).toBeDefined();
     if (catalog === undefined) return;
 
@@ -119,13 +121,16 @@ describe('generated API database bridge', () => {
       },
       databaseProvider: 'supabase',
     });
-    const migration = result.files.find((file) => file.path.endsWith('001_generated_api_resources.sql'));
+    const migration = result.files.find((file) =>
+      file.path.endsWith('001_generated_api_resources.sql'),
+    );
 
     expect(migration?.content).toContain('alter table "app"."products" enable row level security;');
     expect(migration?.content).not.toContain('create policy');
     expect(
       result.diagnostics.some(
-        (diagnostic) => diagnostic.code === 'unsupported-policy' && diagnostic.severity === 'warning',
+        (diagnostic) =>
+          diagnostic.code === 'unsupported-policy' && diagnostic.severity === 'warning',
       ),
     ).toBe(true);
   });
@@ -168,7 +173,7 @@ describe('generated API database bridge', () => {
   });
 
   test('rejects two generated resources targeting the same database table', () => {
-    const catalog = createGeneratedApis().catalog;
+    const { catalog } = createGeneratedApis();
     expect(catalog).toBeDefined();
     if (catalog === undefined) return;
 

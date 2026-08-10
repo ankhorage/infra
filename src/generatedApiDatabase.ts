@@ -237,7 +237,7 @@ function validatePrimaryKey(
   context: GeneratedResourceContext,
   diagnostics: GeneratedApiDatabaseDiagnostic[],
 ): void {
-  const primaryKey = context.resource.collection.primaryKey;
+  const { primaryKey } = context.resource.collection;
   if (primaryKey === undefined) return;
 
   validateIdentifier(context, 'collection.primaryKey', primaryKey, diagnostics);
@@ -258,7 +258,7 @@ function validateSeeds(
   diagnostics: GeneratedApiDatabaseDiagnostic[],
 ): void {
   const fields = new Map(context.resource.collection.fields.map((field) => [field.name, field]));
-  const primaryKey = context.resource.collection.primaryKey;
+  const { primaryKey } = context.resource.collection;
 
   context.seed.forEach((record, index) => {
     for (const key of Object.keys(record)) {
@@ -362,7 +362,7 @@ function materializeSeedRecord(
   record: GeneratedApiSeedRecord,
   index: number,
 ): GeneratedApiSeedRecord {
-  const primaryKey = context.resource.collection.primaryKey;
+  const { primaryKey } = context.resource.collection;
   if (primaryKey === undefined || record[primaryKey] !== undefined) return record;
 
   const primaryKeyField = context.resource.collection.fields.find(
@@ -473,7 +473,7 @@ function formatValue(value: DataContractValue | undefined): string {
 function generateReadme(contexts: readonly GeneratedResourceContext[]): string {
   const resources = contexts
     .map((context) => {
-      const collection = context.resource.collection;
+      const { collection } = context.resource;
       return `- \`${context.api.id}/${context.resource.id}\` -> \`${collection.schema ?? DEFAULT_DATABASE_SCHEMA}.${collection.name}\``;
     })
     .join('\n');
