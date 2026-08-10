@@ -45,7 +45,9 @@ describe('Supabase OAuth runtime reconciliation', () => {
     expect(statusCommand).toContain('provider supabase-auth/app-callback');
     expect(normalizedGuide).toContain('Supabase OAuth Runtime Reconciliation');
     expect(normalizedGuide).toContain('re-syncs the canonical Supabase runtime');
-    expect(normalizedGuide).toContain('A failed rollout stops Infra Up before its success message.');
+    expect(normalizedGuide).toContain(
+      'A failed rollout stops Infra Up before its success message.',
+    );
   });
 
   test('keeps Auth deployment environment declarative across reconciliation', () => {
