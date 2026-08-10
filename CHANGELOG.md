@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 2.0.1
+
+### Patch Changes
+
+- 6ff65a4: Keep Supabase Auth runtime environment assignments declarative across OAuth reconciliation so repeated Minikube Infra Up runs can safely reapply the generated deployment.
+
 ## 2.0.0
 
 ### Major Changes
