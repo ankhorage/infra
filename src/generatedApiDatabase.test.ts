@@ -318,9 +318,9 @@ describe('generated API database bridge', () => {
     });
 
     expect(result.files).toEqual([]);
-    expect(result.diagnostics.filter((diagnostic) => diagnostic.code === 'invalid-default')).toHaveLength(
-      2,
-    );
+    expect(
+      result.diagnostics.filter((diagnostic) => diagnostic.code === 'invalid-default'),
+    ).toHaveLength(2);
   });
 
   test('integrates generated DB artifacts without generating an API service workload', () => {
