@@ -1,35 +1,67 @@
 [
   {
-    "name": "ApiInfrastructureArtifacts",
+    "name": "AuthRedirectConfiguration",
     "description": null,
     "isReadme": false,
     "examples": [],
     "kind": "type",
-    "modulePath": "src/apis.ts",
+    "modulePath": "src/authRedirects.ts",
     "sourceLocation": {
-      "filePath": "src/apis.ts",
-      "line": 11,
+      "filePath": "src/authRedirects.ts",
+      "line": 12,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["GeneratedInfrastructureFile"],
+    "relatedSymbols": [],
     "signatures": [],
     "members": [
       {
-        "name": "files",
+        "name": "providerCallbackUrl",
         "kind": "property",
-        "type": "readonly GeneratedInfrastructureFile[]",
+        "type": "string",
         "required": true,
         "description": null
       },
       {
-        "name": "warnings",
+        "name": "redirectAllowList",
         "kind": "property",
         "type": "readonly string[]",
         "required": true,
         "description": null
+      },
+      {
+        "name": "serializedRedirectAllowList",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "siteUrl",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
       }
     ],
+    "structuredRows": []
+  },
+  {
+    "name": "AuthRedirectEnvironment",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/authRedirects.ts",
+    "sourceLocation": {
+      "filePath": "src/authRedirects.ts",
+      "line": 1,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
     "structuredRows": []
   },
   {
@@ -98,34 +130,114 @@
     "structuredRows": []
   },
   {
-    "name": "generateApiInfrastructureArtifacts",
+    "name": "GeneratedApiDatabaseArtifacts",
     "description": null,
     "isReadme": false,
     "examples": [],
-    "kind": "function",
-    "modulePath": "src/apiArtifacts.ts",
+    "kind": "type",
+    "modulePath": "src/generatedApiDatabase.ts",
     "sourceLocation": {
-      "filePath": "src/apiArtifacts.ts",
-      "line": 12,
+      "filePath": "src/generatedApiDatabase.ts",
+      "line": 34,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["ApiInfrastructureArtifacts"],
-    "signatures": [
+    "relatedSymbols": ["GeneratedApiDatabaseDiagnostic", "GeneratedInfrastructureFile"],
+    "signatures": [],
+    "members": [
       {
-        "label": "(args: { readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }) => ApiInfrastructureArtifacts",
-        "parameters": [
-          {
-            "name": "args",
-            "type": "{ readonly data: AppDataManifest | undefined; readonly databaseProvider: string | undefined; }",
-            "required": true,
-            "description": null
-          }
-        ],
-        "returnType": "ApiInfrastructureArtifacts",
-        "returnDescription": null
+        "name": "diagnostics",
+        "kind": "property",
+        "type": "readonly GeneratedApiDatabaseDiagnostic[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "files",
+        "kind": "property",
+        "type": "readonly GeneratedInfrastructureFile[]",
+        "required": true,
+        "description": null
       }
     ],
+    "structuredRows": []
+  },
+  {
+    "name": "GeneratedApiDatabaseDiagnostic",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/generatedApiDatabase.ts",
+    "sourceLocation": {
+      "filePath": "src/generatedApiDatabase.ts",
+      "line": 25,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["GeneratedApiDatabaseDiagnosticCode"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "apiId",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "code",
+        "kind": "property",
+        "type": "GeneratedApiDatabaseDiagnosticCode",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "message",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "path",
+        "kind": "property",
+        "type": "string | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "resourceId",
+        "kind": "property",
+        "type": "string | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "severity",
+        "kind": "property",
+        "type": "\"error\" | \"warning\"",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "GeneratedApiDatabaseDiagnosticCode",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/generatedApiDatabase.ts",
+    "sourceLocation": {
+      "filePath": "src/generatedApiDatabase.ts",
+      "line": 13,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
     "members": [],
     "structuredRows": []
   },
@@ -228,6 +340,38 @@
     "structuredRows": []
   },
   {
+    "name": "generateGeneratedApiDatabaseArtifacts",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/generatedApiDatabase.ts",
+    "sourceLocation": {
+      "filePath": "src/generatedApiDatabase.ts",
+      "line": 55,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["GeneratedApiDatabaseArtifacts"],
+    "signatures": [
+      {
+        "label": "(args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) => GeneratedApiDatabaseArtifacts",
+        "parameters": [
+          {
+            "name": "args",
+            "type": "{ readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "GeneratedApiDatabaseArtifacts",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
     "name": "generateInfra",
     "description": null,
     "isReadme": false,
@@ -236,7 +380,7 @@
     "modulePath": "src/index.ts",
     "sourceLocation": {
       "filePath": "src/index.ts",
-      "line": 31,
+      "line": 43,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -268,7 +412,7 @@
     "modulePath": "src/index.ts",
     "sourceLocation": {
       "filePath": "src/index.ts",
-      "line": 35,
+      "line": 47,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -295,6 +439,38 @@
           }
         ],
         "returnType": "InfrastructureGenerationResult",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "getLocalAuthRedirectPatterns",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/authRedirects.ts",
+    "sourceLocation": {
+      "filePath": "src/authRedirects.ts",
+      "line": 48,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [
+      {
+        "label": "(callbackRoute: string) => readonly string[]",
+        "parameters": [
+          {
+            "name": "callbackRoute",
+            "type": "string",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "readonly string[]",
         "returnDescription": null
       }
     ],
@@ -506,7 +682,7 @@
       {
         "name": "appManifest",
         "kind": "property",
-        "type": "Pick<AppManifest, \"data\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+        "type": "Pick<AppManifest, \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
         "required": false,
         "description": null
       },
@@ -572,6 +748,38 @@
     "structuredRows": []
   },
   {
+    "name": "normalizeAuthCallbackRoute",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/authRedirects.ts",
+    "sourceLocation": {
+      "filePath": "src/authRedirects.ts",
+      "line": 53,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [
+      {
+        "label": "(callbackRoute: string) => string",
+        "parameters": [
+          {
+            "name": "callbackRoute",
+            "type": "string",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "string",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
     "name": "PackageDependency",
     "description": null,
     "isReadme": false,
@@ -587,6 +795,99 @@
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "resolveAuthRedirectConfiguration",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/authRedirects.ts",
+    "sourceLocation": {
+      "filePath": "src/authRedirects.ts",
+      "line": 19,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["AuthRedirectConfiguration", "ResolveAuthRedirectConfigurationInput"],
+    "signatures": [
+      {
+        "label": "(input: ResolveAuthRedirectConfigurationInput) => AuthRedirectConfiguration",
+        "parameters": [
+          {
+            "name": "input",
+            "type": "ResolveAuthRedirectConfigurationInput",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "AuthRedirectConfiguration",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "ResolveAuthRedirectConfigurationInput",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/authRedirects.ts",
+    "sourceLocation": {
+      "filePath": "src/authRedirects.ts",
+      "line": 3,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["AuthRedirectEnvironment"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "callbackRoute",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "AuthRedirectEnvironment",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "gatewayOrigin",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "nativeRedirectUris",
+        "kind": "property",
+        "type": "readonly string[] | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "siteOrigin",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "webOrigins",
+        "kind": "property",
+        "type": "readonly string[] | undefined",
+        "required": false,
+        "description": null
+      }
+    ],
     "structuredRows": []
   }
 ]

@@ -6,9 +6,15 @@ graph TD
   package__ankhorage_infra -.-> module_package_json
   module_src_adapters_minikube_auth_index_ts["src/adapters/minikube/auth/index.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_auth_index_ts
+  module_src_adapters_minikube_auth_index_ts --> module_src_adapters_minikube_auth_oauthRuntime_ts
   module_src_adapters_minikube_auth_index_ts --> module_src_adapters_minikube_auth_supabase_index_ts
   module_src_adapters_minikube_auth_index_ts --> module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_index_ts --> module_src_types_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts["src/adapters/minikube/auth/oauthRuntime.ts"]
+  package__ankhorage_infra -.-> module_src_adapters_minikube_auth_oauthRuntime_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --> module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --> module_src_authRedirects_ts
+  module_src_adapters_minikube_auth_oauthRuntime_ts --> module_src_types_ts
   module_src_adapters_minikube_auth_supabase_index_ts["src/adapters/minikube/auth/supabase/index.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_auth_supabase_index_ts
   module_src_adapters_minikube_auth_supabase_index_ts --> module_src_adapters_minikube_auth_supabase_profile_ts
@@ -44,7 +50,7 @@ graph TD
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_base_index_ts
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_secrets_index_ts
   module_src_adapters_minikube_index_ts --> module_src_adapters_minikube_storage_index_ts
-  module_src_adapters_minikube_index_ts --> module_src_apiArtifacts_ts
+  module_src_adapters_minikube_index_ts --> module_src_generatedApiDatabase_ts
   module_src_adapters_minikube_index_ts --> module_src_types_ts
   module_src_adapters_minikube_secrets_index_ts["src/adapters/minikube/secrets/index.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_secrets_index_ts
@@ -63,12 +69,8 @@ graph TD
   module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
   package__ankhorage_infra -.-> module_src_adapters_minikube_storage_supabase_index_ts
   module_src_adapters_minikube_storage_supabase_index_ts --> module_src_adapters_minikube_contracts_ts
-  module_src_apiArtifacts_ts["src/apiArtifacts.ts"]
-  package__ankhorage_infra -.-> module_src_apiArtifacts_ts
-  module_src_apiArtifacts_ts --> module_src_apis_ts
-  module_src_apis_ts["src/apis.ts"]
-  package__ankhorage_infra -.-> module_src_apis_ts
-  module_src_apis_ts --> module_src_types_ts
+  module_src_authRedirects_ts["src/authRedirects.ts"]
+  package__ankhorage_infra -.-> module_src_authRedirects_ts
   module_src_cli_bin_ts["src/cli/bin.ts"]
   package__ankhorage_infra -.-> module_src_cli_bin_ts
   module_src_cli_bin_ts --> module_src_commandContext_ts
@@ -88,6 +90,9 @@ graph TD
   module_src_commands_ts --> module_src_project_ts
   module_src_commands_ts --> module_src_projectInfrastructure_ts
   module_src_commands_ts --> module_src_runtime_ts
+  module_src_generatedApiDatabase_ts["src/generatedApiDatabase.ts"]
+  package__ankhorage_infra -.-> module_src_generatedApiDatabase_ts
+  module_src_generatedApiDatabase_ts --> module_src_types_ts
   module_src_index_ts["src/index.ts"]
   module_src_index_ts --> module_src_adapters_minikube_index_ts
   module_src_index_ts --> module_src_types_ts

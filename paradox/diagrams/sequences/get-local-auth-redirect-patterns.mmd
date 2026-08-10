@@ -1,0 +1,5 @@
+sequenceDiagram
+  participant participant_getLocalAuthRedirectPatterns as getLocalAuthRedirectPatterns
+  participant participant_normalizeCallbackRoute as normalizeCallbackRoute
+  participant_getLocalAuthRedirectPatterns->>participant_normalizeCallbackRoute: normalizeCallbackRoute()
+  participant_normalizeCallbackRoute-->>participant_getLocalAuthRedirectPatterns: return

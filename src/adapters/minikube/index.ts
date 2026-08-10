@@ -1,4 +1,4 @@
-import { generateApiInfrastructureArtifacts } from '../../apiArtifacts';
+import { generateGeneratedApiDatabaseArtifacts } from '../../generatedApiDatabase';
 import type {
   GeneratedPackageDependency,
   InfraManifestInput,
@@ -41,10 +41,21 @@ export function generateMinikubeInfra(
   });
   const storageArtifacts = generateStorageArtifacts({ manifest, namespace });
   const secretStoreArtifacts = generateSecretStoreArtifacts({ manifest, namespace });
-  const apiArtifacts = generateApiInfrastructureArtifacts({
-    data: options.appManifest?.data,
+  const generatedApiDatabaseArtifacts = generateGeneratedApiDatabaseArtifacts({
+    generatedApis: options.appManifest?.generatedApis,
     databaseProvider: manifest.database?.provider,
   });
+  const generatedApiErrors = generatedApiDatabaseArtifacts.diagnostics.filter(
+    (diagnostic) => diagnostic.severity === 'error',
+  );
+
+  if (generatedApiErrors.length > 0) {
+    throw new Error(
+      `Generated API database definition is invalid:\n${generatedApiErrors
+        .map((diagnostic) => `- ${diagnostic.path ?? diagnostic.apiId}: ${diagnostic.message}`)
+        .join('\n')}`,
+    );
+  }
 
   const extraResources = unique([
     ...authArtifacts.resources,
@@ -83,7 +94,9 @@ export function generateMinikubeInfra(
     ...authzArtifacts.warnings,
     ...storageArtifacts.warnings,
     ...secretStoreArtifacts.warnings,
-    ...apiArtifacts.warnings,
+    ...generatedApiDatabaseArtifacts.diagnostics
+      .filter((diagnostic) => diagnostic.severity === 'warning')
+      .map((diagnostic) => diagnostic.message),
   ]);
 
   return {
@@ -93,7 +106,7 @@ export function generateMinikubeInfra(
       ...authzArtifacts.files,
       ...storageArtifacts.files,
       ...secretStoreArtifacts.files,
-      ...apiArtifacts.files,
+      ...generatedApiDatabaseArtifacts.files,
     ],
     warnings,
     meta: {

@@ -3,7 +3,7 @@
 
 # INFRA
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v1.0.4](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v1.1.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
 
 Executable infra provider and standalone CLI for Ankhorage project workflows.
 
@@ -57,3 +57,6 @@ bunx @ankhorage/infra
 - [Export graph](././paradox/diagrams/export-graph.mmd)
 - [ankhorage-infra sequence](././paradox/diagrams/sequences/ankhorage-infra.mmd)
 - [createInfraSecretStoreAdapter sequence](././paradox/diagrams/sequences/create-infra-secret-store-adapter.mmd)
+- [getLocalAuthRedirectPatterns sequence](././paradox/diagrams/sequences/get-local-auth-redirect-patterns.mmd)
+- [normalizeAuthCallbackRoute sequence](././paradox/diagrams/sequences/normalize-auth-callback-route.mmd)
+- [resolveAuthRedirectConfiguration sequence](././paradox/diagrams/sequences/resolve-auth-redirect-configuration.mmd)

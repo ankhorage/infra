@@ -1,6 +1,7 @@
 graph LR
   module_package_json["package.json"]
   module_src_adapters_minikube_auth_index_ts["src/adapters/minikube/auth/index.ts"]
+  module_src_adapters_minikube_auth_oauthRuntime_ts["src/adapters/minikube/auth/oauthRuntime.ts"]
   module_src_adapters_minikube_auth_supabase_index_ts["src/adapters/minikube/auth/supabase/index.ts"]
   module_src_adapters_minikube_auth_supabase_profile_ts["src/adapters/minikube/auth/supabase/profile.ts"]
   module_src_adapters_minikube_authz_cerbos_index_ts["src/adapters/minikube/authz/cerbos/index.ts"]
@@ -13,12 +14,12 @@ graph LR
   module_src_adapters_minikube_secrets_supabase_vault_index_ts["src/adapters/minikube/secrets/supabase-vault/index.ts"]
   module_src_adapters_minikube_storage_index_ts["src/adapters/minikube/storage/index.ts"]
   module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
-  module_src_apiArtifacts_ts["src/apiArtifacts.ts"]
-  module_src_apis_ts["src/apis.ts"]
+  module_src_authRedirects_ts["src/authRedirects.ts"]
   module_src_cli_bin_ts["src/cli/bin.ts"]
   module_src_cli_index_ts["src/cli/index.ts"]
   module_src_commandContext_ts["src/commandContext.ts"]
   module_src_commands_ts["src/commands.ts"]
+  module_src_generatedApiDatabase_ts["src/generatedApiDatabase.ts"]
   module_src_index_ts["src/index.ts"]
   module_src_infraValidation_ts["src/infraValidation.ts"]
   module_src_metadata_index_ts["src/metadata/index.ts"]
@@ -29,9 +30,10 @@ graph LR
   module_src_secretStore_ts["src/secretStore.ts"]
   module_src_testSupport_ts["src/testSupport.ts"]
   module_src_types_ts["src/types.ts"]
-  export_ApiInfrastructureArtifacts["ApiInfrastructureArtifacts"]
-  module_src_apis_ts --> export_ApiInfrastructureArtifacts
-  export_ApiInfrastructureArtifacts -.-> export_GeneratedInfrastructureFile
+  export_AuthRedirectConfiguration["AuthRedirectConfiguration"]
+  module_src_authRedirects_ts --> export_AuthRedirectConfiguration
+  export_AuthRedirectEnvironment["AuthRedirectEnvironment"]
+  module_src_authRedirects_ts --> export_AuthRedirectEnvironment
   export_createInfraSecretStoreAdapter["createInfraSecretStoreAdapter"]
   module_src_secretStore_ts --> export_createInfraSecretStoreAdapter
   export_createInfraSecretStoreAdapter -.-> export_CreateInfraSecretStoreAdapterInput
@@ -39,15 +41,24 @@ graph LR
   module_src_secretStore_ts --> export_CreateInfraSecretStoreAdapterInput
   export_CreateInfraSecretStoreAdapterInput -.-> export_InfraManifestInput
   export_CreateInfraSecretStoreAdapterInput -.-> export_InfraSecretStoreProviders
-  export_generateApiInfrastructureArtifacts["generateApiInfrastructureArtifacts"]
-  module_src_apiArtifacts_ts --> export_generateApiInfrastructureArtifacts
-  export_generateApiInfrastructureArtifacts -.-> export_ApiInfrastructureArtifacts
+  export_GeneratedApiDatabaseArtifacts["GeneratedApiDatabaseArtifacts"]
+  module_src_generatedApiDatabase_ts --> export_GeneratedApiDatabaseArtifacts
+  export_GeneratedApiDatabaseArtifacts -.-> export_GeneratedApiDatabaseDiagnostic
+  export_GeneratedApiDatabaseArtifacts -.-> export_GeneratedInfrastructureFile
+  export_GeneratedApiDatabaseDiagnostic["GeneratedApiDatabaseDiagnostic"]
+  module_src_generatedApiDatabase_ts --> export_GeneratedApiDatabaseDiagnostic
+  export_GeneratedApiDatabaseDiagnostic -.-> export_GeneratedApiDatabaseDiagnosticCode
+  export_GeneratedApiDatabaseDiagnosticCode["GeneratedApiDatabaseDiagnosticCode"]
+  module_src_generatedApiDatabase_ts --> export_GeneratedApiDatabaseDiagnosticCode
   export_GeneratedFile["GeneratedFile"]
   module_src_types_ts --> export_GeneratedFile
   export_GeneratedInfrastructureFile["GeneratedInfrastructureFile"]
   module_src_types_ts --> export_GeneratedInfrastructureFile
   export_GeneratedPackageDependency["GeneratedPackageDependency"]
   module_src_types_ts --> export_GeneratedPackageDependency
+  export_generateGeneratedApiDatabaseArtifacts["generateGeneratedApiDatabaseArtifacts"]
+  module_src_generatedApiDatabase_ts --> export_generateGeneratedApiDatabaseArtifacts
+  export_generateGeneratedApiDatabaseArtifacts -.-> export_GeneratedApiDatabaseArtifacts
   export_generateInfra["generateInfra"]
   module_src_index_ts --> export_generateInfra
   export_generateInfra -.-> export_InfraGenerationInput
@@ -57,6 +68,8 @@ graph LR
   export_generateInfrastructure -.-> export_InfraManifestInput
   export_generateInfrastructure -.-> export_InfrastructureGenerationOptions
   export_generateInfrastructure -.-> export_InfrastructureGenerationResult
+  export_getLocalAuthRedirectPatterns["getLocalAuthRedirectPatterns"]
+  module_src_authRedirects_ts --> export_getLocalAuthRedirectPatterns
   export_InfraDiagnostic["InfraDiagnostic"]
   module_src_types_ts --> export_InfraDiagnostic
   export_InfraGenerationInput["InfraGenerationInput"]
@@ -80,5 +93,14 @@ graph LR
   export_InfrastructureGenerationResult -.-> export_GeneratedInfrastructureFile
   export_InfrastructureGenerationResult -.-> export_GeneratedPackageDependency
   export_InfrastructureGenerationResult -.-> export_InfrastructureGenerationMeta
+  export_normalizeAuthCallbackRoute["normalizeAuthCallbackRoute"]
+  module_src_authRedirects_ts --> export_normalizeAuthCallbackRoute
   export_PackageDependency["PackageDependency"]
   module_src_types_ts --> export_PackageDependency
+  export_resolveAuthRedirectConfiguration["resolveAuthRedirectConfiguration"]
+  module_src_authRedirects_ts --> export_resolveAuthRedirectConfiguration
+  export_resolveAuthRedirectConfiguration -.-> export_AuthRedirectConfiguration
+  export_resolveAuthRedirectConfiguration -.-> export_ResolveAuthRedirectConfigurationInput
+  export_ResolveAuthRedirectConfigurationInput["ResolveAuthRedirectConfigurationInput"]
+  module_src_authRedirects_ts --> export_ResolveAuthRedirectConfigurationInput
+  export_ResolveAuthRedirectConfigurationInput -.-> export_AuthRedirectEnvironment

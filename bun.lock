@@ -5,7 +5,7 @@
     "": {
       "name": "@ankhorage/infra",
       "dependencies": {
-        "@ankhorage/contracts": "^2.1.0",
+        "@ankhorage/contracts": "^4.0.2",
         "@ankhorage/supabase-vault": "^0.2.4",
       },
       "devDependencies": {
@@ -22,9 +22,9 @@
   "packages": {
     "@ankhorage/ankh": ["@ankhorage/ankh@0.4.0", "", { "dependencies": { "@ankhorage/contracts": "^1.19.0", "yaml": "^2.8.1" }, "bin": { "ankh": "dist/bin.js" } }, "sha512-wFRH7QZ4ZIViJwJaJwVgDwbU03cDwbqdSgGDlcw3xeB3iOO/elY1bojE0DTp5UavfGsZDb8ZyZPYo4UYppaLWg=="],
 
-    "@ankhorage/color-theory": ["@ankhorage/color-theory@0.0.7", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-fcdJZMmhfbvc9Yhz5vjTolmWYAaCsUaUOq4/P6YDZLHhXer8Mv8y0LaOhWgaXcwq48nrxILGUMOxOl48tRhTmA=="],
+    "@ankhorage/color-theory": ["@ankhorage/color-theory@0.0.8", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-+JRLkvBUiPxFrRANyewRZxLv1sU5cKFOc3VBYB+b/eFngLFDIAqXf/a4e0A6gQE+lk6e3wb3FcGQYIyYB1Dqzg=="],
 
-    "@ankhorage/contracts": ["@ankhorage/contracts@2.1.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.0.7" } }, "sha512-QGG0atpGDe9+BUWzWvV83Kj309TBOK76yBRbWOoQli8g0LY8QLb7Z4UquD+qVhtWJTp3Y1jHUTEttQ0WjdhY/Q=="],
+    "@ankhorage/contracts": ["@ankhorage/contracts@4.0.2", "", { "dependencies": { "@ankhorage/color-theory": "^0.0.8" } }, "sha512-mxWLgJ4DYcSe5PRZBmbeqsyJXjBT5mlBkSoYqigNFw750OjiCjs9DfAxK3npapEASuy4uJWsIWdqLlld3KT/ww=="],
 
     "@ankhorage/devtools": ["@ankhorage/devtools@1.0.6", "", { "dependencies": { "@eslint/js": "^10.0.1", "eslint": "^10.2.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.5", "eslint-plugin-simple-import-sort": "^12.1.1", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.12.2", "prettier": "^3.8.1", "typescript-eslint": "^8.24.0" }, "bin": { "ankhorage-eslint": "dist/eslint-cli.js", "ankhorage-knip": "dist/knip-cli.js", "ankhorage-prettier": "dist/prettier-cli.js" } }, "sha512-QXvpJ3uvr3xcl/smjv0yMimtGRCt/dPs0lVdHYMAXg06u1HsZmoKhRyxdFX8OXcCv9RnfPNheUkjAbOrs0eeaQ=="],
 
@@ -744,6 +744,8 @@
 
     "@ankhorage/ankh/@ankhorage/contracts": ["@ankhorage/contracts@1.19.1", "", { "dependencies": { "@ankhorage/color-theory": "^0.0.7" } }, "sha512-GwmrUhEAvhjllsV38P/zLrPliru1hzZQsI5sgHDRP5OmvfKL9/gUJ53UuBageYqhW7aeXywacvMXRX9LiqZJfw=="],
 
+    "@ankhorage/supabase-vault/@ankhorage/contracts": ["@ankhorage/contracts@2.1.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.0.7" } }, "sha512-QGG0atpGDe9+BUWzWvV83Kj309TBOK76yBRbWOoQli8g0LY8QLb7Z4UquD+qVhtWJTp3Y1jHUTEttQ0WjdhY/Q=="],
+
     "@changesets/apply-release-plan/prettier": ["prettier@2.8.8", "", { "bin": { "prettier": "bin-prettier.js" } }, "sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q=="],
 
     "@changesets/write/prettier": ["prettier@2.8.8", "", { "bin": { "prettier": "bin-prettier.js" } }, "sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q=="],
@@ -781,6 +783,10 @@
     "node-exports-info/semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
 
     "read-yaml-file/js-yaml": ["js-yaml@3.14.2", "", { "dependencies": { "argparse": "^1.0.7", "esprima": "^4.0.0" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-PMSmkqxr106Xa156c2M265Z+FTrPl+oxd/rgOQy2tijQeK5TxQ43psO1ZCwhVOSdnn+RzkzlRz/eY4BgJBYVpg=="],
+
+    "@ankhorage/ankh/@ankhorage/contracts/@ankhorage/color-theory": ["@ankhorage/color-theory@0.0.7", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-fcdJZMmhfbvc9Yhz5vjTolmWYAaCsUaUOq4/P6YDZLHhXer8Mv8y0LaOhWgaXcwq48nrxILGUMOxOl48tRhTmA=="],
+
+    "@ankhorage/supabase-vault/@ankhorage/contracts/@ankhorage/color-theory": ["@ankhorage/color-theory@0.0.7", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-fcdJZMmhfbvc9Yhz5vjTolmWYAaCsUaUOq4/P6YDZLHhXer8Mv8y0LaOhWgaXcwq48nrxILGUMOxOl48tRhTmA=="],
 
     "@manypkg/find-root/find-up/locate-path": ["locate-path@5.0.0", "", { "dependencies": { "p-locate": "^4.1.0" } }, "sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g=="],
 

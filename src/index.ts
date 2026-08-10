@@ -6,8 +6,6 @@ import type {
   InfrastructureGenerationResult,
 } from './types';
 
-export type { ApiInfrastructureArtifacts } from './apiArtifacts';
-export { generateApiInfrastructureArtifacts } from './apiArtifacts';
 export {
   type AuthRedirectConfiguration,
   type AuthRedirectEnvironment,
@@ -16,6 +14,12 @@ export {
   resolveAuthRedirectConfiguration,
   type ResolveAuthRedirectConfigurationInput,
 } from './authRedirects';
+export {
+  type GeneratedApiDatabaseArtifacts,
+  type GeneratedApiDatabaseDiagnostic,
+  type GeneratedApiDatabaseDiagnosticCode,
+  generateGeneratedApiDatabaseArtifacts,
+} from './generatedApiDatabase';
 export {
   createInfraSecretStoreAdapter,
   type CreateInfraSecretStoreAdapterInput,
