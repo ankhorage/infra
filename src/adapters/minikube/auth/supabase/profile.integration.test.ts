@@ -1023,6 +1023,6 @@ function createManifest(args: {
     networking: {
       cdn: false,
     },
-    plugins: [],
+    modules: [],
   };
 }

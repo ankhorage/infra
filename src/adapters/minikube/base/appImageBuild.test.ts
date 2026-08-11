@@ -33,7 +33,7 @@ test('re-exports rotated public environment values before building the app image
       {
         deployment: { target: 'minikube', monitoring: false },
         auth: { scope: 'global', provider: 'supabase' },
-        plugins: [],
+        modules: [],
       },
       { appManifest: createAppManifest(APP_SLUG) },
     );

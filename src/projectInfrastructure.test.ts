@@ -29,7 +29,7 @@ describe('project infrastructure sync', () => {
       projectPath,
       manifest: createAppManifest('shop', {
         deployment: { target: 'minikube', monitoring: false },
-        plugins: [],
+        modules: [],
       }),
       generateInfrastructureImpl() {
         return {
@@ -77,7 +77,7 @@ describe('project infrastructure sync', () => {
 
     const manifest = createAppManifest('shop', {
       deployment: { target: 'minikube', monitoring: false },
-      plugins: [],
+      modules: [],
     });
 
     await syncProjectInfrastructure({
@@ -141,7 +141,7 @@ describe('project infrastructure sync', () => {
     const result = await syncProjectInfrastructure({
       projectId: 'shop',
       projectPath,
-      manifest: createAppManifest('shop', { plugins: [] }),
+      manifest: createAppManifest('shop', { modules: [] }),
     });
 
     expect(result.generated).toBe(0);
@@ -158,7 +158,7 @@ describe('project infrastructure sync', () => {
       projectPath,
       manifest: createAppManifest('studio', {
         deployment: { target: 'minikube', monitoring: false },
-        plugins: [],
+        modules: [],
       }),
     });
 
@@ -183,7 +183,7 @@ describe('project infrastructure sync', () => {
     );
 
     const target = await resolveProjectInfrastructureTarget({
-      manifest: createAppManifest('shop', { plugins: [] }),
+      manifest: createAppManifest('shop', { modules: [] }),
       projectPath,
     });
 

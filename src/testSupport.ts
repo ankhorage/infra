@@ -79,7 +79,7 @@ export async function createWorkspaceFixture(
 
 export function createAppManifest(
   projectId: string,
-  infra: AppManifest['infra'] = { plugins: [] },
+  infra: AppManifest['infra'] = { modules: [] },
 ): AppManifest {
   return {
     metadata: {

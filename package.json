@@ -35,7 +35,7 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/contracts": "^4.0.2",
+    "@ankhorage/contracts": "^6.0.0",
     "@ankhorage/supabase-vault": "^0.2.4"
   },
   "files": [

@@ -66,7 +66,7 @@ describe('infra command table', () => {
               manifestPath: '/workspace/apps/shop/ankh.config.json',
               projectId: 'shop',
               projectPath: '/workspace/apps/shop',
-              manifest: createAppManifest('shop', { plugins: [] }),
+              manifest: createAppManifest('shop', { modules: [] }),
             });
           },
           validateInfraSupport() {
@@ -104,7 +104,7 @@ describe('infra command table', () => {
               manifestPath: '/workspace/apps/studio/ankh.config.json',
               projectId: 'studio',
               projectPath: '/workspace/apps/studio',
-              manifest: createAppManifest('studio', { plugins: [] }),
+              manifest: createAppManifest('studio', { modules: [] }),
             });
           },
           syncProjectInfrastructure() {
@@ -146,7 +146,7 @@ describe('infra command table', () => {
           projectPath: '/workspace/apps/shop',
           manifest: createAppManifest('shop', {
             deployment: { target: 'minikube', monitoring: false },
-            plugins: [],
+            modules: [],
           }),
         });
       },

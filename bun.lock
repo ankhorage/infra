@@ -5,7 +5,7 @@
     "": {
       "name": "@ankhorage/infra",
       "dependencies": {
-        "@ankhorage/contracts": "^4.0.2",
+        "@ankhorage/contracts": "^6.0.0",
         "@ankhorage/supabase-vault": "^0.2.4",
       },
       "devDependencies": {
@@ -24,7 +24,7 @@
 
     "@ankhorage/color-theory": ["@ankhorage/color-theory@0.0.8", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-+JRLkvBUiPxFrRANyewRZxLv1sU5cKFOc3VBYB+b/eFngLFDIAqXf/a4e0A6gQE+lk6e3wb3FcGQYIyYB1Dqzg=="],
 
-    "@ankhorage/contracts": ["@ankhorage/contracts@4.0.2", "", { "dependencies": { "@ankhorage/color-theory": "^0.0.8" } }, "sha512-mxWLgJ4DYcSe5PRZBmbeqsyJXjBT5mlBkSoYqigNFw750OjiCjs9DfAxK3npapEASuy4uJWsIWdqLlld3KT/ww=="],
+    "@ankhorage/contracts": ["@ankhorage/contracts@6.0.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.0.8" } }, "sha512-u6q9HRTMT3fnDEAwj8bMJ4sH6lXh1m90G7q3tZpIuc6NtysV52Z+6fduqYdu83eMHgbYwBXjUHNFY8ZCA9QCNA=="],
 
     "@ankhorage/devtools": ["@ankhorage/devtools@1.0.6", "", { "dependencies": { "@eslint/js": "^10.0.1", "eslint": "^10.2.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.5", "eslint-plugin-simple-import-sort": "^12.1.1", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.12.2", "prettier": "^3.8.1", "typescript-eslint": "^8.24.0" }, "bin": { "ankhorage-eslint": "dist/eslint-cli.js", "ankhorage-knip": "dist/knip-cli.js", "ankhorage-prettier": "dist/prettier-cli.js" } }, "sha512-QXvpJ3uvr3xcl/smjv0yMimtGRCt/dPs0lVdHYMAXg06u1HsZmoKhRyxdFX8OXcCv9RnfPNheUkjAbOrs0eeaQ=="],
 

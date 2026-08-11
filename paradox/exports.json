@@ -348,7 +348,7 @@
     "modulePath": "src/generatedApiDatabase.ts",
     "sourceLocation": {
       "filePath": "src/generatedApiDatabase.ts",
-      "line": 55,
+      "line": 56,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -656,7 +656,7 @@
       {
         "name": "target",
         "kind": "property",
-        "type": "import(\"/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+        "type": "import(\"/private/tmp/ankhorage-infra-125/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
         "required": true,
         "description": null
       }

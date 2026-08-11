@@ -101,7 +101,7 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
           target: 'minikube',
           monitoring: false,
         },
-        plugins: [],
+        modules: [],
       },
       {
         appManifest: createAppManifest('frontend-only'),
@@ -508,7 +508,7 @@ function createSupabaseManifest(): InfraManifestInput {
       provider: 'supabase',
       buckets: ['assets'],
     },
-    plugins: [],
+    modules: [],
   };
 }
 

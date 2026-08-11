@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v1.1.0",
+      "value": "v2.0.1",
       "color": "cb3837"
     },
     {
@@ -761,7 +761,7 @@
       "modulePath": "src/generatedApiDatabase.ts",
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 55,
+        "line": 56,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -1069,7 +1069,7 @@
         {
           "name": "target",
           "kind": "property",
-          "type": "import(\"/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+          "type": "import(\"/private/tmp/ankhorage-infra-125/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
           "required": true,
           "description": null
         }
@@ -1356,7 +1356,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
-        "line": 132,
+        "line": 124,
         "column": 1
       }
     },
@@ -1365,7 +1365,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/oauthRuntime.ts",
-        "line": 148,
+        "line": 140,
         "column": 1
       }
     },
@@ -2634,7 +2634,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 55,
+        "line": 56,
         "column": 1
       }
     },
@@ -2643,7 +2643,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 103,
+        "line": 104,
         "column": 1
       }
     },
@@ -2652,7 +2652,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 115,
+        "line": 116,
         "column": 1
       }
     },
@@ -2661,7 +2661,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 204,
+        "line": 205,
         "column": 1
       }
     },
@@ -2670,7 +2670,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 236,
+        "line": 237,
         "column": 1
       }
     },
@@ -2679,7 +2679,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 256,
+        "line": 257,
         "column": 1
       }
     },
@@ -2688,7 +2688,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 299,
+        "line": 326,
         "column": 1
       }
     },
@@ -2697,7 +2697,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 316,
+        "line": 343,
         "column": 1
       }
     },
@@ -2706,7 +2706,16 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 333,
+        "line": 360,
+        "column": 1
+      }
+    },
+    {
+      "name": "isCompatibleFieldValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 366,
         "column": 1
       }
     },
@@ -2715,7 +2724,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 351,
+        "line": 383,
         "column": 1
       }
     },
@@ -2724,7 +2733,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 360,
+        "line": 392,
         "column": 1
       }
     },
@@ -2733,7 +2742,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 379,
+        "line": 411,
         "column": 1
       }
     },
@@ -2742,7 +2751,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 408,
+        "line": 440,
         "column": 1
       }
     },
@@ -2751,7 +2760,16 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 417,
+        "line": 449,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatSeedValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 475,
         "column": 1
       }
     },
@@ -2760,7 +2778,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 440,
+        "line": 480,
         "column": 1
       }
     },
@@ -2769,7 +2787,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 448,
+        "line": 488,
         "column": 1
       }
     },
@@ -2778,7 +2796,16 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 457,
+        "line": 497,
+        "column": 1
+      }
+    },
+    {
+      "name": "formatFieldValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/generatedApiDatabase.ts",
+        "line": 505,
         "column": 1
       }
     },
@@ -2787,7 +2814,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 465,
+        "line": 513,
         "column": 1
       }
     },
@@ -2796,7 +2823,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 473,
+        "line": 521,
         "column": 1
       }
     },
@@ -2805,7 +2832,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 484,
+        "line": 532,
         "column": 1
       }
     },
@@ -2814,7 +2841,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 488,
+        "line": 536,
         "column": 1
       }
     },
@@ -2823,7 +2850,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 492,
+        "line": 540,
         "column": 1
       }
     },
@@ -2832,7 +2859,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 496,
+        "line": 544,
         "column": 1
       }
     },
@@ -2841,7 +2868,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/generatedApiDatabase.ts",
-        "line": 503,
+        "line": 551,
         "column": 1
       }
     },
@@ -3958,9 +3985,21 @@
         "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
+        "fromSymbol": "src/generatedApiDatabase.ts",
+        "toSymbol": "isCompatibleFieldValue",
+        "callExpression": "isCompatibleFieldValue",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
         "fromSymbol": "validateIdentifier",
         "toSymbol": "resourceDiagnostic",
         "callExpression": "resourceDiagnostic",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "isCompatibleDefault",
+        "toSymbol": "isCompatibleFieldValue",
+        "callExpression": "isCompatibleFieldValue",
         "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
@@ -4001,8 +4040,14 @@
       },
       {
         "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "formatValue",
-        "callExpression": "formatValue",
+        "toSymbol": "formatSeedValue",
+        "callExpression": "formatSeedValue",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatSeedValue",
+        "toSymbol": "formatFieldValue",
+        "callExpression": "formatFieldValue",
         "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
@@ -4025,6 +4070,18 @@
       },
       {
         "fromSymbol": "formatDefault",
+        "toSymbol": "formatFieldValue",
+        "callExpression": "formatFieldValue",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatFieldValue",
+        "toSymbol": "escapeString",
+        "callExpression": "escapeString",
+        "sourcePath": "src/generatedApiDatabase.ts"
+      },
+      {
+        "fromSymbol": "formatFieldValue",
         "toSymbol": "formatValue",
         "callExpression": "formatValue",
         "sourcePath": "src/generatedApiDatabase.ts"
@@ -5369,11 +5426,6 @@
       {
         "fromSymbol": "InfrastructureGenerationMeta",
         "toType": "DeploymentTarget",
-        "sourcePath": "src/types.ts"
-      },
-      {
-        "fromSymbol": "InfrastructureGenerationMeta",
-        "toType": "Users",
         "sourcePath": "src/types.ts"
       },
       {
