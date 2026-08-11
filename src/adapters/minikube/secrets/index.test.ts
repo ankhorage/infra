@@ -14,7 +14,7 @@ function createManifest(overrides: Partial<InfraManifestInput> = {}): InfraManif
     secretStore: {
       provider: 'supabase-vault',
     },
-    plugins: [],
+    modules: [],
     ...overrides,
   };
 }

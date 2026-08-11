@@ -222,6 +222,6 @@ function createManifest(auth: Pick<NonNullable<InfraManifest['auth']>, 'profile'
       provider: 'supabase',
       tier: 'dev',
     },
-    plugins: [],
+    modules: [],
   };
 }

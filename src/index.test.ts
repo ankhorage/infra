@@ -42,7 +42,7 @@ describe('generateInfrastructure', () => {
         domain: 'alpha.local',
         cdn: false,
       },
-      plugins: [],
+      modules: [],
     };
 
     const result = generateInfrastructure(manifest, { appManifest: createAppManifest('alpha') });
@@ -125,7 +125,7 @@ describe('generateInfrastructure', () => {
         provider: 'supabase',
         buckets: ['assets', ' assets ', '', 'assets', 'uploads'],
       },
-      plugins: [],
+      modules: [],
     };
 
     const result = generateInfrastructure(manifest, {
@@ -163,7 +163,7 @@ describe('generateInfrastructure', () => {
         provider: 'supabase',
         tier: 'dev',
       },
-      plugins: [],
+      modules: [],
     };
 
     const appManifest: Pick<AppManifest, 'metadata' | 'navigator' | 'screens' | 'settings'> = {
@@ -237,7 +237,7 @@ describe('generateInfrastructure', () => {
 
   test('throws for missing deployment', () => {
     const manifest: InfraManifestInput = {
-      plugins: [],
+      modules: [],
     };
 
     expect(() => generateInfrastructure(manifest)).toThrow('Deployment configuration is missing.');
@@ -249,7 +249,7 @@ describe('generateInfrastructure', () => {
         target: 'kubernetes',
         monitoring: false,
       },
-      plugins: [],
+      modules: [],
     };
 
     expect(() => generateInfrastructure(manifest)).toThrow(
@@ -267,7 +267,7 @@ describe('generateInfrastructure', () => {
         provider: 'supabase',
         tier: 'dev',
       },
-      plugins: [],
+      modules: [],
     };
 
     expect(() => generateInfrastructure(manifest, { namespaceHint: 'shop' })).toThrow(

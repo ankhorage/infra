@@ -140,7 +140,7 @@ function generateAppOnlyInfrastructure(slug: string) {
       target: 'minikube',
       monitoring: false,
     },
-    plugins: [],
+    modules: [],
   };
 
   return generateInfrastructure(manifest, {
@@ -280,7 +280,7 @@ function generateSupabaseInfrastructure(slug: string) {
     secretStore: {
       provider: 'supabase-vault',
     },
-    plugins: [],
+    modules: [],
   };
 
   return generateInfrastructure(manifest, {

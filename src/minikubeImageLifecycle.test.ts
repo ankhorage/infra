@@ -11,7 +11,7 @@ describe('minikube generated app image lifecycle', () => {
         target: 'minikube',
         monitoring: false,
       },
-      plugins: [],
+      modules: [],
     };
 
     const result = generateInfrastructure(manifest, { appManifest: createAppManifest('shop') });

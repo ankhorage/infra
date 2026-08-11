@@ -21,7 +21,7 @@ test('keeps multiple provider redirect assignments as separate shell arguments',
     },
     database: { provider: 'supabase', tier: 'dev' },
     secretStore: { provider: 'supabase-vault' },
-    plugins: [],
+    modules: [],
   };
   const result = generateInfrastructure(manifest, {
     appManifest: createAppManifest('multi-oauth'),

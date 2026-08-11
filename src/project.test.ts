@@ -58,7 +58,7 @@ describe('resolveInfraProject', () => {
 
     expect(project.manifest.metadata.name).toBe('shop');
     expect(project.manifest.metadata.slug).toBe('shop');
-    expect(project.manifest.infra.plugins).toEqual([]);
+    expect(project.manifest.infra.modules).toEqual([]);
   });
 
   test('rejects malformed manifest JSON', async () => {
@@ -186,7 +186,7 @@ describe('resolveInfraProject', () => {
         monitoring: false,
         target: 'minikube',
       },
-      plugins: [],
+      modules: [],
     });
     const fixture = await createWorkspaceFixture({
       manifest,

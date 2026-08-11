@@ -120,7 +120,7 @@ Source: `src/types.ts:12:1`
 
 Kind: `function`
 Module: `src/generatedApiDatabase.ts`
-Source: `src/generatedApiDatabase.ts:55:1`
+Source: `src/generatedApiDatabase.ts:56:1`
 
 ### Signatures
 
@@ -230,10 +230,10 @@ Source: `src/types.ts:18:1`
 
 ### Members
 
-| Name      | Kind     | Type                                                                                                     | Required | Description |
-| --------- | -------- | -------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| providers | property | `readonly string[]`                                                                                      | yes      |             |
-| target    | property | `import("/Users/a_rtiphishl_e/git/infra/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
+| Name      | Kind     | Type                                                                                                       | Required | Description |
+| --------- | -------- | ---------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| providers | property | `readonly string[]`                                                                                        | yes      |             |
+| target    | property | `import("/private/tmp/ankhorage-infra-125/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
 
 ## InfrastructureGenerationOptions
 

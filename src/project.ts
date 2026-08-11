@@ -76,7 +76,7 @@ function createFallbackManifest(projectId: string): AppManifest {
     themes: [],
     activeThemeId: 'default',
     infra: {
-      plugins: [],
+      modules: [],
     },
     navigator: {
       type: 'stack',
@@ -196,7 +196,7 @@ function isAppManifestMetadata(value: unknown): value is AppManifest['metadata']
 }
 
 function isInfraManifestRecord(value: unknown): value is AppManifest['infra'] {
-  return isRecord(value) && Array.isArray(value.plugins);
+  return isRecord(value) && Array.isArray(value.modules);
 }
 
 function isNavigatorSpec(value: unknown): value is NavigatorSpec {

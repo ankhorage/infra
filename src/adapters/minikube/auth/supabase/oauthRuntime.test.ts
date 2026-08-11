@@ -137,7 +137,7 @@ function createOAuthManifest(): InfraManifest {
     secretStore: {
       provider: 'supabase-vault',
     },
-    plugins: [],
+    modules: [],
   };
 }
 

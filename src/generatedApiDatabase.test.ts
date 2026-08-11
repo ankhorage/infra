@@ -327,7 +327,7 @@ describe('generated API database bridge', () => {
     const infra: InfraManifestInput = {
       deployment: { target: 'minikube', monitoring: false },
       database: { provider: 'supabase', tier: 'dev' },
-      plugins: [],
+      modules: [],
     };
     const appManifest = {
       ...createAppManifest('catalog', infra),
