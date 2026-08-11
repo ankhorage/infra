@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 3.0.0
+
+### Major Changes
+
+- e4549c9: Consume the canonical Contracts 6 module manifest boundary and require `infra.modules` instead of the removed legacy `infra.plugins` field.
+
 ## 2.0.1
 
 ### Patch Changes
