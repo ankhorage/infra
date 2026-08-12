@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 3.2.0
+
+### Minor Changes
+
+- f4ffc4b: Expose canonical project inspection, filtered generated runtime-environment access, and trusted project database URL resolution through `@ankhorage/infra/project`.
+
 ## 3.1.1
 
 ### Patch Changes
