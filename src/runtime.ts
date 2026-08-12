@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 import type { InfraCommandContext } from './commandContext.js';
+import { readProjectInfrastructureEnvironment } from './projectEnvironment.js';
 
 export type InfraLifecycleScript = 'destroy' | 'down' | 'port-forward' | 'reset' | 'status' | 'up';
 
@@ -65,16 +66,16 @@ export async function resolveProjectInfrastructurePortForward(args: {
   readonly projectPath: string;
   readonly target: string;
 }): Promise<InfraPortForwardInfo> {
-  const infraRoot = path.join(args.projectPath, 'infra', args.target);
-  const envPath = path.join(infraRoot, '.env');
-  const fallbackEnvPath = path.join(infraRoot, '.env.example');
-  const sourcePath = (await pathExists(envPath)) ? envPath : fallbackEnvPath;
-  const env = await readSimpleEnvMap(sourcePath);
-  const localPort = parsePositivePort(env.get('APP_PORT_FORWARD_LOCAL_PORT'));
+  const environment = await readProjectInfrastructureEnvironment({
+    keys: ['APP_PORT_FORWARD_LOCAL_PORT'],
+    projectPath: args.projectPath,
+    target: args.target,
+  });
+  const localPort = parsePositivePort(environment.APP_PORT_FORWARD_LOCAL_PORT);
 
   if (localPort === null) {
     throw new Error(
-      `Generated Infra did not provide a valid APP_PORT_FORWARD_LOCAL_PORT in ${sourcePath}. Regenerate infrastructure first.`,
+      'Generated Infra did not provide a valid APP_PORT_FORWARD_LOCAL_PORT. Regenerate infrastructure first.',
     );
   }
 
@@ -184,24 +185,6 @@ function createExitError(
     stderr,
     stdout,
   });
-}
-
-async function readSimpleEnvMap(filePath: string): Promise<Map<string, string>> {
-  const out = new Map<string, string>();
-  const content = await fs.readFile(filePath, 'utf8');
-  for (const line of content.split(/\r?\n/u)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const separator = trimmed.indexOf('=');
-    if (separator <= 0) continue;
-    const key = trimmed.slice(0, separator).trim();
-    const value = trimmed
-      .slice(separator + 1)
-      .trim()
-      .replace(/^['"]|['"]$/g, '');
-    out.set(key, value);
-  }
-  return out;
 }
 
 function parsePositivePort(value: string | undefined): number | null {
