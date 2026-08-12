@@ -3,9 +3,9 @@ bun test v1.3.13 (bf2e2cec)
 
 ::group::src/runtime.test.ts:
 (pass) runtime scripts > resolves minikube lifecycle scripts under the project infra directory
-(pass) runtime scripts > streams script output to the command context [6.00ms]
+(pass) runtime scripts > streams script output to the command context [8.00ms]
 (pass) runtime scripts > reports missing scripts clearly [1.00ms]
-(pass) runtime scripts > wraps non-zero script exits in InfraScriptExecutionError [2.00ms]
+(pass) runtime scripts > wraps non-zero script exits in InfraScriptExecutionError [3.00ms]
 (pass) runtime scripts > rejects unsupported deployment targets
 
 ::endgroup::
@@ -14,18 +14,18 @@ bun test v1.3.13 (bf2e2cec)
 (pass) infra command table > stays aligned across provider descriptors and standalone names
 (pass) infra command table > root help only exposes the locked command surface
 (pass) infra command table > validate prints warnings without failing [1.00ms]
-(pass) infra command table > generate reports skipped studio results
+(pass) infra command table > generate reports skipped studio results [1.00ms]
 (pass) infra command table > status, up, and down use the runtime script service with the expected sequencing
-(pass) infra command table > rejects extra arguments for a command
+(pass) infra command table > rejects extra arguments for a command [1.00ms]
 
 ::endgroup::
 
 ::group::src/projectInfrastructure.test.ts:
-(pass) project infrastructure sync > writes generated files and the infra ledger [3.00ms]
-(pass) project infrastructure sync > removes stale files when regeneration shrinks the output set [1.00ms]
-(pass) project infrastructure sync > cleans generated files when deployment is removed [1.00ms]
-(pass) project infrastructure sync > preserves apps/studio skip behavior [1.00ms]
-(pass) project infrastructure sync > resolves targets from the ledger when deployment metadata is absent
+(pass) project infrastructure sync > writes generated files and the infra ledger [4.00ms]
+(pass) project infrastructure sync > removes stale files when regeneration shrinks the output set [2.00ms]
+(pass) project infrastructure sync > cleans generated files when deployment is removed [2.00ms]
+(pass) project infrastructure sync > preserves apps/studio skip behavior
+(pass) project infrastructure sync > resolves targets from the ledger when deployment metadata is absent [1.00ms]
 (pass) project infrastructure sync > rejects generated file paths outside the project root
 
 ::endgroup::
@@ -39,19 +39,7 @@ bun test v1.3.13 (bf2e2cec)
 ::endgroup::
 
 ::group::src/projectContractsParser.test.ts:
-48 |     await promise;
-49 |   } catch (error) {
-50 |     if (error instanceof Error) return error;
-51 |     throw error;
-52 |   }
-53 |   throw new Error('Expected project resolution to reject.');
-                 ^
-error: Expected project resolution to reject.
-      at captureError (/home/runner/work/infra/infra/src/projectContractsParser.test.ts:53:13)
-      at async <anonymous> (/home/runner/work/infra/infra/src/projectContractsParser.test.ts:40:23)
-
-::error file=src/projectContractsParser.test.ts,line=53,col=13,title=error: Expected project resolution to reject.::%0A      at captureError (/home/runner/work/infra/infra/src/projectContractsParser.test.ts:53:13)%0A      at async <anonymous> (/home/runner/work/infra/infra/src/projectContractsParser.test.ts:40:23)
-(fail) Infra rejects nested manifest shapes rejected by Contracts [2.00ms]
+(pass) Infra rejects nested manifest shapes rejected by Contracts [3.00ms]
 
 ::endgroup::
 
@@ -61,13 +49,13 @@ error: Expected project resolution to reject.
 ::endgroup::
 
 ::group::src/minikubeImageLifecycle.test.ts:
-(pass) minikube generated app image lifecycle > exposes generated cleanup flags and Docker image labels [2.00ms]
+(pass) minikube generated app image lifecycle > exposes generated cleanup flags and Docker image labels [3.00ms]
 
 ::endgroup::
 
 ::group::src/index.test.ts:
 (pass) generateInfrastructure > generates minikube artifacts for app-owned Kubernetes infrastructure [2.00ms]
-(pass) generateInfrastructure > generates minikube storage artifacts for explicit supabase provider with normalized buckets
+(pass) generateInfrastructure > generates minikube storage artifacts for explicit supabase provider with normalized buckets [1.00ms]
 (pass) generateInfrastructure > generates route and screen cerbos policies when app manifest context is provided [1.00ms]
 (pass) generateInfrastructure > throws for missing deployment
 (pass) generateInfrastructure > throws for unsupported deployment target
@@ -76,19 +64,19 @@ error: Expected project resolution to reject.
 ::endgroup::
 
 ::group::src/project.test.ts:
-(pass) resolveInfraProject > resolves an explicit project id from the workspace root [1.00ms]
+(pass) resolveInfraProject > resolves an explicit project id from the workspace root [3.00ms]
 (pass) resolveInfraProject > infers the project id from cwd inside apps/<project> [1.00ms]
 (pass) resolveInfraProject > loads the fallback manifest when ankh.config.json is missing [1.00ms]
-(pass) resolveInfraProject > rejects malformed manifest JSON
+(pass) resolveInfraProject > rejects malformed manifest JSON [1.00ms]
 (pass) resolveInfraProject > rejects traversal project ids [1.00ms]
-(pass) resolveInfraProject > rejects explicit project ids with nested traversal segments
-(pass) resolveInfraProject > rejects explicit absolute project ids [2.00ms]
+(pass) resolveInfraProject > rejects explicit project ids with nested traversal segments [1.00ms]
+(pass) resolveInfraProject > rejects explicit absolute project ids [1.00ms]
 (pass) resolveInfraProject > rejects explicit dot project ids
 (pass) resolveInfraProject > rejects explicit dot-dot project ids [1.00ms]
-(pass) resolveInfraProject > rejects explicit empty project ids
+(pass) resolveInfraProject > rejects explicit empty project ids [1.00ms]
 (pass) resolveInfraProject > rejects explicit blank project ids [1.00ms]
 (pass) resolveInfraProject > fails when no workspace root can be found
-(pass) resolveInfraProject > reads a valid project manifest [1.00ms]
+(pass) resolveInfraProject > reads a valid project manifest [2.00ms]
 
 ::endgroup::
 
@@ -100,12 +88,12 @@ error: Expected project resolution to reject.
 ::endgroup::
 
 ::group::src/generatedApiDatabase.test.ts:
-(pass) generated API database bridge > generates deterministic provider-owned database artifacts [2.00ms]
+(pass) generated API database bridge > generates deterministic provider-owned database artifacts [3.00ms]
 (pass) generated API database bridge > maps canonical collection fields to Supabase/Postgres SQL
 (pass) generated API database bridge > materializes deterministic UUID primary keys for seed records
 (pass) generated API database bridge > enables RLS for explicit policy intent without inventing SQL policies [1.00ms]
 (pass) generated API database bridge > returns structured diagnostics and no partial artifacts for invalid definitions
-(pass) generated API database bridge > rejects two generated resources targeting the same database table
+(pass) generated API database bridge > rejects two generated resources targeting the same database table [1.00ms]
 (pass) generated API database bridge > rejects seed values that do not match collection field types
 (pass) generated API database bridge > rejects null seed values for required fields and primary keys
 (pass) generated API database bridge > uses SQL DEFAULT when seed records omit a column that another record supplies [1.00ms]
@@ -124,7 +112,7 @@ error: Expected project resolution to reject.
 ::endgroup::
 
 ::group::src/cli/index.test.ts:
-(pass) infra package cli provider > publishes the expected runtime provider shape [1.00ms]
+(pass) infra package cli provider > publishes the expected runtime provider shape
 (pass) infra package cli provider > default export is the runtime provider
 
 ::endgroup::
@@ -135,7 +123,7 @@ error: Expected project resolution to reject.
 ::endgroup::
 
 ::group::src/adapters/minikube/base/appImageBuild.test.ts:
-(pass) re-exports rotated public environment values before building the app image [25.00ms]
+(pass) re-exports rotated public environment values before building the app image [29.00ms]
 
 ::endgroup::
 
@@ -146,14 +134,14 @@ error: Expected project resolution to reject.
 ::endgroup::
 
 ::group::src/adapters/minikube/base/index.test.ts:
-(pass) generateMinikubeBaseArtifacts app-owned cluster model > uses the canonical app slug as the only Minikube profile identity [1.00ms]
-(pass) generateMinikubeBaseArtifacts app-owned cluster model > generates fixed app and supabase namespaces instead of slug namespaces
+(pass) generateMinikubeBaseArtifacts app-owned cluster model > uses the canonical app slug as the only Minikube profile identity
+(pass) generateMinikubeBaseArtifacts app-owned cluster model > generates fixed app and supabase namespaces instead of slug namespaces [1.00ms]
 (pass) generateMinikubeBaseArtifacts app-owned cluster model > removes host-level Supabase runtime ownership from generated files [1.00ms]
 (pass) generateMinikubeBaseArtifacts app-owned cluster model > keeps Supabase migration history but executes against the Kubernetes DB URL
 (pass) generateMinikubeBaseArtifacts app-owned cluster model > preserves Supabase-disabled migration behavior [1.00ms]
 (pass) generateMinikubeBaseArtifacts app-owned cluster model > lists and generates Supabase Kubernetes bootstrap and gateway contract files
-(pass) generateMinikubeBaseArtifacts app-owned cluster model > defines reset separately from down and destroy [1.00ms]
-(pass) generateMinikubeBaseArtifacts app-owned cluster model > keeps reset scoped to app namespace when Supabase is not generated
+(pass) generateMinikubeBaseArtifacts app-owned cluster model > defines reset separately from down and destroy
+(pass) generateMinikubeBaseArtifacts app-owned cluster model > keeps reset scoped to app namespace when Supabase is not generated [1.00ms]
 (pass) generateMinikubeBaseArtifacts app-owned cluster model > places standalone provider workloads in provider-owned namespaces
 (pass) generateMinikubeBaseArtifacts app-owned cluster model > uses generated Supabase runtime ownership as an immutable script decision [1.00ms]
 (pass) generateMinikubeBaseArtifacts app-owned cluster model > wires configured OAuth providers into GoTrue runtime env without serializing secrets [1.00ms]
@@ -165,13 +153,13 @@ error: Expected project resolution to reject.
 ::endgroup::
 
 ::group::src/adapters/minikube/base/supabaseMigrations.test.ts:
-(pass) generated Supabase migration command > disables CLI telemetry for closed-stdin migrations and reports progress [5.00ms]
+(pass) generated Supabase migration command > disables CLI telemetry for closed-stdin migrations and reports progress [7.00ms]
 (pass) generated Supabase migration command > propagates migration failures without reporting completion [5.00ms]
 
 ::endgroup::
 
 ::group::src/adapters/minikube/secrets/index.test.ts:
-(pass) minikube secret-store generation > generates the released Supabase Vault migration through the Kubernetes lifecycle
+(pass) minikube secret-store generation > generates the released Supabase Vault migration through the Kubernetes lifecycle [1.00ms]
 (pass) minikube secret-store generation > requires credentialsRef for every enabled OAuth provider
 (pass) minikube secret-store generation > accepts provider-neutral OAuth secret references without serializing values [1.00ms]
 (pass) minikube secret-store generation > rejects unknown secret-store providers
@@ -180,7 +168,7 @@ error: Expected project resolution to reject.
 
 ::group::src/adapters/minikube/auth/supabase/oauthRuntime.test.ts:
 (pass) Supabase OAuth runtime reconciliation > contributes callback-scoped local redirects and a bounded GoTrue restart [1.00ms]
-(pass) Supabase OAuth runtime reconciliation > keeps Auth deployment environment declarative across reconciliation
+(pass) Supabase OAuth runtime reconciliation > keeps Auth deployment environment declarative across reconciliation [1.00ms]
 (pass) Supabase OAuth runtime reconciliation > keeps canonical port groups distinct for concurrent projects [1.00ms]
 
 ::endgroup::
@@ -210,17 +198,17 @@ error: Expected project resolution to reject.
 
 ::group::src/adapters/minikube/auth/supabase/index.test.ts:
 (pass) generateSupabaseAuthArtifacts profile tables > generates profile metadata env vars and SQL migration when profile table is declared [1.00ms]
-(pass) generateSupabaseAuthArtifacts profile tables > does not generate profile reconciliation when profile table is omitted
+(pass) generateSupabaseAuthArtifacts profile tables > does not generate profile reconciliation when profile table is omitted [1.00ms]
 (pass) generateSupabaseAuthArtifacts profile tables > preserves an explicitly empty profile field list
 (pass) generateSupabaseAuthArtifacts profile tables > rejects unsupported configured profile fields
 (pass) generateSupabaseAuthArtifacts profile tables > rejects blank configured profile fields
-(pass) generateSupabaseAuthArtifacts profile tables > uses a stable desired-state hash and canonical managed column ordering [1.00ms]
+(pass) generateSupabaseAuthArtifacts profile tables > uses a stable desired-state hash and canonical managed column ordering
 (pass) generateSupabaseAuthArtifacts profile tables > rejects public.users as a generated profile table before SQL is emitted
 
 ::endgroup::
 
 ::group::src/adapters/minikube/auth/supabase/providerAssignments.test.ts:
-(pass) keeps multiple provider redirect assignments as separate shell arguments [1.00ms]
+(pass) keeps multiple provider redirect assignments as separate shell arguments
 
 ::endgroup::
 
@@ -247,13 +235,8 @@ error: Expected project resolution to reject.
 (skip) generated Supabase profile reconciliation integration > status reports malformed primary key and foreign key drift
 (skip) generated Supabase profile reconciliation integration > rejects public.users at generation time
 
-
-1 tests failed:
-(fail) Infra rejects nested manifest shapes rejected by Contracts [2.00ms]
-
- 97 pass
+ 98 pass
  21 skip
- 1 fail
- 562 expect() calls
-Ran 119 tests across 23 files. [183.00ms]
-error: script "test" exited with code 1
+ 0 fail
+ 563 expect() calls
+Ran 119 tests across 23 files. [247.00ms]
