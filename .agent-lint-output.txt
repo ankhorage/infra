@@ -1,1 +1,0 @@
-$ ankhorage-eslint . --max-warnings=0
