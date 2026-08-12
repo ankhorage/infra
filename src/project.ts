@@ -1,4 +1,4 @@
-import { APP_CATEGORIES, type AppManifest, type NavigatorSpec } from '@ankhorage/contracts';
+import { type AppManifest, isAppManifest } from '@ankhorage/contracts';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -37,11 +37,7 @@ export async function resolveInfraProject(options: {
   }
 
   const manifestPath = path.join(projectPath, 'ankh.config.json');
-  const manifest = await readProjectManifest({
-    manifestPath,
-    projectId,
-    projectPath,
-  });
+  const manifest = await readProjectManifest({ manifestPath, projectId });
 
   return {
     appsRoot,
@@ -75,9 +71,7 @@ function createFallbackManifest(projectId: string): AppManifest {
     },
     themes: [],
     activeThemeId: 'default',
-    infra: {
-      modules: [],
-    },
+    infra: { modules: [] },
     navigator: {
       type: 'stack',
       routes: [{ name: 'index', screenId: 'index' }],
@@ -95,15 +89,14 @@ function createFallbackManifest(projectId: string): AppManifest {
 async function readProjectManifest(args: {
   readonly manifestPath: string;
   readonly projectId: string;
-  readonly projectPath: string;
 }): Promise<AppManifest> {
   if (!(await pathExists(args.manifestPath))) {
     return createFallbackManifest(args.projectId);
   }
 
   const rawManifest = await fs.readFile(args.manifestPath, 'utf8');
-
   let parsed: unknown;
+
   try {
     parsed = JSON.parse(rawManifest);
   } catch (error) {
@@ -125,15 +118,10 @@ async function findWorkspaceRoot(startPath: string): Promise<string | null> {
 
   for (;;) {
     const appsRoot = path.join(currentPath, 'apps');
-    if (await isDirectory(appsRoot)) {
-      return currentPath;
-    }
+    if (await isDirectory(appsRoot)) return currentPath;
 
     const parentPath = path.dirname(currentPath);
-    if (parentPath === currentPath) {
-      return null;
-    }
-
+    if (parentPath === currentPath) return null;
     currentPath = parentPath;
   }
 }
@@ -164,69 +152,6 @@ function validateExplicitProjectId(projectId: string): string {
   }
 
   return projectId;
-}
-
-function isAppManifest(value: unknown): value is AppManifest {
-  if (!isRecord(value)) {
-    return false;
-  }
-
-  return (
-    isAppManifestMetadata(value.metadata) &&
-    Array.isArray(value.themes) &&
-    typeof value.activeThemeId === 'string' &&
-    isInfraManifestRecord(value.infra) &&
-    isNavigatorSpec(value.navigator) &&
-    isRecord(value.screens) &&
-    isSettingsRecord(value.settings)
-  );
-}
-
-function isAppManifestMetadata(value: unknown): value is AppManifest['metadata'] {
-  return (
-    isRecord(value) &&
-    typeof value.name === 'string' &&
-    typeof value.slug === 'string' &&
-    typeof value.version === 'string' &&
-    APP_CATEGORIES.some((category) => category === value.category) &&
-    typeof value.themeId === 'string' &&
-    (value.created === undefined || typeof value.created === 'string') &&
-    (value.updated === undefined || typeof value.updated === 'string')
-  );
-}
-
-function isInfraManifestRecord(value: unknown): value is AppManifest['infra'] {
-  return isRecord(value) && Array.isArray(value.modules);
-}
-
-function isNavigatorSpec(value: unknown): value is NavigatorSpec {
-  return (
-    isRecord(value) &&
-    typeof value.type === 'string' &&
-    Array.isArray(value.routes) &&
-    (value.initialRouteName === undefined || typeof value.initialRouteName === 'string')
-  );
-}
-
-function isSettingsRecord(value: unknown): value is AppManifest['settings'] {
-  return (
-    isRecord(value) &&
-    (value.apiBaseUrl === undefined || typeof value.apiBaseUrl === 'string') &&
-    isLocalizationRecord(value.localization)
-  );
-}
-
-function isLocalizationRecord(value: unknown): value is AppManifest['settings']['localization'] {
-  return (
-    isRecord(value) &&
-    typeof value.defaultLocale === 'string' &&
-    Array.isArray(value.locales) &&
-    value.locales.every((locale) => typeof locale === 'string')
-  );
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
 }
 
 async function isDirectory(filePath: string): Promise<boolean> {
