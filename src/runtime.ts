@@ -48,7 +48,7 @@ export async function runProjectInfrastructureLifecycle(args: {
   const scriptPath = resolveProjectInfraScriptPath(args);
   if (!(await pathExists(scriptPath))) {
     throw new Error(
-      `Infra script not found: ${scriptPath}. Regenerate infrastructure for project '${args.projectId}' first.`,
+      `Infra script not found: ${scriptPath}. Run infra generate for project '${args.projectId}' first.`,
     );
   }
 
