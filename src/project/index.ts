@@ -1,17 +1,17 @@
 export {
-  resolveInfraProject as resolveInfraWorkspaceProject,
   type ResolvedInfraProject,
+  resolveInfraProject as resolveInfraWorkspaceProject,
 } from '../project.js';
 export {
+  type InfraSyncResult,
   resolveProjectInfrastructureTarget,
   syncProjectInfrastructure,
-  type InfraSyncResult,
 } from '../projectInfrastructure.js';
 export {
   type InfraLifecycleScript,
   type InfraPortForwardInfo,
-  type InfraScriptOutput,
   InfraScriptExecutionError,
+  type InfraScriptOutput,
   resolveProjectInfrastructurePortForward,
   runProjectInfrastructureLifecycle,
 } from '../runtime.js';

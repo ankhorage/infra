@@ -4,13 +4,7 @@ import path from 'path';
 
 import type { InfraCommandContext } from './commandContext.js';
 
-export type InfraLifecycleScript =
-  | 'destroy'
-  | 'down'
-  | 'port-forward'
-  | 'reset'
-  | 'status'
-  | 'up';
+export type InfraLifecycleScript = 'destroy' | 'down' | 'port-forward' | 'reset' | 'status' | 'up';
 
 export interface InfraScriptOutput {
   readonly stderr: string;

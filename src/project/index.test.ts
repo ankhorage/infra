@@ -12,9 +12,7 @@ const temporaryPaths: string[] = [];
 
 afterEach(async () => {
   await Promise.all(
-    temporaryPaths
-      .splice(0)
-      .map((entry) => fs.rm(entry, { force: true, recursive: true })),
+    temporaryPaths.splice(0).map((entry) => fs.rm(entry, { force: true, recursive: true })),
   );
 });
 
