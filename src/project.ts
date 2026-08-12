@@ -1,4 +1,4 @@
-import { isAppManifest, type AppManifest } from '@ankhorage/contracts';
+import { type AppManifest, isAppManifest } from '@ankhorage/contracts';
 import { promises as fs } from 'fs';
 import path from 'path';
 
