@@ -93,8 +93,8 @@ export async function runProjectInfraScript(args: {
 }): Promise<void> {
   await runProjectInfrastructureLifecycle({
     env: args.context.env,
-    onStderr: args.context.writeStderr,
-    onStdout: args.context.writeStdout,
+    onStderr: (chunk) => args.context.writeStderr(chunk),
+    onStdout: (chunk) => args.context.writeStdout(chunk),
     projectId: args.projectId,
     projectPath: args.projectPath,
     script: args.script,
