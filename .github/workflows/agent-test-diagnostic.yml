@@ -1,0 +1,30 @@
+name: Agent test diagnostic
+
+on:
+  push:
+    branches:
+      - agent/consume-contracts-manifest-parser
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/consume-contracts-manifest-parser
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+      - run: bun install --frozen-lockfile
+      - run: bun run test > .agent-test-output.txt 2>&1 || true
+      - name: Commit diagnostic output
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .agent-test-output.txt
+          git commit -m "chore: capture parser consumer test diagnostic"
+          git push
