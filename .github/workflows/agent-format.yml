@@ -1,0 +1,32 @@
+name: Agent format
+
+on:
+  push:
+    branches:
+      - agent/public-project-lifecycle-api
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/public-project-lifecycle-api
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+      - run: bun install --frozen-lockfile
+      - run: bun run lint:fix || true
+      - run: bun run format
+      - name: Commit formatter output
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "style: apply repository formatting"
+          git push
