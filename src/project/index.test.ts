@@ -57,10 +57,12 @@ describe('@ankhorage/infra/project', () => {
 
   test('resolves the generated app port-forward endpoint through the owner API', async () => {
     const projectPath = await createProjectFixture();
+    const result = await resolveProjectInfrastructurePortForward({
+      projectPath,
+      target: 'minikube',
+    });
 
-    await expect(
-      resolveProjectInfrastructurePortForward({ projectPath, target: 'minikube' }),
-    ).resolves.toEqual({
+    expect(result).toEqual({
       localPort: 48123,
       url: 'http://127.0.0.1:48123',
     });
