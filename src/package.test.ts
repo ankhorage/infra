@@ -24,6 +24,11 @@ describe('package metadata', () => {
       'ankhorage-infra': './dist/cli/bin.js',
     });
     expect(packageJson.ankh).toEqual(expectedAnkhMetadata);
+    expect(packageJson.exports['./project']).toEqual({
+      types: './dist/project/index.d.ts',
+      import: './dist/project/index.js',
+      default: './dist/project/index.js',
+    });
     expect(JSON.parse(JSON.stringify(expectedAnkhMetadata))).toEqual(expectedAnkhMetadata);
 
     const capabilityText = JSON.stringify(packageJson.ankh.capabilities);

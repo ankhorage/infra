@@ -1,11 +1,17 @@
 import { runCli } from './cli/bin.js';
 
 /***
- * Provider and CLI surface
+ * Provider, CLI, and project API surface
  *
- * `@ankhorage/infra` owns infra command behavior.
+ * `@ankhorage/infra` owns infrastructure generation, project reconciliation,
+ * and generated lifecycle execution.
  *
- * The same shared command implementation backs both:
+ * The same owner implementation backs CLI consumers and the public
+ * `@ankhorage/infra/project` application-service boundary. Trusted hosts such
+ * as Studio should call that subpath instead of reproducing ledger, generated
+ * file, lifecycle-script, or port-forward configuration semantics.
+ *
+ * CLI entrypoints:
  *
  * - `ankh infra ...`
  * - `bunx @ankhorage/infra ...`
@@ -18,12 +24,10 @@ import { runCli } from './cli/bin.js';
  * - `up`
  * - `down`
  *
- * `status` runs the generated live runtime status script for a project.
- *
- * Project resolution is project-aware:
- *
- * - pass `[project]`, or
- * - omit it when cwd is already inside `apps/<project>`
+ * Project resolution for the CLI is workspace-aware: pass `[project]`, or
+ * omit it when cwd is already inside `apps/<project>`. Programmatic project
+ * operations accept an explicit project path and do not require Studio or a
+ * particular workspace layout.
  *
  * @usage
  */
