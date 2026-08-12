@@ -151,7 +151,9 @@ async function runShellScript(args: {
       stderr += chunk;
       args.onStderr?.(chunk);
     });
-    child.once('error', (error) => reject(createStartError(args.scriptPath, error, stdout, stderr)));
+    child.once('error', (error) =>
+      reject(createStartError(args.scriptPath, error, stdout, stderr)),
+    );
     child.once('close', (exitCode) => {
       if (exitCode === 0) {
         resolve({ stderr, stdout });
