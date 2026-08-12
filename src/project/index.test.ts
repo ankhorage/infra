@@ -11,7 +11,11 @@ import {
 const temporaryPaths: string[] = [];
 
 afterEach(async () => {
-  await Promise.all(temporaryPaths.splice(0).map((entry) => fs.rm(entry, { force: true, recursive: true })));
+  await Promise.all(
+    temporaryPaths
+      .splice(0)
+      .map((entry) => fs.rm(entry, { force: true, recursive: true })),
+  );
 });
 
 async function createProjectFixture(): Promise<string> {
@@ -25,7 +29,11 @@ async function createProjectFixture(): Promise<string> {
     "#!/usr/bin/env bash\nprintf 'status-ok'\nprintf 'status-warning' >&2\n",
     'utf8',
   );
-  await fs.writeFile(path.join(infraRoot, '.env.example'), 'APP_PORT_FORWARD_LOCAL_PORT=48123\n', 'utf8');
+  await fs.writeFile(
+    path.join(infraRoot, '.env.example'),
+    'APP_PORT_FORWARD_LOCAL_PORT=48123\n',
+    'utf8',
+  );
   return projectPath;
 }
 
