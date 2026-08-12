@@ -25,6 +25,18 @@ export interface InfraSyncResult {
   };
 }
 
+export interface InfraProjectInspection {
+  readonly generated: boolean;
+  readonly generatedAt: string | null;
+  readonly hasDeployment: boolean;
+  readonly target: string | null;
+  readonly trackedFiles: number;
+  readonly warnings: readonly string[];
+  readonly skipped?: {
+    readonly reason: string;
+  };
+}
+
 export async function syncProjectInfrastructure(args: {
   readonly generateInfrastructureImpl?: typeof generateInfrastructure;
   readonly manifest: AppManifest;
@@ -94,6 +106,38 @@ export async function syncProjectInfrastructure(args: {
     generated: generated.files.length,
     removed,
     warnings: combinedWarnings,
+  };
+}
+
+export async function inspectProjectInfrastructure(args: {
+  readonly manifest: AppManifest;
+  readonly projectId: string;
+  readonly projectPath: string;
+}): Promise<InfraProjectInspection> {
+  const supportWarnings = validateInfraSupport(args.manifest.infra);
+
+  if (args.projectId === STUDIO_PROJECT_ID) {
+    return {
+      generated: false,
+      generatedAt: null,
+      hasDeployment: false,
+      target: null,
+      trackedFiles: 0,
+      warnings: supportWarnings,
+      skipped: {
+        reason: 'apps/studio is the dashboard and is not a generated app target.',
+      },
+    };
+  }
+
+  const ledger = await readInfraLedger(args.projectPath);
+  return {
+    generated: ledger !== null,
+    generatedAt: ledger?.generatedAt ?? null,
+    hasDeployment: args.manifest.infra.deployment !== undefined,
+    target: args.manifest.infra.deployment?.target ?? ledger?.target ?? null,
+    trackedFiles: ledger?.files.length ?? 0,
+    warnings: uniqueStrings([...supportWarnings, ...(ledger?.warnings ?? [])]),
   };
 }
 
