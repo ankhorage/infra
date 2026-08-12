@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 3.1.1
+
+### Patch Changes
+
+- f38e50b: Delegate project `AppManifest` structural validation to the canonical parser published by `@ankhorage/contracts` and remove Infra's duplicate manifest guard implementation.
+
 ## 3.1.0
 
 ### Minor Changes
