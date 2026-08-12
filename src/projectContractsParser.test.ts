@@ -16,20 +16,15 @@ afterEach(async () => {
 
 test('Infra rejects nested manifest shapes rejected by Contracts', async () => {
   const manifest = createAppManifest('cards', { modules: [] });
-  const [theme] = manifest.themes;
   const fixture = await createWorkspaceFixture({ manifest, projectId: 'cards' });
   tempRoots.add(fixture.rootPath);
 
   const malformedManifest = {
     ...manifest,
-    themes: theme
-      ? [
-          {
-            ...theme,
-            light: { ...theme.light, harmony: 'not-a-canonical-harmony' },
-          },
-        ]
-      : [],
+    navigator: {
+      ...manifest.navigator,
+      type: 'not-a-canonical-navigator',
+    },
   };
   await fs.writeFile(
     path.join(fixture.projectPath, 'ankh.config.json'),
