@@ -33,7 +33,11 @@ export function generateMinikubeInfra(
   const appSlug = validateCanonicalAppSlug(options.appManifest?.metadata.slug);
   const namespace = APP_NAMESPACE;
 
-  const authArtifacts = generateAuthProviderArtifacts({ manifest, namespace });
+  const authArtifacts = generateAuthProviderArtifacts({
+    appManifest: options.appManifest,
+    manifest,
+    namespace,
+  });
   const authzArtifacts = generateAuthorizationArtifacts({
     manifest,
     namespace,
