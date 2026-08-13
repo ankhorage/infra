@@ -63,7 +63,7 @@ jobs:
           bun run typecheck
           bun run docs
           bun run format
-          bunx @ankhorage/ankh doctor validate .
+          bunx @ankhorage/ankh@0.8.0 doctor validate .
           bun run changeset:status
           unexpected="$(git diff --name-only | grep -Ev '^(README\.md|paradox/.*|\.github/workflows/auth4-target-aware-finalize\.yml)$' || true)"
           if [ -n "$unexpected" ]; then
