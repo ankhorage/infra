@@ -239,6 +239,16 @@
               <button
                 class="nav-button"
                 type="button"
+                data-target="src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+              >
+                src/adapters/minikube/auth/targetAwareOAuthRuntime.ts
+                <small>6 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
                 data-target="src/adapters/minikube/authz/cerbos/index.ts"
               >
                 src/adapters/minikube/authz/cerbos/index.ts
@@ -338,6 +348,12 @@
               </button>
             </li>
             <li>
+              <button class="nav-button" type="button" data-target="src/authTargetRedirects.ts">
+                src/authTargetRedirects.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
               <button class="nav-button" type="button" data-target="src/cli/bin.ts">
                 src/cli/bin.ts
                 <small>3 functions</small>
@@ -382,19 +398,31 @@
             <li>
               <button class="nav-button" type="button" data-target="src/project.ts">
                 src/project.ts
-                <small>17 functions</small>
+                <small>10 functions</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/projectDatabase.ts">
+                src/projectDatabase.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button" type="button" data-target="src/projectEnvironment.ts">
+                src/projectEnvironment.ts
+                <small>3 functions</small>
               </button>
             </li>
             <li>
               <button class="nav-button" type="button" data-target="src/projectInfrastructure.ts">
                 src/projectInfrastructure.ts
-                <small>10 functions</small>
+                <small>11 functions</small>
               </button>
             </li>
             <li>
               <button class="nav-button" type="button" data-target="src/runtime.ts">
                 src/runtime.ts
-                <small>5 functions</small>
+                <small>10 functions</small>
               </button>
             </li>
             <li>
@@ -419,7 +447,7 @@
             <div class="summary">
               <div><strong>27</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>31</strong><span class="muted">modules</span></div>
+              <div><strong>36</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -438,14 +466,14 @@
             </article>
             <article
               class="item"
-              data-search="src/adapters/minikube/auth/index.ts src/adapters/minikube/auth/oauthRuntime.ts src/adapters/minikube/auth/supabase/index.ts src/adapters/minikube/contracts.ts src/types.ts generateAuthProviderArtifacts"
+              data-search="src/adapters/minikube/auth/index.ts src/adapters/minikube/auth/supabase/index.ts src/adapters/minikube/auth/targetAwareOAuthRuntime.ts src/adapters/minikube/contracts.ts src/types.ts generateAuthProviderArtifacts"
             >
               <h3>src/adapters/minikube/auth/index.ts</h3>
               <p class="muted">Referenced module</p>
               <p>
                 <strong>Dependencies:</strong>
-                <code>src/adapters/minikube/auth/oauthRuntime.ts</code>,
                 <code>src/adapters/minikube/auth/supabase/index.ts</code>,
+                <code>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts</code>,
                 <code>src/adapters/minikube/contracts.ts</code>, <code>src/types.ts</code>
               </p>
               <p><strong>Exports:</strong> <code>generateAuthProviderArtifacts</code></p>
@@ -485,6 +513,23 @@
               <p>
                 <strong>Exports:</strong> <code>getSupabaseProfileReconciliation</code>,
                 <code>ResolvedProfileModel</code>, <code>resolveSupabaseProfileModel</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/adapters/minikube/auth/targetAwareOAuthRuntime.ts src/adapters/minikube/auth/oauthRuntime.ts src/adapters/minikube/contracts.ts src/authRedirects.ts src/authTargetRedirects.ts src/types.ts generateTargetAwareSupabaseOAuthRuntimeArtifacts"
+            >
+              <h3>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong>
+                <code>src/adapters/minikube/auth/oauthRuntime.ts</code>,
+                <code>src/adapters/minikube/contracts.ts</code>, <code>src/authRedirects.ts</code>,
+                <code>src/authTargetRedirects.ts</code>, <code>src/types.ts</code>
+              </p>
+              <p>
+                <strong>Exports:</strong>
+                <code>generateTargetAwareSupabaseOAuthRuntimeArtifacts</code>
               </p>
             </article>
             <article
@@ -630,6 +675,15 @@
                 <code>resolveAuthRedirectConfiguration</code>,
                 <code>ResolveAuthRedirectConfigurationInput</code>
               </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/authTargetRedirects.ts resolveAuthTargetRedirectModel"
+            >
+              <h3>src/authTargetRedirects.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p><strong>Exports:</strong> <code>resolveAuthTargetRedirectModel</code></p>
             </article>
             <article
               class="item"
@@ -785,7 +839,46 @@
             </article>
             <article
               class="item"
-              data-search="src/projectInfrastructure.ts src/index.ts src/infraValidation.ts InfraSyncResult resolveProjectFile resolveProjectInfrastructureTarget syncProjectInfrastructure"
+              data-search="src/project/index.ts InfraLifecycleScript InfraPortForwardInfo InfraProjectInspection InfraScriptExecutionError InfraScriptOutput InfraSyncResult inspectProjectInfrastructure readProjectInfrastructureEnvironment ResolvedInfraProject resolveInfraWorkspaceProject resolveProjectInfrastructureDatabaseUrl resolveProjectInfrastructurePortForward resolveProjectInfrastructureTarget runProjectInfrastructureLifecycle syncProjectInfrastructure"
+            >
+              <h3>src/project/index.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p>
+                <strong>Exports:</strong> <code>InfraLifecycleScript</code>,
+                <code>InfraPortForwardInfo</code>, <code>InfraProjectInspection</code>,
+                <code>InfraScriptExecutionError</code>, <code>InfraScriptOutput</code>,
+                <code>InfraSyncResult</code>, <code>inspectProjectInfrastructure</code>,
+                <code>readProjectInfrastructureEnvironment</code>,
+                <code>ResolvedInfraProject</code>, <code>resolveInfraWorkspaceProject</code>,
+                <code>resolveProjectInfrastructureDatabaseUrl</code>,
+                <code>resolveProjectInfrastructurePortForward</code>,
+                <code>resolveProjectInfrastructureTarget</code>,
+                <code>runProjectInfrastructureLifecycle</code>,
+                <code>syncProjectInfrastructure</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/projectDatabase.ts src/projectEnvironment.ts resolveProjectInfrastructureDatabaseUrl"
+            >
+              <h3>src/projectDatabase.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/projectEnvironment.ts</code></p>
+              <p><strong>Exports:</strong> <code>resolveProjectInfrastructureDatabaseUrl</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/projectEnvironment.ts readProjectInfrastructureEnvironment"
+            >
+              <h3>src/projectEnvironment.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p><strong>Exports:</strong> <code>readProjectInfrastructureEnvironment</code></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/projectInfrastructure.ts src/index.ts src/infraValidation.ts InfraProjectInspection InfraSyncResult inspectProjectInfrastructure resolveProjectFile resolveProjectInfrastructureTarget syncProjectInfrastructure"
             >
               <h3>src/projectInfrastructure.ts</h3>
               <p class="muted">Referenced module</p>
@@ -794,22 +887,28 @@
                 <code>src/infraValidation.ts</code>
               </p>
               <p>
-                <strong>Exports:</strong> <code>InfraSyncResult</code>,
+                <strong>Exports:</strong> <code>InfraProjectInspection</code>,
+                <code>InfraSyncResult</code>, <code>inspectProjectInfrastructure</code>,
                 <code>resolveProjectFile</code>, <code>resolveProjectInfrastructureTarget</code>,
                 <code>syncProjectInfrastructure</code>
               </p>
             </article>
             <article
               class="item"
-              data-search="src/runtime.ts src/commandContext.ts InfraLifecycleScript InfraScriptExecutionError resolveProjectInfraScriptPath runProjectInfraScript"
+              data-search="src/runtime.ts src/commandContext.ts src/projectEnvironment.ts InfraLifecycleScript InfraPortForwardInfo InfraScriptExecutionError InfraScriptOutput resolveProjectInfraScriptPath resolveProjectInfrastructurePortForward runProjectInfraScript runProjectInfrastructureLifecycle"
             >
               <h3>src/runtime.ts</h3>
               <p class="muted">Referenced module</p>
-              <p><strong>Dependencies:</strong> <code>src/commandContext.ts</code></p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/commandContext.ts</code>,
+                <code>src/projectEnvironment.ts</code>
+              </p>
               <p>
                 <strong>Exports:</strong> <code>InfraLifecycleScript</code>,
-                <code>InfraScriptExecutionError</code>, <code>resolveProjectInfraScriptPath</code>,
-                <code>runProjectInfraScript</code>
+                <code>InfraPortForwardInfo</code>, <code>InfraScriptExecutionError</code>,
+                <code>InfraScriptOutput</code>, <code>resolveProjectInfraScriptPath</code>,
+                <code>resolveProjectInfrastructurePortForward</code>,
+                <code>runProjectInfraScript</code>, <code>runProjectInfrastructureLifecycle</code>
               </p>
             </article>
             <article
@@ -1761,7 +1860,7 @@
                       <td>property</td>
                       <td>
                         <code
-                          >import(&quot;/private/tmp/ankhorage-infra-125/node_modules/@ankhorage/contracts/dist/types&quot;).DeploymentTarget</code
+                          >import(&quot;/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types&quot;).DeploymentTarget</code
                         >
                       </td>
                       <td>yes</td>
@@ -1797,9 +1896,9 @@
                       <td>property</td>
                       <td>
                         <code
-                          >Pick&lt;AppManifest, &quot;generatedApis&quot; | &quot;infra&quot; |
-                          &quot;metadata&quot; | &quot;navigator&quot; | &quot;screens&quot; |
-                          &quot;settings&quot;&gt; | undefined</code
+                          >Pick&lt;AppManifest, &quot;deploy&quot; | &quot;generatedApis&quot; |
+                          &quot;infra&quot; | &quot;metadata&quot; | &quot;navigator&quot; |
+                          &quot;screens&quot; | &quot;settings&quot;&gt; | undefined</code
                         >
                       </td>
                       <td>no</td>
@@ -1908,9 +2007,9 @@
                 module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
-                module_src_adapters_minikube_auth_oauthRuntime_ts
-                module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_index_ts
+                module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_auth_index_ts
                 --&gt; module_src_types_ts
@@ -1931,6 +2030,19 @@
                 package__ankhorage_infra -.-&gt;
                 module_src_adapters_minikube_auth_supabase_profile_ts
                 module_src_adapters_minikube_auth_supabase_profile_ts --&gt; module_src_types_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts[&quot;src/adapters/minikube/auth/targetAwareOAuthRuntime.ts&quot;]
+                package__ankhorage_infra -.-&gt;
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_adapters_minikube_auth_oauthRuntime_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_authRedirects_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_authTargetRedirects_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_types_ts
                 module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_adapters_minikube_authz_cerbos_index_ts
                 module_src_adapters_minikube_authz_cerbos_index_ts --&gt;
@@ -1998,6 +2110,8 @@
                 module_src_adapters_minikube_contracts_ts
                 module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_authRedirects_ts
+                module_src_authTargetRedirects_ts[&quot;src/authTargetRedirects.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_authTargetRedirects_ts
                 module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;] package__ankhorage_infra -.-&gt;
                 module_src_cli_bin_ts module_src_cli_bin_ts --&gt; module_src_commandContext_ts
                 module_src_cli_bin_ts --&gt; module_src_commands_ts
@@ -2028,13 +2142,20 @@
                 package__ankhorage_infra -.-&gt; module_src_packageMetadata_ts
                 module_src_packageMetadata_ts --&gt; module_package_json
                 module_src_project_ts[&quot;src/project.ts&quot;] package__ankhorage_infra -.-&gt;
-                module_src_project_ts
+                module_src_project_ts module_src_project_index_ts[&quot;src/project/index.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_project_index_ts
+                module_src_projectDatabase_ts[&quot;src/projectDatabase.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_projectDatabase_ts
+                module_src_projectDatabase_ts --&gt; module_src_projectEnvironment_ts
+                module_src_projectEnvironment_ts[&quot;src/projectEnvironment.ts&quot;]
+                package__ankhorage_infra -.-&gt; module_src_projectEnvironment_ts
                 module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_projectInfrastructure_ts
                 module_src_projectInfrastructure_ts --&gt; module_src_index_ts
                 module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
                 module_src_runtime_ts[&quot;src/runtime.ts&quot;] package__ankhorage_infra -.-&gt;
                 module_src_runtime_ts module_src_runtime_ts --&gt; module_src_commandContext_ts
+                module_src_runtime_ts --&gt; module_src_projectEnvironment_ts
                 module_src_secretStore_ts[&quot;src/secretStore.ts&quot;] package__ankhorage_infra
                 -.-&gt; module_src_secretStore_ts module_src_secretStore_ts --&gt;
                 module_src_types_ts module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
@@ -2053,8 +2174,8 @@ graph TD
   package__ankhorage_infra -.-&gt; module_package_json
   module_src_adapters_minikube_auth_index_ts[&quot;src/adapters/minikube/auth/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_index_ts
-  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
@@ -2070,6 +2191,13 @@ graph TD
   module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_supabase_profile_ts
   module_src_adapters_minikube_auth_supabase_profile_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts[&quot;src/adapters/minikube/auth/targetAwareOAuthRuntime.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_authRedirects_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_authTargetRedirects_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_adapters_minikube_authz_cerbos_index_ts
   module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_adapters_minikube_contracts_ts
@@ -2118,6 +2246,8 @@ graph TD
   module_src_adapters_minikube_storage_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_authRedirects_ts
+  module_src_authTargetRedirects_ts[&quot;src/authTargetRedirects.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_authTargetRedirects_ts
   module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_cli_bin_ts
   module_src_cli_bin_ts --&gt; module_src_commandContext_ts
@@ -2153,6 +2283,13 @@ graph TD
   module_src_packageMetadata_ts --&gt; module_package_json
   module_src_project_ts[&quot;src/project.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_project_ts
+  module_src_project_index_ts[&quot;src/project/index.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_project_index_ts
+  module_src_projectDatabase_ts[&quot;src/projectDatabase.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_projectDatabase_ts
+  module_src_projectDatabase_ts --&gt; module_src_projectEnvironment_ts
+  module_src_projectEnvironment_ts[&quot;src/projectEnvironment.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_projectEnvironment_ts
   module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_projectInfrastructure_ts
   module_src_projectInfrastructure_ts --&gt; module_src_index_ts
@@ -2160,6 +2297,7 @@ graph TD
   module_src_runtime_ts[&quot;src/runtime.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_runtime_ts
   module_src_runtime_ts --&gt; module_src_commandContext_ts
+  module_src_runtime_ts --&gt; module_src_projectEnvironment_ts
   module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_secretStore_ts
   module_src_secretStore_ts --&gt; module_src_types_ts
@@ -2184,6 +2322,7 @@ graph TD
                 module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts[&quot;src/adapters/minikube/auth/targetAwareOAuthRuntime.ts&quot;]
                 module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
                 module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
                 module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
@@ -2195,6 +2334,7 @@ graph TD
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
                 module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
+                module_src_authTargetRedirects_ts[&quot;src/authTargetRedirects.ts&quot;]
                 module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
                 module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
                 module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
@@ -2205,15 +2345,18 @@ graph TD
                 module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
                 module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
                 module_src_project_ts[&quot;src/project.ts&quot;]
+                module_src_project_index_ts[&quot;src/project/index.ts&quot;]
+                module_src_projectDatabase_ts[&quot;src/projectDatabase.ts&quot;]
+                module_src_projectEnvironment_ts[&quot;src/projectEnvironment.ts&quot;]
                 module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
                 module_src_runtime_ts[&quot;src/runtime.ts&quot;]
                 module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
                 module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
                 module_src_types_ts[&quot;src/types.ts&quot;]
                 module_src_adapters_minikube_auth_index_ts --&gt;
-                module_src_adapters_minikube_auth_oauthRuntime_ts
-                module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_auth_supabase_index_ts
+                module_src_adapters_minikube_auth_index_ts --&gt;
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts
                 module_src_adapters_minikube_auth_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts module_src_adapters_minikube_auth_index_ts
                 --&gt; module_src_types_ts module_src_adapters_minikube_auth_oauthRuntime_ts --&gt;
@@ -2226,7 +2369,16 @@ graph TD
                 module_src_adapters_minikube_contracts_ts
                 module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_auth_supabase_profile_ts --&gt; module_src_types_ts
-                module_src_adapters_minikube_authz_cerbos_index_ts --&gt;
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_adapters_minikube_auth_oauthRuntime_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_adapters_minikube_contracts_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_authRedirects_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_authTargetRedirects_ts
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt;
+                module_src_types_ts module_src_adapters_minikube_authz_cerbos_index_ts --&gt;
                 module_src_adapters_minikube_contracts_ts
                 module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_types_ts
                 module_src_adapters_minikube_authz_index_ts --&gt;
@@ -2278,11 +2430,12 @@ graph TD
                 --&gt; module_src_adapters_minikube_index_ts module_src_index_ts --&gt;
                 module_src_types_ts module_src_infraValidation_ts --&gt; module_src_types_ts
                 module_src_packageMetadata_ts --&gt; module_package_json
+                module_src_projectDatabase_ts --&gt; module_src_projectEnvironment_ts
                 module_src_projectInfrastructure_ts --&gt; module_src_index_ts
                 module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
-                module_src_runtime_ts --&gt; module_src_commandContext_ts module_src_secretStore_ts
-                --&gt; module_src_types_ts module_src_testSupport_ts --&gt;
-                module_src_commandContext_ts
+                module_src_runtime_ts --&gt; module_src_commandContext_ts module_src_runtime_ts
+                --&gt; module_src_projectEnvironment_ts module_src_secretStore_ts --&gt;
+                module_src_types_ts module_src_testSupport_ts --&gt; module_src_commandContext_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -2293,6 +2446,7 @@ graph LR
   module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts[&quot;src/adapters/minikube/auth/targetAwareOAuthRuntime.ts&quot;]
   module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
   module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
   module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
@@ -2304,6 +2458,7 @@ graph LR
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
   module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
+  module_src_authTargetRedirects_ts[&quot;src/authTargetRedirects.ts&quot;]
   module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
   module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
   module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
@@ -2314,13 +2469,16 @@ graph LR
   module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
   module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
   module_src_project_ts[&quot;src/project.ts&quot;]
+  module_src_project_index_ts[&quot;src/project/index.ts&quot;]
+  module_src_projectDatabase_ts[&quot;src/projectDatabase.ts&quot;]
+  module_src_projectEnvironment_ts[&quot;src/projectEnvironment.ts&quot;]
   module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
   module_src_runtime_ts[&quot;src/runtime.ts&quot;]
   module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
   module_src_testSupport_ts[&quot;src/testSupport.ts&quot;]
   module_src_types_ts[&quot;src/types.ts&quot;]
-  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_supabase_index_ts
+  module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_auth_oauthRuntime_ts --&gt; module_src_adapters_minikube_contracts_ts
@@ -2330,6 +2488,11 @@ graph LR
   module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_auth_supabase_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_auth_supabase_profile_ts --&gt; module_src_types_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_adapters_minikube_auth_oauthRuntime_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_adapters_minikube_contracts_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_authRedirects_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_authTargetRedirects_ts
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_adapters_minikube_contracts_ts
   module_src_adapters_minikube_authz_cerbos_index_ts --&gt; module_src_types_ts
   module_src_adapters_minikube_authz_index_ts --&gt; module_src_adapters_minikube_authz_cerbos_index_ts
@@ -2372,9 +2535,11 @@ graph LR
   module_src_index_ts --&gt; module_src_types_ts
   module_src_infraValidation_ts --&gt; module_src_types_ts
   module_src_packageMetadata_ts --&gt; module_package_json
+  module_src_projectDatabase_ts --&gt; module_src_projectEnvironment_ts
   module_src_projectInfrastructure_ts --&gt; module_src_index_ts
   module_src_projectInfrastructure_ts --&gt; module_src_infraValidation_ts
   module_src_runtime_ts --&gt; module_src_commandContext_ts
+  module_src_runtime_ts --&gt; module_src_projectEnvironment_ts
   module_src_secretStore_ts --&gt; module_src_types_ts
   module_src_testSupport_ts --&gt; module_src_commandContext_ts
 </pre
@@ -2390,6 +2555,7 @@ graph LR
                 module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
                 module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
+                module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts[&quot;src/adapters/minikube/auth/targetAwareOAuthRuntime.ts&quot;]
                 module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
                 module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
                 module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
@@ -2401,6 +2567,7 @@ graph LR
                 module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
                 module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
                 module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
+                module_src_authTargetRedirects_ts[&quot;src/authTargetRedirects.ts&quot;]
                 module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
                 module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
                 module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
@@ -2411,6 +2578,9 @@ graph LR
                 module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
                 module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
                 module_src_project_ts[&quot;src/project.ts&quot;]
+                module_src_project_index_ts[&quot;src/project/index.ts&quot;]
+                module_src_projectDatabase_ts[&quot;src/projectDatabase.ts&quot;]
+                module_src_projectEnvironment_ts[&quot;src/projectEnvironment.ts&quot;]
                 module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
                 module_src_runtime_ts[&quot;src/runtime.ts&quot;]
                 module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
@@ -2503,6 +2673,7 @@ graph LR
   module_src_adapters_minikube_auth_oauthRuntime_ts[&quot;src/adapters/minikube/auth/oauthRuntime.ts&quot;]
   module_src_adapters_minikube_auth_supabase_index_ts[&quot;src/adapters/minikube/auth/supabase/index.ts&quot;]
   module_src_adapters_minikube_auth_supabase_profile_ts[&quot;src/adapters/minikube/auth/supabase/profile.ts&quot;]
+  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts[&quot;src/adapters/minikube/auth/targetAwareOAuthRuntime.ts&quot;]
   module_src_adapters_minikube_authz_cerbos_index_ts[&quot;src/adapters/minikube/authz/cerbos/index.ts&quot;]
   module_src_adapters_minikube_authz_index_ts[&quot;src/adapters/minikube/authz/index.ts&quot;]
   module_src_adapters_minikube_base_index_ts[&quot;src/adapters/minikube/base/index.ts&quot;]
@@ -2514,6 +2685,7 @@ graph LR
   module_src_adapters_minikube_storage_index_ts[&quot;src/adapters/minikube/storage/index.ts&quot;]
   module_src_adapters_minikube_storage_supabase_index_ts[&quot;src/adapters/minikube/storage/supabase/index.ts&quot;]
   module_src_authRedirects_ts[&quot;src/authRedirects.ts&quot;]
+  module_src_authTargetRedirects_ts[&quot;src/authTargetRedirects.ts&quot;]
   module_src_cli_bin_ts[&quot;src/cli/bin.ts&quot;]
   module_src_cli_index_ts[&quot;src/cli/index.ts&quot;]
   module_src_commandContext_ts[&quot;src/commandContext.ts&quot;]
@@ -2524,6 +2696,9 @@ graph LR
   module_src_metadata_index_ts[&quot;src/metadata/index.ts&quot;]
   module_src_packageMetadata_ts[&quot;src/packageMetadata.ts&quot;]
   module_src_project_ts[&quot;src/project.ts&quot;]
+  module_src_project_index_ts[&quot;src/project/index.ts&quot;]
+  module_src_projectDatabase_ts[&quot;src/projectDatabase.ts&quot;]
+  module_src_projectEnvironment_ts[&quot;src/projectEnvironment.ts&quot;]
   module_src_projectInfrastructure_ts[&quot;src/projectInfrastructure.ts&quot;]
   module_src_runtime_ts[&quot;src/runtime.ts&quot;]
   module_src_secretStore_ts[&quot;src/secretStore.ts&quot;]
@@ -3056,6 +3231,76 @@ sequenceDiagram
             >
               <h3>escapeSqlLiteral</h3>
               <p class="muted"><code>src/adapters/minikube/auth/supabase/profile.ts:524:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-adapters-minikube-auth-targetawareoauthruntime-ts"
+          class="view"
+          data-view="src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts</h2>
+            <article
+              class="item"
+              data-search="generateTargetAwareSupabaseOAuthRuntimeArtifacts src/adapters/minikube/auth/targetAwareOAuthRuntime.ts "
+            >
+              <h3>generateTargetAwareSupabaseOAuthRuntimeArtifacts</h3>
+              <p class="muted">
+                <code>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts:14:1</code>
+              </p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="applyRedirectPolicy src/adapters/minikube/auth/targetAwareOAuthRuntime.ts "
+            >
+              <h3>applyRedirectPolicy</h3>
+              <p class="muted">
+                <code>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts:49:1</code>
+              </p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="rewriteReconciliationCommand src/adapters/minikube/auth/targetAwareOAuthRuntime.ts "
+            >
+              <h3>rewriteReconciliationCommand</h3>
+              <p class="muted">
+                <code>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts:66:1</code>
+              </p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getTargetAwareStatusCommand src/adapters/minikube/auth/targetAwareOAuthRuntime.ts "
+            >
+              <h3>getTargetAwareStatusCommand</h3>
+              <p class="muted">
+                <code>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts:86:1</code>
+              </p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="getTargetAwareGuide src/adapters/minikube/auth/targetAwareOAuthRuntime.ts "
+            >
+              <h3>getTargetAwareGuide</h3>
+              <p class="muted">
+                <code>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts:109:1</code>
+              </p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="replaceOnce src/adapters/minikube/auth/targetAwareOAuthRuntime.ts "
+            >
+              <h3>replaceOnce</h3>
+              <p class="muted">
+                <code>src/adapters/minikube/auth/targetAwareOAuthRuntime.ts:129:1</code>
+              </p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -3712,17 +3957,17 @@ sequenceDiagram
             </article>
             <article class="item" data-search="collectProviders src/adapters/minikube/index.ts ">
               <h3>collectProviders</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:120:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:124:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectDependencies src/adapters/minikube/index.ts ">
               <h3>collectDependencies</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:135:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:139:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="collectWarnings src/adapters/minikube/index.ts ">
               <h3>collectWarnings</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:149:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:153:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -3730,12 +3975,12 @@ sequenceDiagram
               data-search="validateCanonicalAppSlug src/adapters/minikube/index.ts "
             >
               <h3>validateCanonicalAppSlug</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:165:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:169:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="unique src/adapters/minikube/index.ts ">
               <h3>unique</h3>
-              <p class="muted"><code>src/adapters/minikube/index.ts:181:1</code></p>
+              <p class="muted"><code>src/adapters/minikube/index.ts:185:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -3927,6 +4172,24 @@ sequenceDiagram
             <article class="item" data-search="unique src/authRedirects.ts ">
               <h3>unique</h3>
               <p class="muted"><code>src/authRedirects.ts:111:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-authtargetredirects-ts"
+          class="view"
+          data-view="src/authTargetRedirects.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/authTargetRedirects.ts</h2>
+            <article
+              class="item"
+              data-search="resolveAuthTargetRedirectModel src/authTargetRedirects.ts "
+            >
+              <h3>resolveAuthTargetRedirectModel</h3>
+              <p class="muted"><code>src/authTargetRedirects.ts:9:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -4275,82 +4538,93 @@ sequenceDiagram
             </article>
             <article class="item" data-search="resolveProjectPath src/project.ts ">
               <h3>resolveProjectPath</h3>
-              <p class="muted"><code>src/project.ts:56:1</code></p>
+              <p class="muted"><code>src/project.ts:52:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="createFallbackManifest src/project.ts ">
               <h3>createFallbackManifest</h3>
-              <p class="muted"><code>src/project.ts:67:1</code></p>
+              <p class="muted"><code>src/project.ts:63:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="readProjectManifest src/project.ts ">
               <h3>readProjectManifest</h3>
-              <p class="muted"><code>src/project.ts:95:1</code></p>
+              <p class="muted"><code>src/project.ts:89:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="findWorkspaceRoot src/project.ts ">
               <h3>findWorkspaceRoot</h3>
-              <p class="muted"><code>src/project.ts:123:1</code></p>
+              <p class="muted"><code>src/project.ts:116:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="inferProjectId src/project.ts ">
               <h3>inferProjectId</h3>
-              <p class="muted"><code>src/project.ts:141:1</code></p>
+              <p class="muted"><code>src/project.ts:129:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="validateExplicitProjectId src/project.ts ">
               <h3>validateExplicitProjectId</h3>
-              <p class="muted"><code>src/project.ts:151:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="isAppManifest src/project.ts ">
-              <h3>isAppManifest</h3>
-              <p class="muted"><code>src/project.ts:169:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="isAppManifestMetadata src/project.ts ">
-              <h3>isAppManifestMetadata</h3>
-              <p class="muted"><code>src/project.ts:185:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="isInfraManifestRecord src/project.ts ">
-              <h3>isInfraManifestRecord</h3>
-              <p class="muted"><code>src/project.ts:198:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="isNavigatorSpec src/project.ts ">
-              <h3>isNavigatorSpec</h3>
-              <p class="muted"><code>src/project.ts:202:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="isSettingsRecord src/project.ts ">
-              <h3>isSettingsRecord</h3>
-              <p class="muted"><code>src/project.ts:211:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="isLocalizationRecord src/project.ts ">
-              <h3>isLocalizationRecord</h3>
-              <p class="muted"><code>src/project.ts:219:1</code></p>
-              <p class="empty">No description available.</p>
-            </article>
-            <article class="item" data-search="isRecord src/project.ts ">
-              <h3>isRecord</h3>
-              <p class="muted"><code>src/project.ts:228:1</code></p>
+              <p class="muted"><code>src/project.ts:139:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isDirectory src/project.ts ">
               <h3>isDirectory</h3>
-              <p class="muted"><code>src/project.ts:232:1</code></p>
+              <p class="muted"><code>src/project.ts:157:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="pathExists src/project.ts ">
               <h3>pathExists</h3>
-              <p class="muted"><code>src/project.ts:241:1</code></p>
+              <p class="muted"><code>src/project.ts:166:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getErrorMessage src/project.ts ">
               <h3>getErrorMessage</h3>
-              <p class="muted"><code>src/project.ts:250:1</code></p>
+              <p class="muted"><code>src/project.ts:175:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-projectdatabase-ts"
+          class="view"
+          data-view="src/projectDatabase.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/projectDatabase.ts</h2>
+            <article
+              class="item"
+              data-search="resolveProjectInfrastructureDatabaseUrl src/projectDatabase.ts "
+            >
+              <h3>resolveProjectInfrastructureDatabaseUrl</h3>
+              <p class="muted"><code>src/projectDatabase.ts:11:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-projectenvironment-ts"
+          class="view"
+          data-view="src/projectEnvironment.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/projectEnvironment.ts</h2>
+            <article
+              class="item"
+              data-search="readProjectInfrastructureEnvironment src/projectEnvironment.ts "
+            >
+              <h3>readProjectInfrastructureEnvironment</h3>
+              <p class="muted"><code>src/projectEnvironment.ts:4:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="readEnvironmentFile src/projectEnvironment.ts ">
+              <h3>readEnvironmentFile</h3>
+              <p class="muted"><code>src/projectEnvironment.ts:24:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="pathExists src/projectEnvironment.ts ">
+              <h3>pathExists</h3>
+              <p class="muted"><code>src/projectEnvironment.ts:44:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -4368,7 +4642,15 @@ sequenceDiagram
               data-search="syncProjectInfrastructure src/projectInfrastructure.ts "
             >
               <h3>syncProjectInfrastructure</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:28:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:40:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="inspectProjectInfrastructure src/projectInfrastructure.ts "
+            >
+              <h3>inspectProjectInfrastructure</h3>
+              <p class="muted"><code>src/projectInfrastructure.ts:112:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -4376,47 +4658,47 @@ sequenceDiagram
               data-search="resolveProjectInfrastructureTarget src/projectInfrastructure.ts "
             >
               <h3>resolveProjectInfrastructureTarget</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:100:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:144:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="resolveProjectFile src/projectInfrastructure.ts ">
               <h3>resolveProjectFile</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:113:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:157:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="readInfraLedger src/projectInfrastructure.ts ">
               <h3>readInfraLedger</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:125:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:169:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="writeInfraLedger src/projectInfrastructure.ts ">
               <h3>writeInfraLedger</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:137:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:181:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="removeInfraLedger src/projectInfrastructure.ts ">
               <h3>removeInfraLedger</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:143:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:187:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="removeFiles src/projectInfrastructure.ts ">
               <h3>removeFiles</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:147:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:191:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isInfraLedger src/projectInfrastructure.ts ">
               <h3>isInfraLedger</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:158:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:202:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="isRecord src/projectInfrastructure.ts ">
               <h3>isRecord</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:171:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:215:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="uniqueStrings src/projectInfrastructure.ts ">
               <h3>uniqueStrings</h3>
-              <p class="muted"><code>src/projectInfrastructure.ts:175:1</code></p>
+              <p class="muted"><code>src/projectInfrastructure.ts:219:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -4424,29 +4706,57 @@ sequenceDiagram
         <section id="view-src-runtime-ts" class="view" data-view="src/runtime.ts" hidden>
           <section class="panel">
             <h2>src/runtime.ts</h2>
+            <article class="item" data-search="runProjectInfrastructureLifecycle src/runtime.ts ">
+              <h3>runProjectInfrastructureLifecycle</h3>
+              <p class="muted"><code>src/runtime.ts:39:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article
+              class="item"
+              data-search="resolveProjectInfrastructurePortForward src/runtime.ts "
+            >
+              <h3>resolveProjectInfrastructurePortForward</h3>
+              <p class="muted"><code>src/runtime.ts:65:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
             <article class="item" data-search="runProjectInfraScript src/runtime.ts ">
               <h3>runProjectInfraScript</h3>
-              <p class="muted"><code>src/runtime.ts:28:1</code></p>
+              <p class="muted"><code>src/runtime.ts:88:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="resolveProjectInfraScriptPath src/runtime.ts ">
               <h3>resolveProjectInfraScriptPath</h3>
-              <p class="muted"><code>src/runtime.ts:48:1</code></p>
+              <p class="muted"><code>src/runtime.ts:106:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="getInfraScriptsDirectory src/runtime.ts ">
               <h3>getInfraScriptsDirectory</h3>
-              <p class="muted"><code>src/runtime.ts:56:1</code></p>
+              <p class="muted"><code>src/runtime.ts:114:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="runShellScript src/runtime.ts ">
               <h3>runShellScript</h3>
-              <p class="muted"><code>src/runtime.ts:65:1</code></p>
+              <p class="muted"><code>src/runtime.ts:123:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createStartError src/runtime.ts ">
+              <h3>createStartError</h3>
+              <p class="muted"><code>src/runtime.ts:162:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="createExitError src/runtime.ts ">
+              <h3>createExitError</h3>
+              <p class="muted"><code>src/runtime.ts:176:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="parsePositivePort src/runtime.ts ">
+              <h3>parsePositivePort</h3>
+              <p class="muted"><code>src/runtime.ts:190:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="pathExists src/runtime.ts ">
               <h3>pathExists</h3>
-              <p class="muted"><code>src/runtime.ts:120:1</code></p>
+              <p class="muted"><code>src/runtime.ts:196:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
