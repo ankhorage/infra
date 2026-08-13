@@ -1,7 +1,7 @@
-import type { InfrastructureGenerationOptions, InfraManifestInput } from '../../../types';
+import type { InfraManifestInput, InfrastructureGenerationOptions } from '../../../types';
 import { emptyMinikubeArtifacts, type MinikubeAdapterArtifacts } from '../contracts';
-import { generateSupabaseOAuthRuntimeArtifacts } from './oauthRuntime';
 import { generateSupabaseAuthArtifacts } from './supabase';
+import { generateTargetAwareSupabaseOAuthRuntimeArtifacts } from './targetAwareOAuthRuntime';
 
 export function generateAuthProviderArtifacts(args: {
   appManifest: InfrastructureGenerationOptions['appManifest'];
@@ -22,7 +22,10 @@ export function generateAuthProviderArtifacts(args: {
   }
 
   const providerArtifacts = generateSupabaseAuthArtifacts({ manifest, namespace });
-  const oauthArtifacts = generateSupabaseOAuthRuntimeArtifacts({ appManifest, manifest });
+  const oauthArtifacts = generateTargetAwareSupabaseOAuthRuntimeArtifacts({
+    appManifest,
+    manifest,
+  });
 
   return {
     files: [...providerArtifacts.files, ...oauthArtifacts.files],

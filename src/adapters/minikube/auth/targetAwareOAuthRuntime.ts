@@ -1,6 +1,6 @@
-import { resolveAuthTargetRedirectModel } from '../../../authTargetRedirects';
 import { getLocalAuthRedirectPatterns, normalizeAuthCallbackRoute } from '../../../authRedirects';
-import type { InfrastructureGenerationOptions, InfraManifestInput } from '../../../types';
+import { resolveAuthTargetRedirectModel } from '../../../authTargetRedirects';
+import type { InfraManifestInput, InfrastructureGenerationOptions } from '../../../types';
 import type { MinikubeAdapterArtifacts, MinikubeProviderLifecycle } from '../contracts';
 import { generateSupabaseOAuthRuntimeArtifacts } from './oauthRuntime';
 
@@ -128,7 +128,9 @@ a native callback. Provider credential values remain sourced from trusted secret
 
 function replaceOnce(value: string, search: string, replacement: string): string {
   if (!value.includes(search)) {
-    throw new Error('Supabase OAuth redirect reconciliation template drifted from its canonical form.');
+    throw new Error(
+      'Supabase OAuth redirect reconciliation template drifted from its canonical form.',
+    );
   }
   return value.replace(search, replacement);
 }
