@@ -37,7 +37,7 @@ export interface InfrastructureGenerationOptions {
    */
   readonly appManifest?: Pick<
     AppManifest,
-    'generatedApis' | 'infra' | 'metadata' | 'navigator' | 'screens' | 'settings'
+    'deploy' | 'generatedApis' | 'infra' | 'metadata' | 'navigator' | 'screens' | 'settings'
   >;
 }
 

@@ -230,10 +230,10 @@ Source: `src/types.ts:18:1`
 
 ### Members
 
-| Name      | Kind     | Type                                                                                                       | Required | Description |
-| --------- | -------- | ---------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| providers | property | `readonly string[]`                                                                                        | yes      |             |
-| target    | property | `import("/private/tmp/ankhorage-infra-125/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
+| Name      | Kind     | Type                                                                                                    | Required | Description |
+| --------- | -------- | ------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| providers | property | `readonly string[]`                                                                                     | yes      |             |
+| target    | property | `import("/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
 
 ## InfrastructureGenerationOptions
 
@@ -243,10 +243,10 @@ Source: `src/types.ts:30:1`
 
 ### Members
 
-| Name          | Kind     | Type                                                                                                                 | Required | Description |
-| ------------- | -------- | -------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| appManifest   | property | `Pick<AppManifest, "generatedApis" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
-| namespaceHint | property | `string \| undefined`                                                                                                | no       |             |
+| Name          | Kind     | Type                                                                                                                             | Required | Description |
+| ------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| appManifest   | property | `Pick<AppManifest, "deploy" \| "generatedApis" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
+| namespaceHint | property | `string \| undefined`                                                                                                            | no       |             |
 
 ## InfrastructureGenerationResult
 

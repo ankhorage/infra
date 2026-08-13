@@ -656,7 +656,7 @@
       {
         "name": "target",
         "kind": "property",
-        "type": "import(\"/private/tmp/ankhorage-infra-125/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+        "type": "import(\"/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
         "required": true,
         "description": null
       }
@@ -682,7 +682,7 @@
       {
         "name": "appManifest",
         "kind": "property",
-        "type": "Pick<AppManifest, \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+        "type": "Pick<AppManifest, \"deploy\" | \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
         "required": false,
         "description": null
       },

@@ -3,17 +3,23 @@
 
 # INFRA
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v2.0.1](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v3.2.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
 
 Executable infra provider and standalone CLI for Ankhorage project workflows.
 
 ## Usage
 
-### Provider and CLI surface
+### Provider, CLI, and project API surface
 
-`@ankhorage/infra` owns infra command behavior.
+`@ankhorage/infra` owns infrastructure generation, project reconciliation,
+and generated lifecycle execution.
 
-The same shared command implementation backs both:
+The same owner implementation backs CLI consumers and the public
+`@ankhorage/infra/project` application-service boundary. Trusted hosts such
+as Studio should call that subpath instead of reproducing ledger, generated
+file, lifecycle-script, or port-forward configuration semantics.
+
+CLI entrypoints:
 
 - `ankh infra ...`
 - `bunx @ankhorage/infra ...`
@@ -26,12 +32,10 @@ Current command surface:
 - `up`
 - `down`
 
-`status` runs the generated live runtime status script for a project.
-
-Project resolution is project-aware:
-
-- pass `[project]`, or
-- omit it when cwd is already inside `apps/<project>`
+Project resolution for the CLI is workspace-aware: pass `[project]`, or
+omit it when cwd is already inside `apps/<project>`. Programmatic project
+operations accept an explicit project path and do not require Studio or a
+particular workspace layout.
 
 Source: `src/readme-usage.ts`
 

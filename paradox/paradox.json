@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v2.0.1",
+      "value": "v3.2.0",
       "color": "cb3837"
     },
     {
@@ -69,8 +69,8 @@
   },
   "readmeUsage": [
     {
-      "title": "Provider and CLI surface",
-      "description": "Provider and CLI surface\n\n`@ankhorage/infra` owns infra command behavior.\n\nThe same shared command implementation backs both:\n\n- `ankh infra ...`\n- `bunx @ankhorage/infra ...`\n\nCurrent command surface:\n\n- `validate`\n- `generate`\n- `status`\n- `up`\n- `down`\n\n`status` runs the generated live runtime status script for a project.\n\nProject resolution is project-aware:\n\n- pass `[project]`, or\n- omit it when cwd is already inside `apps/<project>`",
+      "title": "Provider, CLI, and project API surface",
+      "description": "Provider, CLI, and project API surface\n\n`@ankhorage/infra` owns infrastructure generation, project reconciliation,\nand generated lifecycle execution.\n\nThe same owner implementation backs CLI consumers and the public\n`@ankhorage/infra/project` application-service boundary. Trusted hosts such\nas Studio should call that subpath instead of reproducing ledger, generated\nfile, lifecycle-script, or port-forward configuration semantics.\n\nCLI entrypoints:\n\n- `ankh infra ...`\n- `bunx @ankhorage/infra ...`\n\nCurrent command surface:\n\n- `validate`\n- `generate`\n- `status`\n- `up`\n- `down`\n\nProject resolution for the CLI is workspace-aware: pass `[project]`, or\nomit it when cwd is already inside `apps/<project>`. Programmatic project\noperations accept an explicit project path and do not require Studio or a\nparticular workspace layout.",
       "language": "ts",
       "code": "import { runCli } from './cli/bin.js';\n\nawait runCli(['--help']);",
       "sourcePath": "src/readme-usage.ts"
@@ -89,8 +89,8 @@
       "path": "src/adapters/minikube/auth/index.ts",
       "isEntrypoint": false,
       "dependencies": [
-        "src/adapters/minikube/auth/oauthRuntime.ts",
         "src/adapters/minikube/auth/supabase/index.ts",
+        "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
         "src/adapters/minikube/contracts.ts",
         "src/types.ts"
       ],
@@ -125,6 +125,18 @@
         "ResolvedProfileModel",
         "resolveSupabaseProfileModel"
       ]
+    },
+    {
+      "path": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/adapters/minikube/auth/oauthRuntime.ts",
+        "src/adapters/minikube/contracts.ts",
+        "src/authRedirects.ts",
+        "src/authTargetRedirects.ts",
+        "src/types.ts"
+      ],
+      "exports": ["generateTargetAwareSupabaseOAuthRuntimeArtifacts"]
     },
     {
       "path": "src/adapters/minikube/authz/cerbos/index.ts",
@@ -223,6 +235,12 @@
         "resolveAuthRedirectConfiguration",
         "ResolveAuthRedirectConfigurationInput"
       ]
+    },
+    {
+      "path": "src/authTargetRedirects.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": ["resolveAuthTargetRedirectModel"]
     },
     {
       "path": "src/cli/bin.ts",
@@ -349,11 +367,47 @@
       "exports": ["ResolvedInfraProject", "resolveInfraProject"]
     },
     {
+      "path": "src/project/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "InfraLifecycleScript",
+        "InfraPortForwardInfo",
+        "InfraProjectInspection",
+        "InfraScriptExecutionError",
+        "InfraScriptOutput",
+        "InfraSyncResult",
+        "inspectProjectInfrastructure",
+        "readProjectInfrastructureEnvironment",
+        "ResolvedInfraProject",
+        "resolveInfraWorkspaceProject",
+        "resolveProjectInfrastructureDatabaseUrl",
+        "resolveProjectInfrastructurePortForward",
+        "resolveProjectInfrastructureTarget",
+        "runProjectInfrastructureLifecycle",
+        "syncProjectInfrastructure"
+      ]
+    },
+    {
+      "path": "src/projectDatabase.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/projectEnvironment.ts"],
+      "exports": ["resolveProjectInfrastructureDatabaseUrl"]
+    },
+    {
+      "path": "src/projectEnvironment.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": ["readProjectInfrastructureEnvironment"]
+    },
+    {
       "path": "src/projectInfrastructure.ts",
       "isEntrypoint": false,
       "dependencies": ["src/index.ts", "src/infraValidation.ts"],
       "exports": [
+        "InfraProjectInspection",
         "InfraSyncResult",
+        "inspectProjectInfrastructure",
         "resolveProjectFile",
         "resolveProjectInfrastructureTarget",
         "syncProjectInfrastructure"
@@ -362,12 +416,16 @@
     {
       "path": "src/runtime.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/commandContext.ts"],
+      "dependencies": ["src/commandContext.ts", "src/projectEnvironment.ts"],
       "exports": [
         "InfraLifecycleScript",
+        "InfraPortForwardInfo",
         "InfraScriptExecutionError",
+        "InfraScriptOutput",
         "resolveProjectInfraScriptPath",
-        "runProjectInfraScript"
+        "resolveProjectInfrastructurePortForward",
+        "runProjectInfraScript",
+        "runProjectInfrastructureLifecycle"
       ]
     },
     {
@@ -1069,7 +1127,7 @@
         {
           "name": "target",
           "kind": "property",
-          "type": "import(\"/private/tmp/ankhorage-infra-125/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+          "type": "import(\"/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
           "required": true,
           "description": null
         }
@@ -1095,7 +1153,7 @@
         {
           "name": "appManifest",
           "kind": "property",
-          "type": "Pick<AppManifest, \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+          "type": "Pick<AppManifest, \"deploy\" | \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
           "required": false,
           "description": null
         },
@@ -1519,6 +1577,60 @@
       "sourceLocation": {
         "filePath": "src/adapters/minikube/auth/supabase/profile.ts",
         "line": 524,
+        "column": 1
+      }
+    },
+    {
+      "name": "generateTargetAwareSupabaseOAuthRuntimeArtifacts",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "line": 14,
+        "column": 1
+      }
+    },
+    {
+      "name": "applyRedirectPolicy",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "line": 49,
+        "column": 1
+      }
+    },
+    {
+      "name": "rewriteReconciliationCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "line": 66,
+        "column": 1
+      }
+    },
+    {
+      "name": "getTargetAwareStatusCommand",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "line": 86,
+        "column": 1
+      }
+    },
+    {
+      "name": "getTargetAwareGuide",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "line": 109,
+        "column": 1
+      }
+    },
+    {
+      "name": "replaceOnce",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "line": 129,
         "column": 1
       }
     },
@@ -2220,7 +2332,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 120,
+        "line": 124,
         "column": 1
       }
     },
@@ -2229,7 +2341,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 135,
+        "line": 139,
         "column": 1
       }
     },
@@ -2238,7 +2350,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 149,
+        "line": 153,
         "column": 1
       }
     },
@@ -2247,7 +2359,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 165,
+        "line": 169,
         "column": 1
       }
     },
@@ -2256,7 +2368,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 181,
+        "line": 185,
         "column": 1
       }
     },
@@ -2428,6 +2540,15 @@
       "sourceLocation": {
         "filePath": "src/authRedirects.ts",
         "line": 111,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveAuthTargetRedirectModel",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/authTargetRedirects.ts",
+        "line": 9,
         "column": 1
       }
     },
@@ -2940,7 +3061,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 56,
+        "line": 52,
         "column": 1
       }
     },
@@ -2949,7 +3070,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 67,
+        "line": 63,
         "column": 1
       }
     },
@@ -2958,7 +3079,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 95,
+        "line": 89,
         "column": 1
       }
     },
@@ -2967,7 +3088,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 123,
+        "line": 116,
         "column": 1
       }
     },
@@ -2976,7 +3097,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 141,
+        "line": 129,
         "column": 1
       }
     },
@@ -2985,70 +3106,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 151,
-        "column": 1
-      }
-    },
-    {
-      "name": "isAppManifest",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 169,
-        "column": 1
-      }
-    },
-    {
-      "name": "isAppManifestMetadata",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 185,
-        "column": 1
-      }
-    },
-    {
-      "name": "isInfraManifestRecord",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 198,
-        "column": 1
-      }
-    },
-    {
-      "name": "isNavigatorSpec",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 202,
-        "column": 1
-      }
-    },
-    {
-      "name": "isSettingsRecord",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 211,
-        "column": 1
-      }
-    },
-    {
-      "name": "isLocalizationRecord",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 219,
-        "column": 1
-      }
-    },
-    {
-      "name": "isRecord",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/project.ts",
-        "line": 228,
+        "line": 139,
         "column": 1
       }
     },
@@ -3057,7 +3115,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 232,
+        "line": 157,
         "column": 1
       }
     },
@@ -3066,7 +3124,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 241,
+        "line": 166,
         "column": 1
       }
     },
@@ -3075,7 +3133,43 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/project.ts",
-        "line": 250,
+        "line": 175,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProjectInfrastructureDatabaseUrl",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectDatabase.ts",
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "name": "readProjectInfrastructureEnvironment",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectEnvironment.ts",
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
+      "name": "readEnvironmentFile",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectEnvironment.ts",
+        "line": 24,
+        "column": 1
+      }
+    },
+    {
+      "name": "pathExists",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectEnvironment.ts",
+        "line": 44,
         "column": 1
       }
     },
@@ -3084,7 +3178,16 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 28,
+        "line": 40,
+        "column": 1
+      }
+    },
+    {
+      "name": "inspectProjectInfrastructure",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/projectInfrastructure.ts",
+        "line": 112,
         "column": 1
       }
     },
@@ -3093,7 +3196,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 100,
+        "line": 144,
         "column": 1
       }
     },
@@ -3102,7 +3205,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 113,
+        "line": 157,
         "column": 1
       }
     },
@@ -3111,7 +3214,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 125,
+        "line": 169,
         "column": 1
       }
     },
@@ -3120,7 +3223,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 137,
+        "line": 181,
         "column": 1
       }
     },
@@ -3129,7 +3232,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 143,
+        "line": 187,
         "column": 1
       }
     },
@@ -3138,7 +3241,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 147,
+        "line": 191,
         "column": 1
       }
     },
@@ -3147,7 +3250,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 158,
+        "line": 202,
         "column": 1
       }
     },
@@ -3156,7 +3259,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 171,
+        "line": 215,
         "column": 1
       }
     },
@@ -3165,39 +3268,21 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/projectInfrastructure.ts",
-        "line": 175,
+        "line": 219,
         "column": 1
       }
     },
     {
-      "name": "runProjectInfraScript",
+      "name": "runProjectInfrastructureLifecycle",
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 28,
+        "line": 39,
         "column": 1
       }
     },
     {
-      "name": "resolveProjectInfraScriptPath",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/runtime.ts",
-        "line": 48,
-        "column": 1
-      }
-    },
-    {
-      "name": "getInfraScriptsDirectory",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/runtime.ts",
-        "line": 56,
-        "column": 1
-      }
-    },
-    {
-      "name": "runShellScript",
+      "name": "resolveProjectInfrastructurePortForward",
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
@@ -3206,11 +3291,74 @@
       }
     },
     {
+      "name": "runProjectInfraScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 88,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProjectInfraScriptPath",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 106,
+        "column": 1
+      }
+    },
+    {
+      "name": "getInfraScriptsDirectory",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 114,
+        "column": 1
+      }
+    },
+    {
+      "name": "runShellScript",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 123,
+        "column": 1
+      }
+    },
+    {
+      "name": "createStartError",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 162,
+        "column": 1
+      }
+    },
+    {
+      "name": "createExitError",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 176,
+        "column": 1
+      }
+    },
+    {
+      "name": "parsePositivePort",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 190,
+        "column": 1
+      }
+    },
+    {
       "name": "pathExists",
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 120,
+        "line": 196,
         "column": 1
       }
     },
@@ -3395,6 +3543,11 @@
         "sourcePath": "src/packageMetadata.ts"
       },
       {
+        "fromPath": "src/projectDatabase.ts",
+        "toPath": "src/projectEnvironment.ts",
+        "sourcePath": "src/projectDatabase.ts"
+      },
+      {
         "fromPath": "src/projectInfrastructure.ts",
         "toPath": "src/index.ts",
         "sourcePath": "src/projectInfrastructure.ts"
@@ -3412,6 +3565,11 @@
       {
         "fromPath": "src/runtime.ts",
         "toPath": "src/commandContext.ts",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromPath": "src/runtime.ts",
+        "toPath": "src/projectEnvironment.ts",
         "sourcePath": "src/runtime.ts"
       },
       {
@@ -3448,6 +3606,31 @@
         "fromPath": "src/metadata/index.ts",
         "toPath": "src/packageMetadata.ts",
         "sourcePath": "src/metadata/index.ts"
+      },
+      {
+        "fromPath": "src/project/index.ts",
+        "toPath": "src/project.ts",
+        "sourcePath": "src/project/index.ts"
+      },
+      {
+        "fromPath": "src/project/index.ts",
+        "toPath": "src/projectDatabase.ts",
+        "sourcePath": "src/project/index.ts"
+      },
+      {
+        "fromPath": "src/project/index.ts",
+        "toPath": "src/projectEnvironment.ts",
+        "sourcePath": "src/project/index.ts"
+      },
+      {
+        "fromPath": "src/project/index.ts",
+        "toPath": "src/projectInfrastructure.ts",
+        "sourcePath": "src/project/index.ts"
+      },
+      {
+        "fromPath": "src/project/index.ts",
+        "toPath": "src/runtime.ts",
+        "sourcePath": "src/project/index.ts"
       },
       {
         "fromPath": "src/adapters/minikube/contracts.ts",
@@ -3501,12 +3684,12 @@
       },
       {
         "fromPath": "src/adapters/minikube/auth/index.ts",
-        "toPath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "toPath": "src/adapters/minikube/auth/supabase/index.ts",
         "sourcePath": "src/adapters/minikube/auth/index.ts"
       },
       {
         "fromPath": "src/adapters/minikube/auth/index.ts",
-        "toPath": "src/adapters/minikube/auth/supabase/index.ts",
+        "toPath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
         "sourcePath": "src/adapters/minikube/auth/index.ts"
       },
       {
@@ -3523,6 +3706,31 @@
         "fromPath": "src/adapters/minikube/auth/oauthRuntime.ts",
         "toPath": "src/adapters/minikube/contracts.ts",
         "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toPath": "src/authRedirects.ts",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toPath": "src/authTargetRedirects.ts",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toPath": "src/types.ts",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toPath": "src/adapters/minikube/contracts.ts",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromPath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toPath": "src/adapters/minikube/auth/oauthRuntime.ts",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
       },
       {
         "fromPath": "src/adapters/minikube/authz/index.ts",
@@ -4195,70 +4403,22 @@
         "sourcePath": "src/project.ts"
       },
       {
-        "fromSymbol": "isAppManifest",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
-        "sourcePath": "src/project.ts"
+        "fromSymbol": "resolveProjectInfrastructureDatabaseUrl",
+        "toSymbol": "readProjectInfrastructureEnvironment",
+        "callExpression": "readProjectInfrastructureEnvironment",
+        "sourcePath": "src/projectDatabase.ts"
       },
       {
-        "fromSymbol": "isAppManifest",
-        "toSymbol": "isAppManifestMetadata",
-        "callExpression": "isAppManifestMetadata",
-        "sourcePath": "src/project.ts"
+        "fromSymbol": "readProjectInfrastructureEnvironment",
+        "toSymbol": "pathExists",
+        "callExpression": "pathExists",
+        "sourcePath": "src/projectEnvironment.ts"
       },
       {
-        "fromSymbol": "isAppManifest",
-        "toSymbol": "isInfraManifestRecord",
-        "callExpression": "isInfraManifestRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isAppManifest",
-        "toSymbol": "isNavigatorSpec",
-        "callExpression": "isNavigatorSpec",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isAppManifest",
-        "toSymbol": "isSettingsRecord",
-        "callExpression": "isSettingsRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isAppManifestMetadata",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isInfraManifestRecord",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isNavigatorSpec",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isSettingsRecord",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isSettingsRecord",
-        "toSymbol": "isLocalizationRecord",
-        "callExpression": "isLocalizationRecord",
-        "sourcePath": "src/project.ts"
-      },
-      {
-        "fromSymbol": "isLocalizationRecord",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
-        "sourcePath": "src/project.ts"
+        "fromSymbol": "readProjectInfrastructureEnvironment",
+        "toSymbol": "readEnvironmentFile",
+        "callExpression": "readEnvironmentFile",
+        "sourcePath": "src/projectEnvironment.ts"
       },
       {
         "fromSymbol": "syncProjectInfrastructure",
@@ -4309,6 +4469,24 @@
         "sourcePath": "src/projectInfrastructure.ts"
       },
       {
+        "fromSymbol": "inspectProjectInfrastructure",
+        "toSymbol": "validateInfraSupport",
+        "callExpression": "validateInfraSupport",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "inspectProjectInfrastructure",
+        "toSymbol": "readInfraLedger",
+        "callExpression": "readInfraLedger",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
+        "fromSymbol": "inspectProjectInfrastructure",
+        "toSymbol": "uniqueStrings",
+        "callExpression": "uniqueStrings",
+        "sourcePath": "src/projectInfrastructure.ts"
+      },
+      {
         "fromSymbol": "resolveProjectInfrastructureTarget",
         "toSymbol": "readInfraLedger",
         "callExpression": "readInfraLedger",
@@ -4339,21 +4517,51 @@
         "sourcePath": "src/readme-usage.ts"
       },
       {
-        "fromSymbol": "runProjectInfraScript",
+        "fromSymbol": "runProjectInfrastructureLifecycle",
         "toSymbol": "resolveProjectInfraScriptPath",
         "callExpression": "resolveProjectInfraScriptPath",
         "sourcePath": "src/runtime.ts"
       },
       {
-        "fromSymbol": "runProjectInfraScript",
+        "fromSymbol": "runProjectInfrastructureLifecycle",
         "toSymbol": "pathExists",
         "callExpression": "pathExists",
         "sourcePath": "src/runtime.ts"
       },
       {
-        "fromSymbol": "runProjectInfraScript",
+        "fromSymbol": "runProjectInfrastructureLifecycle",
         "toSymbol": "runShellScript",
         "callExpression": "runShellScript",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "resolveProjectInfrastructurePortForward",
+        "toSymbol": "readProjectInfrastructureEnvironment",
+        "callExpression": "readProjectInfrastructureEnvironment",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "resolveProjectInfrastructurePortForward",
+        "toSymbol": "parsePositivePort",
+        "callExpression": "parsePositivePort",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "runProjectInfraScript",
+        "toSymbol": "runProjectInfrastructureLifecycle",
+        "callExpression": "runProjectInfrastructureLifecycle",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "onStderr",
+        "toSymbol": "writeStderr",
+        "callExpression": "args.context.writeStderr",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "onStdout",
+        "toSymbol": "writeStdout",
+        "callExpression": "args.context.writeStdout",
         "sourcePath": "src/runtime.ts"
       },
       {
@@ -4370,14 +4578,14 @@
       },
       {
         "fromSymbol": "src/runtime.ts",
-        "toSymbol": "writeStdout",
-        "callExpression": "args.context.writeStdout",
+        "toSymbol": "onStdout",
+        "callExpression": "args.onStdout",
         "sourcePath": "src/runtime.ts"
       },
       {
         "fromSymbol": "src/runtime.ts",
-        "toSymbol": "writeStderr",
-        "callExpression": "args.context.writeStderr",
+        "toSymbol": "onStderr",
+        "callExpression": "args.onStderr",
         "sourcePath": "src/runtime.ts"
       },
       {
@@ -4388,8 +4596,20 @@
       },
       {
         "fromSymbol": "src/runtime.ts",
+        "toSymbol": "createStartError",
+        "callExpression": "createStartError",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "src/runtime.ts",
         "toSymbol": "resolve",
         "callExpression": "resolve",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "src/runtime.ts",
+        "toSymbol": "createExitError",
+        "callExpression": "createExitError",
         "sourcePath": "src/runtime.ts"
       },
       {
@@ -4562,8 +4782,8 @@
       },
       {
         "fromSymbol": "generateAuthProviderArtifacts",
-        "toSymbol": "generateSupabaseOAuthRuntimeArtifacts",
-        "callExpression": "generateSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "generateTargetAwareSupabaseOAuthRuntimeArtifacts",
+        "callExpression": "generateTargetAwareSupabaseOAuthRuntimeArtifacts",
         "sourcePath": "src/adapters/minikube/auth/index.ts"
       },
       {
@@ -4607,6 +4827,66 @@
         "toSymbol": "getOAuthRuntimeStatusCommand",
         "callExpression": "getOAuthRuntimeStatusCommand",
         "sourcePath": "src/adapters/minikube/auth/oauthRuntime.ts"
+      },
+      {
+        "fromSymbol": "generateTargetAwareSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "generateSupabaseOAuthRuntimeArtifacts",
+        "callExpression": "generateSupabaseOAuthRuntimeArtifacts",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "generateTargetAwareSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "normalizeAuthCallbackRoute",
+        "callExpression": "normalizeAuthCallbackRoute",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "generateTargetAwareSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "resolveAuthTargetRedirectModel",
+        "callExpression": "resolveAuthTargetRedirectModel",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "generateTargetAwareSupabaseOAuthRuntimeArtifacts",
+        "toSymbol": "getLocalAuthRedirectPatterns",
+        "callExpression": "getLocalAuthRedirectPatterns",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toSymbol": "getTargetAwareGuide",
+        "callExpression": "getTargetAwareGuide",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toSymbol": "applyRedirectPolicy",
+        "callExpression": "applyRedirectPolicy",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toSymbol": "rewriteReconciliationCommand",
+        "callExpression": "rewriteReconciliationCommand",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts",
+        "toSymbol": "getTargetAwareStatusCommand",
+        "callExpression": "getTargetAwareStatusCommand",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "rewriteReconciliationCommand",
+        "toSymbol": "getLocalAuthRedirectPatterns",
+        "callExpression": "getLocalAuthRedirectPatterns",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
+      },
+      {
+        "fromSymbol": "rewriteReconciliationCommand",
+        "toSymbol": "replaceOnce",
+        "callExpression": "replaceOnce",
+        "sourcePath": "src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"
       },
       {
         "fromSymbol": "generateAuthorizationArtifacts",
