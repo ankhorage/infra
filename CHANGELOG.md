@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 3.3.0
+
+### Minor Changes
+
+- 716f678: Derive Supabase OAuth redirect allowlists from canonical app deployment targets, using enabled Web state and stable Android/iOS schemes instead of a separate native redirect environment variable.
+
 ## 3.2.0
 
 ### Minor Changes
