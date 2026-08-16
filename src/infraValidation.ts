@@ -9,7 +9,7 @@ import {
 import type { InfraManifestInput } from './types.js';
 
 export function validateInfraSupport(manifest: InfraManifestInput): readonly string[] {
-  const warnings: string[] = [];
+  const warnings: string[] = [...validateInfraApiSupport(manifest)];
 
   const deploymentTarget = manifest.deployment?.target;
   if (deploymentTarget !== undefined && !isSupported(deploymentTarget, DEPLOYMENT_TARGETS)) {
@@ -67,6 +67,15 @@ export function validateInfraSupport(manifest: InfraManifestInput): readonly str
   }
 
   return warnings;
+}
+
+export function validateInfraApiSupport(manifest: InfraManifestInput): readonly string[] {
+  return (manifest.apis ?? [])
+    .filter((api) => api.origin === 'internal')
+    .map(
+      (api) =>
+        `infra.apis.${api.id} has origin "internal", but internal API provisioning is not supported in Phase 1; no API infrastructure will be generated.`,
+    );
 }
 
 function warningForUnsupportedValue(args: {

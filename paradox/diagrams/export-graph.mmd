@@ -21,7 +21,6 @@ graph LR
   module_src_cli_index_ts["src/cli/index.ts"]
   module_src_commandContext_ts["src/commandContext.ts"]
   module_src_commands_ts["src/commands.ts"]
-  module_src_generatedApiDatabase_ts["src/generatedApiDatabase.ts"]
   module_src_index_ts["src/index.ts"]
   module_src_infraValidation_ts["src/infraValidation.ts"]
   module_src_metadata_index_ts["src/metadata/index.ts"]
@@ -46,24 +45,12 @@ graph LR
   module_src_secretStore_ts --> export_CreateInfraSecretStoreAdapterInput
   export_CreateInfraSecretStoreAdapterInput -.-> export_InfraManifestInput
   export_CreateInfraSecretStoreAdapterInput -.-> export_InfraSecretStoreProviders
-  export_GeneratedApiDatabaseArtifacts["GeneratedApiDatabaseArtifacts"]
-  module_src_generatedApiDatabase_ts --> export_GeneratedApiDatabaseArtifacts
-  export_GeneratedApiDatabaseArtifacts -.-> export_GeneratedApiDatabaseDiagnostic
-  export_GeneratedApiDatabaseArtifacts -.-> export_GeneratedInfrastructureFile
-  export_GeneratedApiDatabaseDiagnostic["GeneratedApiDatabaseDiagnostic"]
-  module_src_generatedApiDatabase_ts --> export_GeneratedApiDatabaseDiagnostic
-  export_GeneratedApiDatabaseDiagnostic -.-> export_GeneratedApiDatabaseDiagnosticCode
-  export_GeneratedApiDatabaseDiagnosticCode["GeneratedApiDatabaseDiagnosticCode"]
-  module_src_generatedApiDatabase_ts --> export_GeneratedApiDatabaseDiagnosticCode
   export_GeneratedFile["GeneratedFile"]
   module_src_types_ts --> export_GeneratedFile
   export_GeneratedInfrastructureFile["GeneratedInfrastructureFile"]
   module_src_types_ts --> export_GeneratedInfrastructureFile
   export_GeneratedPackageDependency["GeneratedPackageDependency"]
   module_src_types_ts --> export_GeneratedPackageDependency
-  export_generateGeneratedApiDatabaseArtifacts["generateGeneratedApiDatabaseArtifacts"]
-  module_src_generatedApiDatabase_ts --> export_generateGeneratedApiDatabaseArtifacts
-  export_generateGeneratedApiDatabaseArtifacts -.-> export_GeneratedApiDatabaseArtifacts
   export_generateInfra["generateInfra"]
   module_src_index_ts --> export_generateInfra
   export_generateInfra -.-> export_InfraGenerationInput

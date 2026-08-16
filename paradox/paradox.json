@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v3.2.0",
+      "value": "v3.3.0",
       "color": "cb3837"
     },
     {
@@ -67,6 +67,7 @@
       }
     ]
   },
+  "readmeUsageDescription": null,
   "readmeUsage": [
     {
       "title": "Provider, CLI, and project API surface",
@@ -76,6 +77,8 @@
       "sourcePath": "src/readme-usage.ts"
     }
   ],
+  "readmeCli": null,
+  "readmeConfig": null,
   "config": null,
   "entrypoints": ["src/index.ts"],
   "modules": [
@@ -186,7 +189,7 @@
         "src/adapters/minikube/base/index.ts",
         "src/adapters/minikube/secrets/index.ts",
         "src/adapters/minikube/storage/index.ts",
-        "src/generatedApiDatabase.ts",
+        "src/infraValidation.ts",
         "src/types.ts"
       ],
       "exports": ["generateMinikubeInfra"]
@@ -286,17 +289,6 @@
       ]
     },
     {
-      "path": "src/generatedApiDatabase.ts",
-      "isEntrypoint": false,
-      "dependencies": ["src/types.ts"],
-      "exports": [
-        "GeneratedApiDatabaseArtifacts",
-        "GeneratedApiDatabaseDiagnostic",
-        "GeneratedApiDatabaseDiagnosticCode",
-        "generateGeneratedApiDatabaseArtifacts"
-      ]
-    },
-    {
       "path": "src/index.ts",
       "isEntrypoint": true,
       "dependencies": ["src/adapters/minikube/index.ts", "src/types.ts"],
@@ -305,13 +297,9 @@
         "AuthRedirectEnvironment",
         "createInfraSecretStoreAdapter",
         "CreateInfraSecretStoreAdapterInput",
-        "GeneratedApiDatabaseArtifacts",
-        "GeneratedApiDatabaseDiagnostic",
-        "GeneratedApiDatabaseDiagnosticCode",
         "GeneratedFile",
         "GeneratedInfrastructureFile",
         "GeneratedPackageDependency",
-        "generateGeneratedApiDatabaseArtifacts",
         "generateInfra",
         "generateInfrastructure",
         "getLocalAuthRedirectPatterns",
@@ -334,7 +322,7 @@
       "path": "src/infraValidation.ts",
       "isEntrypoint": false,
       "dependencies": ["src/types.ts"],
-      "exports": ["validateInfraSupport"]
+      "exports": ["validateInfraApiSupport", "validateInfraSupport"]
     },
     {
       "path": "src/metadata/index.ts",
@@ -601,118 +589,6 @@
       "structuredRows": []
     },
     {
-      "name": "GeneratedApiDatabaseArtifacts",
-      "description": null,
-      "isReadme": false,
-      "examples": [],
-      "kind": "type",
-      "modulePath": "src/generatedApiDatabase.ts",
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 34,
-        "column": 1
-      },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["GeneratedApiDatabaseDiagnostic", "GeneratedInfrastructureFile"],
-      "signatures": [],
-      "members": [
-        {
-          "name": "diagnostics",
-          "kind": "property",
-          "type": "readonly GeneratedApiDatabaseDiagnostic[]",
-          "required": true,
-          "description": null
-        },
-        {
-          "name": "files",
-          "kind": "property",
-          "type": "readonly GeneratedInfrastructureFile[]",
-          "required": true,
-          "description": null
-        }
-      ],
-      "structuredRows": []
-    },
-    {
-      "name": "GeneratedApiDatabaseDiagnostic",
-      "description": null,
-      "isReadme": false,
-      "examples": [],
-      "kind": "type",
-      "modulePath": "src/generatedApiDatabase.ts",
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 25,
-        "column": 1
-      },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["GeneratedApiDatabaseDiagnosticCode"],
-      "signatures": [],
-      "members": [
-        {
-          "name": "apiId",
-          "kind": "property",
-          "type": "string",
-          "required": true,
-          "description": null
-        },
-        {
-          "name": "code",
-          "kind": "property",
-          "type": "GeneratedApiDatabaseDiagnosticCode",
-          "required": true,
-          "description": null
-        },
-        {
-          "name": "message",
-          "kind": "property",
-          "type": "string",
-          "required": true,
-          "description": null
-        },
-        {
-          "name": "path",
-          "kind": "property",
-          "type": "string | undefined",
-          "required": false,
-          "description": null
-        },
-        {
-          "name": "resourceId",
-          "kind": "property",
-          "type": "string | undefined",
-          "required": false,
-          "description": null
-        },
-        {
-          "name": "severity",
-          "kind": "property",
-          "type": "\"error\" | \"warning\"",
-          "required": true,
-          "description": null
-        }
-      ],
-      "structuredRows": []
-    },
-    {
-      "name": "GeneratedApiDatabaseDiagnosticCode",
-      "description": null,
-      "isReadme": false,
-      "examples": [],
-      "kind": "unknown",
-      "modulePath": "src/generatedApiDatabase.ts",
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 13,
-        "column": 1
-      },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": [],
-      "signatures": [],
-      "members": [],
-      "structuredRows": []
-    },
-    {
       "name": "GeneratedFile",
       "description": null,
       "isReadme": false,
@@ -811,38 +687,6 @@
       "structuredRows": []
     },
     {
-      "name": "generateGeneratedApiDatabaseArtifacts",
-      "description": null,
-      "isReadme": false,
-      "examples": [],
-      "kind": "function",
-      "modulePath": "src/generatedApiDatabase.ts",
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 56,
-        "column": 1
-      },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["GeneratedApiDatabaseArtifacts"],
-      "signatures": [
-        {
-          "label": "(args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) => GeneratedApiDatabaseArtifacts",
-          "parameters": [
-            {
-              "name": "args",
-              "type": "{ readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }",
-              "required": true,
-              "description": null
-            }
-          ],
-          "returnType": "GeneratedApiDatabaseArtifacts",
-          "returnDescription": null
-        }
-      ],
-      "members": [],
-      "structuredRows": []
-    },
-    {
       "name": "generateInfra",
       "description": null,
       "isReadme": false,
@@ -851,7 +695,7 @@
       "modulePath": "src/index.ts",
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 43,
+        "line": 37,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -883,7 +727,7 @@
       "modulePath": "src/index.ts",
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 47,
+        "line": 41,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -1127,7 +971,7 @@
         {
           "name": "target",
           "kind": "property",
-          "type": "import(\"/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+          "type": "import(\"@ankhorage/contracts/dist/types\").DeploymentTarget",
           "required": true,
           "description": null
         }
@@ -1153,7 +997,7 @@
         {
           "name": "appManifest",
           "kind": "property",
-          "type": "Pick<AppManifest, \"deploy\" | \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+          "type": "Pick<AppManifest, \"deploy\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
           "required": false,
           "description": null
         },
@@ -2332,7 +2176,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 124,
+        "line": 105,
         "column": 1
       }
     },
@@ -2341,7 +2185,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 139,
+        "line": 120,
         "column": 1
       }
     },
@@ -2350,7 +2194,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 153,
+        "line": 134,
         "column": 1
       }
     },
@@ -2359,7 +2203,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 169,
+        "line": 150,
         "column": 1
       }
     },
@@ -2368,7 +2212,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/index.ts",
-        "line": 185,
+        "line": 166,
         "column": 1
       }
     },
@@ -2751,254 +2595,11 @@
       }
     },
     {
-      "name": "generateGeneratedApiDatabaseArtifacts",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 56,
-        "column": 1
-      }
-    },
-    {
-      "name": "listGeneratedResources",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 104,
-        "column": 1
-      }
-    },
-    {
-      "name": "validateGeneratedApiDatabaseState",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 116,
-        "column": 1
-      }
-    },
-    {
-      "name": "validateFields",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 205,
-        "column": 1
-      }
-    },
-    {
-      "name": "validatePrimaryKey",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 237,
-        "column": 1
-      }
-    },
-    {
-      "name": "validateSeeds",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 257,
-        "column": 1
-      }
-    },
-    {
-      "name": "validateIdentifier",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 326,
-        "column": 1
-      }
-    },
-    {
-      "name": "resourceDiagnostic",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 343,
-        "column": 1
-      }
-    },
-    {
-      "name": "isCompatibleDefault",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 360,
-        "column": 1
-      }
-    },
-    {
-      "name": "isCompatibleFieldValue",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 366,
-        "column": 1
-      }
-    },
-    {
-      "name": "createSeedEntry",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 383,
-        "column": 1
-      }
-    },
-    {
-      "name": "materializeSeedRecord",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 392,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateMigrationSql",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 411,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateSeedSql",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 440,
-        "column": 1
-      }
-    },
-    {
-      "name": "createSeedStatements",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 449,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatSeedValue",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 475,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatColumn",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 480,
-        "column": 1
-      }
-    },
-    {
-      "name": "mapFieldType",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 488,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatDefault",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 497,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatFieldValue",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 505,
-        "column": 1
-      }
-    },
-    {
-      "name": "formatValue",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 513,
-        "column": 1
-      }
-    },
-    {
-      "name": "generateReadme",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 521,
-        "column": 1
-      }
-    },
-    {
-      "name": "jsonFile",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 532,
-        "column": 1
-      }
-    },
-    {
-      "name": "quoteIdentifier",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 536,
-        "column": 1
-      }
-    },
-    {
-      "name": "escapeString",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 540,
-        "column": 1
-      }
-    },
-    {
-      "name": "createDeterministicSeedUuid",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 544,
-        "column": 1
-      }
-    },
-    {
-      "name": "hashHex",
-      "description": null,
-      "sourceLocation": {
-        "filePath": "src/generatedApiDatabase.ts",
-        "line": 551,
-        "column": 1
-      }
-    },
-    {
       "name": "generateInfra",
       "description": null,
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 43,
+        "line": 37,
         "column": 1
       }
     },
@@ -3007,7 +2608,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/index.ts",
-        "line": 47,
+        "line": 41,
         "column": 1
       }
     },
@@ -3021,7 +2622,7 @@
       }
     },
     {
-      "name": "warningForUnsupportedValue",
+      "name": "validateInfraApiSupport",
       "description": null,
       "sourceLocation": {
         "filePath": "src/infraValidation.ts",
@@ -3030,11 +2631,20 @@
       }
     },
     {
+      "name": "warningForUnsupportedValue",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/infraValidation.ts",
+        "line": 81,
+        "column": 1
+      }
+    },
+    {
       "name": "formatSupportedValues",
       "description": null,
       "sourceLocation": {
         "filePath": "src/infraValidation.ts",
-        "line": 80,
+        "line": 89,
         "column": 1
       }
     },
@@ -3043,7 +2653,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/infraValidation.ts",
-        "line": 88,
+        "line": 97,
         "column": 1
       }
     },
@@ -3418,14 +3028,6 @@
     },
     {
       "kind": "export",
-      "name": "generateGeneratedApiDatabaseArtifacts",
-      "sourcePath": "src/generatedApiDatabase.ts",
-      "symbolName": "generateGeneratedApiDatabaseArtifacts",
-      "description": null,
-      "isReadme": false
-    },
-    {
-      "kind": "export",
       "name": "generateInfra",
       "sourcePath": "src/index.ts",
       "symbolName": "generateInfra",
@@ -3503,11 +3105,6 @@
         "sourcePath": "src/commands.ts"
       },
       {
-        "fromPath": "src/generatedApiDatabase.ts",
-        "toPath": "src/types.ts",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
         "fromPath": "src/index.ts",
         "toPath": "src/adapters/minikube/index.ts",
         "sourcePath": "src/index.ts"
@@ -3520,11 +3117,6 @@
       {
         "fromPath": "src/index.ts",
         "toPath": "src/authRedirects.ts",
-        "sourcePath": "src/index.ts"
-      },
-      {
-        "fromPath": "src/index.ts",
-        "toPath": "src/generatedApiDatabase.ts",
         "sourcePath": "src/index.ts"
       },
       {
@@ -3639,7 +3231,7 @@
       },
       {
         "fromPath": "src/adapters/minikube/index.ts",
-        "toPath": "src/generatedApiDatabase.ts",
+        "toPath": "src/infraValidation.ts",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -4091,222 +3683,6 @@
         "sourcePath": "src/commands.ts"
       },
       {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toSymbol": "listGeneratedResources",
-        "callExpression": "listGeneratedResources",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toSymbol": "validateGeneratedApiDatabaseState",
-        "callExpression": "validateGeneratedApiDatabaseState",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toSymbol": "jsonFile",
-        "callExpression": "jsonFile",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toSymbol": "generateMigrationSql",
-        "callExpression": "generateMigrationSql",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toSymbol": "generateSeedSql",
-        "callExpression": "generateSeedSql",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toSymbol": "generateReadme",
-        "callExpression": "generateReadme",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateGeneratedApiDatabaseState",
-        "toSymbol": "resourceDiagnostic",
-        "callExpression": "resourceDiagnostic",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateGeneratedApiDatabaseState",
-        "toSymbol": "validateIdentifier",
-        "callExpression": "validateIdentifier",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateGeneratedApiDatabaseState",
-        "toSymbol": "validateFields",
-        "callExpression": "validateFields",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateGeneratedApiDatabaseState",
-        "toSymbol": "validatePrimaryKey",
-        "callExpression": "validatePrimaryKey",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateGeneratedApiDatabaseState",
-        "toSymbol": "validateSeeds",
-        "callExpression": "validateSeeds",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateFields",
-        "toSymbol": "validateIdentifier",
-        "callExpression": "validateIdentifier",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateFields",
-        "toSymbol": "resourceDiagnostic",
-        "callExpression": "resourceDiagnostic",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateFields",
-        "toSymbol": "isCompatibleDefault",
-        "callExpression": "isCompatibleDefault",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validatePrimaryKey",
-        "toSymbol": "validateIdentifier",
-        "callExpression": "validateIdentifier",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validatePrimaryKey",
-        "toSymbol": "resourceDiagnostic",
-        "callExpression": "resourceDiagnostic",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "resourceDiagnostic",
-        "callExpression": "resourceDiagnostic",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "isCompatibleFieldValue",
-        "callExpression": "isCompatibleFieldValue",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "validateIdentifier",
-        "toSymbol": "resourceDiagnostic",
-        "callExpression": "resourceDiagnostic",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "isCompatibleDefault",
-        "toSymbol": "isCompatibleFieldValue",
-        "callExpression": "isCompatibleFieldValue",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "materializeSeedRecord",
-        "callExpression": "materializeSeedRecord",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "materializeSeedRecord",
-        "toSymbol": "createDeterministicSeedUuid",
-        "callExpression": "createDeterministicSeedUuid",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "quoteIdentifier",
-        "callExpression": "quoteIdentifier",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "formatColumn",
-        "callExpression": "formatColumn",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "createSeedStatements",
-        "callExpression": "createSeedStatements",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "createSeedStatements",
-        "toSymbol": "quoteIdentifier",
-        "callExpression": "quoteIdentifier",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "src/generatedApiDatabase.ts",
-        "toSymbol": "formatSeedValue",
-        "callExpression": "formatSeedValue",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatSeedValue",
-        "toSymbol": "formatFieldValue",
-        "callExpression": "formatFieldValue",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatColumn",
-        "toSymbol": "formatDefault",
-        "callExpression": "formatDefault",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatColumn",
-        "toSymbol": "quoteIdentifier",
-        "callExpression": "quoteIdentifier",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatColumn",
-        "toSymbol": "mapFieldType",
-        "callExpression": "mapFieldType",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatDefault",
-        "toSymbol": "formatFieldValue",
-        "callExpression": "formatFieldValue",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatFieldValue",
-        "toSymbol": "escapeString",
-        "callExpression": "escapeString",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatFieldValue",
-        "toSymbol": "formatValue",
-        "callExpression": "formatValue",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "formatValue",
-        "toSymbol": "escapeString",
-        "callExpression": "escapeString",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "createDeterministicSeedUuid",
-        "toSymbol": "hashHex",
-        "callExpression": "hashHex",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
         "fromSymbol": "generateInfra",
         "toSymbol": "generateInfrastructure",
         "callExpression": "generateInfrastructure",
@@ -4317,6 +3693,12 @@
         "toSymbol": "generateMinikubeInfra",
         "callExpression": "generateMinikubeInfra",
         "sourcePath": "src/index.ts"
+      },
+      {
+        "fromSymbol": "validateInfraSupport",
+        "toSymbol": "validateInfraApiSupport",
+        "callExpression": "validateInfraApiSupport",
+        "sourcePath": "src/infraValidation.ts"
       },
       {
         "fromSymbol": "validateInfraSupport",
@@ -4734,12 +4116,6 @@
       },
       {
         "fromSymbol": "generateMinikubeInfra",
-        "toSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "callExpression": "generateGeneratedApiDatabaseArtifacts",
-        "sourcePath": "src/adapters/minikube/index.ts"
-      },
-      {
-        "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "unique",
         "callExpression": "unique",
         "sourcePath": "src/adapters/minikube/index.ts"
@@ -4766,6 +4142,12 @@
         "fromSymbol": "generateMinikubeInfra",
         "toSymbol": "collectDependencies",
         "callExpression": "collectDependencies",
+        "sourcePath": "src/adapters/minikube/index.ts"
+      },
+      {
+        "fromSymbol": "collectWarnings",
+        "toSymbol": "validateInfraApiSupport",
+        "callExpression": "validateInfraApiSupport",
         "sourcePath": "src/adapters/minikube/index.ts"
       },
       {
@@ -5637,31 +5019,6 @@
         "fromSymbol": "ResolveAuthRedirectConfigurationInput",
         "toType": "AuthRedirectEnvironment",
         "sourcePath": "src/authRedirects.ts"
-      },
-      {
-        "fromSymbol": "GeneratedApiDatabaseArtifacts",
-        "toType": "GeneratedApiDatabaseDiagnostic",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "GeneratedApiDatabaseArtifacts",
-        "toType": "GeneratedInfrastructureFile",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "GeneratedApiDatabaseDiagnostic",
-        "toType": "GeneratedApiDatabaseDiagnosticCode",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toType": "GeneratedApiDatabaseArtifacts",
-        "sourcePath": "src/generatedApiDatabase.ts"
-      },
-      {
-        "fromSymbol": "generateGeneratedApiDatabaseArtifacts",
-        "toType": "GeneratedApiRegistry",
-        "sourcePath": "src/generatedApiDatabase.ts"
       },
       {
         "fromSymbol": "createInfraSecretStoreAdapter",

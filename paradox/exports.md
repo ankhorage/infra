@@ -46,42 +46,6 @@ Source: `src/secretStore.ts:14:1`
 | manifest  | property | `Pick<InfraManifestInput, "secretStore">` | yes      |             |
 | providers | property | `InfraSecretStoreProviders`               | yes      |             |
 
-## GeneratedApiDatabaseArtifacts
-
-Kind: `type`
-Module: `src/generatedApiDatabase.ts`
-Source: `src/generatedApiDatabase.ts:34:1`
-
-### Members
-
-| Name        | Kind     | Type                                        | Required | Description |
-| ----------- | -------- | ------------------------------------------- | -------- | ----------- |
-| diagnostics | property | `readonly GeneratedApiDatabaseDiagnostic[]` | yes      |             |
-| files       | property | `readonly GeneratedInfrastructureFile[]`    | yes      |             |
-
-## GeneratedApiDatabaseDiagnostic
-
-Kind: `type`
-Module: `src/generatedApiDatabase.ts`
-Source: `src/generatedApiDatabase.ts:25:1`
-
-### Members
-
-| Name       | Kind     | Type                                 | Required | Description |
-| ---------- | -------- | ------------------------------------ | -------- | ----------- |
-| apiId      | property | `string`                             | yes      |             |
-| code       | property | `GeneratedApiDatabaseDiagnosticCode` | yes      |             |
-| message    | property | `string`                             | yes      |             |
-| path       | property | `string \| undefined`                | no       |             |
-| resourceId | property | `string \| undefined`                | no       |             |
-| severity   | property | `"error" \| "warning"`               | yes      |             |
-
-## GeneratedApiDatabaseDiagnosticCode
-
-Kind: `unknown`
-Module: `src/generatedApiDatabase.ts`
-Source: `src/generatedApiDatabase.ts:13:1`
-
 ## GeneratedFile
 
 Kind: `unknown`
@@ -116,23 +80,11 @@ Source: `src/types.ts:12:1`
 | reason  | property | `string` | yes      |             |
 | version | property | `string` | yes      |             |
 
-## generateGeneratedApiDatabaseArtifacts
-
-Kind: `function`
-Module: `src/generatedApiDatabase.ts`
-Source: `src/generatedApiDatabase.ts:56:1`
-
-### Signatures
-
-- `(args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) => GeneratedApiDatabaseArtifacts`
-  - args: `{ readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }`
-  - returns: `GeneratedApiDatabaseArtifacts`
-
 ## generateInfra
 
 Kind: `function`
 Module: `src/index.ts`
-Source: `src/index.ts:43:1`
+Source: `src/index.ts:37:1`
 
 ### Signatures
 
@@ -144,7 +96,7 @@ Source: `src/index.ts:43:1`
 
 Kind: `function`
 Module: `src/index.ts`
-Source: `src/index.ts:47:1`
+Source: `src/index.ts:41:1`
 
 ### Signatures
 
@@ -230,10 +182,10 @@ Source: `src/types.ts:18:1`
 
 ### Members
 
-| Name      | Kind     | Type                                                                                                    | Required | Description |
-| --------- | -------- | ------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| providers | property | `readonly string[]`                                                                                     | yes      |             |
-| target    | property | `import("/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
+| Name      | Kind     | Type                                                         | Required | Description |
+| --------- | -------- | ------------------------------------------------------------ | -------- | ----------- |
+| providers | property | `readonly string[]`                                          | yes      |             |
+| target    | property | `import("@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
 
 ## InfrastructureGenerationOptions
 
@@ -243,10 +195,10 @@ Source: `src/types.ts:30:1`
 
 ### Members
 
-| Name          | Kind     | Type                                                                                                                             | Required | Description |
-| ------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| appManifest   | property | `Pick<AppManifest, "deploy" \| "generatedApis" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
-| namespaceHint | property | `string \| undefined`                                                                                                            | no       |             |
+| Name          | Kind     | Type                                                                                                          | Required | Description |
+| ------------- | -------- | ------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| appManifest   | property | `Pick<AppManifest, "deploy" \| "infra" \| "metadata" \| "navigator" \| "screens" \| "settings"> \| undefined` | no       |             |
+| namespaceHint | property | `string \| undefined`                                                                                         | no       |             |
 
 ## InfrastructureGenerationResult
 

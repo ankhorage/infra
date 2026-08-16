@@ -1,4 +1,4 @@
-import { generateGeneratedApiDatabaseArtifacts } from '../../generatedApiDatabase';
+import { validateInfraApiSupport } from '../../infraValidation';
 import type {
   GeneratedPackageDependency,
   InfraManifestInput,
@@ -45,21 +45,6 @@ export function generateMinikubeInfra(
   });
   const storageArtifacts = generateStorageArtifacts({ manifest, namespace });
   const secretStoreArtifacts = generateSecretStoreArtifacts({ manifest, namespace });
-  const generatedApiDatabaseArtifacts = generateGeneratedApiDatabaseArtifacts({
-    generatedApis: options.appManifest?.generatedApis,
-    databaseProvider: manifest.database?.provider,
-  });
-  const generatedApiErrors = generatedApiDatabaseArtifacts.diagnostics.filter(
-    (diagnostic) => diagnostic.severity === 'error',
-  );
-
-  if (generatedApiErrors.length > 0) {
-    throw new Error(
-      `Generated API database definition is invalid:\n${generatedApiErrors
-        .map((diagnostic) => `- ${diagnostic.path ?? diagnostic.apiId}: ${diagnostic.message}`)
-        .join('\n')}`,
-    );
-  }
 
   const extraResources = unique([
     ...authArtifacts.resources,
@@ -98,9 +83,6 @@ export function generateMinikubeInfra(
     ...authzArtifacts.warnings,
     ...storageArtifacts.warnings,
     ...secretStoreArtifacts.warnings,
-    ...generatedApiDatabaseArtifacts.diagnostics
-      .filter((diagnostic) => diagnostic.severity === 'warning')
-      .map((diagnostic) => diagnostic.message),
   ]);
 
   return {
@@ -110,7 +92,6 @@ export function generateMinikubeInfra(
       ...authzArtifacts.files,
       ...storageArtifacts.files,
       ...secretStoreArtifacts.files,
-      ...generatedApiDatabaseArtifacts.files,
     ],
     warnings,
     meta: {
@@ -151,7 +132,7 @@ function collectDependencies(manifest: InfraManifestInput): readonly GeneratedPa
 }
 
 function collectWarnings(manifest: InfraManifestInput): string[] {
-  const warnings: string[] = [];
+  const warnings = [...validateInfraApiSupport(manifest)];
 
   if (manifest.deployment?.monitoring) {
     warnings.push(

@@ -15,12 +15,6 @@ export {
   type ResolveAuthRedirectConfigurationInput,
 } from './authRedirects';
 export {
-  type GeneratedApiDatabaseArtifacts,
-  type GeneratedApiDatabaseDiagnostic,
-  type GeneratedApiDatabaseDiagnosticCode,
-  generateGeneratedApiDatabaseArtifacts,
-} from './generatedApiDatabase';
-export {
   createInfraSecretStoreAdapter,
   type CreateInfraSecretStoreAdapterInput,
   type InfraSecretStoreProviders,
