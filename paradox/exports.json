@@ -130,118 +130,6 @@
     "structuredRows": []
   },
   {
-    "name": "GeneratedApiDatabaseArtifacts",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/generatedApiDatabase.ts",
-    "sourceLocation": {
-      "filePath": "src/generatedApiDatabase.ts",
-      "line": 34,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["GeneratedApiDatabaseDiagnostic", "GeneratedInfrastructureFile"],
-    "signatures": [],
-    "members": [
-      {
-        "name": "diagnostics",
-        "kind": "property",
-        "type": "readonly GeneratedApiDatabaseDiagnostic[]",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "files",
-        "kind": "property",
-        "type": "readonly GeneratedInfrastructureFile[]",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "GeneratedApiDatabaseDiagnostic",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/generatedApiDatabase.ts",
-    "sourceLocation": {
-      "filePath": "src/generatedApiDatabase.ts",
-      "line": 25,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["GeneratedApiDatabaseDiagnosticCode"],
-    "signatures": [],
-    "members": [
-      {
-        "name": "apiId",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "code",
-        "kind": "property",
-        "type": "GeneratedApiDatabaseDiagnosticCode",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "message",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "path",
-        "kind": "property",
-        "type": "string | undefined",
-        "required": false,
-        "description": null
-      },
-      {
-        "name": "resourceId",
-        "kind": "property",
-        "type": "string | undefined",
-        "required": false,
-        "description": null
-      },
-      {
-        "name": "severity",
-        "kind": "property",
-        "type": "\"error\" | \"warning\"",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "GeneratedApiDatabaseDiagnosticCode",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "unknown",
-    "modulePath": "src/generatedApiDatabase.ts",
-    "sourceLocation": {
-      "filePath": "src/generatedApiDatabase.ts",
-      "line": 13,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [],
-    "structuredRows": []
-  },
-  {
     "name": "GeneratedFile",
     "description": null,
     "isReadme": false,
@@ -340,38 +228,6 @@
     "structuredRows": []
   },
   {
-    "name": "generateGeneratedApiDatabaseArtifacts",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "function",
-    "modulePath": "src/generatedApiDatabase.ts",
-    "sourceLocation": {
-      "filePath": "src/generatedApiDatabase.ts",
-      "line": 56,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["GeneratedApiDatabaseArtifacts"],
-    "signatures": [
-      {
-        "label": "(args: { readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }) => GeneratedApiDatabaseArtifacts",
-        "parameters": [
-          {
-            "name": "args",
-            "type": "{ readonly generatedApis: GeneratedApiRegistry | undefined; readonly databaseProvider: string | undefined; }",
-            "required": true,
-            "description": null
-          }
-        ],
-        "returnType": "GeneratedApiDatabaseArtifacts",
-        "returnDescription": null
-      }
-    ],
-    "members": [],
-    "structuredRows": []
-  },
-  {
     "name": "generateInfra",
     "description": null,
     "isReadme": false,
@@ -380,7 +236,7 @@
     "modulePath": "src/index.ts",
     "sourceLocation": {
       "filePath": "src/index.ts",
-      "line": 43,
+      "line": 37,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -412,7 +268,7 @@
     "modulePath": "src/index.ts",
     "sourceLocation": {
       "filePath": "src/index.ts",
-      "line": 47,
+      "line": 41,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
@@ -656,7 +512,7 @@
       {
         "name": "target",
         "kind": "property",
-        "type": "import(\"/home/runner/work/infra/infra/node_modules/@ankhorage/contracts/dist/types\").DeploymentTarget",
+        "type": "import(\"@ankhorage/contracts/dist/types\").DeploymentTarget",
         "required": true,
         "description": null
       }
@@ -682,7 +538,7 @@
       {
         "name": "appManifest",
         "kind": "property",
-        "type": "Pick<AppManifest, \"deploy\" | \"generatedApis\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
+        "type": "Pick<AppManifest, \"deploy\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
         "required": false,
         "description": null
       },
