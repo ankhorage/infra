@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.0.0
+
+### Major Changes
+
+- 82e969e: Align infrastructure generation with canonical `infra.apis[]`, remove generated-API database projection and public generator exports, treat external APIs as infrastructure no-ops, and report internal API provisioning as unsupported in Phase 1.
+
 ## 3.3.0
 
 ### Minor Changes
