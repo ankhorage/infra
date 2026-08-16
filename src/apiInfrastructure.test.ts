@@ -56,9 +56,7 @@ describe('canonical API infrastructure', () => {
   });
 });
 
-function listApiArtifactPaths(
-  files: readonly { readonly path: string }[],
-): readonly string[] {
+function listApiArtifactPaths(files: readonly { readonly path: string }[]): readonly string[] {
   return files
     .map((file) => file.path)
     .filter(
