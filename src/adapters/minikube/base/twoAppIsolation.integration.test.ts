@@ -30,7 +30,6 @@ describe('generated Minikube two-app isolation', () => {
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
-        await prepareSecondSupabaseProfile(first.slug, second.slug, root);
         await runScript(second.minikubeRoot, 'up.sh');
 
         await expectProfileOwnsAppNamespace(first.slug);
@@ -70,6 +69,7 @@ describe('generated Minikube two-app isolation', () => {
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
+        await prepareSecondSupabaseProfile(first.slug, second.slug, root);
         await runScript(second.minikubeRoot, 'up.sh');
 
         await expectProfileOwnsAppNamespace(first.slug);
