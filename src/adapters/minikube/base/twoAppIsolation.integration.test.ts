@@ -398,8 +398,12 @@ async function expectRuntimePortForwardRecovery(app: {
 
   const env = await readGeneratedEnv(app.minikubeRoot);
   const gatewayUrl = readRequiredEnv(env, 'SUPABASE_PUBLIC_URL');
+  const anonKey = readRequiredEnv(env, 'SUPABASE_ANON_KEY');
   const response = await fetch(`${gatewayUrl}/auth/v1/health`, {
     signal: AbortSignal.timeout(HTTP_TIMEOUT_MS),
+    headers: {
+      apikey: anonKey,
+    },
   });
   expect(response.ok).toBe(true);
 }
