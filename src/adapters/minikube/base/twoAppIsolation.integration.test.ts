@@ -17,6 +17,8 @@ const supabaseIsolationTest =
   process.env.ANKH_MINIKUBE_SUPABASE_ISOLATION === '1' ? test : test.skip;
 const TEST_TIMEOUT_MS = 1_800_000;
 const HTTP_TIMEOUT_MS = 60_000;
+const DIAGNOSTIC_TIMEOUT_MS = 60_000;
+const DIAGNOSTIC_OUTPUT_LIMIT = 20_000;
 
 describe('generated Minikube two-app isolation', () => {
   isolationTest(
@@ -28,6 +30,7 @@ describe('generated Minikube two-app isolation', () => {
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
+        await prepareSecondSupabaseProfile(first.slug, second.slug, root);
         await runScript(second.minikubeRoot, 'up.sh');
 
         await expectProfileOwnsAppNamespace(first.slug);
@@ -307,11 +310,182 @@ async function writeGeneratedFiles(
 }
 
 async function runScript(minikubeRoot: string, scriptName: string) {
-  return execFile(path.join(minikubeRoot, 'scripts', scriptName), {
-    cwd: minikubeRoot,
-    env: process.env,
-    timeout: TEST_TIMEOUT_MS,
-  });
+  try {
+    return await execFile(path.join(minikubeRoot, 'scripts', scriptName), {
+      cwd: minikubeRoot,
+      env: process.env,
+      timeout: TEST_TIMEOUT_MS,
+    });
+  } catch (error) {
+    if (scriptName !== 'up.sh') throw error;
+    const diagnostics = await collectFailedUpDiagnostics(minikubeRoot);
+    throw new Error(
+      `Generated ${scriptName} failed:\n${formatUnknownError(error)}\n\n${diagnostics}`,
+      { cause: error },
+    );
+  }
+}
+
+async function prepareSecondSupabaseProfile(
+  sourceProfile: string,
+  targetProfile: string,
+  scratchRoot: string,
+): Promise<void> {
+  const imagesResult = await execFile(
+    'kubectl',
+    [
+      '--context',
+      sourceProfile,
+      '-n',
+      'supabase',
+      'get',
+      'deployments',
+      '-o',
+      'jsonpath={range .items[*].spec.template.spec.containers[*]}{.image}{"\\n"}{end}',
+    ],
+    { timeout: DIAGNOSTIC_TIMEOUT_MS },
+  );
+  const images = [
+    ...new Set(imagesResult.stdout.split(/\r?\n/u).map((image) => image.trim())),
+  ].filter(Boolean);
+  if (images.length === 0) {
+    throw new Error(`Expected Supabase runtime images in profile ${sourceProfile}.`);
+  }
+
+  await execFile(
+    'minikube',
+    ['start', '-p', targetProfile, `--driver=${process.env.MINIKUBE_DRIVER ?? 'docker'}`],
+    { timeout: TEST_TIMEOUT_MS },
+  );
+
+  const imageArchive = path.join(scratchRoot, 'supabase-image-transfer.tar');
+  try {
+    for (const image of images) {
+      await execFile('minikube', ['-p', sourceProfile, 'image', 'save', image, imageArchive], {
+        timeout: TEST_TIMEOUT_MS,
+      });
+      await execFile('minikube', ['-p', targetProfile, 'image', 'load', imageArchive], {
+        timeout: TEST_TIMEOUT_MS,
+      });
+      await rm(imageArchive, { force: true });
+    }
+  } finally {
+    await rm(imageArchive, { force: true });
+  }
+}
+
+async function collectFailedUpDiagnostics(minikubeRoot: string): Promise<string> {
+  let profile: string;
+  try {
+    profile = readRequiredEnv(await readGeneratedEnv(minikubeRoot), 'ANKH_APP_SLUG');
+  } catch (error) {
+    return `Unable to determine the failed Minikube profile: ${formatUnknownError(error)}`;
+  }
+
+  const commands: readonly DiagnosticCommand[] = [
+    {
+      label: 'Minikube status',
+      command: 'minikube',
+      args: ['-p', profile, 'status'],
+    },
+    {
+      label: 'Supabase pods',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'get', 'pods', '-o', 'wide'],
+    },
+    {
+      label: 'Postgres deployment',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'describe', 'deployment', 'postgres'],
+    },
+    {
+      label: 'Postgres pod',
+      command: 'kubectl',
+      args: [
+        '--context',
+        profile,
+        '-n',
+        'supabase',
+        'describe',
+        'pod',
+        '-l',
+        'app.kubernetes.io/name=supabase-postgres',
+      ],
+    },
+    {
+      label: 'Postgres logs',
+      command: 'kubectl',
+      args: [
+        '--context',
+        profile,
+        '-n',
+        'supabase',
+        'logs',
+        '-l',
+        'app.kubernetes.io/name=supabase-postgres',
+        '--all-containers=true',
+        '--tail=200',
+      ],
+    },
+    {
+      label: 'Supabase events',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'get', 'events', '--sort-by=.lastTimestamp'],
+    },
+    {
+      label: 'Supabase volumes',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'get', 'pvc,pv'],
+    },
+    {
+      label: 'Docker containers',
+      command: 'docker',
+      args: ['ps', '--format', '{{.Names}}\\t{{.Status}}\\t{{.Image}}'],
+    },
+  ];
+  const output: string[] = [];
+  for (const command of commands) {
+    output.push(await captureDiagnostic(command));
+  }
+  return `Bounded diagnostics for failed Minikube profile ${profile}:\n\n${output.join('\n\n')}`;
+}
+
+interface DiagnosticCommand {
+  readonly label: string;
+  readonly command: string;
+  readonly args: readonly string[];
+}
+
+async function captureDiagnostic(diagnostic: DiagnosticCommand): Promise<string> {
+  const renderedCommand = [diagnostic.command, ...diagnostic.args].join(' ');
+  try {
+    const result = await execFile(diagnostic.command, [...diagnostic.args], {
+      timeout: DIAGNOSTIC_TIMEOUT_MS,
+    });
+    const output = [result.stdout.trim(), result.stderr.trim()].filter(Boolean).join('\n');
+    return `${diagnostic.label}\n$ ${renderedCommand}\n${truncateDiagnostic(output || '(no output)')}`;
+  } catch (error) {
+    return `${diagnostic.label}\n$ ${renderedCommand}\n${truncateDiagnostic(
+      formatUnknownError(error),
+    )}`;
+  }
+}
+
+function formatUnknownError(error: unknown): string {
+  if (!(error instanceof Error)) return String(error);
+  const childProcessError = error as Error & { stderr?: unknown; stdout?: unknown };
+  return [
+    error.message,
+    typeof childProcessError.stdout === 'string' ? childProcessError.stdout.trim() : '',
+    typeof childProcessError.stderr === 'string' ? childProcessError.stderr.trim() : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+function truncateDiagnostic(output: string): string {
+  if (output.length <= DIAGNOSTIC_OUTPUT_LIMIT) return output;
+  return `${output.slice(0, DIAGNOSTIC_OUTPUT_LIMIT)}\n... diagnostic output truncated ...`;
 }
 
 async function removeDockerImage(image: string): Promise<void> {
