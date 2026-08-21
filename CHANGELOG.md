@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.0
+
+### Minor Changes
+
+- 66ef9aa: Add a provider-aware runtime port-forward lifecycle and export `ensureProjectInfrastructureRuntime` from `@ankhorage/infra/project`.
+
 ## 4.0.0
 
 ### Major Changes
