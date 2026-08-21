@@ -19,14 +19,20 @@ const TEST_TIMEOUT_MS = 1_800_000;
 const HTTP_TIMEOUT_MS = 60_000;
 const DIAGNOSTIC_TIMEOUT_MS = 60_000;
 const DIAGNOSTIC_OUTPUT_LIMIT = 20_000;
+const APP_ONLY_TEST_PROFILES = ['ankh-isolation-a', 'ankh-isolation-b'] as const;
+const SUPABASE_TEST_PROFILES = ['ankh-isolation-supa-a', 'ankh-isolation-supa-b'] as const;
+type TestOwnedMinikubeProfile =
+  | (typeof APP_ONLY_TEST_PROFILES)[number]
+  | (typeof SUPABASE_TEST_PROFILES)[number];
 
 describe('generated Minikube two-app isolation', () => {
   isolationTest(
     'runs two generated app profiles without sharing cluster resources',
     async () => {
+      await deleteTestOwnedMinikubeProfiles(APP_ONLY_TEST_PROFILES);
       const root = await mkdtemp(path.join(process.cwd(), '.tmp-minikube-isolation-'));
-      const first = await createGeneratedApp(root, 'ankh-isolation-a', 18181);
-      const second = await createGeneratedApp(root, 'ankh-isolation-b', 18182);
+      const first = await createGeneratedApp(root, APP_ONLY_TEST_PROFILES[0], 18181);
+      const second = await createGeneratedApp(root, APP_ONLY_TEST_PROFILES[1], 18182);
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
@@ -59,13 +65,14 @@ describe('generated Minikube two-app isolation', () => {
   supabaseIsolationTest(
     'runs two generated Supabase-backed profiles without shared runtime state',
     async () => {
+      await deleteTestOwnedMinikubeProfiles(SUPABASE_TEST_PROFILES);
       const root = await mkdtemp(path.join(process.cwd(), '.tmp-minikube-supabase-isolation-'));
       const [firstPorts, secondPorts] = await reserveSupabaseHostPortSets(2);
       if (!firstPorts || !secondPorts) {
         throw new Error('Expected two reserved Supabase host port sets.');
       }
-      const first = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-a', firstPorts);
-      const second = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-b', secondPorts);
+      const first = await createGeneratedSupabaseApp(root, SUPABASE_TEST_PROFILES[0], firstPorts);
+      const second = await createGeneratedSupabaseApp(root, SUPABASE_TEST_PROFILES[1], secondPorts);
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
@@ -101,6 +108,14 @@ describe('generated Minikube two-app isolation', () => {
     TEST_TIMEOUT_MS,
   );
 });
+
+async function deleteTestOwnedMinikubeProfiles(
+  profiles: readonly TestOwnedMinikubeProfile[],
+): Promise<void> {
+  for (const profile of profiles) {
+    await execFile('minikube', ['delete', '-p', profile], { timeout: TEST_TIMEOUT_MS });
+  }
+}
 
 async function createGeneratedApp(root: string, slug: string, appPort: number) {
   const appRoot = path.join(root, slug);
