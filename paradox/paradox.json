@@ -12,7 +12,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v3.3.0",
+      "value": "v4.0.0",
       "color": "cb3837"
     },
     {
@@ -71,7 +71,7 @@
   "readmeUsage": [
     {
       "title": "Provider, CLI, and project API surface",
-      "description": "Provider, CLI, and project API surface\n\n`@ankhorage/infra` owns infrastructure generation, project reconciliation,\nand generated lifecycle execution.\n\nThe same owner implementation backs CLI consumers and the public\n`@ankhorage/infra/project` application-service boundary. Trusted hosts such\nas Studio should call that subpath instead of reproducing ledger, generated\nfile, lifecycle-script, or port-forward configuration semantics.\n\nCLI entrypoints:\n\n- `ankh infra ...`\n- `bunx @ankhorage/infra ...`\n\nCurrent command surface:\n\n- `validate`\n- `generate`\n- `status`\n- `up`\n- `down`\n\nProject resolution for the CLI is workspace-aware: pass `[project]`, or\nomit it when cwd is already inside `apps/<project>`. Programmatic project\noperations accept an explicit project path and do not require Studio or a\nparticular workspace layout.",
+      "description": "Provider, CLI, and project API surface\n\n`@ankhorage/infra` owns infrastructure generation, project reconciliation,\nand generated lifecycle execution.\n\nThe same owner implementation backs CLI consumers and the public\n`@ankhorage/infra/project` application-service boundary. Trusted hosts such\nas Studio should call that subpath instead of reproducing ledger, generated\nfile, lifecycle-script, or port-forward configuration semantics.\n\nCLI entrypoints:\n\n- `ankh infra ...`\n- `bunx @ankhorage/infra ...`\n\nCurrent command surface:\n\n- `validate`\n- `generate`\n- `status`\n- `up`\n- `down`\n\nProject resolution for the CLI is workspace-aware: pass `[project]`, or\nomit it when cwd is already inside `apps/<project>`. Programmatic project\noperations accept an explicit project path and do not require Studio or a\nparticular workspace layout.\n\nRunning applications can repair their provider-aware host endpoints through\n`ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project`. This\noperation only ensures the generated runtime port-forward group; it does not\ndeploy, bootstrap, or reconcile infrastructure.",
       "language": "ts",
       "code": "import { runCli } from './cli/bin.js';\n\nawait runCli(['--help']);",
       "sourcePath": "src/readme-usage.ts"
@@ -359,6 +359,7 @@
       "isEntrypoint": false,
       "dependencies": [],
       "exports": [
+        "ensureProjectInfrastructureRuntime",
         "InfraLifecycleScript",
         "InfraPortForwardInfo",
         "InfraProjectInspection",
@@ -406,6 +407,7 @@
       "isEntrypoint": false,
       "dependencies": ["src/commandContext.ts", "src/projectEnvironment.ts"],
       "exports": [
+        "ensureProjectInfrastructureRuntime",
         "InfraLifecycleScript",
         "InfraPortForwardInfo",
         "InfraScriptExecutionError",
@@ -1690,7 +1692,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 444,
+        "line": 453,
         "column": 1
       }
     },
@@ -1699,7 +1701,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 540,
+        "line": 549,
         "column": 1
       }
     },
@@ -1708,7 +1710,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 555,
+        "line": 564,
         "column": 1
       }
     },
@@ -1717,7 +1719,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 569,
+        "line": 578,
         "column": 1
       }
     },
@@ -1726,7 +1728,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 582,
+        "line": 591,
         "column": 1
       }
     },
@@ -1735,7 +1737,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 603,
+        "line": 612,
         "column": 1
       }
     },
@@ -1744,7 +1746,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 607,
+        "line": 616,
         "column": 1
       }
     },
@@ -1753,7 +1755,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 660,
+        "line": 669,
         "column": 1
       }
     },
@@ -1762,7 +1764,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 664,
+        "line": 673,
         "column": 1
       }
     },
@@ -1771,7 +1773,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 668,
+        "line": 677,
         "column": 1
       }
     },
@@ -1780,7 +1782,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 698,
+        "line": 707,
         "column": 1
       }
     },
@@ -1789,7 +1791,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 723,
+        "line": 732,
         "column": 1
       }
     },
@@ -1798,7 +1800,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 752,
+        "line": 761,
         "column": 1
       }
     },
@@ -1807,7 +1809,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 801,
+        "line": 810,
         "column": 1
       }
     },
@@ -1816,7 +1818,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 809,
+        "line": 818,
         "column": 1
       }
     },
@@ -1825,7 +1827,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 820,
+        "line": 829,
         "column": 1
       }
     },
@@ -1834,7 +1836,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 867,
+        "line": 876,
         "column": 1
       }
     },
@@ -1843,7 +1845,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 902,
+        "line": 911,
         "column": 1
       }
     },
@@ -1852,7 +1854,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 935,
+        "line": 944,
         "column": 1
       }
     },
@@ -1861,7 +1863,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 942,
+        "line": 951,
         "column": 1
       }
     },
@@ -1870,7 +1872,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 957,
+        "line": 966,
         "column": 1
       }
     },
@@ -1879,7 +1881,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 994,
+        "line": 1003,
         "column": 1
       }
     },
@@ -1888,7 +1890,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1046,
+        "line": 1055,
         "column": 1
       }
     },
@@ -1897,7 +1899,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1065,
+        "line": 1074,
         "column": 1
       }
     },
@@ -1906,7 +1908,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1127,
+        "line": 1136,
         "column": 1
       }
     },
@@ -1915,7 +1917,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1201,
+        "line": 1210,
         "column": 1
       }
     },
@@ -1924,7 +1926,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1218,
+        "line": 1227,
         "column": 1
       }
     },
@@ -1933,7 +1935,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1233,
+        "line": 1242,
         "column": 1
       }
     },
@@ -1942,7 +1944,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1334,
+        "line": 1343,
         "column": 1
       }
     },
@@ -1951,7 +1953,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1469,
+        "line": 1478,
         "column": 1
       }
     },
@@ -1960,7 +1962,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1530,
+        "line": 1539,
         "column": 1
       }
     },
@@ -1969,7 +1971,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1615,
+        "line": 1624,
         "column": 1
       }
     },
@@ -1978,7 +1980,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1709,
+        "line": 1718,
         "column": 1
       }
     },
@@ -1987,7 +1989,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1751,
+        "line": 1760,
         "column": 1
       }
     },
@@ -1996,7 +1998,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 1811,
+        "line": 1820,
         "column": 1
       }
     },
@@ -2005,7 +2007,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2064,
+        "line": 2073,
         "column": 1
       }
     },
@@ -2014,7 +2016,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2097,
+        "line": 2106,
         "column": 1
       }
     },
@@ -2023,7 +2025,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2182,
+        "line": 2191,
         "column": 1
       }
     },
@@ -2032,7 +2034,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2253,
+        "line": 2262,
         "column": 1
       }
     },
@@ -2041,7 +2043,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2884,
+        "line": 2893,
         "column": 1
       }
     },
@@ -2050,7 +2052,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2964,
+        "line": 2973,
         "column": 1
       }
     },
@@ -2059,7 +2061,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 2989,
+        "line": 2998,
         "column": 1
       }
     },
@@ -2068,7 +2070,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3324,
+        "line": 3342,
         "column": 1
       }
     },
@@ -2077,7 +2079,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3358,
+        "line": 3376,
         "column": 1
       }
     },
@@ -2086,7 +2088,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3422,
+        "line": 3440,
         "column": 1
       }
     },
@@ -2095,7 +2097,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3449,
+        "line": 3467,
         "column": 1
       }
     },
@@ -2104,7 +2106,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3618,
+        "line": 3636,
         "column": 1
       }
     },
@@ -2113,7 +2115,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3622,
+        "line": 3640,
         "column": 1
       }
     },
@@ -2122,7 +2124,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3632,
+        "line": 3650,
         "column": 1
       }
     },
@@ -2131,7 +2133,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3637,
+        "line": 3655,
         "column": 1
       }
     },
@@ -2140,7 +2142,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/adapters/minikube/base/index.ts",
-        "line": 3645,
+        "line": 3663,
         "column": 1
       }
     },
@@ -2901,11 +2903,20 @@
       }
     },
     {
+      "name": "ensureProjectInfrastructureRuntime",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/runtime.ts",
+        "line": 89,
+        "column": 1
+      }
+    },
+    {
       "name": "runProjectInfraScript",
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 88,
+        "line": 119,
         "column": 1
       }
     },
@@ -2914,7 +2925,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 106,
+        "line": 137,
         "column": 1
       }
     },
@@ -2923,7 +2934,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 114,
+        "line": 145,
         "column": 1
       }
     },
@@ -2932,7 +2943,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 123,
+        "line": 154,
         "column": 1
       }
     },
@@ -2941,7 +2952,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 162,
+        "line": 193,
         "column": 1
       }
     },
@@ -2950,7 +2961,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 176,
+        "line": 207,
         "column": 1
       }
     },
@@ -2959,7 +2970,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 190,
+        "line": 221,
         "column": 1
       }
     },
@@ -2968,7 +2979,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/runtime.ts",
-        "line": 196,
+        "line": 227,
         "column": 1
       }
     },
@@ -3926,6 +3937,12 @@
         "fromSymbol": "resolveProjectInfrastructurePortForward",
         "toSymbol": "parsePositivePort",
         "callExpression": "parsePositivePort",
+        "sourcePath": "src/runtime.ts"
+      },
+      {
+        "fromSymbol": "ensureProjectInfrastructureRuntime",
+        "toSymbol": "runProjectInfrastructureLifecycle",
+        "callExpression": "runProjectInfrastructureLifecycle",
         "sourcePath": "src/runtime.ts"
       },
       {

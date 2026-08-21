@@ -12,6 +12,7 @@ export {
   syncProjectInfrastructure,
 } from '../projectInfrastructure.js';
 export {
+  ensureProjectInfrastructureRuntime,
   type InfraLifecycleScript,
   type InfraPortForwardInfo,
   InfraScriptExecutionError,

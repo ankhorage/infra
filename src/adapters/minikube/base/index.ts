@@ -385,6 +385,15 @@ host-level Supabase Compose runtime.
 - \`reset.sh\`: requires \`ANKH_RESET_CONFIRM=${appSlug}\`; ${resetDescription}. It does not delete the Minikube profile.
 - \`destroy.sh\`: deletes only \`minikube -p ${appSlug}\`.
 
+### Port-forward groups
+
+- \`./scripts/port-forward.sh start runtime\` idempotently ensures ${
+    supabaseKubernetesEnabled ? '`app` and `supabase-gateway`' : '`app` only'
+  }, the host endpoints required by the running application. The same group supports \`stop\` and \`status\`.
+- \`runtime\` excludes \`studio\` and \`db-migration\`, which are operational/bootstrap endpoints.
+- \`all\` retains every generated forward, including operational/bootstrap endpoints.
+- Concrete targets remain available for individual lifecycle control.
+
 ## Generated Resources
 
 ${resourceLines}
@@ -2992,6 +3001,11 @@ function getPortForwardScript(args: {
   supabaseHostPorts: SupabaseHostPorts;
 }): string {
   const { appSlug, supabaseKubernetesEnabled, supabaseHostPorts } = args;
+  const runtimeForwardNames = ['app', ...(supabaseKubernetesEnabled ? ['supabase-gateway'] : [])];
+  const allForwardNames = [
+    ...runtimeForwardNames,
+    ...(supabaseKubernetesEnabled ? ['studio', 'db-migration'] : []),
+  ];
 
   return `#!/usr/bin/env bash
 set -euo pipefail
@@ -3010,6 +3024,8 @@ SUPABASE_STUDIO_FORWARD_LOCAL_PORT="\${SUPABASE_STUDIO_FORWARD_LOCAL_PORT:-${sup
 SUPABASE_STUDIO_FORWARD_REMOTE_PORT="\${SUPABASE_STUDIO_FORWARD_REMOTE_PORT:-3000}"
 SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHostPorts.db}}"
 SUPABASE_DB_FORWARD_REMOTE_PORT="\${SUPABASE_DB_FORWARD_REMOTE_PORT:-5432}"
+RUNTIME_FORWARD_NAMES=(${runtimeForwardNames.join(' ')})
+ALL_FORWARD_NAMES=(${allForwardNames.join(' ')})
 
 if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set -a
@@ -3295,26 +3311,28 @@ status_forward() {
 
 for_each_forward() {
   local action="\${1}"
-  "\${action}_forward" app
-  if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
-    "\${action}_forward" supabase-gateway
-    "\${action}_forward" studio
-    "\${action}_forward" db-migration
-  fi
+  shift
+  local name
+  for name in "\${@}"; do
+    "\${action}_forward" "\${name}"
+  done
 }
 
 ACTION="\${1:-start}"
 NAME="\${2:-all}"
 
 case "\${ACTION}:\${NAME}" in
-  start:all) for_each_forward start ;;
-  stop:all) for_each_forward stop ;;
-  status:all) for_each_forward status ;;
+  start:runtime) for_each_forward start "\${RUNTIME_FORWARD_NAMES[@]}" ;;
+  stop:runtime) for_each_forward stop "\${RUNTIME_FORWARD_NAMES[@]}" ;;
+  status:runtime) for_each_forward status "\${RUNTIME_FORWARD_NAMES[@]}" ;;
+  start:all) for_each_forward start "\${ALL_FORWARD_NAMES[@]}" ;;
+  stop:all) for_each_forward stop "\${ALL_FORWARD_NAMES[@]}" ;;
+  status:all) for_each_forward status "\${ALL_FORWARD_NAMES[@]}" ;;
   start:*) start_forward "\${NAME}" ;;
   stop:*) stop_forward "\${NAME}" ;;
   status:*) status_forward "\${NAME}" ;;
   *)
-    echo "Usage: ./scripts/port-forward.sh {start|stop|status} {app|supabase-gateway|studio|db-migration|all}"
+    echo "Usage: ./scripts/port-forward.sh {start|stop|status} {app|supabase-gateway|studio|db-migration|runtime|all}"
     exit 1
     ;;
 esac

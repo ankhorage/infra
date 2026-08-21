@@ -452,6 +452,19 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(portForwardScript).toContain('service/gateway');
     expect(portForwardScript).toContain('service/studio');
     expect(portForwardScript).toContain('service/postgres');
+    expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(app supabase-gateway)');
+    expect(portForwardScript).toContain(
+      'ALL_FORWARD_NAMES=(app supabase-gateway studio db-migration)',
+    );
+    expect(portForwardScript).toContain(
+      'start:runtime) for_each_forward start "${RUNTIME_FORWARD_NAMES[@]}"',
+    );
+    expect(portForwardScript).toContain(
+      'stop:runtime) for_each_forward stop "${RUNTIME_FORWARD_NAMES[@]}"',
+    );
+    expect(portForwardScript).toContain(
+      'status:runtime) for_each_forward status "${RUNTIME_FORWARD_NAMES[@]}"',
+    );
     expect(portForwardScript).toContain('${PROFILE}-${1}.pid');
     expect(portForwardScript).toContain('crashed stale_pid');
     expect(portForwardScript).toContain('is_port_accepting()');
@@ -487,6 +500,26 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     );
     expect(upScript).toContain('trap - ERR');
     expect(downScript).toContain('port-forward.sh" stop all');
+  });
+
+  test('generates an app-only runtime forward group without Supabase', () => {
+    const result = generateInfrastructure(
+      {
+        deployment: {
+          target: 'minikube',
+          monitoring: false,
+        },
+        modules: [],
+      },
+      {
+        appManifest: createAppManifest('frontend-only'),
+      },
+    );
+    const portForwardScript = getFile(result.files, 'infra/minikube/scripts/port-forward.sh');
+
+    expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(app)');
+    expect(portForwardScript).toContain('ALL_FORWARD_NAMES=(app)');
+    expect(portForwardScript).not.toContain('RUNTIME_FORWARD_NAMES=(app supabase-gateway)');
   });
 });
 

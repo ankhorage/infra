@@ -3,7 +3,7 @@
 
 # INFRA
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v3.3.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v4.0.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
 
 Executable infra provider and standalone CLI for Ankhorage project workflows.
 
@@ -36,6 +36,11 @@ Project resolution for the CLI is workspace-aware: pass `[project]`, or
 omit it when cwd is already inside `apps/<project>`. Programmatic project
 operations accept an explicit project path and do not require Studio or a
 particular workspace layout.
+
+Running applications can repair their provider-aware host endpoints through
+`ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project`. This
+operation only ensures the generated runtime port-forward group; it does not
+deploy, bootstrap, or reconcile infrastructure.
 
 Source: `src/readme-usage.ts`
 

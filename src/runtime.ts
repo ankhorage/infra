@@ -85,6 +85,37 @@ export async function resolveProjectInfrastructurePortForward(args: {
   };
 }
 
+/** Ensures the generated host forwards required by a running application are active. */
+export async function ensureProjectInfrastructureRuntime(args: {
+  readonly projectId: string;
+  readonly projectPath: string;
+  readonly target: string;
+}): Promise<InfraScriptOutput> {
+  try {
+    return await runProjectInfrastructureLifecycle({
+      args: ['start', 'runtime'],
+      projectId: args.projectId,
+      projectPath: args.projectPath,
+      script: 'port-forward',
+      target: args.target,
+    });
+  } catch (error) {
+    if (!(error instanceof InfraScriptExecutionError)) {
+      throw error;
+    }
+
+    const detail = error.stderr.trim() || error.stdout.trim();
+    throw new InfraScriptExecutionError({
+      exitCode: error.exitCode,
+      message: `Failed to ensure infrastructure runtime for project '${args.projectId}'${
+        detail.length > 0 ? `: ${detail}` : '.'
+      }`,
+      stderr: error.stderr,
+      stdout: error.stdout,
+    });
+  }
+}
+
 export async function runProjectInfraScript(args: {
   readonly context: InfraCommandContext;
   readonly projectId: string;

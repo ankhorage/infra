@@ -7,6 +7,7 @@ import { promisify } from 'node:util';
 import { describe, expect, test } from 'bun:test';
 
 import { generateInfrastructure } from '../../../index';
+import { ensureProjectInfrastructureRuntime } from '../../../project/index';
 import { createAppManifest } from '../../../testSupport';
 import type { GeneratedInfrastructureFile, InfraManifestInput } from '../../../types';
 
@@ -75,6 +76,7 @@ describe('generated Minikube two-app isolation', () => {
         await expectNoHostSupabaseComposeContainersFor(first.slug, second.slug);
 
         await expectSupabaseEndToEnd(first);
+        await expectRuntimePortForwardRecovery(first);
         const secondSession = await expectSupabaseEndToEnd(second);
 
         await runScript(second.minikubeRoot, 'down.sh');
@@ -367,6 +369,74 @@ async function expectNoHostSupabaseComposeContainersFor(...slugs: string[]) {
   for (const slug of slugs) {
     expect(names.some((name) => name.startsWith('supabase_') && name.includes(slug))).toBe(false);
   }
+}
+
+async function expectRuntimePortForwardRecovery(app: {
+  appRoot: string;
+  minikubeRoot: string;
+  slug: string;
+}): Promise<void> {
+  const appPidBefore = await readForwardPid(app.minikubeRoot, app.slug, 'app');
+  const gatewayPidBefore = await readForwardPid(app.minikubeRoot, app.slug, 'supabase-gateway');
+
+  await runPortForward(app.minikubeRoot, 'stop', 'supabase-gateway');
+  await runPortForward(app.minikubeRoot, 'stop', 'studio');
+  await runPortForward(app.minikubeRoot, 'stop', 'db-migration');
+
+  await ensureProjectInfrastructureRuntime({
+    projectId: app.slug,
+    projectPath: app.appRoot,
+    target: 'minikube',
+  });
+
+  expect(await readForwardPid(app.minikubeRoot, app.slug, 'app')).toBe(appPidBefore);
+  expect(await readForwardPid(app.minikubeRoot, app.slug, 'supabase-gateway')).not.toBe(
+    gatewayPidBefore,
+  );
+  await expectForwardPidMissing(app.minikubeRoot, app.slug, 'studio');
+  await expectForwardPidMissing(app.minikubeRoot, app.slug, 'db-migration');
+
+  const env = await readGeneratedEnv(app.minikubeRoot);
+  const gatewayUrl = readRequiredEnv(env, 'SUPABASE_PUBLIC_URL');
+  const response = await fetch(`${gatewayUrl}/auth/v1/health`, {
+    signal: AbortSignal.timeout(HTTP_TIMEOUT_MS),
+  });
+  expect(response.ok).toBe(true);
+}
+
+async function runPortForward(
+  minikubeRoot: string,
+  action: 'start' | 'status' | 'stop',
+  name: string,
+): Promise<void> {
+  await execFile(path.join(minikubeRoot, 'scripts', 'port-forward.sh'), [action, name], {
+    cwd: minikubeRoot,
+    env: process.env,
+    timeout: 60_000,
+  });
+}
+
+async function readForwardPid(minikubeRoot: string, slug: string, name: string): Promise<number> {
+  const value = await readFile(forwardPidPath(minikubeRoot, slug, name), 'utf8');
+  return Number.parseInt(value.trim(), 10);
+}
+
+async function expectForwardPidMissing(
+  minikubeRoot: string,
+  slug: string,
+  name: string,
+): Promise<void> {
+  let exists = true;
+  try {
+    await readFile(forwardPidPath(minikubeRoot, slug, name), 'utf8');
+  } catch {
+    exists = false;
+  }
+  expect(exists).toBe(false);
+}
+
+function forwardPidPath(minikubeRoot: string, slug: string, name: string): string {
+  return path.join(minikubeRoot, '.state', 'forwards', `${slug}-${name}.pid`);
 }
 
 interface SupabaseSessionFixture {
