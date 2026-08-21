@@ -29,6 +29,11 @@ import { runCli } from './cli/bin.js';
  * operations accept an explicit project path and do not require Studio or a
  * particular workspace layout.
  *
+ * Running applications can repair their provider-aware host endpoints through
+ * `ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project`. This
+ * operation only ensures the generated runtime port-forward group; it does not
+ * deploy, bootstrap, or reconcile infrastructure.
+ *
  * @usage
  */
 await runCli(['--help']);

@@ -7,6 +7,7 @@ import { promisify } from 'node:util';
 import { describe, expect, test } from 'bun:test';
 
 import { generateInfrastructure } from '../../../index';
+import { ensureProjectInfrastructureRuntime } from '../../../project/index';
 import { createAppManifest } from '../../../testSupport';
 import type { GeneratedInfrastructureFile, InfraManifestInput } from '../../../types';
 
@@ -16,14 +17,22 @@ const supabaseIsolationTest =
   process.env.ANKH_MINIKUBE_SUPABASE_ISOLATION === '1' ? test : test.skip;
 const TEST_TIMEOUT_MS = 1_800_000;
 const HTTP_TIMEOUT_MS = 60_000;
+const DIAGNOSTIC_TIMEOUT_MS = 60_000;
+const DIAGNOSTIC_OUTPUT_LIMIT = 20_000;
+const APP_ONLY_TEST_PROFILES = ['ankh-isolation-a', 'ankh-isolation-b'] as const;
+const SUPABASE_TEST_PROFILES = ['ankh-isolation-supa-a', 'ankh-isolation-supa-b'] as const;
+type TestOwnedMinikubeProfile =
+  | (typeof APP_ONLY_TEST_PROFILES)[number]
+  | (typeof SUPABASE_TEST_PROFILES)[number];
 
 describe('generated Minikube two-app isolation', () => {
   isolationTest(
     'runs two generated app profiles without sharing cluster resources',
     async () => {
+      await deleteTestOwnedMinikubeProfiles(APP_ONLY_TEST_PROFILES);
       const root = await mkdtemp(path.join(process.cwd(), '.tmp-minikube-isolation-'));
-      const first = await createGeneratedApp(root, 'ankh-isolation-a', 18181);
-      const second = await createGeneratedApp(root, 'ankh-isolation-b', 18182);
+      const first = await createGeneratedApp(root, APP_ONLY_TEST_PROFILES[0], 18181);
+      const second = await createGeneratedApp(root, APP_ONLY_TEST_PROFILES[1], 18182);
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
@@ -56,16 +65,18 @@ describe('generated Minikube two-app isolation', () => {
   supabaseIsolationTest(
     'runs two generated Supabase-backed profiles without shared runtime state',
     async () => {
+      await deleteTestOwnedMinikubeProfiles(SUPABASE_TEST_PROFILES);
       const root = await mkdtemp(path.join(process.cwd(), '.tmp-minikube-supabase-isolation-'));
       const [firstPorts, secondPorts] = await reserveSupabaseHostPortSets(2);
       if (!firstPorts || !secondPorts) {
         throw new Error('Expected two reserved Supabase host port sets.');
       }
-      const first = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-a', firstPorts);
-      const second = await createGeneratedSupabaseApp(root, 'ankh-isolation-supa-b', secondPorts);
+      const first = await createGeneratedSupabaseApp(root, SUPABASE_TEST_PROFILES[0], firstPorts);
+      const second = await createGeneratedSupabaseApp(root, SUPABASE_TEST_PROFILES[1], secondPorts);
 
       try {
         await runScript(first.minikubeRoot, 'up.sh');
+        await prepareSecondSupabaseProfile(first.slug, second.slug, root);
         await runScript(second.minikubeRoot, 'up.sh');
 
         await expectProfileOwnsAppNamespace(first.slug);
@@ -75,6 +86,7 @@ describe('generated Minikube two-app isolation', () => {
         await expectNoHostSupabaseComposeContainersFor(first.slug, second.slug);
 
         await expectSupabaseEndToEnd(first);
+        await expectRuntimePortForwardRecovery(first);
         const secondSession = await expectSupabaseEndToEnd(second);
 
         await runScript(second.minikubeRoot, 'down.sh');
@@ -96,6 +108,14 @@ describe('generated Minikube two-app isolation', () => {
     TEST_TIMEOUT_MS,
   );
 });
+
+async function deleteTestOwnedMinikubeProfiles(
+  profiles: readonly TestOwnedMinikubeProfile[],
+): Promise<void> {
+  for (const profile of profiles) {
+    await execFile('minikube', ['delete', '-p', profile], { timeout: TEST_TIMEOUT_MS });
+  }
+}
 
 async function createGeneratedApp(root: string, slug: string, appPort: number) {
   const appRoot = path.join(root, slug);
@@ -305,11 +325,182 @@ async function writeGeneratedFiles(
 }
 
 async function runScript(minikubeRoot: string, scriptName: string) {
-  return execFile(path.join(minikubeRoot, 'scripts', scriptName), {
-    cwd: minikubeRoot,
-    env: process.env,
-    timeout: TEST_TIMEOUT_MS,
-  });
+  try {
+    return await execFile(path.join(minikubeRoot, 'scripts', scriptName), {
+      cwd: minikubeRoot,
+      env: process.env,
+      timeout: TEST_TIMEOUT_MS,
+    });
+  } catch (error) {
+    if (scriptName !== 'up.sh') throw error;
+    const diagnostics = await collectFailedUpDiagnostics(minikubeRoot);
+    throw new Error(
+      `Generated ${scriptName} failed:\n${formatUnknownError(error)}\n\n${diagnostics}`,
+      { cause: error },
+    );
+  }
+}
+
+async function prepareSecondSupabaseProfile(
+  sourceProfile: string,
+  targetProfile: string,
+  scratchRoot: string,
+): Promise<void> {
+  const imagesResult = await execFile(
+    'kubectl',
+    [
+      '--context',
+      sourceProfile,
+      '-n',
+      'supabase',
+      'get',
+      'deployments',
+      '-o',
+      'jsonpath={range .items[*].spec.template.spec.containers[*]}{.image}{"\\n"}{end}',
+    ],
+    { timeout: DIAGNOSTIC_TIMEOUT_MS },
+  );
+  const images = [
+    ...new Set(imagesResult.stdout.split(/\r?\n/u).map((image) => image.trim())),
+  ].filter(Boolean);
+  if (images.length === 0) {
+    throw new Error(`Expected Supabase runtime images in profile ${sourceProfile}.`);
+  }
+
+  await execFile(
+    'minikube',
+    ['start', '-p', targetProfile, `--driver=${process.env.MINIKUBE_DRIVER ?? 'docker'}`],
+    { timeout: TEST_TIMEOUT_MS },
+  );
+
+  const imageArchive = path.join(scratchRoot, 'supabase-image-transfer.tar');
+  try {
+    for (const image of images) {
+      await execFile('minikube', ['-p', sourceProfile, 'image', 'save', image, imageArchive], {
+        timeout: TEST_TIMEOUT_MS,
+      });
+      await execFile('minikube', ['-p', targetProfile, 'image', 'load', imageArchive], {
+        timeout: TEST_TIMEOUT_MS,
+      });
+      await rm(imageArchive, { force: true });
+    }
+  } finally {
+    await rm(imageArchive, { force: true });
+  }
+}
+
+async function collectFailedUpDiagnostics(minikubeRoot: string): Promise<string> {
+  let profile: string;
+  try {
+    profile = readRequiredEnv(await readGeneratedEnv(minikubeRoot), 'ANKH_APP_SLUG');
+  } catch (error) {
+    return `Unable to determine the failed Minikube profile: ${formatUnknownError(error)}`;
+  }
+
+  const commands: readonly DiagnosticCommand[] = [
+    {
+      label: 'Minikube status',
+      command: 'minikube',
+      args: ['-p', profile, 'status'],
+    },
+    {
+      label: 'Supabase pods',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'get', 'pods', '-o', 'wide'],
+    },
+    {
+      label: 'Postgres deployment',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'describe', 'deployment', 'postgres'],
+    },
+    {
+      label: 'Postgres pod',
+      command: 'kubectl',
+      args: [
+        '--context',
+        profile,
+        '-n',
+        'supabase',
+        'describe',
+        'pod',
+        '-l',
+        'app.kubernetes.io/name=supabase-postgres',
+      ],
+    },
+    {
+      label: 'Postgres logs',
+      command: 'kubectl',
+      args: [
+        '--context',
+        profile,
+        '-n',
+        'supabase',
+        'logs',
+        '-l',
+        'app.kubernetes.io/name=supabase-postgres',
+        '--all-containers=true',
+        '--tail=200',
+      ],
+    },
+    {
+      label: 'Supabase events',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'get', 'events', '--sort-by=.lastTimestamp'],
+    },
+    {
+      label: 'Supabase volumes',
+      command: 'kubectl',
+      args: ['--context', profile, '-n', 'supabase', 'get', 'pvc,pv'],
+    },
+    {
+      label: 'Docker containers',
+      command: 'docker',
+      args: ['ps', '--format', '{{.Names}}\\t{{.Status}}\\t{{.Image}}'],
+    },
+  ];
+  const output: string[] = [];
+  for (const command of commands) {
+    output.push(await captureDiagnostic(command));
+  }
+  return `Bounded diagnostics for failed Minikube profile ${profile}:\n\n${output.join('\n\n')}`;
+}
+
+interface DiagnosticCommand {
+  readonly label: string;
+  readonly command: string;
+  readonly args: readonly string[];
+}
+
+async function captureDiagnostic(diagnostic: DiagnosticCommand): Promise<string> {
+  const renderedCommand = [diagnostic.command, ...diagnostic.args].join(' ');
+  try {
+    const result = await execFile(diagnostic.command, [...diagnostic.args], {
+      timeout: DIAGNOSTIC_TIMEOUT_MS,
+    });
+    const output = [result.stdout.trim(), result.stderr.trim()].filter(Boolean).join('\n');
+    return `${diagnostic.label}\n$ ${renderedCommand}\n${truncateDiagnostic(output || '(no output)')}`;
+  } catch (error) {
+    return `${diagnostic.label}\n$ ${renderedCommand}\n${truncateDiagnostic(
+      formatUnknownError(error),
+    )}`;
+  }
+}
+
+function formatUnknownError(error: unknown): string {
+  if (!(error instanceof Error)) return String(error);
+  const childProcessError = error as Error & { stderr?: unknown; stdout?: unknown };
+  return [
+    error.message,
+    typeof childProcessError.stdout === 'string' ? childProcessError.stdout.trim() : '',
+    typeof childProcessError.stderr === 'string' ? childProcessError.stderr.trim() : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+function truncateDiagnostic(output: string): string {
+  if (output.length <= DIAGNOSTIC_OUTPUT_LIMIT) return output;
+  return `${output.slice(0, DIAGNOSTIC_OUTPUT_LIMIT)}\n... diagnostic output truncated ...`;
 }
 
 async function removeDockerImage(image: string): Promise<void> {
@@ -367,6 +558,78 @@ async function expectNoHostSupabaseComposeContainersFor(...slugs: string[]) {
   for (const slug of slugs) {
     expect(names.some((name) => name.startsWith('supabase_') && name.includes(slug))).toBe(false);
   }
+}
+
+async function expectRuntimePortForwardRecovery(app: {
+  appRoot: string;
+  minikubeRoot: string;
+  slug: string;
+}): Promise<void> {
+  const appPidBefore = await readForwardPid(app.minikubeRoot, app.slug, 'app');
+  const gatewayPidBefore = await readForwardPid(app.minikubeRoot, app.slug, 'supabase-gateway');
+
+  await runPortForward(app.minikubeRoot, 'stop', 'supabase-gateway');
+  await runPortForward(app.minikubeRoot, 'stop', 'studio');
+  await runPortForward(app.minikubeRoot, 'stop', 'db-migration');
+
+  await ensureProjectInfrastructureRuntime({
+    projectId: app.slug,
+    projectPath: app.appRoot,
+    target: 'minikube',
+  });
+
+  expect(await readForwardPid(app.minikubeRoot, app.slug, 'app')).toBe(appPidBefore);
+  expect(await readForwardPid(app.minikubeRoot, app.slug, 'supabase-gateway')).not.toBe(
+    gatewayPidBefore,
+  );
+  await expectForwardPidMissing(app.minikubeRoot, app.slug, 'studio');
+  await expectForwardPidMissing(app.minikubeRoot, app.slug, 'db-migration');
+
+  const env = await readGeneratedEnv(app.minikubeRoot);
+  const gatewayUrl = readRequiredEnv(env, 'SUPABASE_PUBLIC_URL');
+  const anonKey = readRequiredEnv(env, 'SUPABASE_ANON_KEY');
+  const response = await fetch(`${gatewayUrl}/auth/v1/health`, {
+    signal: AbortSignal.timeout(HTTP_TIMEOUT_MS),
+    headers: {
+      apikey: anonKey,
+    },
+  });
+  expect(response.ok).toBe(true);
+}
+
+async function runPortForward(
+  minikubeRoot: string,
+  action: 'start' | 'status' | 'stop',
+  name: string,
+): Promise<void> {
+  await execFile(path.join(minikubeRoot, 'scripts', 'port-forward.sh'), [action, name], {
+    cwd: minikubeRoot,
+    env: process.env,
+    timeout: 60_000,
+  });
+}
+
+async function readForwardPid(minikubeRoot: string, slug: string, name: string): Promise<number> {
+  const value = await readFile(forwardPidPath(minikubeRoot, slug, name), 'utf8');
+  return Number.parseInt(value.trim(), 10);
+}
+
+async function expectForwardPidMissing(
+  minikubeRoot: string,
+  slug: string,
+  name: string,
+): Promise<void> {
+  let exists = true;
+  try {
+    await readFile(forwardPidPath(minikubeRoot, slug, name), 'utf8');
+  } catch {
+    exists = false;
+  }
+  expect(exists).toBe(false);
+}
+
+function forwardPidPath(minikubeRoot: string, slug: string, name: string): string {
+  return path.join(minikubeRoot, '.state', 'forwards', `${slug}-${name}.pid`);
 }
 
 interface SupabaseSessionFixture {

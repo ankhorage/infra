@@ -30,8 +30,16 @@ when provided by caller.
 - `scripts/reset.sh`: requires `ANKH_RESET_CONFIRM=<slug>` and deletes/recreates namespaces `app` and `supabase`, including Supabase DB and Storage PVC data. It does not delete the Minikube profile.
 - `scripts/destroy.sh`: stops slug-owned port-forwards and runs `minikube delete -p <slug>`.
 - `scripts/status.sh`: reports profile, namespace, workload, and port-forward health.
-- `scripts/port-forward.sh`: owns named forwards for `app`, `supabase-gateway`, `studio`, and `db-migration`.
+- `scripts/port-forward.sh`: owns named forwards for `app`, `supabase-gateway`, `studio`, and `db-migration`, plus provider-aware `runtime` and `all` groups.
 - `scripts/build-app-image.sh`: exports Expo web build from app source and builds the Docker image.
+
+The `runtime` group is the canonical repair lifecycle for host endpoints required by the
+running app. It always contains `app` and adds `supabase-gateway` when the generated
+Supabase Kubernetes runtime is enabled. It deliberately excludes `studio` and
+`db-migration`; `all` retains those operational/bootstrap forwards. Start, stop, or inspect
+the group with `scripts/port-forward.sh {start|stop|status} runtime`. Package consumers
+should call `ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project` instead
+of depending on concrete provider forward names.
 
 ## Supabase Runtime
 

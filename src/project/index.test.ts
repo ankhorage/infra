@@ -5,6 +5,7 @@ import path from 'path';
 
 import { createAppManifest } from '../testSupport.js';
 import {
+  ensureProjectInfrastructureRuntime,
   inspectProjectInfrastructure,
   readProjectInfrastructureEnvironment,
   resolveProjectInfrastructureDatabaseUrl,
@@ -78,6 +79,39 @@ describe('@ankhorage/infra/project', () => {
     });
   });
 
+  test('ensures the generated runtime port-forward group through the owner API', async () => {
+    const projectPath = await createProjectFixture();
+    const scriptPath = path.join(projectPath, 'infra', 'minikube', 'scripts', 'port-forward.sh');
+    await fs.writeFile(scriptPath, '#!/usr/bin/env bash\nprintf \'%s\' "$*"\n', 'utf8');
+
+    const result = await ensureProjectInfrastructureRuntime({
+      projectId: 'example',
+      projectPath,
+      target: 'minikube',
+    });
+
+    expect(result).toEqual({ stdout: 'start runtime', stderr: '' });
+  });
+
+  test('reports actionable runtime-forward failures without reconciling infrastructure', async () => {
+    const projectPath = await createProjectFixture();
+    const scriptPath = path.join(projectPath, 'infra', 'minikube', 'scripts', 'port-forward.sh');
+    await fs.writeFile(
+      scriptPath,
+      '#!/usr/bin/env bash\necho "app: target app/service/app-runtime not found"\nexit 1\n',
+      'utf8',
+    );
+
+    await expectRejectMessage(
+      ensureProjectInfrastructureRuntime({
+        projectId: 'example',
+        projectPath,
+        target: 'minikube',
+      }),
+      "Failed to ensure infrastructure runtime for project 'example': app: target app/service/app-runtime not found",
+    );
+  });
+
   test('reads only requested runtime environment values from the generated fallback', async () => {
     const projectPath = await createProjectFixture();
     const result = await readProjectInfrastructureEnvironment({
@@ -147,3 +181,15 @@ describe('@ankhorage/infra/project', () => {
     });
   });
 });
+
+async function expectRejectMessage(
+  promise: Promise<unknown>,
+  expectedMessage: string,
+): Promise<void> {
+  try {
+    await promise;
+    throw new Error('Expected operation to reject.');
+  } catch (error) {
+    expect(error instanceof Error ? error.message : String(error)).toContain(expectedMessage);
+  }
+}
