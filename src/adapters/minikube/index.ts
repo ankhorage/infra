@@ -31,6 +31,9 @@ export function generateMinikubeInfra(
   }
 
   const appSlug = validateCanonicalAppSlug(options.appManifest?.metadata.slug);
+  const appRuntimeEnabled =
+    options.appManifest?.deploy === undefined ||
+    options.appManifest.deploy.targets.web?.enabled === true;
   const namespace = APP_NAMESPACE;
 
   const authArtifacts = generateAuthProviderArtifacts({
@@ -75,6 +78,7 @@ export function generateMinikubeInfra(
     providerNamespaces,
     providerLifecycle,
     extraEnvEntries,
+    appRuntimeEnabled,
   });
 
   const warnings = unique([

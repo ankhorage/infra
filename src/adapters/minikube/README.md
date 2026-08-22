@@ -25,21 +25,31 @@ when provided by caller.
 
 ## Runtime Scripts
 
-- `scripts/up.sh`: starts `minikube -p <slug>`, applies manifests, waits for Supabase, runs migrations with CLI telemetry disabled for that command, builds/loads the app image, and starts slug-owned port-forwards.
+- `scripts/up.sh`: starts `minikube -p <slug>`, applies manifests, waits for Supabase, runs migrations with CLI telemetry disabled for that command, and starts slug-owned port-forwards. It builds and deploys the Kubernetes Web app runtime only when the canonical app manifest enables `deploy.targets.web` (legacy manifests without `deploy` retain the Web runtime).
 - `scripts/down.sh`: stops slug-owned port-forwards, then runs `minikube stop -p <slug>`. Persistent profile data remains.
 - `scripts/reset.sh`: requires `ANKH_RESET_CONFIRM=<slug>` and deletes/recreates namespaces `app` and `supabase`, including Supabase DB and Storage PVC data. It does not delete the Minikube profile.
 - `scripts/destroy.sh`: stops slug-owned port-forwards and runs `minikube delete -p <slug>`.
 - `scripts/status.sh`: reports profile, namespace, workload, and port-forward health.
-- `scripts/port-forward.sh`: owns named forwards for `app`, `supabase-gateway`, `studio`, and `db-migration`, plus provider-aware `runtime` and `all` groups.
+- `scripts/port-forward.sh`: owns topology-derived named forwards plus provider-aware `runtime` and `all` groups.
 - `scripts/build-app-image.sh`: exports Expo web build from app source and builds the Docker image.
 
 The `runtime` group is the canonical repair lifecycle for host endpoints required by the
-running app. It always contains `app` and adds `supabase-gateway` when the generated
-Supabase Kubernetes runtime is enabled. It deliberately excludes `studio` and
-`db-migration`; `all` retains those operational/bootstrap forwards. Start, stop, or inspect
-the group with `scripts/port-forward.sh {start|stop|status} runtime`. Package consumers
-should call `ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project` instead
-of depending on concrete provider forward names.
+running app. It contains `app` only when the generated topology includes the Kubernetes Web
+app Service, and adds `supabase-gateway` when the generated Supabase Kubernetes runtime is
+enabled. Native-only apps therefore restore provider endpoints without requiring a fictional
+app Service. The group deliberately excludes `studio` and `db-migration`; `all` retains
+those operational/bootstrap forwards. Start, stop, or inspect the group with
+`scripts/port-forward.sh {start|stop|status} runtime`. Package consumers should call
+`ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project` instead of depending
+on concrete provider forward names. Forward startup retries bounded transient Kubernetes
+pod-selection and readiness failures that can occur immediately after a profile restart.
+Active runtime/all groups contain only targets in the generated topology. Cleanup retains
+the exact identities of all Infra-managed forwards so a Web-to-native regeneration safely
+stops an obsolete owned `app` forward without making it an active start target.
+
+When the Web app runtime is disabled, `up.sh` also reconciles the former generated
+`Deployment/app-runtime`, `Service/app-runtime`, and `ConfigMap/app-infra-config` with exact,
+idempotent deletes. It does not prune unrelated resources or delete the `app` namespace.
 
 ## Supabase Runtime
 
