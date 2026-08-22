@@ -4,6 +4,7 @@ import os from 'os';
 import path from 'path';
 
 import { generateInfrastructure } from '../../../index.js';
+import { ensureProjectInfrastructureRuntime } from '../../../project/index.js';
 import { createAppManifest } from '../../../testSupport.js';
 import type { InfraManifestInput } from '../../../types.js';
 
@@ -42,7 +43,11 @@ describe('generated Minikube runtime port-forward lifecycle', () => {
       expect(await readForwardPid(fixture, 'app')).toBe(appPid);
       await expectForwardPid(fixture, 'supabase-gateway', false);
 
-      const recovery = await runPortForward(fixture, 'start', 'runtime');
+      const recovery = await ensureProjectInfrastructureRuntime({
+        projectId: fixture.profile,
+        projectPath: fixture.rootPath,
+        target: 'minikube',
+      });
       expect(recovery.stdout).toContain(`app: running (pid ${appPid})`);
       expect(recovery.stdout).toContain('supabase-gateway: started');
       expect(await readForwardPid(fixture, 'app')).toBe(appPid);
@@ -76,10 +81,132 @@ describe('generated Minikube runtime port-forward lifecycle', () => {
     },
     { timeout: 15_000 },
   );
+
+  test(
+    'restores only the Supabase gateway for a native-only app without an app service',
+    async () => {
+      const appManifest = {
+        ...createAppManifest('native-runtime'),
+        deploy: {
+          targets: {
+            android: { enabled: true, package: 'com.ankh.nativeruntime' },
+          },
+        },
+      };
+      const fixture = await createPortForwardFixture(
+        createSupabaseManifest(),
+        'native-runtime',
+        appManifest,
+        'service/app-runtime',
+      );
+
+      const firstEnsure = await ensureProjectInfrastructureRuntime({
+        projectId: fixture.profile,
+        projectPath: fixture.rootPath,
+        target: 'minikube',
+      });
+      expect(firstEnsure.stdout).toContain('supabase-gateway: started');
+      expect(firstEnsure.stdout).not.toContain('app:');
+      const gatewayPid = await readForwardPid(fixture, 'supabase-gateway');
+
+      const repeatedEnsure = await ensureProjectInfrastructureRuntime({
+        projectId: fixture.profile,
+        projectPath: fixture.rootPath,
+        target: 'minikube',
+      });
+      expect(repeatedEnsure.stdout).toContain(`supabase-gateway: running (pid ${gatewayPid})`);
+      expect(await readForwardPid(fixture, 'supabase-gateway')).toBe(gatewayPid);
+      await expectForwardPid(fixture, 'app', false);
+    },
+    { timeout: 15_000 },
+  );
+
+  test(
+    'retries a transient forward that becomes reachable and then loses its stale pod',
+    async () => {
+      const appManifest = {
+        ...createAppManifest('native-runtime-retry'),
+        deploy: {
+          targets: {
+            android: { enabled: true, package: 'com.ankh.nativeruntimeretry' },
+          },
+        },
+      };
+      const fixture = await createPortForwardFixture(
+        createSupabaseManifest(),
+        'native-runtime-retry',
+        appManifest,
+        undefined,
+        1,
+        750,
+      );
+
+      const recovery = await ensureProjectInfrastructureRuntime({
+        projectId: fixture.profile,
+        projectPath: fixture.rootPath,
+        target: 'minikube',
+      });
+
+      expect(recovery.stdout).toContain(
+        'supabase-gateway: port-forward attempt 1 exited before readiness; retrying',
+      );
+      expect(recovery.stdout).toContain('supabase-gateway: started');
+      expect(Number.parseInt(await fs.readFile(fixture.forwardAttemptPath, 'utf8'), 10)).toBe(2);
+      await expectForwardPid(fixture, 'supabase-gateway', true);
+      await expectForwardPid(fixture, 'app', false);
+    },
+    { timeout: 15_000 },
+  );
+
+  test('fails actionably when a generated Web app target is genuinely missing', async () => {
+    const fixture = await createPortForwardFixture(
+      createSupabaseManifest(),
+      'missing-web-runtime',
+      createAppManifest('missing-web-runtime'),
+      'service/app-runtime',
+    );
+
+    await expectFailureMessage(
+      ensureProjectInfrastructureRuntime({
+        projectId: fixture.profile,
+        projectPath: fixture.rootPath,
+        target: 'minikube',
+      }),
+      'app: target app/service/app-runtime not found',
+    );
+    await expectForwardPid(fixture, 'supabase-gateway', false);
+  });
+
+  test('fails actionably when a generated provider target is genuinely missing', async () => {
+    const appManifest = {
+      ...createAppManifest('missing-provider-runtime'),
+      deploy: {
+        targets: {
+          android: { enabled: true, package: 'com.ankh.missingprovider' },
+        },
+      },
+    };
+    const fixture = await createPortForwardFixture(
+      createSupabaseManifest(),
+      'missing-provider-runtime',
+      appManifest,
+      'service/gateway',
+    );
+
+    await expectFailureMessage(
+      ensureProjectInfrastructureRuntime({
+        projectId: fixture.profile,
+        projectPath: fixture.rootPath,
+        target: 'minikube',
+      }),
+      'supabase-gateway: target supabase/service/gateway not found',
+    );
+  });
 });
 
 interface PortForwardFixture {
   readonly env: Record<string, string>;
+  readonly forwardAttemptPath: string;
   readonly processDirectory: string;
   readonly profile: string;
   readonly rootPath: string;
@@ -89,11 +216,15 @@ interface PortForwardFixture {
 async function createPortForwardFixture(
   manifest: InfraManifestInput,
   profile: string,
+  appManifest = createAppManifest(profile),
+  missingResource?: string,
+  transientPortForwardFailures = 0,
+  transientPortForwardLifetimeMs = 0,
 ): Promise<PortForwardFixture> {
   const rootPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-port-forward-runtime-'));
   temporaryPaths.add(rootPath);
   const generated = generateInfrastructure(manifest, {
-    appManifest: createAppManifest(profile),
+    appManifest,
   });
   const generatedScript = generated.files.find(
     (file) => file.path === 'infra/minikube/scripts/port-forward.sh',
@@ -104,18 +235,23 @@ async function createPortForwardFixture(
 
   const scriptPath = path.join(rootPath, generatedScript.path);
   const fakeBin = path.join(rootPath, 'fake-bin');
+  const forwardAttemptPath = path.join(rootPath, 'forward-attempts');
   const processDirectory = path.join(rootPath, 'fake-processes');
   const serverScript = path.join(rootPath, 'forward-server.ts');
   await fs.mkdir(path.dirname(scriptPath), { recursive: true });
   await fs.mkdir(fakeBin, { recursive: true });
   await fs.mkdir(processDirectory, { recursive: true });
-  await fs.writeFile(scriptPath, generatedScript.content, 'utf8');
-  await fs.chmod(scriptPath, 0o755);
   await fs.writeFile(
     serverScript,
     [
       "const port = Number.parseInt(Bun.argv[2] ?? '', 10);",
-      "Bun.serve({ hostname: '127.0.0.1', port, fetch: () => new Response('ok') });",
+      "const lifetimeMs = Number.parseInt(Bun.argv[3] ?? '0', 10);",
+      "const server = Bun.serve({ hostname: '127.0.0.1', port, fetch: () => new Response('ok') });",
+      'if (lifetimeMs > 0) {',
+      '  await Bun.sleep(lifetimeMs);',
+      '  server.stop(true);',
+      '  process.exit(1);',
+      '}',
       'await new Promise(() => undefined);',
       '',
     ].join('\n'),
@@ -126,6 +262,9 @@ async function createPortForwardFixture(
     `#!/usr/bin/env bash
 set -euo pipefail
 if [[ " $* " == *" get "* ]]; then
+  if [[ -n "\${FAKE_MISSING_RESOURCE:-}" && " $* " == *" \${FAKE_MISSING_RESOURCE} "* ]]; then
+    exit 1
+  fi
   exit 0
 fi
 if [[ " $* " != *" port-forward "* ]]; then
@@ -133,6 +272,19 @@ if [[ " $* " != *" port-forward "* ]]; then
 fi
 endpoint="\${!#}"
 local_port="\${endpoint%%:*}"
+forward_attempt=0
+if [[ -f "\${FAKE_FORWARD_ATTEMPT_FILE}" ]]; then
+  forward_attempt="$(cat "\${FAKE_FORWARD_ATTEMPT_FILE}")"
+fi
+forward_attempt="$((forward_attempt + 1))"
+printf '%s\n' "\${forward_attempt}" > "\${FAKE_FORWARD_ATTEMPT_FILE}"
+if [[ "\${forward_attempt}" -le "\${FAKE_TRANSIENT_FORWARD_FAILURES}" ]]; then
+  if [[ "\${FAKE_TRANSIENT_FORWARD_LIFETIME_MS}" -gt 0 ]]; then
+    bun "\${FAKE_FORWARD_SERVER_SCRIPT}" "\${local_port}" "\${FAKE_TRANSIENT_FORWARD_LIFETIME_MS}" || true
+  fi
+  echo 'error: error upgrading connection: unable to upgrade connection: pod does not exist' >&2
+  exit 1
+fi
 printf 'kubectl %s\n' "$*" > "\${FAKE_PROCESS_DIRECTORY}/$$.command"
 exec bun "\${FAKE_FORWARD_SERVER_SCRIPT}" "\${local_port}"
 `,
@@ -162,23 +314,70 @@ fi
   );
 
   const ports = reserveAvailablePorts(4);
+  const env = {
+    ...process.env,
+    ANKH_APP_SLUG: profile,
+    APP_PORT_FORWARD_LOCAL_PORT: String(ports[0]),
+    SUPABASE_GATEWAY_FORWARD_LOCAL_PORT: String(ports[1]),
+    SUPABASE_STUDIO_FORWARD_LOCAL_PORT: String(ports[2]),
+    SUPABASE_DB_FORWARD_LOCAL_PORT: String(ports[3]),
+    FAKE_FORWARD_ATTEMPT_FILE: forwardAttemptPath,
+    FAKE_FORWARD_SERVER_SCRIPT: serverScript,
+    FAKE_PROCESS_DIRECTORY: processDirectory,
+    FAKE_TRANSIENT_FORWARD_FAILURES: String(transientPortForwardFailures),
+    FAKE_TRANSIENT_FORWARD_LIFETIME_MS: String(transientPortForwardLifetimeMs),
+    ...(missingResource ? { FAKE_MISSING_RESOURCE: missingResource } : {}),
+    PATH: `${fakeBin}:${process.env.PATH ?? ''}`,
+  };
+  const injectedEnvironment = Object.entries(env)
+    .filter(([key]) =>
+      [
+        'ANKH_APP_SLUG',
+        'APP_PORT_FORWARD_LOCAL_PORT',
+        'SUPABASE_GATEWAY_FORWARD_LOCAL_PORT',
+        'SUPABASE_STUDIO_FORWARD_LOCAL_PORT',
+        'SUPABASE_DB_FORWARD_LOCAL_PORT',
+        'FAKE_FORWARD_ATTEMPT_FILE',
+        'FAKE_FORWARD_SERVER_SCRIPT',
+        'FAKE_PROCESS_DIRECTORY',
+        'FAKE_TRANSIENT_FORWARD_FAILURES',
+        'FAKE_TRANSIENT_FORWARD_LIFETIME_MS',
+        'FAKE_MISSING_RESOURCE',
+        'PATH',
+      ].includes(key),
+    )
+    .map(([key, value]) => `export ${key}=${shellQuote(value)}`)
+    .join('\n');
+  await fs.writeFile(
+    scriptPath,
+    generatedScript.content.replace(
+      '#!/usr/bin/env bash\n',
+      `#!/usr/bin/env bash\n${injectedEnvironment}\n`,
+    ),
+    'utf8',
+  );
+  await fs.chmod(scriptPath, 0o755);
   return {
-    env: {
-      ...process.env,
-      ANKH_APP_SLUG: profile,
-      APP_PORT_FORWARD_LOCAL_PORT: String(ports[0]),
-      SUPABASE_GATEWAY_FORWARD_LOCAL_PORT: String(ports[1]),
-      SUPABASE_STUDIO_FORWARD_LOCAL_PORT: String(ports[2]),
-      SUPABASE_DB_FORWARD_LOCAL_PORT: String(ports[3]),
-      FAKE_FORWARD_SERVER_SCRIPT: serverScript,
-      FAKE_PROCESS_DIRECTORY: processDirectory,
-      PATH: `${fakeBin}:${process.env.PATH ?? ''}`,
-    },
+    env,
+    forwardAttemptPath,
     processDirectory,
     profile,
     rootPath,
     scriptPath,
   };
+}
+
+function shellQuote(value: string): string {
+  return `'${value.replaceAll("'", `'"'"'`)}'`;
+}
+
+async function expectFailureMessage(promise: Promise<unknown>, expected: string): Promise<void> {
+  try {
+    await promise;
+    throw new Error('Expected runtime ensure to fail.');
+  } catch (error) {
+    expect(error instanceof Error ? error.message : String(error)).toContain(expected);
+  }
 }
 
 async function runPortForward(

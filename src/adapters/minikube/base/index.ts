@@ -60,6 +60,7 @@ const PORT_REFERENCE_SLUG = 'my-app';
 export function generateMinikubeBaseArtifacts(args: {
   manifest: InfraManifestInput;
   appSlug: string;
+  appRuntimeEnabled: boolean;
   extraResources: string[];
   providerNamespaces: string[];
   providerLifecycle: MinikubeProviderLifecycle[];
@@ -68,6 +69,7 @@ export function generateMinikubeBaseArtifacts(args: {
   const {
     manifest,
     appSlug,
+    appRuntimeEnabled,
     extraResources,
     providerNamespaces,
     providerLifecycle,
@@ -109,6 +111,7 @@ export function generateMinikubeBaseArtifacts(args: {
       path: `${root}/README.md`,
       content: getReadmeMarkdown({
         appSlug,
+        appRuntimeEnabled,
         defaultAppImage,
         monitoringEnabled,
         authProvider,
@@ -150,32 +153,37 @@ export function generateMinikubeBaseArtifacts(args: {
       path: `${k8sRoot}/namespaces/${namespace}.yaml`,
       content: getNamespaceManifest(namespace),
     })),
-    {
-      path: `${k8sRoot}/app.configmap.yaml`,
-      content: getAppConfigMap({
-        appSlug,
-        authScope,
-        authProvider,
-        databaseProvider,
-        secretStoreProvider,
-        storageMetadata,
-        monitoringEnabled,
-        domain,
-      }),
-    },
-    {
-      path: `${k8sRoot}/app/deployment.yaml`,
-      content: getAppDeploymentManifest(defaultAppImage),
-    },
-    {
-      path: `${k8sRoot}/app/service.yaml`,
-      content: getAppServiceManifest(),
-    },
+    ...(appRuntimeEnabled
+      ? [
+          {
+            path: `${k8sRoot}/app.configmap.yaml`,
+            content: getAppConfigMap({
+              appSlug,
+              authScope,
+              authProvider,
+              databaseProvider,
+              secretStoreProvider,
+              storageMetadata,
+              monitoringEnabled,
+              domain,
+            }),
+          },
+          {
+            path: `${k8sRoot}/app/deployment.yaml`,
+            content: getAppDeploymentManifest(defaultAppImage),
+          },
+          {
+            path: `${k8sRoot}/app/service.yaml`,
+            content: getAppServiceManifest(),
+          },
+        ]
+      : []),
     ...supabaseResources,
     {
       path: `${k8sRoot}/kustomization.yaml`,
       content: getKustomizationManifest({
         namespaceResources,
+        appRuntimeEnabled,
         supabaseEnabled: supabaseKubernetesEnabled,
         extraResources,
       }),
@@ -184,6 +192,7 @@ export function generateMinikubeBaseArtifacts(args: {
       path: `${scriptsRoot}/up.sh`,
       content: getUpScript({
         appSlug,
+        appRuntimeEnabled,
         defaultAppImage,
         supabaseKubernetesEnabled,
         profileModel,
@@ -203,6 +212,7 @@ export function generateMinikubeBaseArtifacts(args: {
       path: `${scriptsRoot}/port-forward.sh`,
       content: getPortForwardScript({
         appSlug,
+        appRuntimeEnabled,
         supabaseKubernetesEnabled,
         supabaseHostPorts,
       }),
@@ -231,6 +241,7 @@ export function generateMinikubeBaseArtifacts(args: {
       path: `${scriptsRoot}/status.sh`,
       content: getStatusScript({
         appSlug,
+        appRuntimeEnabled,
         supabaseKubernetesEnabled,
         profileModel,
         supabaseHostPorts,
@@ -248,6 +259,7 @@ export function generateMinikubeBaseArtifacts(args: {
 
 function getReadmeMarkdown(args: {
   appSlug: string;
+  appRuntimeEnabled: boolean;
   defaultAppImage: string;
   monitoringEnabled: boolean;
   authProvider: string;
@@ -262,6 +274,7 @@ function getReadmeMarkdown(args: {
 }): string {
   const {
     appSlug,
+    appRuntimeEnabled,
     defaultAppImage,
     monitoringEnabled,
     authProvider,
@@ -278,9 +291,7 @@ function getReadmeMarkdown(args: {
     'namespaces/app.yaml',
     ...(supabaseKubernetesEnabled ? ['namespaces/supabase.yaml'] : []),
     ...providerNamespaces.map((namespace) => `namespaces/${namespace}.yaml`),
-    'app.configmap.yaml',
-    'app/deployment.yaml',
-    'app/service.yaml',
+    ...(appRuntimeEnabled ? ['app.configmap.yaml', 'app/deployment.yaml', 'app/service.yaml'] : []),
     ...(supabaseKubernetesEnabled
       ? [
           'supabase/bootstrap.sql',
@@ -343,6 +354,14 @@ function getReadmeMarkdown(args: {
       ? `\nConfigured OAuth providers are wired into GoTrue through generated \`GOTRUE_EXTERNAL_*\` runtime keys. The keys are named in \`.env.example\`; values must come from trusted secret resolution for the configured \`credentialsRef\` entries.\n`
       : '';
 
+  const runtimeForwardDescription = appRuntimeEnabled
+    ? supabaseKubernetesEnabled
+      ? '`app` and `supabase-gateway`'
+      : '`app`'
+    : supabaseKubernetesEnabled
+      ? '`supabase-gateway`'
+      : 'no host endpoints';
+
   return `# Minikube Infra
 
 This directory is generated from \`ankh.config.json\` (infra manifest).
@@ -350,7 +369,7 @@ This directory is generated from \`ankh.config.json\` (infra manifest).
 ## Ownership Model
 
 - App slug / Minikube profile: \`${appSlug}\`
-- App runtime namespace: \`${APP_NAMESPACE}\`
+- App runtime: \`${appRuntimeEnabled ? `deployment/app-runtime in namespace ${APP_NAMESPACE}` : 'disabled (no enabled Web deploy target)'}\`
 - Supabase namespace: \`${supabaseKubernetesEnabled ? SUPABASE_NAMESPACE : 'unused'}\`
 ${providerNamespaceLine}- Default app image: \`${defaultAppImage}\`
 
@@ -380,16 +399,14 @@ host-level Supabase Compose runtime.
 
 ## Lifecycle Semantics
 
-- \`up.sh\`: starts \`minikube -p ${appSlug}\`, deploys provider namespaces, runs migrations with CLI telemetry disabled for that command, starts slug-owned port-forwards, and deploys the app runtime.
+- \`up.sh\`: starts \`minikube -p ${appSlug}\`, deploys provider namespaces, runs migrations with CLI telemetry disabled for that command, starts slug-owned port-forwards${appRuntimeEnabled ? ', and deploys the Web app runtime' : ''}.
 - \`down.sh\`: stops slug-owned port-forwards, then stops \`minikube -p ${appSlug}\`. Persistent data remains in the profile.
 - \`reset.sh\`: requires \`ANKH_RESET_CONFIRM=${appSlug}\`; ${resetDescription}. It does not delete the Minikube profile.
 - \`destroy.sh\`: deletes only \`minikube -p ${appSlug}\`.
 
 ### Port-forward groups
 
-- \`./scripts/port-forward.sh start runtime\` idempotently ensures ${
-    supabaseKubernetesEnabled ? '`app` and `supabase-gateway`' : '`app` only'
-  }, the host endpoints required by the running application. The same group supports \`stop\` and \`status\`.
+- \`./scripts/port-forward.sh start runtime\` idempotently ensures ${runtimeForwardDescription}, the generated host endpoints required by the running application. The same group supports \`stop\` and \`status\`.
 - \`runtime\` excludes \`studio\` and \`db-migration\`, which are operational/bootstrap endpoints.
 - \`all\` retains every generated forward, including operational/bootstrap endpoints.
 - Concrete targets remain available for individual lifecycle control.
@@ -428,8 +445,7 @@ Pinned images:
 
 ## Host URLs
 
-- App: \`http://127.0.0.1:${supabaseHostPorts.app}\`
-- Supabase gateway: \`http://127.0.0.1:${supabaseHostPorts.gateway}\`
+${appRuntimeEnabled ? `- App: \`http://127.0.0.1:${supabaseHostPorts.app}\`\n` : ''}- Supabase gateway: \`http://127.0.0.1:${supabaseHostPorts.gateway}\`
 - Studio: \`http://127.0.0.1:${supabaseHostPorts.studio}\`
 - DB migration endpoint: \`127.0.0.1:${supabaseHostPorts.db}\`
 
@@ -965,6 +981,7 @@ function normalizeBuckets(rawBuckets: readonly string[]): string[] {
 
 function getKustomizationManifest(args: {
   namespaceResources: string[];
+  appRuntimeEnabled: boolean;
   supabaseEnabled: boolean;
   extraResources: string[];
 }): string {
@@ -985,9 +1002,9 @@ function getKustomizationManifest(args: {
     : [];
   const resources = [
     ...args.namespaceResources,
-    'app.configmap.yaml',
-    'app/deployment.yaml',
-    'app/service.yaml',
+    ...(args.appRuntimeEnabled
+      ? ['app.configmap.yaml', 'app/deployment.yaml', 'app/service.yaml']
+      : []),
     ...supabaseResources,
     ...args.extraResources,
   ];
@@ -2261,6 +2278,7 @@ spec:
 
 function getUpScript(args: {
   appSlug: string;
+  appRuntimeEnabled: boolean;
   defaultAppImage: string;
   supabaseKubernetesEnabled: boolean;
   profileModel: ResolvedProfileModel;
@@ -2271,6 +2289,7 @@ function getUpScript(args: {
 }): string {
   const {
     appSlug,
+    appRuntimeEnabled,
     defaultAppImage,
     supabaseKubernetesEnabled,
     profileModel,
@@ -2305,6 +2324,7 @@ DRIVER="\${MINIKUBE_DRIVER:-}"
 APP_NAMESPACE="${APP_NAMESPACE}"
 SUPABASE_NAMESPACE="${SUPABASE_NAMESPACE}"
 SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+APP_RUNTIME_ENABLED="${appRuntimeEnabled ? 'true' : 'false'}"
 APP_BUILD_ENABLED="\${APP_BUILD_ENABLED:-}"
 APP_SOURCE_DIR="\${APP_SOURCE_DIR:-}"
 APP_WEB_EXPORT_DIR="\${APP_WEB_EXPORT_DIR:-}"
@@ -2808,7 +2828,7 @@ else
   kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
 fi
 
-if [[ "\${APP_BUILD_ENABLED}" == "true" ]]; then
+if [[ "\${APP_RUNTIME_ENABLED}" == "true" && "\${APP_BUILD_ENABLED}" == "true" ]]; then
   if [[ ! -x "\${BUILD_SCRIPT}" ]]; then
     echo "Missing build helper script: \${BUILD_SCRIPT}"
     exit 1
@@ -2823,6 +2843,7 @@ else
   EXPORT_DIR="\${APP_SOURCE_DIR}/\${APP_WEB_EXPORT_DIR}"
 fi
 
+if [[ "\${APP_RUNTIME_ENABLED}" == "true" ]]; then
 case "\${APP_IMAGE_SYNC_STRATEGY}" in
   minikube-build)
     if [[ ! -f "\${EXPORT_DIR}/index.html" ]]; then
@@ -2844,6 +2865,7 @@ case "\${APP_IMAGE_SYNC_STRATEGY}" in
     exit 1
     ;;
 esac
+fi
 
 if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
   kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
@@ -2853,6 +2875,7 @@ wait_for_provider_readiness
 run_provider_migrations
 run_provider_reconciliation
 
+if [[ "\${APP_RUNTIME_ENABLED}" == "true" ]]; then
 if [[ -n "\${APP_IMAGE_PULL_SECRET_NAME}" ]]; then
   if [[ -z "\${APP_IMAGE_PULL_SECRET_USERNAME}" || -z "\${APP_IMAGE_PULL_SECRET_PASSWORD}" ]]; then
     echo "APP_IMAGE_PULL_SECRET_NAME is set, but username/password are missing."
@@ -2884,6 +2907,7 @@ fi
 
 kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" rollout status deployment/app-runtime --timeout=180s >/dev/null
 "\${PORT_FORWARD_SCRIPT}" start app >/dev/null
+fi
 
 trap - ERR
 echo "Minikube infrastructure for '\${PROFILE}' is running."
@@ -2997,15 +3021,44 @@ CMD ["nginx", "-g", "daemon off;"]
 
 function getPortForwardScript(args: {
   appSlug: string;
+  appRuntimeEnabled: boolean;
   supabaseKubernetesEnabled: boolean;
   supabaseHostPorts: SupabaseHostPorts;
 }): string {
-  const { appSlug, supabaseKubernetesEnabled, supabaseHostPorts } = args;
-  const runtimeForwardNames = ['app', ...(supabaseKubernetesEnabled ? ['supabase-gateway'] : [])];
+  const { appSlug, appRuntimeEnabled, supabaseKubernetesEnabled, supabaseHostPorts } = args;
+  const runtimeForwardNames = [
+    ...(appRuntimeEnabled ? ['app'] : []),
+    ...(supabaseKubernetesEnabled ? ['supabase-gateway'] : []),
+  ];
   const allForwardNames = [
     ...runtimeForwardNames,
     ...(supabaseKubernetesEnabled ? ['studio', 'db-migration'] : []),
   ];
+  const appTargetCase = appRuntimeEnabled
+    ? `    app)
+      echo "${APP_NAMESPACE} service/app-runtime \${APP_PORT_FORWARD_LOCAL_PORT} \${APP_PORT_FORWARD_REMOTE_PORT}"
+      ;;`
+    : '';
+  const supabaseTargetCases = supabaseKubernetesEnabled
+    ? `    supabase-gateway)
+      echo "${SUPABASE_NAMESPACE} service/gateway \${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT} \${SUPABASE_GATEWAY_FORWARD_REMOTE_PORT}"
+      ;;
+    studio)
+      echo "${SUPABASE_NAMESPACE} service/studio \${SUPABASE_STUDIO_FORWARD_LOCAL_PORT} \${SUPABASE_STUDIO_FORWARD_REMOTE_PORT}"
+      ;;
+    db-migration)
+      echo "${SUPABASE_NAMESPACE} service/postgres \${SUPABASE_DB_FORWARD_LOCAL_PORT} \${SUPABASE_DB_FORWARD_REMOTE_PORT}"
+      ;;`
+    : '';
+  const concreteForwardNames = [
+    ...(appRuntimeEnabled ? ['app'] : []),
+    ...(supabaseKubernetesEnabled ? ['supabase-gateway', 'studio', 'db-migration'] : []),
+  ];
+  const forwardUsage = [...concreteForwardNames, 'runtime', 'all'].join('|');
+  const forwardNamesDescription =
+    concreteForwardNames.length > 0
+      ? `${concreteForwardNames.join(', ')}, runtime, or all`
+      : 'runtime or all';
 
   return `#!/usr/bin/env bash
 set -euo pipefail
@@ -3053,20 +3106,10 @@ pid_file_for() {
 
 target_for() {
   case "\${1}" in
-    app)
-      echo "${APP_NAMESPACE} service/app-runtime \${APP_PORT_FORWARD_LOCAL_PORT} \${APP_PORT_FORWARD_REMOTE_PORT}"
-      ;;
-    supabase-gateway)
-      echo "${SUPABASE_NAMESPACE} service/gateway \${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT} \${SUPABASE_GATEWAY_FORWARD_REMOTE_PORT}"
-      ;;
-    studio)
-      echo "${SUPABASE_NAMESPACE} service/studio \${SUPABASE_STUDIO_FORWARD_LOCAL_PORT} \${SUPABASE_STUDIO_FORWARD_REMOTE_PORT}"
-      ;;
-    db-migration)
-      echo "${SUPABASE_NAMESPACE} service/postgres \${SUPABASE_DB_FORWARD_LOCAL_PORT} \${SUPABASE_DB_FORWARD_REMOTE_PORT}"
-      ;;
+${appTargetCase}
+${supabaseTargetCases}
     *)
-      echo "Unknown forward '\${1}'. Use app, supabase-gateway, studio, db-migration, or all." >&2
+      echo "Unknown forward '\${1}'. Use ${forwardNamesDescription}." >&2
       return 1
       ;;
   esac
@@ -3231,28 +3274,52 @@ start_forward() {
     return 1
   fi
 
-  nohup kubectl --context "\${PROFILE}" -n "\${namespace}" port-forward "\${resource}" "\${local_port}:\${remote_port}" >"\${STATE_DIR}/\${PROFILE}-\${name}.log" 2>&1 &
-  local pid="$!"
-  echo "\${pid}" > "\${pid_file}"
+  for start_attempt in {1..5}; do
+    nohup kubectl --context "\${PROFILE}" -n "\${namespace}" port-forward "\${resource}" "\${local_port}:\${remote_port}" >"\${STATE_DIR}/\${PROFILE}-\${name}.log" 2>&1 &
+    local pid="$!"
+    echo "\${pid}" > "\${pid_file}"
 
-  for attempt in {1..40}; do
-    if ! is_pid_running "\${pid}"; then
-      echo "\${name}: failed to start local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
-      print_forward_log_tail "\${name}"
+    for readiness_attempt in {1..20}; do
+      if ! is_pid_running "\${pid}"; then
+        rm -f "\${pid_file}"
+        if [[ "\${start_attempt}" -lt 5 ]]; then
+          echo "\${name}: port-forward attempt \${start_attempt} exited before readiness; retrying"
+          sleep 2
+          break
+        fi
+
+        echo "\${name}: failed to start local port \${local_port} for \${namespace}/\${resource}:\${remote_port} after \${start_attempt} attempts"
+        print_forward_log_tail "\${name}"
+        return 1
+      fi
+      if is_port_accepting "\${local_port}"; then
+        sleep 1
+        if is_pid_running "\${pid}" && is_port_accepting "\${local_port}"; then
+          sleep 0.5
+          if is_pid_running "\${pid}"; then
+            echo "\${name}: started (pid \${pid}, local port \${local_port})"
+            return 0
+          fi
+        fi
+      fi
+      sleep 0.5
+    done
+
+    if [[ -f "\${pid_file}" ]]; then
+      terminate_forward_process "\${name}" "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
       rm -f "\${pid_file}"
-      return 1
+
+      if [[ "\${start_attempt}" -lt 5 ]]; then
+        echo "\${name}: port-forward attempt \${start_attempt} did not become ready; retrying"
+        sleep 2
+      else
+        echo "\${name}: did not become ready on local port \${local_port} for \${namespace}/\${resource}:\${remote_port} after \${start_attempt} attempts"
+        print_forward_log_tail "\${name}"
+        return 1
+      fi
     fi
-    if is_port_accepting "\${local_port}"; then
-      echo "\${name}: started (pid \${pid}, local port \${local_port})"
-      return 0
-    fi
-    sleep 0.5
   done
 
-  echo "\${name}: did not become ready on local port \${local_port} for \${namespace}/\${resource}:\${remote_port}"
-  print_forward_log_tail "\${name}"
-  terminate_forward_process "\${name}" "\${pid}" "\${namespace}" "\${resource}" "\${local_port}" "\${remote_port}" || return 1
-  rm -f "\${pid_file}"
   return 1
 }
 
@@ -3332,7 +3399,7 @@ case "\${ACTION}:\${NAME}" in
   stop:*) stop_forward "\${NAME}" ;;
   status:*) status_forward "\${NAME}" ;;
   *)
-    echo "Usage: ./scripts/port-forward.sh {start|stop|status} {app|supabase-gateway|studio|db-migration|runtime|all}"
+    echo "Usage: ./scripts/port-forward.sh {start|stop|status} {${forwardUsage}}"
     exit 1
     ;;
 esac
@@ -3466,6 +3533,7 @@ echo "Deleted Minikube profile '\${PROFILE}'."
 
 function getStatusScript(args: {
   appSlug: string;
+  appRuntimeEnabled: boolean;
   supabaseKubernetesEnabled: boolean;
   profileModel: ResolvedProfileModel;
   supabaseHostPorts: SupabaseHostPorts;
@@ -3474,6 +3542,7 @@ function getStatusScript(args: {
 }): string {
   const {
     appSlug,
+    appRuntimeEnabled,
     supabaseKubernetesEnabled,
     profileModel,
     supabaseHostPorts,
@@ -3558,7 +3627,7 @@ for namespace in ${namespaces}; do
   fi
 done
 
-if kubectl --context "\${PROFILE}" -n ${APP_NAMESPACE} get deployment app-runtime >/dev/null 2>&1; then
+if [[ "${appRuntimeEnabled ? 'true' : 'false'}" == "true" ]] && kubectl --context "\${PROFILE}" -n ${APP_NAMESPACE} get deployment app-runtime >/dev/null 2>&1; then
   kubectl --context "\${PROFILE}" -n ${APP_NAMESPACE} rollout status deployment/app-runtime --timeout=5s >/dev/null 2>&1 && echo "- app-runtime: ready" || echo "- app-runtime: not ready"
 fi
 

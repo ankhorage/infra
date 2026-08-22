@@ -387,7 +387,9 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     );
     expect(upScript).toContain('ensure_supabase_runtime_env\nsync_app_public_supabase_env');
     expect(upScript.lastIndexOf('sync_app_public_supabase_env')).toBeLessThan(
-      upScript.indexOf('if [[ "${APP_BUILD_ENABLED}" == "true" ]]'),
+      upScript.indexOf(
+        'if [[ "${APP_RUNTIME_ENABLED}" == "true" && "${APP_BUILD_ENABLED}" == "true" ]]',
+      ),
     );
     expect(upScript).not.toContain('SUPABASE_SERVICE_ROLE_KEY" "${SUPABASE_SERVICE_ROLE_KEY}"');
     expect(buildScript).toContain(
@@ -520,6 +522,69 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(app)');
     expect(portForwardScript).toContain('ALL_FORWARD_NAMES=(app)');
     expect(portForwardScript).not.toContain('RUNTIME_FORWARD_NAMES=(app supabase-gateway)');
+  });
+
+  test('derives native-only runtime topology without a fictional Kubernetes app service', () => {
+    const appManifest = {
+      ...createAppManifest('native-only'),
+      deploy: {
+        targets: {
+          android: { enabled: true, package: 'com.ankh.nativeonly' },
+          ios: { enabled: true, bundleIdentifier: 'com.ankh.nativeonly' },
+        },
+      },
+    };
+    const result = generateInfrastructure(createSupabaseManifest(), { appManifest });
+    const paths = result.files.map((file) => file.path);
+    const kustomization = getFile(result.files, 'infra/minikube/k8s/kustomization.yaml');
+    const portForwardScript = getFile(result.files, 'infra/minikube/scripts/port-forward.sh');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
+    const readme = getFile(result.files, 'infra/minikube/README.md');
+
+    expect(paths).not.toContain('infra/minikube/k8s/app/deployment.yaml');
+    expect(paths).not.toContain('infra/minikube/k8s/app/service.yaml');
+    expect(paths).not.toContain('infra/minikube/k8s/app.configmap.yaml');
+    expect(kustomization).not.toContain('app/deployment.yaml');
+    expect(kustomization).not.toContain('app/service.yaml');
+    expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(supabase-gateway)');
+    expect(portForwardScript).toContain('ALL_FORWARD_NAMES=(supabase-gateway studio db-migration)');
+    expect(portForwardScript).not.toContain('service/app-runtime');
+    expect(upScript).toContain('APP_RUNTIME_ENABLED="false"');
+    expect(readme).toContain('disabled (no enabled Web deploy target)');
+    expect(JSON.stringify(result.files)).not.toContain('adb');
+    expect(JSON.stringify(result.files)).not.toContain('10.0.2.2');
+  });
+
+  test('keeps legacy manifests without deploy targets on the Web app runtime topology', () => {
+    const result = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: createAppManifest('legacy-web'),
+    });
+    const paths = result.files.map((file) => file.path);
+    const portForwardScript = getFile(result.files, 'infra/minikube/scripts/port-forward.sh');
+
+    expect(paths).toContain('infra/minikube/k8s/app/service.yaml');
+    expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(app supabase-gateway)');
+  });
+
+  test('generates an empty provider-agnostic runtime group when no host target exists', () => {
+    const appManifest = {
+      ...createAppManifest('native-no-provider'),
+      deploy: {
+        targets: {
+          android: { enabled: true, package: 'com.ankh.nativeproviderless' },
+        },
+      },
+    };
+    const result = generateInfrastructure(
+      { deployment: { target: 'minikube', monitoring: false }, modules: [] },
+      { appManifest },
+    );
+    const portForwardScript = getFile(result.files, 'infra/minikube/scripts/port-forward.sh');
+
+    expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=()');
+    expect(portForwardScript).toContain('ALL_FORWARD_NAMES=()');
+    expect(portForwardScript).not.toContain('service/app-runtime');
+    expect(portForwardScript).not.toContain('service/gateway');
   });
 });
 
