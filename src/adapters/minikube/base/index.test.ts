@@ -459,13 +459,11 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
       'ALL_FORWARD_NAMES=(app supabase-gateway studio db-migration)',
     );
     expect(portForwardScript).toContain(
-      'start:runtime) for_each_forward start "${RUNTIME_FORWARD_NAMES[@]}"',
+      'start:runtime) for_each_forward start app supabase-gateway',
     );
+    expect(portForwardScript).toContain('for_each_forward stop app supabase-gateway');
     expect(portForwardScript).toContain(
-      'stop:runtime) for_each_forward stop "${RUNTIME_FORWARD_NAMES[@]}"',
-    );
-    expect(portForwardScript).toContain(
-      'status:runtime) for_each_forward status "${RUNTIME_FORWARD_NAMES[@]}"',
+      'status:runtime) for_each_forward status app supabase-gateway',
     );
     expect(portForwardScript).toContain('${PROFILE}-${1}.pid');
     expect(portForwardScript).toContain('crashed stale_pid');
@@ -521,7 +519,64 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
 
     expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(app)');
     expect(portForwardScript).toContain('ALL_FORWARD_NAMES=(app)');
+    expect(portForwardScript).toContain(
+      'OBSOLETE_FORWARD_NAMES=(supabase-gateway studio db-migration)',
+    );
     expect(portForwardScript).not.toContain('RUNTIME_FORWARD_NAMES=(app supabase-gateway)');
+  });
+
+  test('reconciles a generated Web topology to the exact native-only desired topology', () => {
+    const baseManifest = createAppManifest('topology-upgrade');
+    const webResult = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: {
+        ...baseManifest,
+        deploy: { targets: { web: { enabled: true } } },
+      },
+    });
+    const nativeResult = generateInfrastructure(createSupabaseManifest(), {
+      appManifest: {
+        ...baseManifest,
+        deploy: {
+          targets: {
+            android: { enabled: true, package: 'com.ankh.topologyupgrade' },
+          },
+        },
+      },
+    });
+    const webPaths = webResult.files.map((file) => file.path);
+    const nativePaths = nativeResult.files.map((file) => file.path);
+    const webAppConfig = getFile(webResult.files, 'infra/minikube/k8s/app.configmap.yaml');
+    const webUpScript = getFile(webResult.files, 'infra/minikube/scripts/up.sh');
+    const nativeUpScript = getFile(nativeResult.files, 'infra/minikube/scripts/up.sh');
+    const nativePortForwardScript = getFile(
+      nativeResult.files,
+      'infra/minikube/scripts/port-forward.sh',
+    );
+    const exactDelete =
+      'delete deployment/app-runtime service/app-runtime configmap/app-infra-config --ignore-not-found';
+
+    expect(webPaths).toContain('infra/minikube/k8s/app/deployment.yaml');
+    expect(webPaths).toContain('infra/minikube/k8s/app/service.yaml');
+    expect(webPaths).toContain('infra/minikube/k8s/app.configmap.yaml');
+    expect(webAppConfig).toContain('name: app-infra-config');
+    expect(getFile(webResult.files, 'infra/minikube/scripts/port-forward.sh')).toContain(
+      'RUNTIME_FORWARD_NAMES=(app supabase-gateway)',
+    );
+
+    expect(nativePaths).not.toContain('infra/minikube/k8s/app/deployment.yaml');
+    expect(nativePaths).not.toContain('infra/minikube/k8s/app/service.yaml');
+    expect(nativePaths).not.toContain('infra/minikube/k8s/app.configmap.yaml');
+    expect(nativeUpScript).toContain(exactDelete);
+    expect(nativeUpScript).toContain('"${PORT_FORWARD_SCRIPT}" stop obsolete');
+    expect(nativeUpScript.indexOf(exactDelete)).toBeLessThan(
+      nativeUpScript.indexOf('"${PORT_FORWARD_SCRIPT}" stop obsolete'),
+    );
+    expect(nativePortForwardScript).toContain(
+      'MANAGED_FORWARD_NAMES=(app supabase-gateway studio db-migration)',
+    );
+    expect(nativePortForwardScript).toContain('OBSOLETE_FORWARD_NAMES=(app)');
+    expect(webUpScript).not.toContain(exactDelete);
+    expect(webUpScript).not.toContain('stop obsolete');
   });
 
   test('derives native-only runtime topology without a fictional Kubernetes app service', () => {
@@ -548,8 +603,15 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(kustomization).not.toContain('app/service.yaml');
     expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(supabase-gateway)');
     expect(portForwardScript).toContain('ALL_FORWARD_NAMES=(supabase-gateway studio db-migration)');
-    expect(portForwardScript).not.toContain('service/app-runtime');
+    expect(portForwardScript).toContain(
+      'MANAGED_FORWARD_NAMES=(app supabase-gateway studio db-migration)',
+    );
+    expect(portForwardScript).toContain('OBSOLETE_FORWARD_NAMES=(app)');
+    expect(portForwardScript).toContain('${name}: skipped (Web app runtime disabled)');
     expect(upScript).toContain('APP_RUNTIME_ENABLED="false"');
+    expect(upScript).toContain(
+      'delete deployment/app-runtime service/app-runtime configmap/app-infra-config --ignore-not-found',
+    );
     expect(readme).toContain('disabled (no enabled Web deploy target)');
     expect(JSON.stringify(result.files)).not.toContain('adb');
     expect(JSON.stringify(result.files)).not.toContain('10.0.2.2');
@@ -561,9 +623,12 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     });
     const paths = result.files.map((file) => file.path);
     const portForwardScript = getFile(result.files, 'infra/minikube/scripts/port-forward.sh');
+    const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
 
     expect(paths).toContain('infra/minikube/k8s/app/service.yaml');
     expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=(app supabase-gateway)');
+    expect(portForwardScript).toContain('OBSOLETE_FORWARD_NAMES=()');
+    expect(upScript).not.toContain('delete deployment/app-runtime');
   });
 
   test('generates an empty provider-agnostic runtime group when no host target exists', () => {
@@ -583,8 +648,9 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
 
     expect(portForwardScript).toContain('RUNTIME_FORWARD_NAMES=()');
     expect(portForwardScript).toContain('ALL_FORWARD_NAMES=()');
-    expect(portForwardScript).not.toContain('service/app-runtime');
-    expect(portForwardScript).not.toContain('service/gateway');
+    expect(portForwardScript).toContain(
+      'OBSOLETE_FORWARD_NAMES=(app supabase-gateway studio db-migration)',
+    );
   });
 });
 

@@ -43,6 +43,13 @@ those operational/bootstrap forwards. Start, stop, or inspect the group with
 `ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project` instead of depending
 on concrete provider forward names. Forward startup retries bounded transient Kubernetes
 pod-selection and readiness failures that can occur immediately after a profile restart.
+Active runtime/all groups contain only targets in the generated topology. Cleanup retains
+the exact identities of all Infra-managed forwards so a Web-to-native regeneration safely
+stops an obsolete owned `app` forward without making it an active start target.
+
+When the Web app runtime is disabled, `up.sh` also reconciles the former generated
+`Deployment/app-runtime`, `Service/app-runtime`, and `ConfigMap/app-infra-config` with exact,
+idempotent deletes. It does not prune unrelated resources or delete the `app` namespace.
 
 ## Supabase Runtime
 

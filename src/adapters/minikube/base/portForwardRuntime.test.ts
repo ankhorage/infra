@@ -158,6 +158,85 @@ describe('generated Minikube runtime port-forward lifecycle', () => {
     { timeout: 15_000 },
   );
 
+  test(
+    'cleans an owned app forward removed from the native-only active topology',
+    async () => {
+      const fixture = await createPortForwardFixture(
+        createSupabaseManifest(),
+        'native-runtime-upgrade',
+        createNativeAppManifest('native-runtime-upgrade'),
+      );
+      const appPort = Number.parseInt(fixture.env.APP_PORT_FORWARD_LOCAL_PORT ?? '', 10);
+      const oldAppForward = Bun.spawn(
+        [
+          'kubectl',
+          '--context',
+          fixture.profile,
+          '-n',
+          'app',
+          'port-forward',
+          'service/app-runtime',
+          `${appPort}:80`,
+        ],
+        { env: fixture.env, stderr: 'ignore', stdout: 'ignore' },
+      );
+      await waitForHttpPort(appPort);
+      await writeForwardPid(fixture, 'app', oldAppForward.pid);
+
+      const cleanup = await runPortForward(fixture, 'stop', 'all');
+
+      expect(cleanup.stdout).toContain('app: stopped');
+      await oldAppForward.exited;
+      expect(isProcessRunning(oldAppForward.pid)).toBe(false);
+      await expectForwardPid(fixture, 'app', false);
+
+      const recovery = await runPortForward(fixture, 'start', 'runtime');
+      expect(recovery.stdout).toContain('supabase-gateway: started');
+      expect(recovery.stdout).not.toContain('app: started');
+      await expectForwardPid(fixture, 'app', false);
+      await expectForwardPid(fixture, 'supabase-gateway', true);
+    },
+    { timeout: 15_000 },
+  );
+
+  test(
+    'refuses to terminate a non-owned PID recorded as an obsolete app forward',
+    async () => {
+      const fixture = await createPortForwardFixture(
+        createSupabaseManifest(),
+        'native-runtime-non-owned',
+        createNativeAppManifest('native-runtime-non-owned'),
+      );
+      const appPort = Number.parseInt(fixture.env.APP_PORT_FORWARD_LOCAL_PORT ?? '', 10);
+      const nonOwnedProcess = Bun.spawn(['bun', fixture.serverScript, String(appPort)], {
+        env: fixture.env,
+        stderr: 'ignore',
+        stdout: 'ignore',
+      });
+
+      try {
+        await waitForHttpPort(appPort);
+        await writeForwardPid(fixture, 'app', nonOwnedProcess.pid);
+
+        const cleanup = await executePortForward(fixture, 'stop', 'all');
+
+        expect(cleanup.exitCode).not.toBe(0);
+        expect(cleanup.stdout).toContain(
+          `app: stale pid file pointed at non-owned live pid ${nonOwnedProcess.pid}`,
+        );
+        expect(cleanup.stdout).toContain(
+          `app: port occupied by non-owned process on local port ${appPort}`,
+        );
+        expect(isProcessRunning(nonOwnedProcess.pid)).toBe(true);
+        await expectForwardPid(fixture, 'app', false);
+      } finally {
+        nonOwnedProcess.kill();
+        await nonOwnedProcess.exited;
+      }
+    },
+    { timeout: 15_000 },
+  );
+
   test('fails actionably when a generated Web app target is genuinely missing', async () => {
     const fixture = await createPortForwardFixture(
       createSupabaseManifest(),
@@ -210,6 +289,7 @@ interface PortForwardFixture {
   readonly processDirectory: string;
   readonly profile: string;
   readonly rootPath: string;
+  readonly serverScript: string;
   readonly scriptPath: string;
 }
 
@@ -363,6 +443,7 @@ fi
     processDirectory,
     profile,
     rootPath,
+    serverScript,
     scriptPath,
   };
 }
@@ -385,6 +466,20 @@ async function runPortForward(
   action: string,
   name: string,
 ): Promise<{ readonly exitCode: number; readonly stderr: string; readonly stdout: string }> {
+  const result = await executePortForward(fixture, action, name);
+  if (result.exitCode !== 0) {
+    throw new Error(
+      `port-forward ${action} ${name} failed (${result.exitCode}): ${result.stdout}${result.stderr}`,
+    );
+  }
+  return result;
+}
+
+async function executePortForward(
+  fixture: PortForwardFixture,
+  action: string,
+  name: string,
+): Promise<{ readonly exitCode: number; readonly stderr: string; readonly stdout: string }> {
   const process = Bun.spawn(['bash', fixture.scriptPath, action, name], {
     env: fixture.env,
     stderr: 'pipe',
@@ -395,10 +490,41 @@ async function runPortForward(
     new Response(process.stdout).text(),
     new Response(process.stderr).text(),
   ]);
-  if (exitCode !== 0) {
-    throw new Error(`port-forward ${action} ${name} failed (${exitCode}): ${stdout}${stderr}`);
-  }
   return { exitCode, stderr, stdout };
+}
+
+async function writeForwardPid(
+  fixture: PortForwardFixture,
+  name: string,
+  pid: number,
+): Promise<void> {
+  const pidPath = forwardPidPath(fixture, name);
+  await fs.mkdir(path.dirname(pidPath), { recursive: true });
+  await fs.writeFile(pidPath, `${pid}\n`, 'utf8');
+}
+
+async function waitForHttpPort(port: number): Promise<void> {
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    try {
+      const response = await fetch(`http://127.0.0.1:${port}`, {
+        signal: AbortSignal.timeout(250),
+      });
+      if (response.ok) return;
+    } catch {
+      // The fixture process may still be binding its port.
+    }
+    await Bun.sleep(50);
+  }
+  throw new Error(`Timed out waiting for fixture port ${port}.`);
+}
+
+function isProcessRunning(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function readForwardPid(fixture: PortForwardFixture, name: string): Promise<number> {
@@ -483,5 +609,16 @@ function createSupabaseManifest(): InfraManifestInput {
     auth: { scope: 'global', provider: 'supabase' },
     database: { provider: 'supabase', tier: 'dev' },
     modules: [],
+  };
+}
+
+function createNativeAppManifest(profile: string) {
+  return {
+    ...createAppManifest(profile),
+    deploy: {
+      targets: {
+        android: { enabled: true, package: `com.ankh.${profile.replaceAll('-', '')}` },
+      },
+    },
   };
 }

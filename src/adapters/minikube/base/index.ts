@@ -2309,6 +2309,14 @@ function getUpScript(args: {
     secretStoreProvider,
   });
   const supabaseMigrationCommand = getSupabaseMigrationCommandScript();
+  const disabledAppRuntimeReconciliation = appRuntimeEnabled
+    ? ''
+    : `reconcile_disabled_app_runtime() {
+  kubectl --context "\${PROFILE}" -n "\${APP_NAMESPACE}" delete deployment/app-runtime service/app-runtime configmap/app-infra-config --ignore-not-found
+  "\${PORT_FORWARD_SCRIPT}" stop obsolete
+}
+`;
+  const reconcileDisabledAppRuntime = appRuntimeEnabled ? '' : 'reconcile_disabled_app_runtime';
 
   return `#!/usr/bin/env bash
 set -Eeuo pipefail
@@ -2755,6 +2763,7 @@ apply_namespace_manifests() {
   done
 }
 
+${disabledAppRuntimeReconciliation}
 ${providerLifecycleStageScripts}
 
 load_env_file_preserving_process_env
@@ -2871,6 +2880,7 @@ if [[ "\${SUPABASE_RUNTIME_ENABLED}" == "true" ]]; then
   kubectl --context "\${PROFILE}" apply -k "\${K8S_DIR}"
 fi
 
+${reconcileDisabledAppRuntime}
 wait_for_provider_readiness
 run_provider_migrations
 run_provider_reconciliation
@@ -3034,13 +3044,14 @@ function getPortForwardScript(args: {
     ...runtimeForwardNames,
     ...(supabaseKubernetesEnabled ? ['studio', 'db-migration'] : []),
   ];
-  const appTargetCase = appRuntimeEnabled
-    ? `    app)
+  const managedForwardNames = ['app', 'supabase-gateway', 'studio', 'db-migration'];
+  const obsoleteForwardNames = managedForwardNames.filter(
+    (name) => !allForwardNames.includes(name),
+  );
+  const appTargetCase = `    app)
       echo "${APP_NAMESPACE} service/app-runtime \${APP_PORT_FORWARD_LOCAL_PORT} \${APP_PORT_FORWARD_REMOTE_PORT}"
-      ;;`
-    : '';
-  const supabaseTargetCases = supabaseKubernetesEnabled
-    ? `    supabase-gateway)
+      ;;`;
+  const supabaseTargetCases = `    supabase-gateway)
       echo "${SUPABASE_NAMESPACE} service/gateway \${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT} \${SUPABASE_GATEWAY_FORWARD_REMOTE_PORT}"
       ;;
     studio)
@@ -3048,8 +3059,7 @@ function getPortForwardScript(args: {
       ;;
     db-migration)
       echo "${SUPABASE_NAMESPACE} service/postgres \${SUPABASE_DB_FORWARD_LOCAL_PORT} \${SUPABASE_DB_FORWARD_REMOTE_PORT}"
-      ;;`
-    : '';
+      ;;`;
   const concreteForwardNames = [
     ...(appRuntimeEnabled ? ['app'] : []),
     ...(supabaseKubernetesEnabled ? ['supabase-gateway', 'studio', 'db-migration'] : []),
@@ -3069,6 +3079,7 @@ STATE_DIR="\${ROOT_DIR}/.state/forwards"
 APP_SLUG="${appSlug}"
 PROFILE="\${ANKH_APP_SLUG:-${appSlug}}"
 SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+APP_RUNTIME_ENABLED="${appRuntimeEnabled ? 'true' : 'false'}"
 APP_PORT_FORWARD_LOCAL_PORT="\${APP_PORT_FORWARD_LOCAL_PORT:-${supabaseHostPorts.app}}"
 APP_PORT_FORWARD_REMOTE_PORT="\${APP_PORT_FORWARD_REMOTE_PORT:-80}"
 SUPABASE_GATEWAY_FORWARD_LOCAL_PORT="\${SUPABASE_GATEWAY_FORWARD_LOCAL_PORT:-${supabaseHostPorts.gateway}}"
@@ -3079,6 +3090,8 @@ SUPABASE_DB_FORWARD_LOCAL_PORT="\${SUPABASE_DB_FORWARD_LOCAL_PORT:-${supabaseHos
 SUPABASE_DB_FORWARD_REMOTE_PORT="\${SUPABASE_DB_FORWARD_REMOTE_PORT:-5432}"
 RUNTIME_FORWARD_NAMES=(${runtimeForwardNames.join(' ')})
 ALL_FORWARD_NAMES=(${allForwardNames.join(' ')})
+MANAGED_FORWARD_NAMES=(${managedForwardNames.join(' ')})
+OBSOLETE_FORWARD_NAMES=(${obsoleteForwardNames.join(' ')})
 
 if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set -a
@@ -3087,6 +3100,7 @@ if [[ -f "\${ROOT_DIR}/.env" ]]; then
   set +a
 fi
 SUPABASE_RUNTIME_ENABLED="${supabaseKubernetesEnabled ? 'true' : 'false'}"
+APP_RUNTIME_ENABLED="${appRuntimeEnabled ? 'true' : 'false'}"
 
 if [[ "\${PROFILE}" != "\${APP_SLUG}" ]]; then
   echo "ANKH_APP_SLUG must remain the generated canonical slug '\${APP_SLUG}' for this infra directory."
@@ -3245,6 +3259,11 @@ start_forward() {
   pid_file="$(pid_file_for "\${name}")"
   read -r namespace resource local_port remote_port <<<"$(target_for "\${name}")"
 
+  if [[ "\${name}" == "app" && "\${APP_RUNTIME_ENABLED}" != "true" ]]; then
+    echo "\${name}: skipped (Web app runtime disabled)"
+    return 0
+  fi
+
   if [[ -f "\${pid_file}" ]]; then
     local existing_pid
     existing_pid="$(cat "\${pid_file}")"
@@ -3380,7 +3399,9 @@ for_each_forward() {
   local action="\${1}"
   shift
   local name
-  for name in "\${@}"; do
+  while [[ "\${#}" -gt 0 ]]; do
+    name="\${1}"
+    shift
     "\${action}_forward" "\${name}"
   done
 }
@@ -3389,12 +3410,16 @@ ACTION="\${1:-start}"
 NAME="\${2:-all}"
 
 case "\${ACTION}:\${NAME}" in
-  start:runtime) for_each_forward start "\${RUNTIME_FORWARD_NAMES[@]}" ;;
-  stop:runtime) for_each_forward stop "\${RUNTIME_FORWARD_NAMES[@]}" ;;
-  status:runtime) for_each_forward status "\${RUNTIME_FORWARD_NAMES[@]}" ;;
-  start:all) for_each_forward start "\${ALL_FORWARD_NAMES[@]}" ;;
-  stop:all) for_each_forward stop "\${ALL_FORWARD_NAMES[@]}" ;;
-  status:all) for_each_forward status "\${ALL_FORWARD_NAMES[@]}" ;;
+  start:runtime) for_each_forward start ${runtimeForwardNames.join(' ')} ;;
+  stop:runtime)
+    for_each_forward stop ${runtimeForwardNames.join(' ')}
+    for_each_forward stop ${obsoleteForwardNames.join(' ')}
+    ;;
+  status:runtime) for_each_forward status ${runtimeForwardNames.join(' ')} ;;
+  start:all) for_each_forward start ${allForwardNames.join(' ')} ;;
+  stop:all) for_each_forward stop ${managedForwardNames.join(' ')} ;;
+  status:all) for_each_forward status ${allForwardNames.join(' ')} ;;
+  stop:obsolete) for_each_forward stop ${obsoleteForwardNames.join(' ')} ;;
   start:*) start_forward "\${NAME}" ;;
   stop:*) stop_forward "\${NAME}" ;;
   status:*) status_forward "\${NAME}" ;;
