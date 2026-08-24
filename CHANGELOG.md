@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.2
+
+### Patch Changes
+
+- b25415f: Emit Minikube README and Kong templates in their canonical generated format.
+
 ## 4.1.1
 
 ### Patch Changes
