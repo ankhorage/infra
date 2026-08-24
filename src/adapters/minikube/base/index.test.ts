@@ -169,6 +169,9 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(postgres).toContain('config_file=/etc/postgresql/postgresql.conf');
     expect(gatewayTemplate).toContain('keyauth_credentials');
     expect(gatewayTemplate).toContain('request-transformer');
+    expect(gatewayTemplate).toContain('_format_version: "2.1"');
+    expect(gatewayTemplate).toContain('username: "$DASHBOARD_USERNAME"');
+    expect(gatewayTemplate).toContain('password: "$DASHBOARD_PASSWORD"');
     expect(kongEntrypoint).toContain('LUA_AUTH_EXPR');
     expect(auth).toContain('name: GOTRUE_JWT_EXP');
     expect(auth).toContain('key: JWT_EXPIRY');
@@ -268,6 +271,7 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
     expect(kustomization).toContain('namespaces/cerbos.yaml');
     expect(readme).toContain('- Provider namespaces: `cerbos`');
     expect(readme).toContain('## Provider Lifecycle Contributions');
+    expect(readme).not.toContain('\n\n\n## Provider Lifecycle Contributions');
     expect(readme).toContain('`cerbos`: namespace `cerbos`');
     expect(readme).toContain('`deployment/cerbos` in namespace `cerbos`');
     expect(readme).toContain('`http` = `http://cerbos.cerbos.svc.cluster.local:3592`');
@@ -329,9 +333,11 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
       },
     );
     const envExample = getFile(result.files, 'infra/minikube/.env.example');
+    const readme = getFile(result.files, 'infra/minikube/README.md');
     const upScript = getFile(result.files, 'infra/minikube/scripts/up.sh');
 
     expect(envExample).toContain('# google: auth/oauth/google');
+    expect(readme).not.toContain('credentialsRef` entries.\n\n\nPinned images:');
     expect(envExample).toContain('GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID=');
     expect(envExample).toContain('GOTRUE_EXTERNAL_GOOGLE_SECRET=');
     expect(upScript).toContain('GOTRUE_EXTERNAL_GOOGLE_ENABLED=true');

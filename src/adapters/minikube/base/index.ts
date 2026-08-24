@@ -331,7 +331,7 @@ function getReadmeMarkdown(args: {
       : '';
   const providerLifecycleLines =
     providerLifecycle.length > 0
-      ? `\n## Provider Lifecycle Contributions\n\n${providerLifecycle
+      ? `## Provider Lifecycle Contributions\n\n${providerLifecycle
           .map((provider) => {
             const readiness =
               provider.readinessChecks.length > 0
@@ -347,11 +347,11 @@ function getReadmeMarkdown(args: {
                 : 'none';
             return `- \`${provider.id}\`: namespace \`${provider.namespace}\`; readiness ${readiness}; endpoints ${endpoints}`;
           })
-          .join('\n')}\n`
+          .join('\n')}`
       : '';
   const oauthDescription =
     oauthProviders.length > 0
-      ? `\nConfigured OAuth providers are wired into GoTrue through generated \`GOTRUE_EXTERNAL_*\` runtime keys. The keys are named in \`.env.example\`; values must come from trusted secret resolution for the configured \`credentialsRef\` entries.\n`
+      ? `\nConfigured OAuth providers are wired into GoTrue through generated \`GOTRUE_EXTERNAL_*\` runtime keys. The keys are named in \`.env.example\`; values must come from trusted secret resolution for the configured \`credentialsRef\` entries.`
       : '';
 
   const runtimeForwardDescription = appRuntimeEnabled
@@ -1835,7 +1835,7 @@ spec:
 }
 
 function getSupabaseGatewayTemplate(): string {
-  return `_format_version: '2.1'
+  return `_format_version: "2.1"
 _transform: true
 
 consumers:
@@ -1857,8 +1857,8 @@ acls:
 
 basicauth_credentials:
   - consumer: DASHBOARD
-    username: '$DASHBOARD_USERNAME'
-    password: '$DASHBOARD_PASSWORD'
+    username: "$DASHBOARD_USERNAME"
+    password: "$DASHBOARD_PASSWORD"
 
 services:
   - name: auth-v1-open
