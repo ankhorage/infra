@@ -73,9 +73,12 @@ official Supabase Kubernetes distribution.
 
 - Default app image: `ankh/<slug>:dev`.
 - By default `up.sh` triggers `build-app-image.sh` (`APP_BUILD_ENABLED=true`) before apply.
-- `build-app-image.sh` runs `bunx expo export --platform web --clear`, then builds via
-  `app-image/Dockerfile`. Clearing the Expo/Metro cache ensures rotated `EXPO_PUBLIC_*`
-  values replace cached transforms before the browser bundle and Docker image are created.
+- `build-app-image.sh` requires the app's installed `node_modules/.bin/expo`, runs
+  `expo export --platform web --clear` through that pinned local CLI, then builds via
+  `app-image/Dockerfile`. Missing app dependencies fail with an explicit frozen-install
+  instruction; the script never resolves Expo through `bunx` or the network. Clearing the
+  Expo/Metro cache ensures rotated `EXPO_PUBLIC_*` values replace cached transforms before the
+  browser bundle and Docker image are created.
 - `up.sh` syncs runtime image using `APP_IMAGE_SYNC_STRATEGY`:
   - `docker-load` (default): loads existing local Docker image into the app profile.
   - `minikube-build`: builds exported web artifacts directly into the profile image store.
