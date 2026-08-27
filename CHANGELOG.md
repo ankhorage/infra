@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.3
+
+### Patch Changes
+
+- 9cb5d75: Require generated app-image builds to execute the app-installed Expo CLI and fail before export when dependencies are missing.
+
 ## 4.1.2
 
 ### Patch Changes
