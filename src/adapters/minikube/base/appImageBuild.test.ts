@@ -25,7 +25,7 @@ test('re-exports rotated public environment values before building the app image
     const buildScriptPath = path.join(scriptsRoot, 'build-app-image.sh');
     const dockerfilePath = path.join(infraRoot, 'app-image', 'Dockerfile');
     const metroCachePath = path.join(workspaceRoot, 'fake-metro-cache');
-    const bunxArgsPath = path.join(workspaceRoot, 'bunx-args');
+    const expoArgsPath = path.join(workspaceRoot, 'expo-args');
     const dockerArgsPath = path.join(workspaceRoot, 'docker-args');
     const exportDir = path.join(appRoot, '.ankh', 'web-export');
     const bundlePath = path.join(exportDir, '_expo', 'static', 'js', 'web', 'index-fixture.js');
@@ -49,14 +49,14 @@ test('re-exports rotated public environment values before building the app image
     await writeFile(dockerfilePath, 'FROM scratch\n', 'utf8');
     await writeFile(buildScriptPath, buildScript, 'utf8');
     await chmod(buildScriptPath, 0o755);
-    await writeFakeBunx(path.join(fakeBin, 'bunx'));
+    await writeFakeExpo(path.join(appRoot, 'node_modules', '.bin', 'expo'));
     await writeFakeDocker(path.join(fakeBin, 'docker'));
 
     await writePublicEnvironment(appRoot, infraRoot, PUBLIC_KEY_A);
     await runBuildScript({
       appRoot,
       buildScriptPath,
-      bunxArgsPath,
+      expoArgsPath,
       dockerArgsPath,
       fakeBin,
       metroCachePath,
@@ -70,7 +70,7 @@ test('re-exports rotated public environment values before building the app image
     await runBuildScript({
       appRoot,
       buildScriptPath,
-      bunxArgsPath,
+      expoArgsPath,
       dockerArgsPath,
       fakeBin,
       metroCachePath,
@@ -80,8 +80,7 @@ test('re-exports rotated public environment values before building the app image
     expect(secondBundle).toContain(PUBLIC_KEY_B);
     expect(secondBundle).not.toContain(PUBLIC_KEY_A);
     expect(secondBundle).not.toContain(PRIVATE_SERVICE_ROLE_KEY);
-    expect((await readFile(bunxArgsPath, 'utf8')).trim().split('\n')).toEqual([
-      'expo',
+    expect((await readFile(expoArgsPath, 'utf8')).trim().split('\n')).toEqual([
       'export',
       '--platform',
       'web',
@@ -93,6 +92,64 @@ test('re-exports rotated public environment values before building the app image
     const dockerArgs = (await readFile(dockerArgsPath, 'utf8')).trim().split('\n');
     expect(dockerArgs.at(-1)).toBe(exportDir);
     expect(dockerArgs).toContain(dockerfilePath);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test('fails before global or network Expo resolution when app dependencies are missing', async () => {
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), 'ankh-infra-app-image-missing-expo-'));
+
+  try {
+    const appRoot = path.join(workspaceRoot, 'apps', APP_SLUG);
+    const infraRoot = path.join(appRoot, 'infra', 'minikube');
+    const scriptsRoot = path.join(infraRoot, 'scripts');
+    const fakeBin = path.join(workspaceRoot, 'bin');
+    const buildScriptPath = path.join(scriptsRoot, 'build-app-image.sh');
+    const dockerfilePath = path.join(infraRoot, 'app-image', 'Dockerfile');
+    const fallbackMarkerPath = path.join(workspaceRoot, 'forbidden-expo-fallback');
+    const generated = generateInfrastructure(
+      {
+        deployment: { target: 'minikube', monitoring: false },
+        modules: [],
+      },
+      { appManifest: createAppManifest(APP_SLUG) },
+    );
+    const buildScript = getGeneratedFile(
+      generated.files,
+      'infra/minikube/scripts/build-app-image.sh',
+    );
+
+    await mkdir(path.dirname(dockerfilePath), { recursive: true });
+    await mkdir(fakeBin, { recursive: true });
+    await mkdir(scriptsRoot, { recursive: true });
+    await writeFile(path.join(appRoot, 'package.json'), '{}\n', 'utf8');
+    await writeFile(dockerfilePath, 'FROM scratch\n', 'utf8');
+    await writeFile(buildScriptPath, buildScript, 'utf8');
+    await chmod(buildScriptPath, 0o755);
+    await writeFakeDocker(path.join(fakeBin, 'docker'));
+    await writeForbiddenExpoFallback(path.join(fakeBin, 'bunx'));
+    await writeForbiddenExpoFallback(path.join(fakeBin, 'expo'));
+
+    const result = await executeBuildScript({
+      appRoot,
+      buildScriptPath,
+      dockerArgsPath: path.join(workspaceRoot, 'docker-args'),
+      expoArgsPath: path.join(workspaceRoot, 'expo-args'),
+      fakeBin,
+      fallbackMarkerPath,
+      metroCachePath: path.join(workspaceRoot, 'fake-metro-cache'),
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain(
+      `App-owned Expo CLI is missing: ${appRoot}/node_modules/.bin/expo`,
+    );
+    expect(result.stderr).toContain(
+      `Run 'bun install --frozen-lockfile' in ${appRoot} before building the app image.`,
+    );
+    expect(buildScript).not.toContain('bunx');
+    expect(await Bun.file(fallbackMarkerPath).exists()).toBe(false);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -122,19 +179,20 @@ SUPABASE_SERVICE_ROLE_KEY=${PRIVATE_SERVICE_ROLE_KEY}
   );
 }
 
-async function writeFakeBunx(filePath: string): Promise<void> {
+async function writeFakeExpo(filePath: string): Promise<void> {
+  await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(
     filePath,
     `#!/usr/bin/env bash
 set -euo pipefail
 
-printf '%s\\n' "$@" > "\${FAKE_BUNX_ARGS_PATH:?}"
+printf '%s\\n' "$@" > "\${FAKE_EXPO_ARGS_PATH:?}"
 
-if [[ "\${1:-}" != "expo" || "\${2:-}" != "export" ]]; then
+if [[ "\${1:-}" != "export" ]]; then
   echo "Expected expo export invocation." >&2
   exit 64
 fi
-shift 2
+shift
 
 clear_cache=false
 output_dir=""
@@ -208,20 +266,38 @@ fi
   await chmod(filePath, 0o755);
 }
 
-async function runBuildScript(args: {
+async function writeForbiddenExpoFallback(filePath: string): Promise<void> {
+  await writeFile(
+    filePath,
+    `#!/usr/bin/env bash
+set -euo pipefail
+
+: > "\${FAKE_FALLBACK_MARKER_PATH:?}"
+exit 86
+`,
+    'utf8',
+  );
+  await chmod(filePath, 0o755);
+}
+
+async function executeBuildScript(args: {
   appRoot: string;
   buildScriptPath: string;
-  bunxArgsPath: string;
+  expoArgsPath: string;
   dockerArgsPath: string;
   fakeBin: string;
+  fallbackMarkerPath?: string;
   metroCachePath: string;
-}): Promise<void> {
+}): Promise<{ exitCode: number | null; stderr: string; stdout: string }> {
   const child = spawn('bash', [args.buildScriptPath], {
     cwd: args.appRoot,
     env: {
       ...process.env,
-      FAKE_BUNX_ARGS_PATH: args.bunxArgsPath,
       FAKE_DOCKER_ARGS_PATH: args.dockerArgsPath,
+      FAKE_EXPO_ARGS_PATH: args.expoArgsPath,
+      ...(args.fallbackMarkerPath === undefined
+        ? {}
+        : { FAKE_FALLBACK_MARKER_PATH: args.fallbackMarkerPath }),
       FAKE_METRO_CACHE_PATH: args.metroCachePath,
       PATH: `${args.fakeBin}:${process.env.PATH ?? ''}`,
     },
@@ -236,6 +312,19 @@ async function runBuildScript(args: {
     readStream(child.stderr),
     exitCodePromise,
   ]);
+
+  return { exitCode, stderr, stdout };
+}
+
+async function runBuildScript(args: {
+  appRoot: string;
+  buildScriptPath: string;
+  expoArgsPath: string;
+  dockerArgsPath: string;
+  fakeBin: string;
+  metroCachePath: string;
+}): Promise<void> {
+  const { exitCode, stderr, stdout } = await executeBuildScript(args);
 
   if (exitCode !== 0) {
     throw new Error(

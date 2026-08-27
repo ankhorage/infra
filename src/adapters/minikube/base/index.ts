@@ -451,10 +451,12 @@ ${appRuntimeEnabled ? `- App: \`http://127.0.0.1:${supabaseHostPorts.app}\`\n` :
 
 ## App Image Export
 
-\`build-app-image.sh\` clears the Expo/Metro bundler cache before every web export. Expo
-inlines \`EXPO_PUBLIC_*\` values into the browser bundle, so cache invalidation ensures a
-rotated browser-safe Supabase URL or anon key replaces the previous value before the Docker
-image is built. Privileged Supabase credentials are not written to the app's public env file.
+\`build-app-image.sh\` requires the app-installed \`node_modules/.bin/expo\` and never resolves
+Expo globally or through the network. It clears the Expo/Metro bundler cache before every web
+export. Expo inlines \`EXPO_PUBLIC_*\` values into the browser bundle, so cache invalidation
+ensures a rotated browser-safe Supabase URL or anon key replaces the previous value before the
+Docker image is built. Privileged Supabase credentials are not written to the app's public env
+file.
 
 ## Runtime Conventions
 
@@ -2958,16 +2960,6 @@ if [[ "\${APP_BUILD_ENABLED}" != "true" ]]; then
   exit 0
 fi
 
-if ! command -v docker >/dev/null 2>&1; then
-  echo "docker is required to build app image."
-  exit 1
-fi
-
-if ! command -v bunx >/dev/null 2>&1; then
-  echo "bunx is required to export the app for container image build."
-  exit 1
-fi
-
 if [[ ! -f "\${APP_SOURCE_DIR}/package.json" ]]; then
   echo "APP_SOURCE_DIR does not look like an app root: \${APP_SOURCE_DIR}"
   exit 1
@@ -2978,9 +2970,21 @@ if [[ ! -f "\${DOCKERFILE_PATH}" ]]; then
   exit 1
 fi
 
+EXPO_CLI="\${APP_SOURCE_DIR}/node_modules/.bin/expo"
+if [[ ! -x "\${EXPO_CLI}" ]]; then
+  echo "App-owned Expo CLI is missing: \${EXPO_CLI}" >&2
+  echo "Run 'bun install --frozen-lockfile' in \${APP_SOURCE_DIR} before building the app image." >&2
+  exit 1
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "docker is required to build app image."
+  exit 1
+fi
+
 (
   cd "\${APP_SOURCE_DIR}"
-  bunx expo export --platform web --clear --output-dir "\${APP_WEB_EXPORT_DIR}"
+  "\${EXPO_CLI}" export --platform web --clear --output-dir "\${APP_WEB_EXPORT_DIR}"
 )
 
 if [[ "\${APP_WEB_EXPORT_DIR}" = /* ]]; then

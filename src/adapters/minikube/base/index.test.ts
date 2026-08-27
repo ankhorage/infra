@@ -398,12 +398,16 @@ describe('generateMinikubeBaseArtifacts app-owned cluster model', () => {
       ),
     );
     expect(upScript).not.toContain('SUPABASE_SERVICE_ROLE_KEY" "${SUPABASE_SERVICE_ROLE_KEY}"');
+    expect(buildScript).toContain('EXPO_CLI="${APP_SOURCE_DIR}/node_modules/.bin/expo"');
     expect(buildScript).toContain(
-      'bunx expo export --platform web --clear --output-dir "${APP_WEB_EXPORT_DIR}"',
+      '"${EXPO_CLI}" export --platform web --clear --output-dir "${APP_WEB_EXPORT_DIR}"',
     );
+    expect(buildScript).not.toContain('bunx');
     expect(readme).toContain(
-      '`build-app-image.sh` clears the Expo/Metro bundler cache before every web export.',
+      '`build-app-image.sh` requires the app-installed `node_modules/.bin/expo` and never resolves',
     );
+    expect(readme).toContain('Expo globally or through the network.');
+    expect(readme).toContain('It clears the Expo/Metro bundler cache before every web');
   });
 
   test('starts Supabase schema owners before app migrations and profile reconciliation', () => {
