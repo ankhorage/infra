@@ -22,8 +22,7 @@ const DIAGNOSTIC_OUTPUT_LIMIT = 20_000;
 const APP_ONLY_TEST_PROFILES = ['ankh-isolation-a', 'ankh-isolation-b'] as const;
 const SUPABASE_TEST_PROFILES = ['ankh-isolation-supa-a', 'ankh-isolation-supa-b'] as const;
 type TestOwnedMinikubeProfile =
-  | (typeof APP_ONLY_TEST_PROFILES)[number]
-  | (typeof SUPABASE_TEST_PROFILES)[number];
+  (typeof APP_ONLY_TEST_PROFILES)[number] | (typeof SUPABASE_TEST_PROFILES)[number];
 
 describe('generated Minikube two-app isolation', () => {
   isolationTest(
