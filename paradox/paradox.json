@@ -2,6 +2,8 @@
   "packageName": "INFRA",
   "packageId": "@ankhorage/infra",
   "description": "Executable infra provider and standalone CLI for Ankhorage project workflows.",
+  "collaborators": null,
+  "donation": null,
   "badges": [
     {
       "id": "license",
@@ -973,7 +975,7 @@
         {
           "name": "target",
           "kind": "property",
-          "type": "import(\"@ankhorage/contracts/dist/types\").DeploymentTarget",
+          "type": "import(\"@ankhorage/contracts\").DeploymentTarget",
           "required": true,
           "description": null
         }

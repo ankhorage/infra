@@ -512,7 +512,7 @@
       {
         "name": "target",
         "kind": "property",
-        "type": "import(\"@ankhorage/contracts/dist/types\").DeploymentTarget",
+        "type": "import(\"@ankhorage/contracts\").DeploymentTarget",
         "required": true,
         "description": null
       }
