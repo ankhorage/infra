@@ -182,10 +182,10 @@ Source: `src/types.ts:18:1`
 
 ### Members
 
-| Name      | Kind     | Type                                                         | Required | Description |
-| --------- | -------- | ------------------------------------------------------------ | -------- | ----------- |
-| providers | property | `readonly string[]`                                          | yes      |             |
-| target    | property | `import("@ankhorage/contracts/dist/types").DeploymentTarget` | yes      |             |
+| Name      | Kind     | Type                                              | Required | Description |
+| --------- | -------- | ------------------------------------------------- | -------- | ----------- |
+| providers | property | `readonly string[]`                               | yes      |             |
+| target    | property | `import("@ankhorage/contracts").DeploymentTarget` | yes      |             |
 
 ## InfrastructureGenerationOptions
 
