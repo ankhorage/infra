@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.4
+
+### Patch Changes
+
+- ed2b643: Update Ankhorage dependencies: `@ankhorage/contracts`, `@ankhorage/paradox`, `@ankhorage/supabase-vault`.
+
 ## 4.1.3
 
 ### Patch Changes
