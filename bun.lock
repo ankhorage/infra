@@ -9,7 +9,7 @@
         "@ankhorage/supabase-vault": "^0.2.6",
       },
       "devDependencies": {
-        "@ankhorage/ankh": "^0.8.5",
+        "@ankhorage/ankh": "^0.8.6",
         "@ankhorage/devtools": "^1.9.2",
         "@ankhorage/paradox": "^0.1.24",
         "@types/bun": "^1.4.0",
@@ -19,7 +19,7 @@
     },
   },
   "packages": {
-    "@ankhorage/ankh": ["@ankhorage/ankh@0.8.5", "", { "dependencies": { "@ankhorage/contracts": "^8.0.0", "@ankhorage/devtools": "^1.8.3", "@ankhorage/doctor": "^0.10.4", "yaml": "^2.8.1" }, "bin": { "ankh": "dist/bin.js" } }, "sha512-hQpFimAzNJ4TxG4FkXMzs7HFpfyOihYBgkJPf7Y+q7/qeaAxbl98RLc9TeeSG00EYEZUk2W5JlfInbCyvi/gOw=="],
+    "@ankhorage/ankh": ["@ankhorage/ankh@0.8.6", "", { "dependencies": { "@ankhorage/contracts": "^8.0.1", "@ankhorage/devtools": "^1.9.2", "@ankhorage/doctor": "^0.10.4", "yaml": "^2.8.1" }, "bin": { "ankh": "dist/bin.js" } }, "sha512-+uvuOnQ4O/XpITEq3FMbpmGODqPkefIu/69O5vTcI4jAHFbeoL1k43rguHET9pNT/7s37LTiePB2b9uxMYE8jA=="],
 
     "@ankhorage/color-theory": ["@ankhorage/color-theory@0.0.8", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-+JRLkvBUiPxFrRANyewRZxLv1sU5cKFOc3VBYB+b/eFngLFDIAqXf/a4e0A6gQE+lk6e3wb3FcGQYIyYB1Dqzg=="],
 
