@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.5
+
+### Patch Changes
+
+- ec1f351: Update Ankhorage dependencies: `@ankhorage/supabase-vault`.
+
 ## 4.1.4
 
 ### Patch Changes
