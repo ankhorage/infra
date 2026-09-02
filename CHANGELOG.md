@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.7
+
+### Patch Changes
+
+- 6670cb5: Update Ankhorage dependencies: `@ankhorage/contracts`.
+
 ## 4.1.6
 
 ### Patch Changes
