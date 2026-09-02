@@ -106,8 +106,8 @@
     "knip:check": "ankhorage-knip"
   },
   "devDependencies": {
-    "@ankhorage/ankh": "^0.8.8",
-    "@ankhorage/devtools": "^1.10.4",
+    "@ankhorage/ankh": "^0.8.10",
+    "@ankhorage/devtools": "^1.10.7",
     "@ankhorage/paradox": "^0.1.24",
     "@types/bun": "^1.4.0",
     "@types/node": "^25.6.0",
