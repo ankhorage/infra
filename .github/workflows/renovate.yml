@@ -14,7 +14,7 @@ permissions:
 jobs:
   changeset:
     if: >-
-      github.actor == 'renovate[bot]' &&
+      (github.actor == 'renovate[bot]' || github.actor == 'ankhorage-renovate-sync[bot]') &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       startsWith(github.event.pull_request.head.ref, 'renovate/')
     uses: ankhorage/renovate/.github/workflows/changeset.yml@41f0960651a1cd1c55f5ad4ab9d42f9dbc863228
