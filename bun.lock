@@ -6,7 +6,7 @@
       "name": "@ankhorage/infra",
       "dependencies": {
         "@ankhorage/contracts": "^11.0.0",
-        "@ankhorage/supabase-vault": "^0.2.8",
+        "@ankhorage/supabase-vault": "^0.2.9",
       },
       "devDependencies": {
         "@ankhorage/ankh": "^0.8.11",
@@ -33,7 +33,7 @@
 
     "@ankhorage/supabase-auth": ["@ankhorage/supabase-auth@1.2.8", "", { "dependencies": { "@ankhorage/contracts": "^8.0.2", "@noble/hashes": "2.3.0" } }, "sha512-S8hSWS7pTAokKSKPs3gtRG0A82NH6iyHeNyMEOi3btCxv9UKbdkesJCRXyT8tAvjkaqRCuSQKJqO91qpC1qMeQ=="],
 
-    "@ankhorage/supabase-vault": ["@ankhorage/supabase-vault@0.2.8", "", { "dependencies": { "@ankhorage/contracts": "^8.1.0" } }, "sha512-tZmP/Xi5rBTi92NwCwoIjbBORYa+lvIYbkkOkYSMAjDKQsWBbnFGBevKd+/xfUS2bjdo7xwZjZ3eg+D1tPsKRg=="],
+    "@ankhorage/supabase-vault": ["@ankhorage/supabase-vault@0.2.9", "", { "dependencies": { "@ankhorage/contracts": "^10.1.0" } }, "sha512-XBjt+dPtc7aT2zSjQ4XtQFReoedHFG/+txuaFPfuVaHXtpftdHM/6csdS9jJLQYeIPCahGz4x7+BIhlWIawCyg=="],
 
     "@ankhorage/utility": ["@ankhorage/utility@0.3.0", "", {}, "sha512-cqmfcgXmA7NgM5FYxfVKeA3XpN4YskqGtNU45AT7G2Yr5MeN09r4a0GS8i0hthLCLMis65/tBXd7OjdfoYv7/w=="],
 
@@ -795,7 +795,7 @@
 
     "@ankhorage/supabase-auth/@ankhorage/contracts": ["@ankhorage/contracts@8.2.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0" } }, "sha512-2ZD99/z/1KbGmK4kSi7gP42U9LjkGLlxXZwb5U/Et3PWKxsy2SP8PUj9plJSZHAXy4AJh01G4j4TUQ1bYq0LvQ=="],
 
-    "@ankhorage/supabase-vault/@ankhorage/contracts": ["@ankhorage/contracts@8.2.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0" } }, "sha512-2ZD99/z/1KbGmK4kSi7gP42U9LjkGLlxXZwb5U/Et3PWKxsy2SP8PUj9plJSZHAXy4AJh01G4j4TUQ1bYq0LvQ=="],
+    "@ankhorage/supabase-vault/@ankhorage/contracts": ["@ankhorage/contracts@10.1.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0" } }, "sha512-K6O3wfTgae0HBYAVF1DGmGO+fRybAoDe2H/kIQ+UVlzEfniJmd0mkmiXV7JWRLTpoHGu+zbRtboGKfJXZNyDoA=="],
 
     "@babel/core/json5": ["json5@2.2.3", "", { "bin": { "json5": "lib/cli.js" } }, "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg=="],
 
