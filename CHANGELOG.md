@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.10
+
+### Patch Changes
+
+- fb11cb2: Update Ankhorage dependencies: `@ankhorage/supabase-vault`.
+
 ## 4.1.9
 
 ### Patch Changes
