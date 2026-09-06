@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 4.1.8
+
+### Patch Changes
+
+- 1952e2e: Update Ankhorage dependencies: `@ankhorage/contracts`, `@ankhorage/supabase-vault`.
+
 ## 4.1.7
 
 ### Patch Changes
