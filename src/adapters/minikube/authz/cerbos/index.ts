@@ -1,4 +1,4 @@
-import type { AppManifest, NavigatorSpec, RouteDefinition } from '@ankhorage/contracts';
+import type { AppManifest, NavigatorNode, RouteDefinition } from '@ankhorage/contracts';
 import { resolveAuthFlow } from '@ankhorage/contracts/auth';
 
 import type { InfraManifestInput } from '../../../../types';
@@ -400,10 +400,10 @@ function buildCerbosPolicyIntent(args: {
   };
 }
 
-function flattenNavigatorRoutes(navigator: NavigatorSpec): CerbosRouteIntent[] {
+function flattenNavigatorRoutes(navigator: NavigatorNode): CerbosRouteIntent[] {
   const deduped = new Map<string, CerbosRouteIntent>();
 
-  const walk = (current: NavigatorSpec) => {
+  const walk = (current: NavigatorNode) => {
     for (const route of current.routes) {
       const normalizedGuards = normalizeGuards(route.guards);
       const existing = deduped.get(route.name);
