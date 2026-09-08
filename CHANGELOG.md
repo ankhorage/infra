@@ -1,5 +1,13 @@
 # @ankhorage/infra
 
+## 4.1.12
+
+### Patch Changes
+
+- af1d003: Update Ankhorage dependencies: `@ankhorage/contracts`.
+- a67796e: Update Ankhorage dependencies: `@ankhorage/supabase-vault`.
+- 64bbf27: Update Ankhorage dependencies: `@ankhorage/supabase-vault`.
+
 ## 4.1.11
 
 ### Patch Changes
