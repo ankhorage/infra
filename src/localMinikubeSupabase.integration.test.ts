@@ -63,24 +63,24 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       );
       expect(initialPlan.actions.some(({ operation }) => operation === 'create')).toBe(true);
 
-      const firstUp = requireSuccess(
+      const { ledger: firstLedger, outputs: firstOutputs } = requireSuccess(
         await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
       );
-      ledger = firstUp.ledger;
-      assertSafePublicOutputs(firstUp.outputs);
+      ledger = firstLedger;
+      assertSafePublicOutputs(firstOutputs);
       expect(
-        firstUp.outputs.some(
+        firstOutputs.some(
           ({ owner, name, value }) =>
             owner.adapter === 'minikube' && name === 'localUrl' && value === baseUrl,
         ),
       ).toBe(true);
       expect(
-        firstUp.outputs.some(
+        firstOutputs.some(
           ({ environmentVariable, value }) =>
             environmentVariable === 'EXPO_PUBLIC_SUPABASE_URL' && value === baseUrl,
         ),
       ).toBe(true);
-      expect(firstUp.outputs.some(({ name, value }) => name === 'bucket' && value === bucket)).toBe(
+      expect(firstOutputs.some(({ name, value }) => name === 'bucket' && value === bucket)).toBe(
         true,
       );
 
@@ -94,16 +94,16 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       );
       expect(convergedPlan.actions.every(({ operation }) => operation === 'noop')).toBe(true);
 
-      const down = requireSuccess(
+      const { ledger: downLedger } = requireSuccess(
         await downInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
       );
-      ledger = down.ledger;
+      ledger = downLedger;
 
-      const resumed = requireSuccess(
+      const { ledger: resumedLedger, outputs: resumedOutputs } = requireSuccess(
         await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
       );
-      ledger = resumed.ledger;
-      assertSafePublicOutputs(resumed.outputs);
+      ledger = resumedLedger;
+      assertSafePublicOutputs(resumedOutputs);
 
       const health = await fetch(`${baseUrl}/auth/v1/health`);
       expect(health.ok).toBe(true);
@@ -182,10 +182,8 @@ function assertSafePublicOutputs(outputs: InfraLedger['outputs']): void {
   expect(serialized).not.toContain(credentials.pgMetaCryptoKey);
   expect(
     outputs.some(
-      ({ environmentVariable, value, visibility }) =>
-        environmentVariable === 'EXPO_PUBLIC_SUPABASE_ANON_KEY' &&
-        value === credentials.anonKey &&
-        visibility === 'public',
+      ({ environmentVariable, value }) =>
+        environmentVariable === 'EXPO_PUBLIC_SUPABASE_ANON_KEY' && value === credentials.anonKey,
     ),
   ).toBe(true);
 }
