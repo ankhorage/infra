@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 5.1.0
+
+### Minor Changes
+
+- 51a60f2: Expose a typed project lifecycle that applies the canonical Infra use cases while preserving environment-scoped state and generated artifact ownership.
+
 ## 5.0.0
 
 ### Major Changes
