@@ -67,13 +67,36 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Run local Minikube Supabase acceptance
+        timeout-minutes: 8
         run: bun run test:e2e:minikube-supabase
+
+      - name: Collect Supabase workload diagnostics
+        if: failure()
+        env:
+          ACCEPTANCE_NAMESPACE: infra145-minikube-supabase-local
+        run: |
+          kubectl get pods --all-namespaces -o wide || true
+          kubectl get events -n "${ACCEPTANCE_NAMESPACE}" --sort-by=.lastTimestamp || true
+
+          for pod in $(kubectl get pods -n "${ACCEPTANCE_NAMESPACE}" -o name 2>/dev/null); do
+            echo "::group::${pod} state"
+            kubectl get -n "${ACCEPTANCE_NAMESPACE}" "${pod}" \
+              -o 'jsonpath={range .status.containerStatuses[*]}{.name}{" ready="}{.ready}{" restarts="}{.restartCount}{" waiting="}{.state.waiting.reason}{" terminated="}{.lastState.terminated.reason}{" exitCode="}{.lastState.terminated.exitCode}{"\n"}{end}' || true
+            echo
+            echo "::endgroup::"
+
+            echo "::group::${pod} previous logs"
+            kubectl logs -n "${ACCEPTANCE_NAMESPACE}" "${pod}" --all-containers --previous --tail=160 || true
+            echo "::endgroup::"
+
+            echo "::group::${pod} current logs"
+            kubectl logs -n "${ACCEPTANCE_NAMESPACE}" "${pod}" --all-containers --tail=160 || true
+            echo "::endgroup::"
+          done
 
       - name: Collect Minikube diagnostics
         if: failure()
-        run: |
-          minikube -p infra145-minikube-supabase kubectl -- get pods --all-namespaces -o wide || true
-          minikube -p infra145-minikube-supabase logs || true
+        run: minikube -p infra145-minikube-supabase logs || true
 
       - name: Delete acceptance profile
         if: always()
