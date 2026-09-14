@@ -1,207 +1,161 @@
+import type { InfraGeneratedArtifact, InfraLedger } from '@ankhorage/contracts/infra';
 import { afterEach, describe, expect, test } from 'bun:test';
 import { promises as fs } from 'fs';
 import os from 'os';
 import path from 'path';
 
 import {
+  readStoredInfraStateAsync,
+  removeStoredInfraStateAsync,
   resolveProjectFile,
-  resolveProjectInfrastructureTarget,
-  syncProjectInfrastructure,
-} from './projectInfrastructure.js';
-import { createAppManifest } from './testSupport.js';
+  writeInfraGeneratedArtifactsAsync,
+  writeStoredInfraStateAsync,
+} from './project/index.js';
 
-const tempRoots = new Set<string>();
+const temporaryPaths = new Set<string>();
 
 afterEach(async () => {
   await Promise.all(
-    [...tempRoots].map((rootPath) => fs.rm(rootPath, { force: true, recursive: true })),
+    [...temporaryPaths].map((entry) => fs.rm(entry, { force: true, recursive: true })),
   );
-  tempRoots.clear();
+  temporaryPaths.clear();
 });
 
-describe('project infrastructure sync', () => {
-  test('writes generated files and the infra ledger', async () => {
-    const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-sync-'));
-    tempRoots.add(projectPath);
+describe('project Infra state and artifacts', () => {
+  test('persists environment-scoped desired state and a secret-safe ledger', async () => {
+    const projectPath = await temporaryProject();
+    await writeStoredInfraStateAsync(projectPath, {
+      schemaVersion: 1,
+      desired: desired,
+      ledger: ledger([]),
+    });
+    expect(await readStoredInfraStateAsync(projectPath, 'local')).toEqual({
+      schemaVersion: 1,
+      desired,
+      ledger: ledger([]),
+    });
+    await removeStoredInfraStateAsync(projectPath, 'local');
+    expect(await readStoredInfraStateAsync(projectPath, 'local')).toBeNull();
+  });
 
-    const result = await syncProjectInfrastructure({
-      projectId: 'shop',
+  test('writes deterministic artifacts and removes only previously tracked stale files', async () => {
+    const projectPath = await temporaryProject();
+    const unrelatedPath = path.join(projectPath, 'infra/unrelated.txt');
+    await fs.mkdir(path.dirname(unrelatedPath), { recursive: true });
+    await fs.writeFile(unrelatedPath, 'keep', 'utf8');
+    const first = artifact('infra/compose.yaml', 'first');
+    const stale = artifact('infra/stale.yaml', 'stale');
+    await writeInfraGeneratedArtifactsAsync(projectPath, [first, stale], undefined);
+    const result = await writeInfraGeneratedArtifactsAsync(
       projectPath,
-      manifest: createAppManifest('shop', {
-        deployment: { target: 'minikube', monitoring: false },
-        modules: [],
-      }),
-      generateInfrastructureImpl() {
-        return {
-          files: [
+      [artifact('infra/compose.yaml', 'second')],
+      ledger([first, stale]),
+    );
+    expect(result).toEqual({ written: 1, removed: 1 });
+    expect(await fs.readFile(path.join(projectPath, 'infra/compose.yaml'), 'utf8')).toBe('second');
+    expect(await fs.readFile(unrelatedPath, 'utf8')).toBe('keep');
+    expect(await fileExists(path.join(projectPath, 'infra/stale.yaml'))).toBe(false);
+  });
+
+  test('rejects traversal, state collisions and duplicate artifact paths before writing', async () => {
+    const projectPath = await temporaryProject();
+    expect(() => resolveProjectFile(projectPath, '../outside')).toThrow('outside project root');
+    expect(() => resolveProjectFile(projectPath, '.ankh/infra/local/state.json')).toThrow(
+      'Invalid generated Infra artifact path',
+    );
+    expect(
+      await captureError(
+        writeInfraGeneratedArtifactsAsync(
+          projectPath,
+          [artifact('infra/duplicate', 'a'), artifact('infra/duplicate', 'b')],
+          undefined,
+        ),
+      ),
+    ).toContain('Duplicate generated Infra artifact path');
+    expect(await fileExists(path.join(projectPath, 'infra/duplicate'))).toBe(false);
+  });
+
+  test('fails closed when stored secret outputs contain a resolved value', async () => {
+    const projectPath = await temporaryProject();
+    const statePath = path.join(projectPath, '.ankh/infra/local/state.json');
+    await fs.mkdir(path.dirname(statePath), { recursive: true });
+    await fs.writeFile(
+      statePath,
+      JSON.stringify({
+        schemaVersion: 1,
+        desired,
+        ledger: {
+          ...ledger([]),
+          outputs: [
             {
-              path: 'infra/minikube/scripts/status.sh',
-              content: '#!/usr/bin/env bash\n',
-              executable: true,
+              owner: artifact('infra/example', '').owner,
+              name: 'password',
+              visibility: 'secret',
+              value: 'must-not-be-accepted',
             },
-            { path: 'infra/minikube/.env.example', content: 'APP_PORT=1\n' },
           ],
-          warnings: ['generated warning'],
-          meta: {
-            target: 'minikube',
-            providers: [],
-          },
-          dependencies: [],
-        };
-      },
-    });
-
-    expect(result.generated).toBe(2);
-    expect(result.removed).toBe(0);
-    expect(result.warnings).toEqual(['generated warning']);
-    expect(await fs.readFile(path.join(projectPath, 'infra/minikube/.env.example'), 'utf8')).toBe(
-      'APP_PORT=1\n',
-    );
-
-    const ledger = JSON.parse(
-      await fs.readFile(path.join(projectPath, '.ankh/infra-ledger.json'), 'utf8'),
-    ) as {
-      readonly target: string;
-      readonly files: readonly string[];
-    };
-    expect(ledger.target).toBe('minikube');
-    expect(ledger.files).toEqual([
-      'infra/minikube/.env.example',
-      'infra/minikube/scripts/status.sh',
-    ]);
-  });
-
-  test('removes stale files when regeneration shrinks the output set', async () => {
-    const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-stale-'));
-    tempRoots.add(projectPath);
-
-    const manifest = createAppManifest('shop', {
-      deployment: { target: 'minikube', monitoring: false },
-      modules: [],
-    });
-
-    await syncProjectInfrastructure({
-      projectId: 'shop',
-      projectPath,
-      manifest,
-      generateInfrastructureImpl() {
-        return {
-          files: [
-            { path: 'infra/minikube/scripts/status.sh', content: 'first' },
-            { path: 'infra/minikube/scripts/up.sh', content: 'extra' },
-          ],
-          warnings: [],
-          meta: { target: 'minikube', providers: [] },
-          dependencies: [],
-        };
-      },
-    });
-
-    const result = await syncProjectInfrastructure({
-      projectId: 'shop',
-      projectPath,
-      manifest,
-      generateInfrastructureImpl() {
-        return {
-          files: [{ path: 'infra/minikube/scripts/status.sh', content: 'second' }],
-          warnings: [],
-          meta: { target: 'minikube', providers: [] },
-          dependencies: [],
-        };
-      },
-    });
-
-    expect(result.removed).toBe(1);
-    expect(await pathExists(path.join(projectPath, 'infra/minikube/scripts/up.sh'))).toBe(false);
-  });
-
-  test('cleans generated files when deployment is removed', async () => {
-    const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-clean-'));
-    tempRoots.add(projectPath);
-
-    await fs.mkdir(path.join(projectPath, '.ankh'), { recursive: true });
-    await fs.mkdir(path.join(projectPath, 'infra/minikube/scripts'), { recursive: true });
-    await fs.writeFile(
-      path.join(projectPath, 'infra/minikube/scripts/status.sh'),
-      'status',
-      'utf8',
-    );
-    await fs.writeFile(
-      path.join(projectPath, '.ankh/infra-ledger.json'),
-      JSON.stringify({
-        schemaVersion: 1,
-        generatedAt: new Date().toISOString(),
-        target: 'minikube',
-        files: ['infra/minikube/scripts/status.sh'],
-        warnings: [],
+        },
       }),
       'utf8',
     );
-
-    const result = await syncProjectInfrastructure({
-      projectId: 'shop',
-      projectPath,
-      manifest: createAppManifest('shop', { modules: [] }),
-    });
-
-    expect(result.generated).toBe(0);
-    expect(result.removed).toBe(1);
-    expect(await pathExists(path.join(projectPath, '.ankh/infra-ledger.json'))).toBe(false);
-  });
-
-  test('preserves apps/studio skip behavior', async () => {
-    const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-studio-'));
-    tempRoots.add(projectPath);
-
-    const result = await syncProjectInfrastructure({
-      projectId: 'studio',
-      projectPath,
-      manifest: createAppManifest('studio', {
-        deployment: { target: 'minikube', monitoring: false },
-        modules: [],
-      }),
-    });
-
-    expect(result.skipped?.reason).toContain('apps/studio');
-  });
-
-  test('resolves targets from the ledger when deployment metadata is absent', async () => {
-    const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-target-'));
-    tempRoots.add(projectPath);
-
-    await fs.mkdir(path.join(projectPath, '.ankh'), { recursive: true });
-    await fs.writeFile(
-      path.join(projectPath, '.ankh/infra-ledger.json'),
-      JSON.stringify({
-        schemaVersion: 1,
-        generatedAt: new Date().toISOString(),
-        target: 'minikube',
-        files: [],
-        warnings: [],
-      }),
-      'utf8',
-    );
-
-    const target = await resolveProjectInfrastructureTarget({
-      manifest: createAppManifest('shop', { modules: [] }),
-      projectPath,
-    });
-
-    expect(target).toBe('minikube');
-  });
-
-  test('rejects generated file paths outside the project root', () => {
-    expect(() => resolveProjectFile('/workspace/project', '../outside.txt')).toThrow(
-      'Invalid infra output path outside project root',
+    expect(await captureError(readStoredInfraStateAsync(projectPath, 'local'))).toContain(
+      'invalid shape',
     );
   });
 });
 
-async function pathExists(filePath: string): Promise<boolean> {
+const desired = {
+  deployment: {
+    compute: { provider: 'local' },
+    runtime: { provider: 'docker-compose' },
+  },
+} as const;
+
+function ledger(artifacts: readonly InfraGeneratedArtifact[]): InfraLedger {
+  return {
+    schemaVersion: 1,
+    projectId: 'sample',
+    environment: 'local',
+    targets: [],
+    resources: [],
+    outputs: [],
+    artifacts: artifacts.map(({ owner, path: artifactPath }) => ({ owner, path: artifactPath })),
+  };
+}
+
+function artifact(artifactPath: string, content: string): InfraGeneratedArtifact {
+  return {
+    owner: {
+      projectId: 'sample',
+      environment: 'local',
+      adapter: 'docker-compose',
+      resourceId: 'runtime',
+    },
+    path: artifactPath,
+    content,
+  };
+}
+
+async function temporaryProject(): Promise<string> {
+  const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-project-'));
+  temporaryPaths.add(projectPath);
+  return projectPath;
+}
+
+async function fileExists(filePath: string): Promise<boolean> {
   try {
     await fs.access(filePath);
     return true;
   } catch {
     return false;
   }
+}
+
+async function captureError(operation: Promise<unknown>): Promise<string> {
+  try {
+    await operation;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+  throw new Error('Expected operation to fail.');
 }

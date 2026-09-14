@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import os from 'os';
 import path from 'path';
 
-import type { InfraCommandContext } from './commandContext.js';
+import type { InfraCommandContext } from './types/infraCli.js';
 
 export interface CapturedCommandContext {
   readonly context: InfraCommandContext;
@@ -79,7 +79,17 @@ export async function createWorkspaceFixture(
 
 export function createAppManifest(
   projectId: string,
-  infra: AppManifest['infra'] = { modules: [] },
+  infra: AppManifest['infra'] = {
+    environments: {
+      local: {
+        deployment: {
+          compute: { provider: 'local' },
+          runtime: { provider: 'docker-compose' },
+        },
+      },
+    },
+    modules: [],
+  },
 ): AppManifest {
   return {
     metadata: {

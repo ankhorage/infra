@@ -1,6 +1,17 @@
 import { createKnipConfig } from '@ankhorage/devtools/knip';
 
 export default createKnipConfig({
+  ignoreDependencies: [
+    '@ankhorage/cerbos',
+    '@ankhorage/docker-compose',
+    '@ankhorage/hetzner',
+    '@ankhorage/k3s',
+    '@ankhorage/local',
+    '@ankhorage/minikube',
+    '@ankhorage/r2',
+    '@ankhorage/supabase',
+    '@ankhorage/supabase-vault',
+  ],
   ignoreFiles: [
     '.prettierrc.js',
     'eslint.config.mjs',

@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant participant_identityKey as identityKey
+  participant participant_invalidPlan as invalidPlan
+  participant participant_orderInfraPlanActions as orderInfraPlanActions
+  participant participant_visitAction as visitAction
+  participant_orderInfraPlanActions->>participant_invalidPlan: invalidPlan()
+  participant_invalidPlan-->>participant_orderInfraPlanActions: return
+  participant_orderInfraPlanActions->>participant_visitAction: visitAction()
+  participant_visitAction->>participant_identityKey: identityKey()
+  participant_identityKey-->>participant_visitAction: return
+  participant_visitAction->>participant_invalidPlan: invalidPlan()
+  participant_invalidPlan-->>participant_visitAction: return
+  participant_visitAction->>participant_visitAction: visitAction()
+  participant_visitAction-->>participant_visitAction: return
+  participant_visitAction-->>participant_orderInfraPlanActions: return

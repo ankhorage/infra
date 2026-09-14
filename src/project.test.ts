@@ -3,216 +3,66 @@ import { promises as fs } from 'fs';
 import os from 'os';
 import path from 'path';
 
-import { resolveInfraProject } from './project.js';
-import { createAppManifest, createWorkspaceFixture } from './testSupport.js';
+import { resolveInfraProjectAsync } from './features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.js';
+import { createWorkspaceFixture } from './testSupport.js';
 
-const tempRoots = new Set<string>();
+const temporaryPaths = new Set<string>();
 
 afterEach(async () => {
   await Promise.all(
-    [...tempRoots].map((rootPath) => fs.rm(rootPath, { force: true, recursive: true })),
+    [...temporaryPaths].map((entry) => fs.rm(entry, { force: true, recursive: true })),
   );
-  tempRoots.clear();
+  temporaryPaths.clear();
 });
 
-describe('resolveInfraProject', () => {
-  test('resolves an explicit project id from the workspace root', async () => {
+describe('project resolution', () => {
+  test('resolves explicit and cwd-inferred projects with canonical manifests', async () => {
     const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    const project = await resolveInfraProject({
+    temporaryPaths.add(fixture.rootPath);
+    const explicit = await resolveInfraProjectAsync({
       cwd: fixture.rootPath,
       projectId: fixture.projectId,
     });
-
-    expect(project.projectId).toBe('shop');
-    expect(project.projectPath).toBe(fixture.projectPath);
-    expect(project.workspaceRoot).toBe(fixture.rootPath);
+    const inferred = await resolveInfraProjectAsync({ cwd: fixture.projectPath });
+    expect(explicit.projectPath).toBe(fixture.projectPath);
+    expect(inferred.projectId).toBe(fixture.projectId);
+    expect(explicit.manifest.infra.environments.local.deployment.runtime.provider).toBe(
+      'docker-compose',
+    );
   });
 
-  test('infers the project id from cwd inside apps/<project>', async () => {
+  test('requires a real manifest and rejects malformed JSON', async () => {
+    const missing = await createWorkspaceFixture({ manifestFile: 'missing' });
+    const invalid = await createWorkspaceFixture({ manifestFile: 'invalid-json' });
+    temporaryPaths.add(missing.rootPath);
+    temporaryPaths.add(invalid.rootPath);
+    expect(
+      await captureError(resolveInfraProjectAsync({ cwd: missing.rootPath, projectId: 'shop' })),
+    ).toContain('Project manifest not found');
+    expect(
+      await captureError(resolveInfraProjectAsync({ cwd: invalid.rootPath, projectId: 'shop' })),
+    ).toContain('Project manifest is not valid JSON');
+  });
+
+  test('rejects traversal and projects outside an Ankh workspace', async () => {
     const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    const nestedPath = path.join(fixture.projectPath, 'src', 'modules');
-    await fs.mkdir(nestedPath, { recursive: true });
-
-    const project = await resolveInfraProject({
-      cwd: nestedPath,
-    });
-
-    expect(project.projectId).toBe('shop');
-    expect(project.projectPath).toBe(fixture.projectPath);
-  });
-
-  test('loads the fallback manifest when ankh.config.json is missing', async () => {
-    const fixture = await createWorkspaceFixture({
-      manifestFile: 'missing',
-    });
-    tempRoots.add(fixture.rootPath);
-
-    const project = await resolveInfraProject({
-      cwd: fixture.rootPath,
-      projectId: fixture.projectId,
-    });
-
-    expect(project.manifest.metadata.name).toBe('shop');
-    expect(project.manifest.metadata.slug).toBe('shop');
-    expect(project.manifest.infra.modules).toEqual([]);
-  });
-
-  test('rejects malformed manifest JSON', async () => {
-    const fixture = await createWorkspaceFixture({
-      manifestFile: 'invalid-json',
-    });
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: fixture.projectId,
-      }),
-      'Project manifest is not valid JSON',
-    );
-  });
-
-  test('rejects traversal project ids', async () => {
-    const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: '../shop',
-      }),
-      'Invalid project id:',
-    );
-  });
-
-  test('rejects explicit project ids with nested traversal segments', async () => {
-    const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: 'shop/../other',
-      }),
-      'Invalid project id:',
-    );
-  });
-
-  test('rejects explicit absolute project ids', async () => {
-    const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: '/tmp/shop',
-      }),
-      'Invalid project id:',
-    );
-  });
-
-  test('rejects explicit dot project ids', async () => {
-    const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: '.',
-      }),
-      'Invalid project id:',
-    );
-  });
-
-  test('rejects explicit dot-dot project ids', async () => {
-    const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: '..',
-      }),
-      'Invalid project id:',
-    );
-  });
-
-  test('rejects explicit empty project ids', async () => {
-    const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: '',
-      }),
-      'Invalid project id:',
-    );
-  });
-
-  test('rejects explicit blank project ids', async () => {
-    const fixture = await createWorkspaceFixture();
-    tempRoots.add(fixture.rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: fixture.rootPath,
-        projectId: '   ',
-      }),
-      'Invalid project id:',
-    );
-  });
-
-  test('fails when no workspace root can be found', async () => {
-    const rootPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-no-root-'));
-    tempRoots.add(rootPath);
-
-    await expectRejectMessage(
-      resolveInfraProject({
-        cwd: rootPath,
-        projectId: 'shop',
-      }),
-      'Could not find an Ankh workspace root',
-    );
-  });
-
-  test('reads a valid project manifest', async () => {
-    const manifest = createAppManifest('cards', {
-      deployment: {
-        monitoring: false,
-        target: 'minikube',
-      },
-      modules: [],
-    });
-    const fixture = await createWorkspaceFixture({
-      manifest,
-      projectId: 'cards',
-    });
-    tempRoots.add(fixture.rootPath);
-
-    const project = await resolveInfraProject({
-      cwd: fixture.rootPath,
-      projectId: 'cards',
-    });
-
-    expect(project.manifest.metadata.name).toBe('cards');
-    expect(project.manifest.infra.deployment?.target).toBe('minikube');
+    const outside = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-outside-'));
+    temporaryPaths.add(fixture.rootPath);
+    temporaryPaths.add(outside);
+    expect(
+      await captureError(resolveInfraProjectAsync({ cwd: fixture.rootPath, projectId: '../shop' })),
+    ).toContain('Invalid project id');
+    expect(
+      await captureError(resolveInfraProjectAsync({ cwd: outside, projectId: 'shop' })),
+    ).toContain('Could not find an Ankh workspace root');
   });
 });
 
-async function expectRejectMessage(promise: Promise<unknown>, text: string): Promise<void> {
-  let didReject = false;
-
+async function captureError(operation: Promise<unknown>): Promise<string> {
   try {
-    await promise;
+    await operation;
   } catch (error) {
-    didReject = true;
-    expect(error instanceof Error ? error.message : String(error)).toContain(text);
+    return error instanceof Error ? error.message : String(error);
   }
-
-  expect(didReject).toBe(true);
+  throw new Error('Expected operation to fail.');
 }

@@ -1,95 +1,30 @@
 [
   {
-    "name": "AuthRedirectConfiguration",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/authRedirects.ts",
-    "sourceLocation": {
-      "filePath": "src/authRedirects.ts",
-      "line": 12,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [
-      {
-        "name": "providerCallbackUrl",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "redirectAllowList",
-        "kind": "property",
-        "type": "readonly string[]",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "serializedRedirectAllowList",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "siteUrl",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "AuthRedirectEnvironment",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "unknown",
-    "modulePath": "src/authRedirects.ts",
-    "sourceLocation": {
-      "filePath": "src/authRedirects.ts",
-      "line": 1,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [],
-    "structuredRows": []
-  },
-  {
-    "name": "createInfraSecretStoreAdapter",
-    "description": null,
+    "name": "createEnvironmentInfraCredentialPort",
+    "description": "Resolve execution-only control-plane credentials from exact-name or prefixed environment data.",
     "isReadme": false,
     "examples": [],
     "kind": "function",
-    "modulePath": "src/secretStore.ts",
+    "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
     "sourceLocation": {
-      "filePath": "src/secretStore.ts",
-      "line": 26,
+      "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
+      "line": 7,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["CreateInfraSecretStoreAdapterInput"],
+    "relatedSymbols": [],
     "signatures": [
       {
-        "label": "(input: CreateInfraSecretStoreAdapterInput) => SecretStoreAdapter | null",
+        "label": "(environment: Readonly<Record<string, string | undefined>>) => { resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
         "parameters": [
           {
-            "name": "input",
-            "type": "CreateInfraSecretStoreAdapterInput",
+            "name": "environment",
+            "type": "Readonly<Record<string, string | undefined>>",
             "required": true,
             "description": null
           }
         ],
-        "returnType": "SecretStoreAdapter | null",
+        "returnType": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
         "returnDescription": null
       }
     ],
@@ -97,162 +32,31 @@
     "structuredRows": []
   },
   {
-    "name": "CreateInfraSecretStoreAdapterInput",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/secretStore.ts",
-    "sourceLocation": {
-      "filePath": "src/secretStore.ts",
-      "line": 14,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["InfraManifestInput", "InfraSecretStoreProviders"],
-    "signatures": [],
-    "members": [
-      {
-        "name": "manifest",
-        "kind": "property",
-        "type": "Pick<InfraManifestInput, \"secretStore\">",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "providers",
-        "kind": "property",
-        "type": "InfraSecretStoreProviders",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "GeneratedFile",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "unknown",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 59,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [],
-    "structuredRows": []
-  },
-  {
-    "name": "GeneratedInfrastructureFile",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 3,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [
-      {
-        "name": "content",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "executable",
-        "kind": "property",
-        "type": "boolean | undefined",
-        "required": false,
-        "description": null
-      },
-      {
-        "name": "path",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "GeneratedPackageDependency",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 12,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [
-      {
-        "name": "name",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "reason",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "version",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "generateInfra",
-    "description": null,
+    "name": "createEnvironmentInfraSecretPort",
+    "description": "Resolve explicitly addressed secret values from environment data without serializing them.",
     "isReadme": false,
     "examples": [],
     "kind": "function",
-    "modulePath": "src/index.ts",
+    "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
     "sourceLocation": {
-      "filePath": "src/index.ts",
-      "line": 37,
+      "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
+      "line": 7,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["InfraGenerationInput", "InfrastructureGenerationResult"],
+    "relatedSymbols": [],
     "signatures": [
       {
-        "label": "(input: InfraGenerationInput) => InfrastructureGenerationResult",
+        "label": "(environment: Readonly<Record<string, string | undefined>>) => { resolveAsync(reference: import(\"@ankhorage/contracts\").InfraSecretReference): Promise<import(\"@ankhorage/contracts\").InfraResult<string>>; }",
         "parameters": [
           {
-            "name": "input",
-            "type": "InfraGenerationInput",
+            "name": "environment",
+            "type": "Readonly<Record<string, string | undefined>>",
             "required": true,
             "description": null
           }
         ],
-        "returnType": "InfrastructureGenerationResult",
+        "returnType": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraSecretReference): Promise<import(\"@ankhorage/contracts\").InfraResult<string>>; }",
         "returnDescription": null
       }
     ],
@@ -260,73 +64,66 @@
     "structuredRows": []
   },
   {
-    "name": "generateInfrastructure",
-    "description": null,
+    "name": "createNodeInfraAdapterPackageResolver",
+    "description": "Load only a catalog-selected package through the host module resolver.",
     "isReadme": false,
     "examples": [],
     "kind": "function",
-    "modulePath": "src/index.ts",
+    "modulePath": "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts",
     "sourceLocation": {
-      "filePath": "src/index.ts",
-      "line": 41,
+      "filePath": "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts",
+      "line": 4,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["InfraAdapterPackageResolver"],
+    "signatures": [
+      {
+        "label": "() => InfraAdapterPackageResolver",
+        "parameters": [],
+        "returnType": "InfraAdapterPackageResolver",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "destroyInfraEnvironmentAsync",
+    "description": "Destroy exact owned resources in reverse dependency order behind explicit scope confirmation.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
+      "line": 22,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
     "relatedSymbols": [
-      "InfraManifestInput",
-      "InfrastructureGenerationOptions",
-      "InfrastructureGenerationResult"
+      "InfraDestroyOperationRequest",
+      "InfraDestroyOperationResult",
+      "InfraOrchestrationDependencies"
     ],
     "signatures": [
       {
-        "label": "(manifest: InfraManifestInput, options?: InfrastructureGenerationOptions) => InfrastructureGenerationResult",
+        "label": "(request: InfraDestroyOperationRequest, dependencies: InfraOrchestrationDependencies) => Promise<InfraDestroyOperationResult>",
         "parameters": [
           {
-            "name": "manifest",
-            "type": "InfraManifestInput",
+            "name": "dependencies",
+            "type": "InfraOrchestrationDependencies",
             "required": true,
             "description": null
           },
           {
-            "name": "options",
-            "type": "InfrastructureGenerationOptions",
-            "required": false,
-            "description": null
-          }
-        ],
-        "returnType": "InfrastructureGenerationResult",
-        "returnDescription": null
-      }
-    ],
-    "members": [],
-    "structuredRows": []
-  },
-  {
-    "name": "getLocalAuthRedirectPatterns",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "function",
-    "modulePath": "src/authRedirects.ts",
-    "sourceLocation": {
-      "filePath": "src/authRedirects.ts",
-      "line": 48,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [
-      {
-        "label": "(callbackRoute: string) => readonly string[]",
-        "parameters": [
-          {
-            "name": "callbackRoute",
-            "type": "string",
+            "name": "request",
+            "type": "InfraDestroyOperationRequest",
             "required": true,
             "description": null
           }
         ],
-        "returnType": "readonly string[]",
+        "returnType": "Promise<InfraDestroyOperationResult>",
         "returnDescription": null
       }
     ],
@@ -334,301 +131,41 @@
     "structuredRows": []
   },
   {
-    "name": "InfraDiagnostic",
-    "description": null,
+    "name": "downInfraEnvironmentAsync",
+    "description": "Reversibly suspend services and runtime while retaining compute and persistent data.",
     "isReadme": false,
     "examples": [],
-    "kind": "type",
-    "modulePath": "src/types.ts",
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
     "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 62,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [
-      {
-        "name": "message",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "severity",
-        "kind": "property",
-        "type": "\"warning\"",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "InfraGenerationInput",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 44,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["InfraManifestInput", "InfrastructureGenerationOptions"],
-    "signatures": [],
-    "members": [
-      {
-        "name": "manifest",
-        "kind": "property",
-        "type": "InfraManifestInput",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "options",
-        "kind": "property",
-        "type": "InfrastructureGenerationOptions | undefined",
-        "required": false,
-        "description": null
-      },
-      {
-        "name": "outputRoot",
-        "kind": "property",
-        "type": "string | undefined",
-        "required": false,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "InfraGenerationOptions",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "unknown",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 57,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [],
-    "structuredRows": []
-  },
-  {
-    "name": "InfraGenerationResult",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "unknown",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 58,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [],
-    "structuredRows": []
-  },
-  {
-    "name": "InfraManifestInput",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "unknown",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 80,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [],
-    "structuredRows": []
-  },
-  {
-    "name": "InfraSecretStoreProviders",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/secretStore.ts",
-    "sourceLocation": {
-      "filePath": "src/secretStore.ts",
-      "line": 10,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [
-      {
-        "name": "supabaseVault",
-        "kind": "property",
-        "type": "SupabaseVaultAdapterOptions | undefined",
-        "required": false,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "InfrastructureGenerationMeta",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 18,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [
-      {
-        "name": "providers",
-        "kind": "property",
-        "type": "readonly string[]",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "target",
-        "kind": "property",
-        "type": "import(\"@ankhorage/contracts\").DeploymentTarget",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "InfrastructureGenerationOptions",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 30,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [
-      {
-        "name": "appManifest",
-        "kind": "property",
-        "type": "Pick<AppManifest, \"deploy\" | \"infra\" | \"metadata\" | \"navigator\" | \"screens\" | \"settings\"> | undefined",
-        "required": false,
-        "description": null
-      },
-      {
-        "name": "namespaceHint",
-        "kind": "property",
-        "type": "string | undefined",
-        "required": false,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "InfrastructureGenerationResult",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "type",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 23,
+      "filePath": "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
+      "line": 15,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
     "relatedSymbols": [
-      "GeneratedInfrastructureFile",
-      "GeneratedPackageDependency",
-      "InfrastructureGenerationMeta"
+      "InfraDownOperationResult",
+      "InfraOperationRequest",
+      "InfraOrchestrationDependencies"
     ],
-    "signatures": [],
-    "members": [
-      {
-        "name": "dependencies",
-        "kind": "property",
-        "type": "readonly GeneratedPackageDependency[]",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "files",
-        "kind": "property",
-        "type": "readonly GeneratedInfrastructureFile[]",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "meta",
-        "kind": "property",
-        "type": "InfrastructureGenerationMeta",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "warnings",
-        "kind": "property",
-        "type": "readonly string[]",
-        "required": true,
-        "description": null
-      }
-    ],
-    "structuredRows": []
-  },
-  {
-    "name": "normalizeAuthCallbackRoute",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "function",
-    "modulePath": "src/authRedirects.ts",
-    "sourceLocation": {
-      "filePath": "src/authRedirects.ts",
-      "line": 53,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
     "signatures": [
       {
-        "label": "(callbackRoute: string) => string",
+        "label": "(request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) => Promise<InfraDownOperationResult>",
         "parameters": [
           {
-            "name": "callbackRoute",
-            "type": "string",
+            "name": "dependencies",
+            "type": "InfraOrchestrationDependencies",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "request",
+            "type": "InfraOperationRequest",
             "required": true,
             "description": null
           }
         ],
-        "returnType": "string",
+        "returnType": "Promise<InfraDownOperationResult>",
         "returnDescription": null
       }
     ],
@@ -636,49 +173,41 @@
     "structuredRows": []
   },
   {
-    "name": "PackageDependency",
-    "description": null,
-    "isReadme": false,
-    "examples": [],
-    "kind": "unknown",
-    "modulePath": "src/types.ts",
-    "sourceLocation": {
-      "filePath": "src/types.ts",
-      "line": 60,
-      "column": 1
-    },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
-    "signatures": [],
-    "members": [],
-    "structuredRows": []
-  },
-  {
-    "name": "resolveAuthRedirectConfiguration",
-    "description": null,
+    "name": "generateInfraEnvironmentAsync",
+    "description": "Generate deterministic review artifacts without mutating local or remote infrastructure.",
     "isReadme": false,
     "examples": [],
     "kind": "function",
-    "modulePath": "src/authRedirects.ts",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
     "sourceLocation": {
-      "filePath": "src/authRedirects.ts",
-      "line": 19,
+      "filePath": "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
+      "line": 15,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["AuthRedirectConfiguration", "ResolveAuthRedirectConfigurationInput"],
+    "relatedSymbols": [
+      "InfraGenerateOperationResult",
+      "InfraOperationRequest",
+      "InfraOrchestrationDependencies"
+    ],
     "signatures": [
       {
-        "label": "(input: ResolveAuthRedirectConfigurationInput) => AuthRedirectConfiguration",
+        "label": "(request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) => Promise<InfraGenerateOperationResult>",
         "parameters": [
           {
-            "name": "input",
-            "type": "ResolveAuthRedirectConfigurationInput",
+            "name": "dependencies",
+            "type": "InfraOrchestrationDependencies",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "request",
+            "type": "InfraOperationRequest",
             "required": true,
             "description": null
           }
         ],
-        "returnType": "AuthRedirectConfiguration",
+        "returnType": "Promise<InfraGenerateOperationResult>",
         "returnDescription": null
       }
     ],
@@ -686,64 +215,1095 @@
     "structuredRows": []
   },
   {
-    "name": "ResolveAuthRedirectConfigurationInput",
+    "name": "getInfraEnvironmentOutputs",
+    "description": "Return only safe serialized public outputs and secret references from the canonical ledger.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
+      "line": 8,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["InfraOperationRequest", "InfraOutputsOperationResult"],
+    "signatures": [
+      {
+        "label": "(request: InfraOperationRequest) => InfraOutputsOperationResult",
+        "parameters": [
+          {
+            "name": "request",
+            "type": "InfraOperationRequest",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "InfraOutputsOperationResult",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraAdapterPackageModule",
     "description": null,
     "isReadme": false,
     "examples": [],
     "kind": "type",
-    "modulePath": "src/authRedirects.ts",
+    "modulePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
     "sourceLocation": {
-      "filePath": "src/authRedirects.ts",
+      "filePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
+      "line": 7,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "createInfraAdapter",
+        "kind": "property",
+        "type": "() => unknown",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "infraAdapterDescriptor",
+        "kind": "property",
+        "type": "InfraAdapterDescriptor",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraAdapterPackageResolver",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
       "line": 3,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["AuthRedirectEnvironment"],
+    "relatedSymbols": [],
     "signatures": [],
     "members": [
       {
-        "name": "callbackRoute",
+        "name": "loadAsync",
+        "kind": "method",
+        "type": "(packageName: string) => Promise<unknown>",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraDestroyOperationRequest",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 72,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "confirmation",
         "kind": "property",
-        "type": "string",
+        "type": "{ readonly projectId: string; readonly environment: AppEnvironmentId; }",
         "required": true,
         "description": null
       },
       {
         "name": "environment",
         "kind": "property",
-        "type": "AuthRedirectEnvironment",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "gatewayOrigin",
-        "kind": "property",
-        "type": "string",
-        "required": true,
-        "description": null
-      },
-      {
-        "name": "nativeRedirectUris",
-        "kind": "property",
-        "type": "readonly string[] | undefined",
+        "type": "string | undefined",
         "required": false,
         "description": null
       },
       {
-        "name": "siteOrigin",
+        "name": "manifest",
+        "kind": "property",
+        "type": "InfraManifest",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "persistence",
+        "kind": "property",
+        "type": "{ readonly policy: \"retain\"; } | { readonly policy: \"delete\"; readonly confirmedResources: readonly import(\"@ankhorage/contracts\").InfraResourceIdentity[]; }",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "previous",
+        "kind": "property",
+        "type": "InfraLedger | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "previousDesired",
+        "kind": "property",
+        "type": "InfraEnvironmentSpec | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "projectId",
         "kind": "property",
         "type": "string",
         "required": true,
         "description": null
       },
       {
-        "name": "webOrigins",
+        "name": "signal",
         "kind": "property",
-        "type": "readonly string[] | undefined",
+        "type": "any",
         "required": false,
         "description": null
       }
     ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraDestroyOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 126,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraDestroyResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 121,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "\"local\" | \"preview\" | \"production\"",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "ledger",
+        "kind": "property",
+        "type": "InfraLedger | null",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraDownOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 119,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraDownResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 114,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "\"local\" | \"preview\" | \"production\"",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "ledger",
+        "kind": "property",
+        "type": "InfraLedger",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraGenerateOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 103,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraGenerateResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 97,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "artifacts",
+        "kind": "property",
+        "type": "readonly InfraGeneratedArtifact[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "\"local\" | \"preview\" | \"production\"",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "ledger",
+        "kind": "property",
+        "type": "InfraLedger",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraOperationRequest",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 63,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "string | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "manifest",
+        "kind": "property",
+        "type": "InfraManifest",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "previous",
+        "kind": "property",
+        "type": "InfraLedger | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "previousDesired",
+        "kind": "property",
+        "type": "InfraEnvironmentSpec | undefined",
+        "required": false,
+        "description": null
+      },
+      {
+        "name": "projectId",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "signal",
+        "kind": "property",
+        "type": "any",
+        "required": false,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraOrchestrationDependencies",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 57,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["InfraAdapterPackageResolver"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "adapterResolver",
+        "kind": "property",
+        "type": "InfraAdapterPackageResolver",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "credentials",
+        "kind": "property",
+        "type": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "secrets",
+        "kind": "property",
+        "type": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraSecretReference): Promise<InfraResult<string>>; }",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraOutputsOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 112,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraOutputsResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 107,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "\"local\" | \"preview\" | \"production\"",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "outputs",
+        "kind": "property",
+        "type": "readonly InfraOutput[]",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraPlanOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 95,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraStatusOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 105,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraStoredState",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 43,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "desired",
+        "kind": "property",
+        "type": "InfraEnvironmentSpec",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "ledger",
+        "kind": "property",
+        "type": "InfraLedger",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "schemaVersion",
+        "kind": "property",
+        "type": "1",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraUpOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 93,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraUpRequest",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 83,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraUpResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 85,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "\"local\" | \"preview\" | \"production\"",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "ledger",
+        "kind": "property",
+        "type": "InfraLedger",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "outputs",
+        "kind": "property",
+        "type": "readonly InfraOutput[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "resources",
+        "kind": "property",
+        "type": "readonly InfraOwnedResource[]",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "targets",
+        "kind": "property",
+        "type": "readonly InfraComputeTarget[]",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraValidateOperationResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "unknown",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 81,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "InfraValidateResult",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 77,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "\"local\" | \"preview\" | \"production\"",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "orderInfraPlanActions",
+    "description": "Order plan actions dependency-first and reject duplicate owners or dependency cycles.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
+      "line": 8,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [
+      {
+        "label": "(actions: readonly InfraPlanAction[]) => InfraResult<readonly InfraPlanAction[]>",
+        "parameters": [
+          {
+            "name": "actions",
+            "type": "readonly InfraPlanAction[]",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "InfraResult<readonly InfraPlanAction[]>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "planInfraEnvironmentAsync",
+    "description": "Aggregate a side-effect-free dependency-ordered plan from all selected adapters.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
+      "line": 13,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [
+      "InfraOperationRequest",
+      "InfraOrchestrationDependencies",
+      "InfraPlanOperationResult"
+    ],
+    "signatures": [
+      {
+        "label": "(request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) => Promise<InfraPlanOperationResult>",
+        "parameters": [
+          {
+            "name": "dependencies",
+            "type": "InfraOrchestrationDependencies",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "request",
+            "type": "InfraOperationRequest",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "Promise<InfraPlanOperationResult>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "PreparedInfraOperation",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 49,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["ResolvedInfraAdapters", "ResolvedInfraEnvironment"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "adapters",
+        "kind": "property",
+        "type": "ResolvedInfraAdapters",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "compute",
+        "kind": "property",
+        "type": "InfraComputeSnapshot",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "context",
+        "kind": "property",
+        "type": "InfraExecutionContext",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "environment",
+        "kind": "property",
+        "type": "ResolvedInfraEnvironment",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "runtimeDesired",
+        "kind": "property",
+        "type": "InfraRuntimeDesiredState<\"minikube\" | \"k3s\" | \"docker-compose\">",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "ResolvedInfraAdapters",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 37,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "compute",
+        "kind": "property",
+        "type": "InfraComputeAdapter<import(\"@ankhorage/contracts\").InfraComputeProviderId>",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "runtime",
+        "kind": "property",
+        "type": "InfraRuntimeAdapter<\"minikube\" | \"k3s\" | \"docker-compose\">",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "services",
+        "kind": "property",
+        "type": "readonly InfraServiceAdapter[]",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "ResolvedInfraEnvironment",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/infraOrchestration.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraOrchestration.ts",
+      "line": 24,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "desired",
+        "kind": "property",
+        "type": "InfraEnvironmentSpec",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "id",
+        "kind": "property",
+        "type": "\"local\" | \"preview\" | \"production\"",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "manifest",
+        "kind": "property",
+        "type": "InfraManifest",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "resolveInfraAdaptersAsync",
+    "description": "Resolve exactly the selected provider packages and validate their public adapter boundaries.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
+      "line": 21,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["InfraAdapterPackageResolver", "ResolvedInfraAdapters"],
+    "signatures": [
+      {
+        "label": "(environment: InfraEnvironmentSpec, resolver: InfraAdapterPackageResolver) => Promise<InfraResult<ResolvedInfraAdapters>>",
+        "parameters": [
+          {
+            "name": "environment",
+            "type": "InfraEnvironmentSpec",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "resolver",
+            "type": "InfraAdapterPackageResolver",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "Promise<InfraResult<ResolvedInfraAdapters>>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "resolveInfraEnvironment",
+    "description": "Resolve one explicitly configured environment while keeping local as the only safe default.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
+      "line": 10,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["ResolvedInfraEnvironment"],
+    "signatures": [
+      {
+        "label": "(request: InfraEnvironmentResolutionRequest) => InfraResult<ResolvedInfraEnvironment>",
+        "parameters": [
+          {
+            "name": "request",
+            "type": "InfraEnvironmentResolutionRequest",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "InfraResult<ResolvedInfraEnvironment>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "statusInfraEnvironmentAsync",
+    "description": "Aggregate provider-neutral compute, runtime and service status.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
+      "line": 12,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [
+      "InfraOperationRequest",
+      "InfraOrchestrationDependencies",
+      "InfraStatusOperationResult"
+    ],
+    "signatures": [
+      {
+        "label": "(request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) => Promise<InfraStatusOperationResult>",
+        "parameters": [
+          {
+            "name": "dependencies",
+            "type": "InfraOrchestrationDependencies",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "request",
+            "type": "InfraOperationRequest",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "Promise<InfraStatusOperationResult>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "upInfraEnvironmentAsync",
+    "description": "Validate and reconcile compute, contributed workloads, runtime and services in dependency order.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
+      "line": 25,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [
+      "InfraOperationRequest",
+      "InfraOrchestrationDependencies",
+      "InfraUpOperationResult"
+    ],
+    "signatures": [
+      {
+        "label": "(request: import(\"../../../../index.js\").InfraOperationRequest, dependencies: InfraOrchestrationDependencies) => Promise<InfraUpOperationResult>",
+        "parameters": [
+          {
+            "name": "dependencies",
+            "type": "InfraOrchestrationDependencies",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "request",
+            "type": "import(\"../../../../index.js\").InfraOperationRequest",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "Promise<InfraUpOperationResult>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "validateInfraEnvironmentAsync",
+    "description": "Validate one environment and every selected adapter without mutating infrastructure.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
+      "line": 9,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [
+      "InfraOperationRequest",
+      "InfraOrchestrationDependencies",
+      "InfraValidateOperationResult"
+    ],
+    "signatures": [
+      {
+        "label": "(request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) => Promise<InfraValidateOperationResult>",
+        "parameters": [
+          {
+            "name": "dependencies",
+            "type": "InfraOrchestrationDependencies",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "request",
+            "type": "InfraOperationRequest",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "Promise<InfraValidateOperationResult>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
     "structuredRows": []
   }
 ]

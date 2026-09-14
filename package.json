@@ -35,8 +35,7 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/contracts": "^11.1.0",
-    "@ankhorage/supabase-vault": "^0.2.12"
+    "@ankhorage/contracts": "^19.0.0"
   },
   "files": [
     "dist",
@@ -77,11 +76,13 @@
     "provider": "./dist/cli/index.js",
     "capabilities": [
       "infra.validate",
+      "infra.plan",
       "infra.generate",
-      "infra.status",
       "infra.up",
+      "infra.status",
+      "infra.outputs",
       "infra.down",
-      "infra.secret-store"
+      "infra.destroy"
     ]
   },
   "publishConfig": {
@@ -98,17 +99,26 @@
     "format:check": "ankhorage-prettier --check .",
     "prepack": "bun run build",
     "test": "bun test src",
-    "test:e2e": "bun run test:e2e:supabase",
-    "test:e2e:minikube": "ANKH_MINIKUBE_ISOLATION=1 bun test src/adapters/minikube/base/twoAppIsolation.integration.test.ts",
-    "test:e2e:supabase": "ANKH_MINIKUBE_SUPABASE_ISOLATION=1 bun test src/adapters/minikube/base/twoAppIsolation.integration.test.ts",
+    "test:e2e": "ANKH_INFRA_COMPOSITION_E2E=1 bun test src/infraComposition.integration.test.ts",
     "typecheck": "bun x tsc --noEmit -p tsconfig.json",
+    "check-types": "bun run typecheck",
     "version-packages": "ankhorage-changeset version",
-    "knip:check": "ankhorage-knip"
+    "knip:check": "ankhorage-knip",
+    "knip:test": "bun run knip:check"
   },
   "devDependencies": {
     "@ankhorage/ankh": "^0.8.11",
+    "@ankhorage/cerbos": "^0.2.0",
     "@ankhorage/devtools": "^1.14.0",
+    "@ankhorage/docker-compose": "^0.4.0",
+    "@ankhorage/hetzner": "^0.3.0",
+    "@ankhorage/k3s": "^0.3.0",
+    "@ankhorage/local": "^0.3.0",
+    "@ankhorage/minikube": "^0.3.0",
     "@ankhorage/paradox": "^0.1.24",
+    "@ankhorage/r2": "^0.2.0",
+    "@ankhorage/supabase": "^0.2.0",
+    "@ankhorage/supabase-vault": "^0.3.1",
     "@types/bun": "^1.4.1",
     "@types/node": "^25.6.0",
     "typescript": "^5.9.3"

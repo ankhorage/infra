@@ -1,219 +1,221 @@
+import type { AppManifest } from '@ankhorage/contracts';
+import type { InfraEnvironmentSpec, InfraLedger, InfraResult } from '@ankhorage/contracts/infra';
 import { describe, expect, test } from 'bun:test';
 
-import {
-  createProviderCommandDescriptors,
-  findInfraCommandByStandaloneName,
-  INFRA_COMMANDS,
-  renderRootHelp,
-  runInfraCommand,
-} from './commands.js';
-import { createCapturedCommandContext } from './testSupport.js';
-import { createAppManifest } from './testSupport.js';
+import { INFRA_COMMANDS } from './cli/constants.js';
+import { createProviderCommandDescriptors } from './cli/createProviderCommandDescriptors.js';
+import { findInfraCommand } from './cli/findInfraCommand.js';
+import { renderInfraRootHelp } from './cli/renderInfraRootHelp.js';
+import { runInfraCommandAsync } from './cli/runInfraCommandAsync.js';
+import { createAppManifest, createCapturedCommandContext } from './testSupport.js';
+import type { InfraCommandServices, InfraLifecycleOperations } from './types/infraCli.js';
+import type { InfraDestroyOperationRequest } from './types/infraOrchestration.js';
 
-describe('infra command table', () => {
-  test('stays aligned across provider descriptors and standalone names', () => {
-    const providerDescriptors = createProviderCommandDescriptors();
-
-    expect(INFRA_COMMANDS.map((command) => command.standaloneName)).toEqual([
-      'validate',
-      'generate',
-      'status',
-      'up',
-      'down',
-    ]);
-    expect(providerDescriptors.map((command) => command.path.join(' '))).toEqual([
-      'validate',
-      'generate',
-      'status',
-      'up',
-      'down',
-    ]);
-    expect(JSON.stringify(providerDescriptors)).not.toContain('port-forward');
-    expect(JSON.stringify(providerDescriptors)).not.toContain('portForward');
-  });
-
-  test('root help only exposes the locked command surface', () => {
-    const help = renderRootHelp('0.2.1');
-
-    expect(help).toContain('validate');
-    expect(help).toContain('generate');
-    expect(help).toContain('status');
-    expect(help).toContain('up');
-    expect(help).toContain('down');
+describe('canonical Infra commands', () => {
+  test('exposes the same locked eight-command surface everywhere', () => {
+    const names = ['validate', 'plan', 'generate', 'up', 'status', 'outputs', 'down', 'destroy'];
+    expect(INFRA_COMMANDS.map(({ standaloneName }) => standaloneName)).toEqual(names);
+    expect(createProviderCommandDescriptors().map(({ path }) => path.join(' '))).toEqual(names);
+    const help = renderInfraRootHelp('9.9.9');
+    for (const name of names) expect(help).toContain(name);
     expect(help).not.toContain('port-forward');
+    expect(help).not.toContain('reset');
   });
 
-  test('validate prints warnings without failing', async () => {
-    const command = findInfraCommandByStandaloneName('validate');
+  test('prints environment output format without resolving or exposing secret values', async () => {
     const captured = createCapturedCommandContext('/workspace');
+    const command = requireCommand('outputs');
+    const result = await runInfraCommandAsync(
+      { argv: ['shop', '--format', 'env'], command, context: captured.context },
+      { services: createServices() },
+    );
+    expect(result.exitCode).toBe(0);
+    expect(captured.stdout.value).toBe("PUBLIC_URL='https://example.test'\n");
+    expect(captured.stderr.value).toContain('remains a reference and was not printed');
+    expect(`${captured.stdout.value}${captured.stderr.value}`).not.toContain('resolved-secret');
+  });
 
-    if (command === null) {
-      throw new Error('validate command not found');
-    }
+  test('requires explicit destroy environment and exact project confirmation', async () => {
+    const command = requireCommand('destroy');
+    const missingEnvironment = createCapturedCommandContext('/workspace');
+    expect(
+      (
+        await runInfraCommandAsync(
+          { argv: ['shop'], command, context: missingEnvironment.context },
+          { services: createServices() },
+        )
+      ).exitCode,
+    ).toBe(1);
+    expect(missingEnvironment.stderr.value).toContain('requires --environment');
 
-    const result = await runInfraCommand(
+    const wrongConfirmation = createCapturedCommandContext('/workspace');
+    expect(
+      (
+        await runInfraCommandAsync(
+          {
+            argv: ['shop', '--environment', 'local', '--confirm', 'other:local'],
+            command,
+            context: wrongConfirmation.context,
+          },
+          { services: createServices() },
+        )
+      ).exitCode,
+    ).toBe(1);
+    expect(wrongConfirmation.stderr.value).toContain('--confirm shop:local');
+  });
+
+  test('maps explicit persistent deletion only to an owned persistent resource', async () => {
+    const requests: InfraDestroyOperationRequest[] = [];
+    const captured = createCapturedCommandContext('/workspace');
+    const result = await runInfraCommandAsync(
       {
-        argv: ['shop'],
-        command,
+        argv: [
+          'shop',
+          '--environment',
+          'local',
+          '--confirm',
+          'shop:local',
+          '--delete-resource',
+          'supabase:database',
+        ],
+        command: requireCommand('destroy'),
         context: captured.context,
       },
-      {
-        services: {
-          resolveProject() {
-            return Promise.resolve({
-              appsRoot: '/workspace/apps',
-              workspaceRoot: '/workspace',
-              manifestPath: '/workspace/apps/shop/ankh.config.json',
-              projectId: 'shop',
-              projectPath: '/workspace/apps/shop',
-              manifest: createAppManifest('shop', { modules: [] }),
-            });
-          },
-          validateInfraSupport() {
-            return ['warning-1'];
-          },
-        },
-      },
+      { services: createServices(requests) },
     );
-
     expect(result.exitCode).toBe(0);
-    expect(captured.stdout.value).toContain('infraConfigSupport: warnings');
-    expect(captured.stderr.value).toContain('warning-1');
-  });
-
-  test('generate reports skipped studio results', async () => {
-    const command = findInfraCommandByStandaloneName('generate');
-    const captured = createCapturedCommandContext('/workspace');
-
-    if (command === null) {
-      throw new Error('generate command not found');
-    }
-
-    const result = await runInfraCommand(
-      {
-        argv: ['studio'],
-        command,
-        context: captured.context,
-      },
-      {
-        services: {
-          resolveProject() {
-            return Promise.resolve({
-              appsRoot: '/workspace/apps',
-              workspaceRoot: '/workspace',
-              manifestPath: '/workspace/apps/studio/ankh.config.json',
-              projectId: 'studio',
-              projectPath: '/workspace/apps/studio',
-              manifest: createAppManifest('studio', { modules: [] }),
-            });
-          },
-          syncProjectInfrastructure() {
-            return Promise.resolve({
-              generated: 0,
-              removed: 0,
-              warnings: [],
-              skipped: {
-                reason: 'apps/studio is the dashboard and is not a generated app target.',
-              },
-            });
-          },
-        },
-      },
-    );
-
-    expect(result.exitCode).toBe(0);
-    expect(captured.stdout.value).toContain('Skipped: apps/studio');
-  });
-
-  test('status, up, and down use the runtime script service with the expected sequencing', async () => {
-    const events: string[] = [];
-    const status = findInfraCommandByStandaloneName('status');
-    const up = findInfraCommandByStandaloneName('up');
-    const down = findInfraCommandByStandaloneName('down');
-
-    if (status === null || up === null || down === null) {
-      throw new Error('missing infra commands');
-    }
-
-    const services = {
-      resolveProject() {
-        events.push('resolve-project');
-        return Promise.resolve({
-          appsRoot: '/workspace/apps',
-          workspaceRoot: '/workspace',
-          manifestPath: '/workspace/apps/shop/ankh.config.json',
-          projectId: 'shop',
-          projectPath: '/workspace/apps/shop',
-          manifest: createAppManifest('shop', {
-            deployment: { target: 'minikube', monitoring: false },
-            modules: [],
-          }),
-        });
-      },
-      resolveProjectInfrastructureTarget() {
-        events.push('resolve-target');
-        return Promise.resolve('minikube');
-      },
-      syncProjectInfrastructure() {
-        events.push('generate');
-        return Promise.resolve({ generated: 1, removed: 0, warnings: [] });
-      },
-      runProjectInfraScript(args: { readonly script: string }) {
-        events.push(`script:${args.script}`);
-        return Promise.resolve();
-      },
-    };
-
-    await runInfraCommand(
-      {
-        argv: ['shop'],
-        command: status,
-        context: createCapturedCommandContext('/workspace').context,
-      },
-      { services },
-    );
-    await runInfraCommand(
-      { argv: ['shop'], command: up, context: createCapturedCommandContext('/workspace').context },
-      { services },
-    );
-    await runInfraCommand(
-      {
-        argv: ['shop'],
-        command: down,
-        context: createCapturedCommandContext('/workspace').context,
-      },
-      { services },
-    );
-
-    expect(events).toEqual([
-      'resolve-project',
-      'resolve-target',
-      'script:status',
-      'resolve-project',
-      'generate',
-      'resolve-target',
-      'script:up',
-      'resolve-project',
-      'resolve-target',
-      'script:down',
-    ]);
-  });
-
-  test('rejects extra arguments for a command', async () => {
-    const command = findInfraCommandByStandaloneName('validate');
-    const captured = createCapturedCommandContext('/workspace');
-
-    if (command === null) {
-      throw new Error('validate command not found');
-    }
-
-    const result = await runInfraCommand({
-      argv: ['shop', 'extra'],
-      command,
-      context: captured.context,
+    expect(requests[0]?.persistence).toEqual({
+      policy: 'delete',
+      confirmedResources: [ledger.resources[0].identity],
     });
-
-    expect(result.exitCode).toBe(1);
-    expect(captured.stderr.value).toContain('accepts at most one project argument');
   });
 });
+
+const desired = {
+  deployment: {
+    compute: { provider: 'local' },
+    runtime: { provider: 'docker-compose' },
+  },
+} as const satisfies InfraEnvironmentSpec;
+
+const ledger = {
+  schemaVersion: 1,
+  projectId: 'shop',
+  environment: 'local',
+  targets: [],
+  resources: [
+    {
+      identity: {
+        projectId: 'shop',
+        environment: 'local',
+        adapter: 'supabase',
+        resourceId: 'database',
+      },
+      persistent: true,
+      retention: 'retain',
+      dependsOn: [],
+    },
+  ],
+  outputs: [
+    {
+      owner: {
+        projectId: 'shop',
+        environment: 'local',
+        adapter: 'docker-compose',
+        resourceId: 'runtime',
+      },
+      name: 'url',
+      visibility: 'public',
+      value: 'https://example.test',
+      environmentVariable: 'PUBLIC_URL',
+    },
+    {
+      owner: {
+        projectId: 'shop',
+        environment: 'local',
+        adapter: 'supabase-vault',
+        resourceId: 'vault',
+      },
+      name: 'password',
+      visibility: 'secret',
+      reference: {
+        source: 'secret-store',
+        projectId: 'shop',
+        environment: 'local',
+        ref: 'database',
+        key: 'password',
+      },
+    },
+  ],
+  artifacts: [],
+} as const satisfies InfraLedger;
+
+function createServices(
+  destroyRequests: InfraDestroyOperationRequest[] = [],
+): Partial<InfraCommandServices> {
+  const manifest: AppManifest = createAppManifest('shop', {
+    environments: { local: desired },
+    modules: [],
+  });
+  return {
+    resolveProject: () =>
+      Promise.resolve({
+        appsRoot: '/workspace/apps',
+        workspaceRoot: '/workspace',
+        manifestPath: '/workspace/apps/shop/ankh.config.json',
+        projectId: 'shop',
+        projectPath: '/workspace/apps/shop',
+        manifest,
+      }),
+    readState: () => Promise.resolve({ schemaVersion: 1, desired, ledger }),
+    writeState: () => Promise.resolve(),
+    removeState: () => Promise.resolve(),
+    writeArtifacts: () => Promise.resolve({ written: 0, removed: 0 }),
+    createDependencies: () => ({
+      adapterResolver: { loadAsync: () => Promise.resolve({}) },
+      credentials: { resolveAsync: () => Promise.resolve(success({})) },
+      secrets: { resolveAsync: () => Promise.resolve(success('resolved-secret')) },
+    }),
+    operations: createOperations(destroyRequests),
+  };
+}
+
+function createOperations(
+  destroyRequests: InfraDestroyOperationRequest[],
+): InfraLifecycleOperations {
+  return {
+    validate: () => Promise.resolve(success({ environment: 'local' })),
+    plan: (request) =>
+      Promise.resolve(success({ projectId: request.projectId, environment: 'local', actions: [] })),
+    generate: () => Promise.resolve(success({ environment: 'local', artifacts: [], ledger })),
+    up: () =>
+      Promise.resolve(
+        success({ environment: 'local', targets: [], resources: [], outputs: [], ledger }),
+      ),
+    status: (request) =>
+      Promise.resolve(
+        success({
+          projectId: request.projectId,
+          environment: 'local',
+          state: 'ready',
+          resources: [],
+        }),
+      ),
+    outputs: () => success({ environment: 'local', outputs: ledger.outputs }),
+    down: () => Promise.resolve(success({ environment: 'local', ledger })),
+    destroy: (request) => {
+      destroyRequests.push(request);
+      return Promise.resolve(success({ environment: 'local', ledger: null }));
+    },
+  };
+}
+
+function requireCommand(name: string) {
+  const command = findInfraCommand(name);
+  if (command === null) throw new Error(`Missing command: ${name}`);
+  return command;
+}
+
+function success<T>(value: T): InfraResult<T> {
+  return { ok: true, value, diagnostics: [] };
+}

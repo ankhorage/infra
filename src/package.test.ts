@@ -10,11 +10,13 @@ describe('package metadata', () => {
       provider: './dist/cli/index.js',
       capabilities: [
         'infra.validate',
+        'infra.plan',
         'infra.generate',
-        'infra.status',
         'infra.up',
+        'infra.status',
+        'infra.outputs',
         'infra.down',
-        'infra.secret-store',
+        'infra.destroy',
       ],
     } as const satisfies AnkhPackageMetadata;
 
