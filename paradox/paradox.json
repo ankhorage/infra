@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v4.1.12",
+      "value": "v5.0.0",
       "color": "cb3837"
     },
     {
@@ -560,6 +560,17 @@
       "exports": ["createInfraCommandServices"]
     },
     {
+      "path": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/constants.ts",
+        "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
+        "src/types/infraOrchestration.ts",
+        "src/types/infraProject.ts"
+      ],
+      "exports": ["createProjectInfraLifecycle"]
+    },
+    {
       "path": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
       "isEntrypoint": false,
       "dependencies": [],
@@ -711,7 +722,12 @@
       "isEntrypoint": false,
       "dependencies": [],
       "exports": [
+        "createProjectInfraLifecycle",
+        "CreateProjectInfraLifecycleOptions",
         "InfraArtifactWriteResult",
+        "ProjectInfraDestroyRequest",
+        "ProjectInfraLifecycle",
+        "ProjectInfraOperationRequest",
         "readStoredInfraStateAsync",
         "removeStoredInfraStateAsync",
         "ResolvedInfraProject",
@@ -801,8 +817,15 @@
     {
       "path": "src/types/infraProject.ts",
       "isEntrypoint": false,
-      "dependencies": [],
-      "exports": ["InfraArtifactWriteResult", "ResolvedInfraProject"]
+      "dependencies": ["src/types/infraCli.ts", "src/types/infraOrchestration.ts"],
+      "exports": [
+        "CreateProjectInfraLifecycleOptions",
+        "InfraArtifactWriteResult",
+        "ProjectInfraDestroyRequest",
+        "ProjectInfraLifecycle",
+        "ProjectInfraOperationRequest",
+        "ResolvedInfraProject"
+      ]
     }
   ],
   "exports": [
@@ -2864,6 +2887,42 @@
       }
     },
     {
+      "name": "createProjectInfraLifecycle",
+      "description": "Create the typed project-facing Infra lifecycle backed by canonical use cases and ownership state.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "line": 13,
+        "column": 1
+      }
+    },
+    {
+      "name": "prepareProjectOperationAsync",
+      "description": "Resolve one explicit project/environment request with its prior ownership state and dependencies.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "line": 108,
+        "column": 1
+      }
+    },
+    {
+      "name": "readEnvironment",
+      "description": "Read one exact environment without inventing a fallback.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "line": 141,
+        "column": 1
+      }
+    },
+    {
+      "name": "replaceEnvironment",
+      "description": "Replace one selected environment while preserving all other manifest state.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "line": 151,
+        "column": 1
+      }
+    },
+    {
       "name": "orderInfraPlanActions",
       "description": "Order plan actions dependency-first and reject duplicate owners or dependency cycles.",
       "sourceLocation": {
@@ -3564,6 +3623,11 @@
       },
       {
         "fromPath": "src/project/index.ts",
+        "toPath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "sourcePath": "src/project/index.ts"
+      },
+      {
+        "fromPath": "src/project/index.ts",
         "toPath": "src/features/environment-lifecycle/utils/resolveProjectFile.ts",
         "sourcePath": "src/project/index.ts"
       },
@@ -3646,6 +3710,16 @@
         "fromPath": "src/types/infraOrchestration.ts",
         "toPath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
         "sourcePath": "src/types/infraOrchestration.ts"
+      },
+      {
+        "fromPath": "src/types/infraProject.ts",
+        "toPath": "src/types/infraCli.ts",
+        "sourcePath": "src/types/infraProject.ts"
+      },
+      {
+        "fromPath": "src/types/infraProject.ts",
+        "toPath": "src/types/infraOrchestration.ts",
+        "sourcePath": "src/types/infraProject.ts"
       },
       {
         "fromPath": "src/cli/commands/destroy.ts",
@@ -3966,6 +4040,26 @@
         "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
         "toPath": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
         "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "toPath": "src/constants.ts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "toPath": "src/types/infraOrchestration.ts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "toPath": "src/types/infraProject.ts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "toPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
       },
       {
         "fromPath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
@@ -4831,6 +4925,174 @@
         "toSymbol": "createEnvironmentInfraSecretPort",
         "callExpression": "createEnvironmentInfraSecretPort",
         "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
+      },
+      {
+        "fromSymbol": "createProjectInfraLifecycle",
+        "toSymbol": "createInfraCommandServices",
+        "callExpression": "createInfraCommandServices",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "validateAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "validateAsync",
+        "toSymbol": "validate",
+        "callExpression": "services.operations.validate",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "planAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "planAsync",
+        "toSymbol": "plan",
+        "callExpression": "services.operations.plan",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "generateAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "generateAsync",
+        "toSymbol": "generate",
+        "callExpression": "services.operations.generate",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "generateAsync",
+        "toSymbol": "writeArtifacts",
+        "callExpression": "services.writeArtifacts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "generateAsync",
+        "toSymbol": "writeState",
+        "callExpression": "services.writeState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "upAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "upAsync",
+        "toSymbol": "up",
+        "callExpression": "services.operations.up",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "upAsync",
+        "toSymbol": "writeState",
+        "callExpression": "services.writeState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "statusAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "statusAsync",
+        "toSymbol": "status",
+        "callExpression": "services.operations.status",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "outputsAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "outputsAsync",
+        "toSymbol": "outputs",
+        "callExpression": "services.operations.outputs",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "downAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "downAsync",
+        "toSymbol": "down",
+        "callExpression": "services.operations.down",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "downAsync",
+        "toSymbol": "writeState",
+        "callExpression": "services.writeState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "prepareProjectOperationAsync",
+        "callExpression": "prepareProjectOperationAsync",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "destroy",
+        "callExpression": "services.operations.destroy",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "writeArtifacts",
+        "callExpression": "services.writeArtifacts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "removeState",
+        "callExpression": "services.removeState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "writeState",
+        "callExpression": "services.writeState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "prepareProjectOperationAsync",
+        "toSymbol": "readState",
+        "callExpression": "services.readState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "prepareProjectOperationAsync",
+        "toSymbol": "readEnvironment",
+        "callExpression": "readEnvironment",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "prepareProjectOperationAsync",
+        "toSymbol": "replaceEnvironment",
+        "callExpression": "replaceEnvironment",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "prepareProjectOperationAsync",
+        "toSymbol": "createDependencies",
+        "callExpression": "services.createDependencies",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
       },
       {
         "fromSymbol": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
