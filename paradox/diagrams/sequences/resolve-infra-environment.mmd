@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant participant_failure as failure
+  participant participant_getEnvironment as getEnvironment
+  participant participant_isAppEnvironmentId as isAppEnvironmentId
+  participant participant_resolveInfraEnvironment as resolveInfraEnvironment
+  participant_resolveInfraEnvironment->>participant_failure: failure()
+  participant_failure-->>participant_resolveInfraEnvironment: return
+  participant_resolveInfraEnvironment->>participant_isAppEnvironmentId: isAppEnvironmentId()
+  participant_isAppEnvironmentId-->>participant_resolveInfraEnvironment: return
+  participant_resolveInfraEnvironment->>participant_getEnvironment: getEnvironment()
+  participant_getEnvironment-->>participant_resolveInfraEnvironment: return

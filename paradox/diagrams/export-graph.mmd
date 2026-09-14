@@ -1,98 +1,177 @@
 graph LR
   module_package_json["package.json"]
-  module_src_adapters_minikube_auth_index_ts["src/adapters/minikube/auth/index.ts"]
-  module_src_adapters_minikube_auth_oauthRuntime_ts["src/adapters/minikube/auth/oauthRuntime.ts"]
-  module_src_adapters_minikube_auth_supabase_index_ts["src/adapters/minikube/auth/supabase/index.ts"]
-  module_src_adapters_minikube_auth_supabase_profile_ts["src/adapters/minikube/auth/supabase/profile.ts"]
-  module_src_adapters_minikube_auth_targetAwareOAuthRuntime_ts["src/adapters/minikube/auth/targetAwareOAuthRuntime.ts"]
-  module_src_adapters_minikube_authz_cerbos_index_ts["src/adapters/minikube/authz/cerbos/index.ts"]
-  module_src_adapters_minikube_authz_index_ts["src/adapters/minikube/authz/index.ts"]
-  module_src_adapters_minikube_base_index_ts["src/adapters/minikube/base/index.ts"]
-  module_src_adapters_minikube_base_supabaseMigrations_ts["src/adapters/minikube/base/supabaseMigrations.ts"]
-  module_src_adapters_minikube_contracts_ts["src/adapters/minikube/contracts.ts"]
-  module_src_adapters_minikube_index_ts["src/adapters/minikube/index.ts"]
-  module_src_adapters_minikube_secrets_index_ts["src/adapters/minikube/secrets/index.ts"]
-  module_src_adapters_minikube_secrets_supabase_vault_index_ts["src/adapters/minikube/secrets/supabase-vault/index.ts"]
-  module_src_adapters_minikube_storage_index_ts["src/adapters/minikube/storage/index.ts"]
-  module_src_adapters_minikube_storage_supabase_index_ts["src/adapters/minikube/storage/supabase/index.ts"]
-  module_src_authRedirects_ts["src/authRedirects.ts"]
-  module_src_authTargetRedirects_ts["src/authTargetRedirects.ts"]
   module_src_cli_bin_ts["src/cli/bin.ts"]
+  module_src_cli_commands_destroy_ts["src/cli/commands/destroy.ts"]
+  module_src_cli_commands_down_ts["src/cli/commands/down.ts"]
+  module_src_cli_commands_generate_ts["src/cli/commands/generate.ts"]
+  module_src_cli_commands_outputs_ts["src/cli/commands/outputs.ts"]
+  module_src_cli_commands_plan_ts["src/cli/commands/plan.ts"]
+  module_src_cli_commands_status_ts["src/cli/commands/status.ts"]
+  module_src_cli_commands_up_ts["src/cli/commands/up.ts"]
+  module_src_cli_commands_validate_ts["src/cli/commands/validate.ts"]
+  module_src_cli_constants_ts["src/cli/constants.ts"]
+  module_src_cli_createDefaultInfraCommandContext_ts["src/cli/createDefaultInfraCommandContext.ts"]
+  module_src_cli_createInfraRuntimeProvider_ts["src/cli/createInfraRuntimeProvider.ts"]
+  module_src_cli_createProviderCommandDescriptors_ts["src/cli/createProviderCommandDescriptors.ts"]
+  module_src_cli_findInfraCommand_ts["src/cli/findInfraCommand.ts"]
   module_src_cli_index_ts["src/cli/index.ts"]
-  module_src_commandContext_ts["src/commandContext.ts"]
-  module_src_commands_ts["src/commands.ts"]
+  module_src_cli_renderInfraRootHelp_ts["src/cli/renderInfraRootHelp.ts"]
+  module_src_cli_renderUnknownInfraCommand_ts["src/cli/renderUnknownInfraCommand.ts"]
+  module_src_cli_runInfraCliAsync_ts["src/cli/runInfraCliAsync.ts"]
+  module_src_cli_runInfraCommandAsync_ts["src/cli/runInfraCommandAsync.ts"]
+  module_src_cli_utils_prepareInfraCommandOperationAsync_ts["src/cli/utils/prepareInfraCommandOperationAsync.ts"]
+  module_src_cli_utils_requireInfraSuccess_ts["src/cli/utils/requireInfraSuccess.ts"]
+  module_src_cli_utils_resolveInfraPersistence_ts["src/cli/utils/resolveInfraPersistence.ts"]
+  module_src_cli_utils_writeInfraEnvironmentOutputs_ts["src/cli/utils/writeInfraEnvironmentOutputs.ts"]
+  module_src_cli_utils_writeInfraStructured_ts["src/cli/utils/writeInfraStructured.ts"]
+  module_src_constants_ts["src/constants.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts["src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraSecretPort_ts["src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_createNodeInfraAdapterPackageResolver_ts["src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_readStoredInfraStateAsync_ts["src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraStateAsync_ts["src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_resolveInfraProjectAsync_ts["src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_writeInfraGeneratedArtifactsAsync_ts["src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts"]
+  module_src_features_environment_lifecycle_adapters_outbound_writeStoredInfraStateAsync_ts["src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts"]
+  module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts["src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_collectInfraWorkloadsAsync_ts["src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_destroyInfraEnvironmentAsync_ts["src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_downInfraEnvironmentAsync_ts["src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_generateInfraEnvironmentAsync_ts["src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts["src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts["src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts["src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts["src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts["src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts["src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_validateInfraAdaptersAsync_ts["src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts"]
+  module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts["src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts"]
+  module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts["src/features/environment-lifecycle/composition/createInfraCommandServices.ts"]
+  module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts["src/features/environment-lifecycle/domain/orderInfraPlanActions.ts"]
+  module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts["src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts"]
+  module_src_features_environment_lifecycle_utils_appendInfraFailure_ts["src/features/environment-lifecycle/utils/appendInfraFailure.ts"]
+  module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts["src/features/environment-lifecycle/utils/createInfraExecutionContext.ts"]
+  module_src_features_environment_lifecycle_utils_createInfraFailure_ts["src/features/environment-lifecycle/utils/createInfraFailure.ts"]
+  module_src_features_environment_lifecycle_utils_createInfraLedger_ts["src/features/environment-lifecycle/utils/createInfraLedger.ts"]
+  module_src_features_environment_lifecycle_utils_infraIdentityKey_ts["src/features/environment-lifecycle/utils/infraIdentityKey.ts"]
+  module_src_features_environment_lifecycle_utils_isInfraStoredState_ts["src/features/environment-lifecycle/utils/isInfraStoredState.ts"]
+  module_src_features_environment_lifecycle_utils_mergeInfraOutputs_ts["src/features/environment-lifecycle/utils/mergeInfraOutputs.ts"]
+  module_src_features_environment_lifecycle_utils_mergeInfraResources_ts["src/features/environment-lifecycle/utils/mergeInfraResources.ts"]
+  module_src_features_environment_lifecycle_utils_normalizeInfraEnvironmentKey_ts["src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts"]
+  module_src_features_environment_lifecycle_utils_resolveInfraStatePath_ts["src/features/environment-lifecycle/utils/resolveInfraStatePath.ts"]
+  module_src_features_environment_lifecycle_utils_resolveProjectFile_ts["src/features/environment-lifecycle/utils/resolveProjectFile.ts"]
+  module_src_features_environment_lifecycle_utils_retainUnchangedAdapterOutputs_ts["src/features/environment-lifecycle/utils/retainUnchangedAdapterOutputs.ts"]
+  module_src_features_environment_lifecycle_utils_retainUnchangedAdapterResources_ts["src/features/environment-lifecycle/utils/retainUnchangedAdapterResources.ts"]
   module_src_index_ts["src/index.ts"]
-  module_src_infraValidation_ts["src/infraValidation.ts"]
   module_src_metadata_index_ts["src/metadata/index.ts"]
-  module_src_packageMetadata_ts["src/packageMetadata.ts"]
-  module_src_project_ts["src/project.ts"]
   module_src_project_index_ts["src/project/index.ts"]
-  module_src_projectDatabase_ts["src/projectDatabase.ts"]
-  module_src_projectEnvironment_ts["src/projectEnvironment.ts"]
-  module_src_projectInfrastructure_ts["src/projectInfrastructure.ts"]
-  module_src_runtime_ts["src/runtime.ts"]
-  module_src_secretStore_ts["src/secretStore.ts"]
   module_src_testSupport_ts["src/testSupport.ts"]
-  module_src_types_ts["src/types.ts"]
-  export_AuthRedirectConfiguration["AuthRedirectConfiguration"]
-  module_src_authRedirects_ts --> export_AuthRedirectConfiguration
-  export_AuthRedirectEnvironment["AuthRedirectEnvironment"]
-  module_src_authRedirects_ts --> export_AuthRedirectEnvironment
-  export_createInfraSecretStoreAdapter["createInfraSecretStoreAdapter"]
-  module_src_secretStore_ts --> export_createInfraSecretStoreAdapter
-  export_createInfraSecretStoreAdapter -.-> export_CreateInfraSecretStoreAdapterInput
-  export_CreateInfraSecretStoreAdapterInput["CreateInfraSecretStoreAdapterInput"]
-  module_src_secretStore_ts --> export_CreateInfraSecretStoreAdapterInput
-  export_CreateInfraSecretStoreAdapterInput -.-> export_InfraManifestInput
-  export_CreateInfraSecretStoreAdapterInput -.-> export_InfraSecretStoreProviders
-  export_GeneratedFile["GeneratedFile"]
-  module_src_types_ts --> export_GeneratedFile
-  export_GeneratedInfrastructureFile["GeneratedInfrastructureFile"]
-  module_src_types_ts --> export_GeneratedInfrastructureFile
-  export_GeneratedPackageDependency["GeneratedPackageDependency"]
-  module_src_types_ts --> export_GeneratedPackageDependency
-  export_generateInfra["generateInfra"]
-  module_src_index_ts --> export_generateInfra
-  export_generateInfra -.-> export_InfraGenerationInput
-  export_generateInfra -.-> export_InfrastructureGenerationResult
-  export_generateInfrastructure["generateInfrastructure"]
-  module_src_index_ts --> export_generateInfrastructure
-  export_generateInfrastructure -.-> export_InfraManifestInput
-  export_generateInfrastructure -.-> export_InfrastructureGenerationOptions
-  export_generateInfrastructure -.-> export_InfrastructureGenerationResult
-  export_getLocalAuthRedirectPatterns["getLocalAuthRedirectPatterns"]
-  module_src_authRedirects_ts --> export_getLocalAuthRedirectPatterns
-  export_InfraDiagnostic["InfraDiagnostic"]
-  module_src_types_ts --> export_InfraDiagnostic
-  export_InfraGenerationInput["InfraGenerationInput"]
-  module_src_types_ts --> export_InfraGenerationInput
-  export_InfraGenerationInput -.-> export_InfraManifestInput
-  export_InfraGenerationInput -.-> export_InfrastructureGenerationOptions
-  export_InfraGenerationOptions["InfraGenerationOptions"]
-  module_src_types_ts --> export_InfraGenerationOptions
-  export_InfraGenerationResult["InfraGenerationResult"]
-  module_src_types_ts --> export_InfraGenerationResult
-  export_InfraManifestInput["InfraManifestInput"]
-  module_src_types_ts --> export_InfraManifestInput
-  export_InfraSecretStoreProviders["InfraSecretStoreProviders"]
-  module_src_secretStore_ts --> export_InfraSecretStoreProviders
-  export_InfrastructureGenerationMeta["InfrastructureGenerationMeta"]
-  module_src_types_ts --> export_InfrastructureGenerationMeta
-  export_InfrastructureGenerationOptions["InfrastructureGenerationOptions"]
-  module_src_types_ts --> export_InfrastructureGenerationOptions
-  export_InfrastructureGenerationResult["InfrastructureGenerationResult"]
-  module_src_types_ts --> export_InfrastructureGenerationResult
-  export_InfrastructureGenerationResult -.-> export_GeneratedInfrastructureFile
-  export_InfrastructureGenerationResult -.-> export_GeneratedPackageDependency
-  export_InfrastructureGenerationResult -.-> export_InfrastructureGenerationMeta
-  export_normalizeAuthCallbackRoute["normalizeAuthCallbackRoute"]
-  module_src_authRedirects_ts --> export_normalizeAuthCallbackRoute
-  export_PackageDependency["PackageDependency"]
-  module_src_types_ts --> export_PackageDependency
-  export_resolveAuthRedirectConfiguration["resolveAuthRedirectConfiguration"]
-  module_src_authRedirects_ts --> export_resolveAuthRedirectConfiguration
-  export_resolveAuthRedirectConfiguration -.-> export_AuthRedirectConfiguration
-  export_resolveAuthRedirectConfiguration -.-> export_ResolveAuthRedirectConfigurationInput
-  export_ResolveAuthRedirectConfigurationInput["ResolveAuthRedirectConfigurationInput"]
-  module_src_authRedirects_ts --> export_ResolveAuthRedirectConfigurationInput
-  export_ResolveAuthRedirectConfigurationInput -.-> export_AuthRedirectEnvironment
+  module_src_types_infraCli_ts["src/types/infraCli.ts"]
+  module_src_types_infraOrchestration_ts["src/types/infraOrchestration.ts"]
+  module_src_types_infraProject_ts["src/types/infraProject.ts"]
+  export_createEnvironmentInfraCredentialPort["createEnvironmentInfraCredentialPort"]
+  module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts --> export_createEnvironmentInfraCredentialPort
+  export_createEnvironmentInfraSecretPort["createEnvironmentInfraSecretPort"]
+  module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraSecretPort_ts --> export_createEnvironmentInfraSecretPort
+  export_createNodeInfraAdapterPackageResolver["createNodeInfraAdapterPackageResolver"]
+  module_src_features_environment_lifecycle_adapters_outbound_createNodeInfraAdapterPackageResolver_ts --> export_createNodeInfraAdapterPackageResolver
+  export_createNodeInfraAdapterPackageResolver -.-> export_InfraAdapterPackageResolver
+  export_destroyInfraEnvironmentAsync["destroyInfraEnvironmentAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_destroyInfraEnvironmentAsync_ts --> export_destroyInfraEnvironmentAsync
+  export_destroyInfraEnvironmentAsync -.-> export_InfraDestroyOperationRequest
+  export_destroyInfraEnvironmentAsync -.-> export_InfraDestroyOperationResult
+  export_destroyInfraEnvironmentAsync -.-> export_InfraOrchestrationDependencies
+  export_downInfraEnvironmentAsync["downInfraEnvironmentAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_downInfraEnvironmentAsync_ts --> export_downInfraEnvironmentAsync
+  export_downInfraEnvironmentAsync -.-> export_InfraDownOperationResult
+  export_downInfraEnvironmentAsync -.-> export_InfraOperationRequest
+  export_downInfraEnvironmentAsync -.-> export_InfraOrchestrationDependencies
+  export_generateInfraEnvironmentAsync["generateInfraEnvironmentAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_generateInfraEnvironmentAsync_ts --> export_generateInfraEnvironmentAsync
+  export_generateInfraEnvironmentAsync -.-> export_InfraGenerateOperationResult
+  export_generateInfraEnvironmentAsync -.-> export_InfraOperationRequest
+  export_generateInfraEnvironmentAsync -.-> export_InfraOrchestrationDependencies
+  export_getInfraEnvironmentOutputs["getInfraEnvironmentOutputs"]
+  module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts --> export_getInfraEnvironmentOutputs
+  export_getInfraEnvironmentOutputs -.-> export_InfraOperationRequest
+  export_getInfraEnvironmentOutputs -.-> export_InfraOutputsOperationResult
+  export_InfraAdapterPackageModule["InfraAdapterPackageModule"]
+  module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts --> export_InfraAdapterPackageModule
+  export_InfraAdapterPackageResolver["InfraAdapterPackageResolver"]
+  module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts --> export_InfraAdapterPackageResolver
+  export_InfraDestroyOperationRequest["InfraDestroyOperationRequest"]
+  module_src_types_infraOrchestration_ts --> export_InfraDestroyOperationRequest
+  export_InfraDestroyOperationResult["InfraDestroyOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraDestroyOperationResult
+  export_InfraDestroyResult["InfraDestroyResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraDestroyResult
+  export_InfraDownOperationResult["InfraDownOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraDownOperationResult
+  export_InfraDownResult["InfraDownResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraDownResult
+  export_InfraGenerateOperationResult["InfraGenerateOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraGenerateOperationResult
+  export_InfraGenerateResult["InfraGenerateResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraGenerateResult
+  export_InfraOperationRequest["InfraOperationRequest"]
+  module_src_types_infraOrchestration_ts --> export_InfraOperationRequest
+  export_InfraOrchestrationDependencies["InfraOrchestrationDependencies"]
+  module_src_types_infraOrchestration_ts --> export_InfraOrchestrationDependencies
+  export_InfraOrchestrationDependencies -.-> export_InfraAdapterPackageResolver
+  export_InfraOutputsOperationResult["InfraOutputsOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraOutputsOperationResult
+  export_InfraOutputsResult["InfraOutputsResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraOutputsResult
+  export_InfraPlanOperationResult["InfraPlanOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraPlanOperationResult
+  export_InfraStatusOperationResult["InfraStatusOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraStatusOperationResult
+  export_InfraStoredState["InfraStoredState"]
+  module_src_types_infraOrchestration_ts --> export_InfraStoredState
+  export_InfraUpOperationResult["InfraUpOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraUpOperationResult
+  export_InfraUpRequest["InfraUpRequest"]
+  module_src_types_infraOrchestration_ts --> export_InfraUpRequest
+  export_InfraUpResult["InfraUpResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraUpResult
+  export_InfraValidateOperationResult["InfraValidateOperationResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraValidateOperationResult
+  export_InfraValidateResult["InfraValidateResult"]
+  module_src_types_infraOrchestration_ts --> export_InfraValidateResult
+  export_orderInfraPlanActions["orderInfraPlanActions"]
+  module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts --> export_orderInfraPlanActions
+  export_planInfraEnvironmentAsync["planInfraEnvironmentAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts --> export_planInfraEnvironmentAsync
+  export_planInfraEnvironmentAsync -.-> export_InfraOperationRequest
+  export_planInfraEnvironmentAsync -.-> export_InfraOrchestrationDependencies
+  export_planInfraEnvironmentAsync -.-> export_InfraPlanOperationResult
+  export_PreparedInfraOperation["PreparedInfraOperation"]
+  module_src_types_infraOrchestration_ts --> export_PreparedInfraOperation
+  export_PreparedInfraOperation -.-> export_ResolvedInfraAdapters
+  export_PreparedInfraOperation -.-> export_ResolvedInfraEnvironment
+  export_ResolvedInfraAdapters["ResolvedInfraAdapters"]
+  module_src_types_infraOrchestration_ts --> export_ResolvedInfraAdapters
+  export_ResolvedInfraEnvironment["ResolvedInfraEnvironment"]
+  module_src_types_infraOrchestration_ts --> export_ResolvedInfraEnvironment
+  export_resolveInfraAdaptersAsync["resolveInfraAdaptersAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts --> export_resolveInfraAdaptersAsync
+  export_resolveInfraAdaptersAsync -.-> export_InfraAdapterPackageResolver
+  export_resolveInfraAdaptersAsync -.-> export_ResolvedInfraAdapters
+  export_resolveInfraEnvironment["resolveInfraEnvironment"]
+  module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts --> export_resolveInfraEnvironment
+  export_resolveInfraEnvironment -.-> export_ResolvedInfraEnvironment
+  export_statusInfraEnvironmentAsync["statusInfraEnvironmentAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts --> export_statusInfraEnvironmentAsync
+  export_statusInfraEnvironmentAsync -.-> export_InfraOperationRequest
+  export_statusInfraEnvironmentAsync -.-> export_InfraOrchestrationDependencies
+  export_statusInfraEnvironmentAsync -.-> export_InfraStatusOperationResult
+  export_upInfraEnvironmentAsync["upInfraEnvironmentAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --> export_upInfraEnvironmentAsync
+  export_upInfraEnvironmentAsync -.-> export_InfraOperationRequest
+  export_upInfraEnvironmentAsync -.-> export_InfraOrchestrationDependencies
+  export_upInfraEnvironmentAsync -.-> export_InfraUpOperationResult
+  export_validateInfraEnvironmentAsync["validateInfraEnvironmentAsync"]
+  module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts --> export_validateInfraEnvironmentAsync
+  export_validateInfraEnvironmentAsync -.-> export_InfraOperationRequest
+  export_validateInfraEnvironmentAsync -.-> export_InfraOrchestrationDependencies
+  export_validateInfraEnvironmentAsync -.-> export_InfraValidateOperationResult

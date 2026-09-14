@@ -1,22 +1,7 @@
-export {
-  type ResolvedInfraProject,
-  resolveInfraProject as resolveInfraWorkspaceProject,
-} from '../project.js';
-export { resolveProjectInfrastructureDatabaseUrl } from '../projectDatabase.js';
-export { readProjectInfrastructureEnvironment } from '../projectEnvironment.js';
-export {
-  type InfraProjectInspection,
-  type InfraSyncResult,
-  inspectProjectInfrastructure,
-  resolveProjectInfrastructureTarget,
-  syncProjectInfrastructure,
-} from '../projectInfrastructure.js';
-export {
-  ensureProjectInfrastructureRuntime,
-  type InfraLifecycleScript,
-  type InfraPortForwardInfo,
-  InfraScriptExecutionError,
-  type InfraScriptOutput,
-  resolveProjectInfrastructurePortForward,
-  runProjectInfrastructureLifecycle,
-} from '../runtime.js';
+export { readStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.js';
+export { removeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.js';
+export { resolveInfraProjectAsync } from '../features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.js';
+export { writeInfraGeneratedArtifactsAsync } from '../features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.js';
+export { writeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.js';
+export { resolveProjectFile } from '../features/environment-lifecycle/utils/resolveProjectFile.js';
+export type { InfraArtifactWriteResult, ResolvedInfraProject } from '../types/infraProject.js';

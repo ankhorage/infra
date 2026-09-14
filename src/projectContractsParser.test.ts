@@ -2,7 +2,7 @@ import { afterEach, expect, test } from 'bun:test';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-import { resolveInfraProject } from './project.js';
+import { resolveInfraProjectAsync } from './features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.js';
 import { createAppManifest, createWorkspaceFixture } from './testSupport.js';
 
 const tempRoots = new Set<string>();
@@ -33,7 +33,7 @@ test('Infra rejects nested manifest shapes rejected by Contracts', async () => {
   );
 
   const error = await captureError(
-    resolveInfraProject({ cwd: fixture.rootPath, projectId: fixture.projectId }),
+    resolveInfraProjectAsync({ cwd: fixture.rootPath, projectId: fixture.projectId }),
   );
   expect(error.message).toContain('Project manifest has an invalid shape');
 });

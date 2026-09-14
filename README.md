@@ -3,51 +3,42 @@
 
 # INFRA
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v4.1.8](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v4.1.12](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
 
 Executable infra provider and standalone CLI for Ankhorage project workflows.
 
 ## Usage
 
-### Provider, CLI, and project API surface
+### Provider-neutral infrastructure lifecycle
 
-`@ankhorage/infra` owns infrastructure generation, project reconciliation,
-and generated lifecycle execution.
+`@ankhorage/infra` resolves only the compute, runtime, and service adapter packages selected by
+an environment-aware Infra manifest. Its typed use cases own orchestration, dependency ordering,
+safe outputs, deterministic artifacts, and environment-scoped ownership state. Provider packages
+own all technology-specific implementation.
 
-The same owner implementation backs CLI consumers and the public
-`@ankhorage/infra/project` application-service boundary. Trusted hosts such
-as Studio should call that subpath instead of reproducing ledger, generated
-file, lifecycle-script, or port-forward configuration semantics.
-
-CLI entrypoints:
-
-- `ankh infra ...`
-- `bunx @ankhorage/infra ...`
-
-Current command surface:
+The standalone CLI and `ankh infra` expose the same lifecycle:
 
 - `validate`
+- `plan`
 - `generate`
-- `status`
 - `up`
+- `status`
+- `outputs`
 - `down`
+- `destroy`
 
-Project resolution for the CLI is workspace-aware: pass `[project]`, or
-omit it when cwd is already inside `apps/<project>`. Programmatic project
-operations accept an explicit project path and do not require Studio or a
-particular workspace layout.
-
-Running applications can repair their provider-aware host endpoints through
-`ensureProjectInfrastructureRuntime()` from `@ankhorage/infra/project`. This
-operation only ensures the generated runtime port-forward group; it does not
-deploy, bootstrap, or reconcile infrastructure.
+`local` is the only default environment. Destruction always requires an explicit environment and
+exact `<project>:<environment>` confirmation. Persistent resources remain retained unless each
+exact owned resource is separately authorized with `--delete-resource <adapter>:<resourceId>`.
+Environment-style outputs print only explicitly public values with an environment-variable name;
+secret outputs remain references.
 
 Source: `src/readme-usage.ts`
 
 ```ts
-import { runCli } from './cli/bin.js';
+import { runInfraCliAsync } from './cli/runInfraCliAsync.js';
 
-await runCli(['--help']);
+await runInfraCliAsync(['--help']);
 ```
 
 ## Generated documentation
@@ -58,8 +49,6 @@ await runCli(['--help']);
 - [Architecture overview](././paradox/diagrams/architecture-overview.mmd)
 - [Module relationships](././paradox/diagrams/module-relationships.mmd)
 - [Export graph](././paradox/diagrams/export-graph.mmd)
-- [ankhorage-infra sequence](././paradox/diagrams/sequences/ankhorage-infra.mmd)
-- [createInfraSecretStoreAdapter sequence](././paradox/diagrams/sequences/create-infra-secret-store-adapter.mmd)
-- [getLocalAuthRedirectPatterns sequence](././paradox/diagrams/sequences/get-local-auth-redirect-patterns.mmd)
-- [normalizeAuthCallbackRoute sequence](././paradox/diagrams/sequences/normalize-auth-callback-route.mmd)
-- [resolveAuthRedirectConfiguration sequence](././paradox/diagrams/sequences/resolve-auth-redirect-configuration.mmd)
+- [getInfraEnvironmentOutputs sequence](././paradox/diagrams/sequences/get-infra-environment-outputs.mmd)
+- [orderInfraPlanActions sequence](././paradox/diagrams/sequences/order-infra-plan-actions.mmd)
+- [resolveInfraEnvironment sequence](././paradox/diagrams/sequences/resolve-infra-environment.mmd)

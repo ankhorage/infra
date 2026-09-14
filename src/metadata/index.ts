@@ -4,4 +4,4 @@ export {
   INFRA_PACKAGE_METADATA,
   INFRA_PACKAGE_NAME,
   INFRA_PACKAGE_VERSION,
-} from '../packageMetadata.js';
+} from '../constants.js';
