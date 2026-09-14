@@ -533,6 +533,16 @@
               <button
                 class="nav-button"
                 type="button"
+                data-target="src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+              >
+                src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts
+                <small>4 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
                 data-target="src/features/environment-lifecycle/domain/orderInfraPlanActions.ts"
               >
                 src/features/environment-lifecycle/domain/orderInfraPlanActions.ts
@@ -695,7 +705,7 @@
             <div class="summary">
               <div><strong>38</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>70</strong><span class="muted">modules</span></div>
+              <div><strong>71</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -1452,6 +1462,21 @@
             </article>
             <article
               class="item"
+              data-search="src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts src/constants.ts src/features/environment-lifecycle/composition/createInfraCommandServices.ts src/types/infraOrchestration.ts src/types/infraProject.ts createProjectInfraLifecycle"
+            >
+              <h3>src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong> <code>src/constants.ts</code>,
+                <code
+                  >src/features/environment-lifecycle/composition/createInfraCommandServices.ts</code
+                >, <code>src/types/infraOrchestration.ts</code>,
+                <code>src/types/infraProject.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>createProjectInfraLifecycle</code></p>
+            </article>
+            <article
+              class="item"
               data-search="src/features/environment-lifecycle/domain/orderInfraPlanActions.ts orderInfraPlanActions"
             >
               <h3>src/features/environment-lifecycle/domain/orderInfraPlanActions.ts</h3>
@@ -1643,13 +1668,16 @@
             </article>
             <article
               class="item"
-              data-search="src/project/index.ts InfraArtifactWriteResult readStoredInfraStateAsync removeStoredInfraStateAsync ResolvedInfraProject resolveInfraProjectAsync resolveProjectFile writeInfraGeneratedArtifactsAsync writeStoredInfraStateAsync"
+              data-search="src/project/index.ts createProjectInfraLifecycle CreateProjectInfraLifecycleOptions InfraArtifactWriteResult ProjectInfraDestroyRequest ProjectInfraLifecycle ProjectInfraOperationRequest readStoredInfraStateAsync removeStoredInfraStateAsync ResolvedInfraProject resolveInfraProjectAsync resolveProjectFile writeInfraGeneratedArtifactsAsync writeStoredInfraStateAsync"
             >
               <h3>src/project/index.ts</h3>
               <p class="muted">Referenced module</p>
               <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
               <p>
-                <strong>Exports:</strong> <code>InfraArtifactWriteResult</code>,
+                <strong>Exports:</strong> <code>createProjectInfraLifecycle</code>,
+                <code>CreateProjectInfraLifecycleOptions</code>,
+                <code>InfraArtifactWriteResult</code>, <code>ProjectInfraDestroyRequest</code>,
+                <code>ProjectInfraLifecycle</code>, <code>ProjectInfraOperationRequest</code>,
                 <code>readStoredInfraStateAsync</code>, <code>removeStoredInfraStateAsync</code>,
                 <code>ResolvedInfraProject</code>, <code>resolveInfraProjectAsync</code>,
                 <code>resolveProjectFile</code>, <code>writeInfraGeneratedArtifactsAsync</code>,
@@ -1755,13 +1783,18 @@
             </article>
             <article
               class="item"
-              data-search="src/types/infraProject.ts InfraArtifactWriteResult ResolvedInfraProject"
+              data-search="src/types/infraProject.ts src/types/infraCli.ts src/types/infraOrchestration.ts CreateProjectInfraLifecycleOptions InfraArtifactWriteResult ProjectInfraDestroyRequest ProjectInfraLifecycle ProjectInfraOperationRequest ResolvedInfraProject"
             >
               <h3>src/types/infraProject.ts</h3>
               <p class="muted">Referenced module</p>
-              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
               <p>
-                <strong>Exports:</strong> <code>InfraArtifactWriteResult</code>,
+                <strong>Dependencies:</strong> <code>src/types/infraCli.ts</code>,
+                <code>src/types/infraOrchestration.ts</code>
+              </p>
+              <p>
+                <strong>Exports:</strong> <code>CreateProjectInfraLifecycleOptions</code>,
+                <code>InfraArtifactWriteResult</code>, <code>ProjectInfraDestroyRequest</code>,
+                <code>ProjectInfraLifecycle</code>, <code>ProjectInfraOperationRequest</code>,
                 <code>ResolvedInfraProject</code>
               </p>
             </article>
@@ -3932,6 +3965,18 @@
                 module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
                 module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts
                 --&gt; module_src_types_infraCli_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts[&quot;src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts&quot;]
+                package__ankhorage_infra -.-&gt;
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt; module_src_constants_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt;
+                module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt; module_src_types_infraOrchestration_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt; module_src_types_infraProject_ts
                 module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts[&quot;src/features/environment-lifecycle/domain/orderInfraPlanActions.ts&quot;]
                 package__ankhorage_infra -.-&gt;
                 module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts
@@ -4033,6 +4078,8 @@
                 module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
                 module_src_types_infraProject_ts[&quot;src/types/infraProject.ts&quot;]
                 package__ankhorage_infra -.-&gt; module_src_types_infraProject_ts
+                module_src_types_infraProject_ts --&gt; module_src_types_infraCli_ts
+                module_src_types_infraProject_ts --&gt; module_src_types_infraOrchestration_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -4299,6 +4346,12 @@ graph TD
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts --&gt; module_src_types_infraCli_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts[&quot;src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_constants_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_types_infraOrchestration_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_types_infraProject_ts
   module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts[&quot;src/features/environment-lifecycle/domain/orderInfraPlanActions.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts
   module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts[&quot;src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts&quot;]
@@ -4365,6 +4418,8 @@ graph TD
   module_src_types_infraOrchestration_ts --&gt; module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
   module_src_types_infraProject_ts[&quot;src/types/infraProject.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_types_infraProject_ts
+  module_src_types_infraProject_ts --&gt; module_src_types_infraCli_ts
+  module_src_types_infraProject_ts --&gt; module_src_types_infraOrchestration_ts
 </pre>
               </details>
             </article>
@@ -4423,6 +4478,7 @@ graph TD
                 module_src_features_environment_lifecycle_application_use_cases_validateInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts&quot;]
                 module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts[&quot;src/features/environment-lifecycle/composition/createInfraCommandServices.ts&quot;]
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts[&quot;src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts&quot;]
                 module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts[&quot;src/features/environment-lifecycle/domain/orderInfraPlanActions.ts&quot;]
                 module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts[&quot;src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts&quot;]
                 module_src_features_environment_lifecycle_utils_appendInfraFailure_ts[&quot;src/features/environment-lifecycle/utils/appendInfraFailure.ts&quot;]
@@ -4742,6 +4798,15 @@ graph TD
                 module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
                 module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts
                 --&gt; module_src_types_infraCli_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt; module_src_constants_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt;
+                module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt; module_src_types_infraOrchestration_ts
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts
+                --&gt; module_src_types_infraProject_ts
                 module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts --&gt;
                 module_src_types_infraOrchestration_ts
                 module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts
@@ -4785,6 +4850,8 @@ graph TD
                 module_src_types_infraCli_ts --&gt; module_src_types_infraProject_ts
                 module_src_types_infraOrchestration_ts --&gt;
                 module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
+                module_src_types_infraProject_ts --&gt; module_src_types_infraCli_ts
+                module_src_types_infraProject_ts --&gt; module_src_types_infraOrchestration_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -4838,6 +4905,7 @@ graph LR
   module_src_features_environment_lifecycle_application_use_cases_validateInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts&quot;]
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts[&quot;src/features/environment-lifecycle/composition/createInfraCommandServices.ts&quot;]
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts[&quot;src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts&quot;]
   module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts[&quot;src/features/environment-lifecycle/domain/orderInfraPlanActions.ts&quot;]
   module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts[&quot;src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts&quot;]
   module_src_features_environment_lifecycle_utils_appendInfraFailure_ts[&quot;src/features/environment-lifecycle/utils/appendInfraFailure.ts&quot;]
@@ -5022,6 +5090,10 @@ graph LR
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts --&gt; module_src_types_infraCli_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_constants_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_types_infraOrchestration_ts
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts --&gt; module_src_types_infraProject_ts
   module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_features_environment_lifecycle_utils_isInfraStoredState_ts --&gt; module_src_types_infraOrchestration_ts
@@ -5045,6 +5117,8 @@ graph LR
   module_src_types_infraCli_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraProject_ts
   module_src_types_infraOrchestration_ts --&gt; module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
+  module_src_types_infraProject_ts --&gt; module_src_types_infraCli_ts
+  module_src_types_infraProject_ts --&gt; module_src_types_infraOrchestration_ts
 </pre>
               </details>
             </article>
@@ -5100,6 +5174,7 @@ graph LR
                 module_src_features_environment_lifecycle_application_use_cases_validateInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts&quot;]
                 module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts[&quot;src/features/environment-lifecycle/composition/createInfraCommandServices.ts&quot;]
+                module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts[&quot;src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts&quot;]
                 module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts[&quot;src/features/environment-lifecycle/domain/orderInfraPlanActions.ts&quot;]
                 module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts[&quot;src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts&quot;]
                 module_src_features_environment_lifecycle_utils_appendInfraFailure_ts[&quot;src/features/environment-lifecycle/utils/appendInfraFailure.ts&quot;]
@@ -5298,6 +5373,7 @@ graph LR
   module_src_features_environment_lifecycle_application_use_cases_validateInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts&quot;]
   module_src_features_environment_lifecycle_composition_createInfraCommandServices_ts[&quot;src/features/environment-lifecycle/composition/createInfraCommandServices.ts&quot;]
+  module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts[&quot;src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts&quot;]
   module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts[&quot;src/features/environment-lifecycle/domain/orderInfraPlanActions.ts&quot;]
   module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts[&quot;src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts&quot;]
   module_src_features_environment_lifecycle_utils_appendInfraFailure_ts[&quot;src/features/environment-lifecycle/utils/appendInfraFailure.ts&quot;]
@@ -6931,6 +7007,70 @@ sequenceDiagram
                 Compose command use cases with filesystem, environment-value and package-resolver
                 adapters.
               </p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-features-environment-lifecycle-composition-createprojectinfralifecycle-ts"
+          class="view"
+          data-view="src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts</h2>
+            <article
+              class="item"
+              data-search="createProjectInfraLifecycle src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Create the typed project-facing Infra lifecycle backed by canonical use cases and ownership state."
+            >
+              <h3>createProjectInfraLifecycle</h3>
+              <p class="muted">
+                <code
+                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:13:1</code
+                >
+              </p>
+              <p>
+                Create the typed project-facing Infra lifecycle backed by canonical use cases and
+                ownership state.
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="prepareProjectOperationAsync src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Resolve one explicit project/environment request with its prior ownership state and dependencies."
+            >
+              <h3>prepareProjectOperationAsync</h3>
+              <p class="muted">
+                <code
+                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:108:1</code
+                >
+              </p>
+              <p>
+                Resolve one explicit project/environment request with its prior ownership state and
+                dependencies.
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="readEnvironment src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Read one exact environment without inventing a fallback."
+            >
+              <h3>readEnvironment</h3>
+              <p class="muted">
+                <code
+                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:141:1</code
+                >
+              </p>
+              <p>Read one exact environment without inventing a fallback.</p>
+            </article>
+            <article
+              class="item"
+              data-search="replaceEnvironment src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Replace one selected environment while preserving all other manifest state."
+            >
+              <h3>replaceEnvironment</h3>
+              <p class="muted">
+                <code
+                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:151:1</code
+                >
+              </p>
+              <p>Replace one selected environment while preserving all other manifest state.</p>
             </article>
           </section>
         </section>
