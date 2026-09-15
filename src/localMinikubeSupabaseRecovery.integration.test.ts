@@ -295,12 +295,23 @@ async function findPodAsync(prefix: string, excludedPrefix?: string): Promise<st
 }
 
 async function collectFailureDiagnosticsAsync(): Promise<string> {
-  const [auth, storageStatus, buckets] = await Promise.all([
+  const [auth, storageStatus, buckets, databaseLogs] = await Promise.all([
     readEndpointDiagnosticAsync('/auth/v1/health', false),
     readEndpointDiagnosticAsync('/storage/v1/status', false),
     readEndpointDiagnosticAsync('/storage/v1/bucket', true),
+    readDatabaseLogsAsync(),
   ]);
-  return [auth, storageStatus, buckets].join(' | ');
+  return [auth, storageStatus, buckets, databaseLogs].join(' | ');
+}
+
+async function readDatabaseLogsAsync(): Promise<string> {
+  const pod = await findPodAsync('supabase-db-', 'supabase-db-backup-').catch(() => undefined);
+  if (pod === undefined) return 'database-logs=unavailable';
+  const logs = await runAsync(
+    ['kubectl', 'logs', '--namespace', namespace, pod, '--container', 'supabase-db', '--tail=200'],
+    'read database recovery logs',
+  ).catch((error: unknown) => (error instanceof Error ? error.message : String(error)));
+  return `database-logs=${redactDiagnosticText(logs).slice(-4_000)}`;
 }
 
 async function readEndpointDiagnosticAsync(path: string, authenticated: boolean): Promise<string> {
