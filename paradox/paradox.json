@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v5.0.0",
+      "value": "v5.1.2",
       "color": "cb3837"
     },
     {
@@ -2585,7 +2585,7 @@
       "description": "Refuse cross-project confirmation and unowned persistent deletion before any mutation.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
-        "line": 85,
+        "line": 97,
         "column": 1
       }
     },
@@ -2594,7 +2594,7 @@
       "description": "Create one stable non-provider-specific destroy safety failure.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
-        "line": 117,
+        "line": 129,
         "column": 1
       }
     },
