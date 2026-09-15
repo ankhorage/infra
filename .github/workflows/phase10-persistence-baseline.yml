@@ -43,3 +43,4 @@ jobs:
           git add package.json bun.lock src/hetznerK3sProduction.test.ts .changeset/steady-production-persistence.md .github/phase10-persistence-baseline.py .github/workflows/phase10-persistence-baseline.yml
           git commit -m 'test: prove production persistence baseline'
           git push origin HEAD:test/145-production-persistence-baseline
+# registration trigger
