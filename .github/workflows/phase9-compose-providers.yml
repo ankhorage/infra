@@ -25,7 +25,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.4.2'
-      - run: bun update @ankhorage/docker-compose@^0.5.3 @ankhorage/supabase@^0.4.6
+      - run: bun update @ankhorage/docker-compose@^0.5.3 @ankhorage/supabase@^0.4.7
       - run: bun run build
       - run: bun run check-types
       - run: bun run lint
