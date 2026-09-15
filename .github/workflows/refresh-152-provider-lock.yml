@@ -28,14 +28,21 @@ jobs:
           import { readFileSync, writeFileSync } from 'node:fs';
           const manifest = JSON.parse(readFileSync('package.json', 'utf8'));
           manifest.devDependencies['@ankhorage/supabase'] = '^0.4.2';
+          manifest.overrides = {
+            ...(manifest.overrides ?? {}),
+            '@ankhorage/kubernetes': '0.7.1',
+          };
           writeFileSync('package.json', `${JSON.stringify(manifest, null, 2)}\n`);
           NODE
           bun install --lockfile-only
-          cp package.json "${RUNNER_TEMP}/infra-package.json"
-          # Ask Bun to resolve the patched transitive driver, then restore the
-          # real package boundary: Infra must not depend directly on Kubernetes.
-          bun add --dev --lockfile-only @ankhorage/kubernetes@0.7.1
-          cp "${RUNNER_TEMP}/infra-package.json" package.json
+
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const manifest = JSON.parse(readFileSync('package.json', 'utf8'));
+          delete manifest.overrides['@ankhorage/kubernetes'];
+          if (Object.keys(manifest.overrides).length === 0) delete manifest.overrides;
+          writeFileSync('package.json', `${JSON.stringify(manifest, null, 2)}\n`);
+          NODE
           bun install --lockfile-only
           bun install --frozen-lockfile
       - name: Verify actual Minikube dependency resolution
@@ -52,7 +59,10 @@ jobs:
           if (driver.version !== "0.7.1") throw new Error(`Unexpected Minikube driver: ${driver.version}`);
           if (supabase.version !== "0.4.2") throw new Error(`Unexpected Supabase provider: ${supabase.version}`);
           if (manifest.dependencies["@ankhorage/kubernetes"] || manifest.devDependencies["@ankhorage/kubernetes"]) {
-            throw new Error("A temporary direct driver dependency must not remain.");
+            throw new Error("Infra must not depend directly on Kubernetes.");
+          }
+          if (manifest.overrides?.["@ankhorage/kubernetes"]) {
+            throw new Error("The temporary Kubernetes override must not remain.");
           }
           console.log(`Supabase ${supabase.version}; Minikube driver ${driver.version}`);
           '
