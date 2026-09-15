@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 5.1.4
+
+### Patch Changes
+
+- 3a4d8a3: Consume the current Infra networking TLS contract while proving the released k3s production HTTPS integration in the Hetzner composition acceptance baseline.
+
 ## 5.1.3
 
 ### Patch Changes
