@@ -66,6 +66,22 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Report resolved runtime package versions
+        run: |
+          bun --eval '
+          import { createRequire } from "node:module";
+          import { dirname, resolve } from "node:path";
+
+          const supabaseEntry = import.meta.resolve("@ankhorage/supabase");
+          const supabase = await Bun.file(new URL("../package.json", supabaseEntry)).json();
+          const minikubeRequire = createRequire(import.meta.resolve("@ankhorage/minikube"));
+          const driverEntry = minikubeRequire.resolve("@ankhorage/kubernetes");
+          const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();
+
+          console.log(`Supabase provider: ${supabase.version}`);
+          console.log(`Minikube Kubernetes driver: ${driver.version}`);
+          '
+
       - name: Run local Minikube Supabase acceptance
         timeout-minutes: 8
         run: bun run test:e2e:minikube-supabase
