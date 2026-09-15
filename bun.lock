@@ -45,7 +45,7 @@
 
     "@ankhorage/k3s": ["@ankhorage/k3s@0.4.1", "", { "dependencies": { "@ankhorage/contracts": "^19.4.0", "@ankhorage/kubernetes": "^0.8.0", "@ankhorage/utility": "^1.2.0" } }, "sha512-2eJPogq0syjfwTiYcUVovSP+ZsbowrnrUjvSdkgl8BXvyfji/8/bxhWd0ZTmGPBc8BWRISJaNOsAAMrVT+7aXA=="],
 
-    "@ankhorage/kubernetes": ["@ankhorage/kubernetes@0.8.0", "", { "dependencies": { "@ankhorage/contracts": "^19.4.0" } }, "sha512-BTltb73VBdUcQKgxsGJyyNK/8gveU/TSMRsi6D3Z6HAyGEauPqLb8/cQiIaZrlxD8NpbjIdKDdih7K4TjPGMow=="],
+    "@ankhorage/kubernetes": ["@ankhorage/kubernetes@0.8.1", "", { "dependencies": { "@ankhorage/contracts": "^19.4.0" } }, "sha512-mLLAl8+pdPkXJEr/lew37tOjYh/NS1rkylfux5AZ1KnG7m2jd82ObHG6RDL6TEuPEhTVzRRuLKMSEv2Kh6yZgA=="],
 
     "@ankhorage/local": ["@ankhorage/local@0.3.0", "", { "dependencies": { "@ankhorage/contracts": "^19.0.0" } }, "sha512-TdF1LyEhOl6ahMJNVn3zb15a3rZjSliRdd7RQcDufeBre2qeeCSBHxcc2ipbCRGtY6oa3/gaunkBVhbCvOEEBA=="],
 
