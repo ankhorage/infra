@@ -43,6 +43,7 @@ export async function destroyInfraEnvironmentAsync(
     outputs.push(...result.value.outputs);
     diagnostics.push(...result.diagnostics);
   }
+  let runtimeRetained = false;
   if (prepared.value.runtimeDesired.targets.length > 0) {
     const runtime = await prepared.value.adapters.runtime.destroyAsync(
       prepared.value.context,
@@ -50,18 +51,29 @@ export async function destroyInfraEnvironmentAsync(
       destroyRequest,
     );
     if (!runtime.ok) return appendInfraFailure(diagnostics, runtime);
+    runtimeRetained = runtime.value.resources.length > 0;
     resources.push(...runtime.value.resources);
     outputs.push(...runtime.value.outputs);
     diagnostics.push(...runtime.diagnostics);
   }
-  const compute = await prepared.value.adapters.compute.destroyAsync(
-    prepared.value.context,
-    destroyRequest,
-  );
-  if (!compute.ok) return appendInfraFailure(diagnostics, compute);
-  resources.push(...compute.value.resources);
-  outputs.push(...compute.value.outputs);
-  diagnostics.push(...compute.diagnostics);
+  if (runtimeRetained) {
+    resources.push(...prepared.value.compute.resources);
+    outputs.push(...prepared.value.compute.outputs);
+    diagnostics.push({
+      severity: 'info',
+      code: 'infra-compute-retained-for-runtime',
+      message: 'Compute remains active because runtime-owned resources survived destruction.',
+    });
+  } else {
+    const compute = await prepared.value.adapters.compute.destroyAsync(
+      prepared.value.context,
+      destroyRequest,
+    );
+    if (!compute.ok) return appendInfraFailure(diagnostics, compute);
+    resources.push(...compute.value.resources);
+    outputs.push(...compute.value.outputs);
+    diagnostics.push(...compute.diagnostics);
+  }
   const remainingResources = mergeInfraResources(resources);
   const remainingOutputs = mergeInfraOutputs(outputs);
   const ledger =
@@ -70,7 +82,7 @@ export async function destroyInfraEnvironmentAsync(
       : createInfraLedger({
           projectId: request.projectId,
           environment: prepared.value.environment.id,
-          targets: [],
+          targets: runtimeRetained ? prepared.value.compute.targets : [],
           resources: remainingResources,
           outputs: remainingOutputs,
         });
