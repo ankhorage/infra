@@ -1,0 +1,70 @@
+name: Repair Phase 10 production acceptance
+
+on:
+  push:
+    branches:
+      - test/145-hetzner-k3s-production-composition
+    paths:
+      - '.github/workflows/phase10-pr156-fix.yml'
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: test/145-hetzner-k3s-production-composition
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: bun install --frozen-lockfile
+      - name: Apply targeted test cleanup
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/hetznerK3sProduction.test.ts')
+          text = path.read_text()
+          replacements = {
+              "  let ledger: InfraLedger = firstUp.ledger;\n": "  const firstLedger: InfraLedger = firstUp.ledger;\n",
+              "  const access = fixture.k3s.lastAccess[0];\n": "  const [access] = fixture.k3s.lastAccess;\n",
+              "  expect(fixture.kubernetes.serializedResources()).toContain(`\\\"host\\\":\\\"${domain}\\\"`);\n": "  expect(fixture.kubernetes.serializedResources()).toContain(`\"host\":\"${domain}\"`);\n",
+              "  expect(\n    firstUp.outputs.some(\n      ({ name, value, visibility }) =>\n        name === 'url' && value === publicBaseUrl && visibility === 'public',\n    ),\n  ).toBe(true);\n": "  const urlOutput = firstUp.outputs.find(({ name }) => name === 'url');\n  expect(urlOutput?.value).toBe(publicBaseUrl);\n  expect(urlOutput?.visibility).toBe('public');\n",
+              "      { projectId, manifest, environment: 'production', previous: ledger },\n": "      { projectId, manifest, environment: 'production', previous: firstLedger },\n",
+              "  ledger = down.ledger;\n": "  const { ledger: downLedger } = down;\n",
+              "      { projectId, manifest, environment: 'production', previous: ledger },\n      dependencies,\n    ),\n  );\n  ledger = resumed.ledger;\n": "      { projectId, manifest, environment: 'production', previous: downLedger },\n      dependencies,\n    ),\n  );\n  const { ledger: resumedLedger } = resumed;\n",
+              "        previous: ledger,\n": "        previous: resumedLedger,\n",
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing replacement: {old!r}')
+              text = text.replace(old, new, 1)
+          path.write_text(text)
+          PY
+      - run: bun run lint:fix || true
+      - run: bun run format
+      - run: bun run build
+      - run: bun run check-types
+      - run: bun run lint
+      - run: bun run knip:test
+      - run: bun run test
+      - run: bun run changeset:status
+      - run: bun run format:check
+      - name: Commit validated repair
+        run: |
+          rm .github/workflows/phase10-pr156-fix.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add src/hetznerK3sProduction.test.ts .github/workflows/phase10-pr156-fix.yml
+          git commit -m 'test: validate Phase 10 production composition'
+          git push origin HEAD:test/145-hetzner-k3s-production-composition
