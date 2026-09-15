@@ -17,8 +17,12 @@ import { upInfraEnvironmentAsync } from './features/environment-lifecycle/applic
 import type { InfraOrchestrationDependencies } from './types/infraOrchestration.js';
 
 const projectId = 'infra145-minikube-supabase';
+const acceptanceNamespace = `${projectId}-local`;
 const baseUrl = 'http://127.0.0.1:54321';
 const bucket = 'phase8-acceptance';
+const staleOwnedConfigMap = 'phase8-stale-owned';
+const unrelatedConfigMap = 'phase8-unrelated';
+const staleOwnedResourceId = 'stale:phase8-owned';
 const jwtSecret = 'phase8-jwt-secret-that-is-at-least-thirty-two-characters';
 const credentials = {
   postgresPassword: 'phase8-postgres-password',
@@ -94,6 +98,32 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       );
       expect(convergedPlan.actions.every(({ operation }) => operation === 'noop')).toBe(true);
 
+      await createStaleOwnershipFixturesAsync();
+      const stalePlan = requireSuccess(
+        await planInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
+      );
+      expect(
+        stalePlan.actions.some(
+          ({ operation, owner }) =>
+            operation === 'delete' && owner.resourceId === staleOwnedResourceId,
+        ),
+      ).toBe(true);
+
+      const { ledger: prunedLedger } = requireSuccess(
+        await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
+      );
+      ledger = prunedLedger;
+      expect(await configMapExistsAsync(staleOwnedConfigMap)).toBe(false);
+      expect(await configMapExistsAsync(unrelatedConfigMap)).toBe(true);
+      await runKubectlAsync([
+        'delete',
+        'configmap',
+        unrelatedConfigMap,
+        '--namespace',
+        acceptanceNamespace,
+        '--ignore-not-found=true',
+      ]);
+
       const { ledger: downLedger } = requireSuccess(
         await downInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
       );
@@ -127,6 +157,75 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
   },
   900_000,
 );
+
+async function createStaleOwnershipFixturesAsync(): Promise<void> {
+  await runKubectlAsync([
+    'create',
+    'configmap',
+    staleOwnedConfigMap,
+    '--namespace',
+    acceptanceNamespace,
+    '--from-literal=marker=stale',
+  ]);
+  await runKubectlAsync([
+    'label',
+    'configmap',
+    staleOwnedConfigMap,
+    '--namespace',
+    acceptanceNamespace,
+    'app.kubernetes.io/managed-by=ankhorage-infra',
+    `infra.ankhorage.dev/project=${projectId}`,
+    'infra.ankhorage.dev/environment=local',
+  ]);
+  await runKubectlAsync([
+    'annotate',
+    'configmap',
+    staleOwnedConfigMap,
+    '--namespace',
+    acceptanceNamespace,
+    `infra.ankhorage.dev/project-id=${projectId}`,
+    'infra.ankhorage.dev/environment=local',
+    'infra.ankhorage.dev/adapter=minikube',
+    `infra.ankhorage.dev/resource-id=${staleOwnedResourceId}`,
+    'infra.ankhorage.dev/persistent=false',
+    'infra.ankhorage.dev/retention=retain',
+    'infra.ankhorage.dev/depends-on=[]',
+  ]);
+  await runKubectlAsync([
+    'create',
+    'configmap',
+    unrelatedConfigMap,
+    '--namespace',
+    acceptanceNamespace,
+    '--from-literal=marker=unrelated',
+  ]);
+}
+
+async function configMapExistsAsync(name: string): Promise<boolean> {
+  const output = await runKubectlAsync([
+    'get',
+    'configmap',
+    name,
+    '--namespace',
+    acceptanceNamespace,
+    '--ignore-not-found=true',
+    '--output=name',
+  ]);
+  return output === `configmap/${name}`;
+}
+
+async function runKubectlAsync(args: readonly string[]): Promise<string> {
+  const process = Bun.spawn(['kubectl', ...args], { stdout: 'pipe', stderr: 'pipe' });
+  const [exitCode, stdout, stderr] = await Promise.all([
+    process.exited,
+    new Response(process.stdout).text(),
+    new Response(process.stderr).text(),
+  ]);
+  if (exitCode !== 0) {
+    throw new Error(`kubectl ${args.join(' ')} failed: ${stderr.trim()}`);
+  }
+  return stdout.trim();
+}
 
 function createDependencies(): InfraOrchestrationDependencies {
   return {
