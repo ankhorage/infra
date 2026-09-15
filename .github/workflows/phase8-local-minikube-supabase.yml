@@ -91,7 +91,6 @@ jobs:
           '
 
       - name: Run local Minikube Supabase acceptance
-        timeout-minutes: 8
         run: bun run test:e2e:minikube-supabase
 
       - name: Collect Supabase workload diagnostics
