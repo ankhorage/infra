@@ -115,7 +115,7 @@
     "@ankhorage/hetzner": "^0.3.0",
     "@ankhorage/k3s": "^0.3.0",
     "@ankhorage/local": "^0.3.0",
-    "@ankhorage/minikube": "^0.4.0",
+    "@ankhorage/minikube": "^0.4.1",
     "@ankhorage/paradox": "^0.1.24",
     "@ankhorage/r2": "^0.2.0",
     "@ankhorage/supabase": "^0.4.3",
