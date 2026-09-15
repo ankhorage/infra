@@ -55,7 +55,15 @@ jobs:
       - run: bun run format
       - run: bun run build
       - run: bun run check-types
-      - run: bun run lint
+      - name: Run lint with focused diagnostics
+        run: |
+          set +e
+          bun run lint
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            nl -ba src/hetznerK3sProduction.test.ts | sed -n '108,134p'
+          fi
+          exit "$status"
       - run: bun run knip:test
       - run: bun run test
       - run: bun run changeset:status
