@@ -68,11 +68,11 @@ test.skipIf(process.env.ANKH_INFRA_DOCKER_COMPOSE_PROVIDERS_E2E !== '1')(
       );
       expect(initialPlan.actions.some(({ operation }) => operation === 'create')).toBe(true);
 
-      const firstUp = requireSuccess(
+      const { ledger: firstLedger, outputs: firstOutputs } = requireSuccess(
         await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
       );
-      ledger = firstUp.ledger;
-      assertProviderNeutralOutputs(firstUp.outputs);
+      ledger = firstLedger;
+      assertProviderNeutralOutputs(firstOutputs);
 
       const status = requireSuccess(
         await statusInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
@@ -89,16 +89,16 @@ test.skipIf(process.env.ANKH_INFRA_DOCKER_COMPOSE_PROVIDERS_E2E !== '1')(
       );
       expect(convergedPlan.actions.every(({ operation }) => operation === 'noop')).toBe(true);
 
-      const down = requireSuccess(
+      const { ledger: downLedger } = requireSuccess(
         await downInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
       );
-      ledger = down.ledger;
+      ledger = downLedger;
 
-      const resumed = requireSuccess(
+      const { ledger: resumedLedger, outputs: resumedOutputs } = requireSuccess(
         await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
       );
-      ledger = resumed.ledger;
-      assertProviderNeutralOutputs(resumed.outputs);
+      ledger = resumedLedger;
+      assertProviderNeutralOutputs(resumedOutputs);
 
       const health = await fetch(`${baseUrl}/auth/v1/health`);
       expect(health.ok).toBe(true);
