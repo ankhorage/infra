@@ -66,18 +66,25 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Report resolved runtime package versions
+      - name: Verify resolved runtime package versions
         run: |
           bun --eval '
           import { createRequire } from "node:module";
           import { dirname, resolve } from "node:path";
 
+          const minikubeEntry = import.meta.resolve("@ankhorage/minikube");
+          const minikube = await Bun.file(new URL("../package.json", minikubeEntry)).json();
           const supabaseEntry = import.meta.resolve("@ankhorage/supabase");
           const supabase = await Bun.file(new URL("../package.json", supabaseEntry)).json();
-          const minikubeRequire = createRequire(import.meta.resolve("@ankhorage/minikube"));
+          const minikubeRequire = createRequire(minikubeEntry);
           const driverEntry = minikubeRequire.resolve("@ankhorage/kubernetes");
           const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();
 
+          if (minikube.version !== "0.4.1") throw new Error(`Expected Minikube 0.4.1, got ${minikube.version}`);
+          if (supabase.version !== "0.4.3") throw new Error(`Expected Supabase 0.4.3, got ${supabase.version}`);
+          if (driver.version !== "0.7.2") throw new Error(`Expected Kubernetes 0.7.2, got ${driver.version}`);
+
+          console.log(`Minikube runtime: ${minikube.version}`);
           console.log(`Supabase provider: ${supabase.version}`);
           console.log(`Minikube Kubernetes driver: ${driver.version}`);
           '
