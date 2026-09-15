@@ -18,7 +18,7 @@
         "@ankhorage/minikube": "^0.4.0",
         "@ankhorage/paradox": "^0.1.24",
         "@ankhorage/r2": "^0.2.0",
-        "@ankhorage/supabase": "^0.4.1",
+        "@ankhorage/supabase": "^0.4.2",
         "@ankhorage/supabase-vault": "^0.3.1",
         "@types/bun": "^1.4.1",
         "@types/node": "^25.6.0",
@@ -55,7 +55,7 @@
 
     "@ankhorage/r2": ["@ankhorage/r2@0.2.0", "", { "dependencies": { "@ankhorage/contracts": "^16.0.0", "@ankhorage/utility": "^0.8.0" } }, "sha512-aM4F7r7p5l5QNUcyryeHHP47udhsXOXtBdLfA+0gfSBTSjNZx6zm381b6SZeIATpO6lxzTfO3etAVmYRsKrVyA=="],
 
-    "@ankhorage/supabase": ["@ankhorage/supabase@0.4.1", "", { "dependencies": { "@ankhorage/contracts": "^19.1.0" } }, "sha512-LHLdPkOSabi6Q0WPBs+/U14AG2FTTP88kJJShhhcx2MKT9DRFQKS9EVvFzZiqGwpeb2VspSEQXlIdnEyj59NTg=="],
+    "@ankhorage/supabase": ["@ankhorage/supabase@0.4.2", "", { "dependencies": { "@ankhorage/contracts": "^19.1.0" } }, "sha512-ACw8hLdzjFz8Kw+qFMrJgn2xHiCYgxJjrqDe3qQfDgCx8kvs4xC4+L2Ru0bmyJyJz+LuQ+aV79b1duO3xuWIZg=="],
 
     "@ankhorage/supabase-auth": ["@ankhorage/supabase-auth@1.2.8", "", { "dependencies": { "@ankhorage/contracts": "^8.0.2", "@noble/hashes": "2.3.0" } }, "sha512-S8hSWS7pTAokKSKPs3gtRG0A82NH6iyHeNyMEOi3btCxv9UKbdkesJCRXyT8tAvjkaqRCuSQKJqO91qpC1qMeQ=="],
 
