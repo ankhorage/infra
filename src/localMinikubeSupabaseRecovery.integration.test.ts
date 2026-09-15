@@ -83,11 +83,11 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_RECOVERY_E2E !== '1')(
 
       const destroyed = requireSuccess(
         await destroyInfraEnvironmentAsync(
-          createDestroyRequest(firstUp.ledger, persistentIdentities(firstUp.ledger)),
+          createDestroyRequest(firstUp.ledger, clusterPersistentIdentities(firstUp.ledger)),
           dependencies,
         ),
       );
-      expect(destroyed.ledger).toBeNull();
+      expectRetainedStorageBucket(destroyed.ledger);
 
       const recovered = requireSuccess(
         await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
@@ -97,15 +97,15 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_RECOVERY_E2E !== '1')(
 
       const finalDestroy = requireSuccess(
         await destroyInfraEnvironmentAsync(
-          createDestroyRequest(recovered.ledger, persistentIdentities(recovered.ledger)),
+          createDestroyRequest(recovered.ledger, clusterPersistentIdentities(recovered.ledger)),
           dependencies,
         ),
       );
-      expect(finalDestroy.ledger).toBeNull();
+      expectRetainedStorageBucket(finalDestroy.ledger);
     } catch (error) {
       const diagnostics = await collectFailureDiagnosticsAsync();
       const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`${message}\nRecovery diagnostics: ${diagnostics}`);
+      throw new Error(`${message}\nRecovery diagnostics: ${diagnostics}`, { cause: error });
     } finally {
       await runAllowFailureAsync(['minikube', 'delete', '-p', profile]);
       await stopMinioAsync();
@@ -355,8 +355,16 @@ function createDestroyRequest(
   };
 }
 
-function persistentIdentities(ledger: InfraLedger): readonly InfraResourceIdentity[] {
-  return ledger.resources.filter(({ persistent }) => persistent).map(({ identity }) => identity);
+function clusterPersistentIdentities(ledger: InfraLedger): readonly InfraResourceIdentity[] {
+  return ledger.resources
+    .filter(({ identity, persistent }) => persistent && identity.adapter !== 'supabase')
+    .map(({ identity }) => identity);
+}
+
+function expectRetainedStorageBucket(ledger: InfraLedger | null): void {
+  expect(
+    ledger?.resources.map(({ identity }) => `${identity.adapter}:${identity.resourceId}`),
+  ).toEqual([`supabase:bucket/${logicalBucket}`]);
 }
 
 function supabaseCredentials() {
