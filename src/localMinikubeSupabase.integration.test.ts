@@ -121,10 +121,10 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       );
       expect(stalePlan.actions.some(({ operation }) => operation === 'delete')).toBe(true);
 
-      const pruned = requireSuccess(
+      const { ledger: prunedLedger } = requireSuccess(
         await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
       );
-      ledger = pruned.ledger;
+      ledger = prunedLedger;
       expect(await kubernetesResourceExistsAsync('deployment', staleWorkloadId)).toBe(false);
       expect(await kubernetesResourceExistsAsync('configmap', externalConfigMap)).toBe(true);
 
