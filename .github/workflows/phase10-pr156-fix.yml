@@ -40,7 +40,6 @@ jobs:
               "  const access = fixture.k3s.lastAccess[0];\n": "  const [access] = fixture.k3s.lastAccess;\n",
               "  expect(fixture.kubernetes.serializedResources()).toContain(`\\\"host\\\":\\\"${domain}\\\"`);\n": "  expect(fixture.kubernetes.serializedResources()).toContain(`\"host\":\"${domain}\"`);\n",
               "  expect(\n    firstUp.outputs.some(\n      ({ name, value, visibility }) =>\n        name === 'url' && value === publicBaseUrl && visibility === 'public',\n    ),\n  ).toBe(true);\n": "  const urlOutput = firstUp.outputs.find(({ name }) => name === 'url');\n  expect(urlOutput?.value).toBe(publicBaseUrl);\n  expect(urlOutput?.visibility).toBe('public');\n",
-              "      { projectId, manifest, environment: 'production', previous: ledger },\n": "      { projectId, manifest, environment: 'production', previous: firstLedger },\n",
               "  ledger = down.ledger;\n": "  const { ledger: downLedger } = down;\n",
               "      { projectId, manifest, environment: 'production', previous: ledger },\n      dependencies,\n    ),\n  );\n  ledger = resumed.ledger;\n": "      { projectId, manifest, environment: 'production', previous: downLedger },\n      dependencies,\n    ),\n  );\n  const { ledger: resumedLedger } = resumed;\n",
               "        previous: ledger,\n": "        previous: resumedLedger,\n",
@@ -49,21 +48,21 @@ jobs:
               if old not in text:
                   raise SystemExit(f'missing replacement: {old!r}')
               text = text.replace(old, new, 1)
+          remaining = "{ projectId, manifest, environment: 'production', previous: ledger }"
+          if text.count(remaining) != 2:
+              raise SystemExit(f'expected 2 remaining ledger references, got {text.count(remaining)}')
+          text = text.replace(
+              remaining,
+              "{ projectId, manifest, environment: 'production', previous: firstLedger }",
+              2,
+          )
           path.write_text(text)
           PY
       - run: bun run lint:fix || true
       - run: bun run format
       - run: bun run build
       - run: bun run check-types
-      - name: Run lint with focused diagnostics
-        run: |
-          set +e
-          bun run lint
-          status=$?
-          if [ "$status" -ne 0 ]; then
-            nl -ba src/hetznerK3sProduction.test.ts | sed -n '108,134p'
-          fi
-          exit "$status"
+      - run: bun run lint
       - run: bun run knip:test
       - run: bun run test
       - run: bun run changeset:status
