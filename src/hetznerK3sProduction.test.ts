@@ -56,7 +56,11 @@ const manifest = {
       },
       database: { provider: 'supabase', tier: 'prod' },
       auth: { provider: 'supabase' },
-      networking: { domain, publicBaseUrl },
+      networking: {
+        domain,
+        publicBaseUrl,
+        tls: { mode: 'acme-http-01', contactEmail: 'infra@example.test' },
+      },
     },
   },
   modules: [],
@@ -92,6 +96,11 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
     },
   ]);
   expect(fixture.k3s.lastAccess).toHaveLength(1);
+  expect(fixture.k3s.lastSpec?.networking).toEqual({
+    domain,
+    publicBaseUrl,
+    tls: { mode: 'acme-http-01', contactEmail: 'infra@example.test' },
+  });
   const [access] = fixture.k3s.lastAccess;
   expect(access?.transport.kind).toBe('ssh');
   expect(access?.transport.kind === 'ssh' && access.transport.host).toBe('203.0.113.10');
@@ -308,6 +317,7 @@ class FakeK3sControlPlane implements K3sControlPlane {
   readonly api = new FakeKubernetesApi();
   readonly calls: string[] = [];
   lastAccess: readonly K3sNodeAccess[] = [];
+  lastSpec?: K3sClusterSpec;
   state: K3sClusterObservation['state'] = 'absent';
   nodes: K3sClusterObservation['nodes'] = [];
 
@@ -331,6 +341,7 @@ class FakeK3sControlPlane implements K3sControlPlane {
   ): Promise<InfraResult<K3sClusterObservation>> {
     this.calls.push('ensure');
     this.lastAccess = access;
+    this.lastSpec = spec;
     this.state = 'ready';
     this.nodes = spec.nodes.map(({ id }) => ({
       id,
