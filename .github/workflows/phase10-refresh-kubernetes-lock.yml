@@ -1,0 +1,50 @@
+name: Phase 10 refresh Kubernetes lock
+
+on:
+  push:
+    branches:
+      - test/145-s3-backup-recovery
+    paths:
+      - .github/workflows/phase10-refresh-kubernetes-lock.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: test/145-s3-backup-recovery
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Refresh Kubernetes resolution
+        run: |
+          cp package.json /tmp/package.json.before
+          bun update @ankhorage/kubernetes
+          cmp package.json /tmp/package.json.before
+          bun --eval '
+          const entry = import.meta.resolve("@ankhorage/kubernetes");
+          const pkg = await Bun.file(new URL("../package.json", entry)).json();
+          if (pkg.version !== "0.8.1") throw new Error(`Expected Kubernetes 0.8.1, got ${pkg.version}`);
+          console.log(`Kubernetes: ${pkg.version}`);
+          '
+
+      - name: Commit refreshed lock
+        run: |
+          if git diff --quiet -- bun.lock; then
+            echo "bun.lock already resolves Kubernetes 0.8.1"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bun.lock
+          git commit -m "chore: use kubernetes 0.8.1"
+          git push origin HEAD:test/145-s3-backup-recovery
