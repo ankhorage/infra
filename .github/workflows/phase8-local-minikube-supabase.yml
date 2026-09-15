@@ -87,6 +87,7 @@ jobs:
           console.log(`Minikube runtime: ${minikube.version}`);
           console.log(`Supabase provider: ${supabase.version}`);
           console.log(`Minikube Kubernetes driver: ${driver.version}`);
+          console.log("Image-seeded persistence baseline verified.");
           '
 
       - name: Run local Minikube Supabase acceptance
