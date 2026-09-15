@@ -108,6 +108,8 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
   expect(JSON.stringify(firstUp)).not.toContain('phase10-service-role-key');
   expect(fixture.kubernetes.serializedResources()).toContain(`"host":"${domain}"`);
   expect(fixture.kubernetes.serializedResources()).toContain('PersistentVolumeClaim');
+  expect(fixture.kubernetes.serializedResources()).toContain('/etc/postgresql-custom');
+  expect(fixture.kubernetes.serializedResources()).toContain('.ankhorage-image-seeded');
   expect(firstUp.resources.some(({ persistent }) => persistent)).toBe(true);
   const urlOutput = firstUp.outputs.find(({ name }) => name === 'url');
   expect(urlOutput?.value).toBe(publicBaseUrl);

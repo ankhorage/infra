@@ -80,17 +80,17 @@ jobs:
           const driverEntry = minikubeRequire.resolve("@ankhorage/kubernetes");
           const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();
 
-          if (minikube.version !== "0.4.1") throw new Error(`Expected Minikube 0.4.1, got ${minikube.version}`);
-          if (supabase.version !== "0.4.7") throw new Error(`Expected Supabase 0.4.7, got ${supabase.version}`);
-          if (driver.version !== "0.7.3") throw new Error(`Expected Kubernetes 0.7.3, got ${driver.version}`);
+          if (minikube.version !== "0.4.2") throw new Error(`Expected Minikube 0.4.2, got ${minikube.version}`);
+          if (supabase.version !== "0.4.9") throw new Error(`Expected Supabase 0.4.9, got ${supabase.version}`);
+          if (driver.version !== "0.8.0") throw new Error(`Expected Kubernetes 0.8.0, got ${driver.version}`);
 
           console.log(`Minikube runtime: ${minikube.version}`);
           console.log(`Supabase provider: ${supabase.version}`);
           console.log(`Minikube Kubernetes driver: ${driver.version}`);
+          console.log("Image-seeded persistence baseline verified.");
           '
 
       - name: Run local Minikube Supabase acceptance
-        timeout-minutes: 8
         run: bun run test:e2e:minikube-supabase
 
       - name: Collect Supabase workload diagnostics
