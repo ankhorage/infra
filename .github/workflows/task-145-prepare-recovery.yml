@@ -35,11 +35,11 @@ jobs:
       - name: Refresh dependencies
         run: bun install
 
-      - name: Format sources
-        run: bun run format
-
       - name: Generate docs
         run: bun run docs
+
+      - name: Format sources and generated docs
+        run: bun run format
 
       - name: Run build
         run: bun run build
