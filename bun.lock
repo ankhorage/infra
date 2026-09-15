@@ -1505,7 +1505,7 @@
 
     "@ankhorage/kubernetes/@ankhorage/contracts": ["@ankhorage/contracts@17.0.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0", "@ankhorage/utility": "^0.8.0", "expo-splash-screen": "~57.0.9" } }, "sha512-bI0o+sKoNixpxCf0YOMBc8dvXxHFkGrBprUGTiBQE7CyIX/8txdCgLMvtUai/Ggl0HGyNMxHbDMDqcaCeF57WQ=="],
 
-    "@ankhorage/minikube/@ankhorage/kubernetes": ["@ankhorage/kubernetes@0.7.0", "", { "dependencies": { "@ankhorage/contracts": "^19.1.0" } }, "sha512-9oXkRcpdue3oRxF2LTOK5IGca21c+UGwWUovyVQdXfmChGQV2Cfiy6yaGGr7kItuEPhs8KRJaWMoE8XnvONAwQ=="],
+    "@ankhorage/minikube/@ankhorage/kubernetes": ["@ankhorage/kubernetes@0.7.1", "", { "dependencies": { "@ankhorage/contracts": "^19.1.0" } }, "sha512-nv6JSG5LN7Jijihp0HDzLj6WkcwxG+1ezneFBFa21HO8CUhvVIu+1FiU6bXJm1ikSDBMDTyiFPPKLOh6Qdc33g=="],
 
     "@ankhorage/r2/@ankhorage/contracts": ["@ankhorage/contracts@16.1.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0", "@ankhorage/utility": "^0.8.0", "expo-splash-screen": "~57.0.9" } }, "sha512-uicIjdHmHFeqoX0JP/dk3LOZoDNwIPNsCyBlU8HaH9ZYf9mtF3LSTbTTsD4icikvD2HE0ldquS8wHdIyLgYwdw=="],
 
