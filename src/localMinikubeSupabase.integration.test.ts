@@ -17,8 +17,11 @@ import { upInfraEnvironmentAsync } from './features/environment-lifecycle/applic
 import type { InfraOrchestrationDependencies } from './types/infraOrchestration.js';
 
 const projectId = 'infra145-minikube-supabase';
+const namespace = `${projectId}-local`;
 const baseUrl = 'http://127.0.0.1:54321';
 const bucket = 'phase8-acceptance';
+const staleWorkloadId = 'phase8-stale';
+const externalConfigMap = 'phase8-external';
 const jwtSecret = 'phase8-jwt-secret-that-is-at-least-thirty-two-characters';
 const credentials = {
   postgresPassword: 'phase8-postgres-password',
@@ -50,6 +53,24 @@ const manifest = {
   },
   modules: [],
 } as const satisfies InfraManifest;
+const initialManifest = {
+  ...manifest,
+  environments: {
+    ...manifest.environments,
+    local: {
+      ...manifest.environments.local,
+      workloads: [
+        {
+          id: staleWorkloadId,
+          artifact: { kind: 'image', image: 'nginx:alpine' },
+          ports: [{ name: 'http', port: 80 }],
+          health: { kind: 'tcp', port: 80 },
+          exposure: 'internal',
+        },
+      ],
+    },
+  },
+} as const satisfies InfraManifest;
 
 test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
   'runs local Minikube and Supabase through the provider-neutral lifecycle',
@@ -59,12 +80,12 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
 
     try {
       const initialPlan = requireSuccess(
-        await planInfraEnvironmentAsync({ projectId, manifest }, dependencies),
+        await planInfraEnvironmentAsync({ projectId, manifest: initialManifest }, dependencies),
       );
       expect(initialPlan.actions.some(({ operation }) => operation === 'create')).toBe(true);
 
       const { ledger: firstLedger, outputs: firstOutputs } = requireSuccess(
-        await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
+        await upInfraEnvironmentAsync({ projectId, manifest: initialManifest }, dependencies),
       );
       ledger = firstLedger;
       assertSafePublicOutputs(firstOutputs);
@@ -83,6 +104,29 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       expect(firstOutputs.some(({ name, value }) => name === 'bucket' && value === bucket)).toBe(
         true,
       );
+
+      await runKubectlAsync([
+        'create',
+        'configmap',
+        externalConfigMap,
+        '--namespace',
+        namespace,
+        '--from-literal=owner=external',
+      ]);
+      expect(await kubernetesResourceExistsAsync('deployment', staleWorkloadId)).toBe(true);
+      expect(await kubernetesResourceExistsAsync('configmap', externalConfigMap)).toBe(true);
+
+      const stalePlan = requireSuccess(
+        await planInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
+      );
+      expect(stalePlan.actions.some(({ operation }) => operation === 'delete')).toBe(true);
+
+      const pruned = requireSuccess(
+        await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
+      );
+      ledger = pruned.ledger;
+      expect(await kubernetesResourceExistsAsync('deployment', staleWorkloadId)).toBe(false);
+      expect(await kubernetesResourceExistsAsync('configmap', externalConfigMap)).toBe(true);
 
       const status = requireSuccess(
         await statusInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
@@ -170,6 +214,35 @@ function createDestroyRequest(
 
 function persistentIdentities(ledger: InfraLedger): readonly InfraResourceIdentity[] {
   return ledger.resources.filter(({ persistent }) => persistent).map(({ identity }) => identity);
+}
+
+async function kubernetesResourceExistsAsync(kind: string, name: string): Promise<boolean> {
+  const output = await runKubectlAsync([
+    'get',
+    `${kind}/${name}`,
+    '--namespace',
+    namespace,
+    '--ignore-not-found=true',
+    '-o',
+    'name',
+  ]);
+  return output.length > 0;
+}
+
+async function runKubectlAsync(arguments_: readonly string[]): Promise<string> {
+  const process = Bun.spawn(['kubectl', '--context', projectId, ...arguments_], {
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const [stdout, stderr, exitCode] = await Promise.all([
+    new Response(process.stdout).text(),
+    new Response(process.stderr).text(),
+    process.exited,
+  ]);
+  if (exitCode !== 0) {
+    throw new Error(`kubectl command failed: ${stderr.trim()}`);
+  }
+  return stdout.trim();
 }
 
 function assertSafePublicOutputs(outputs: InfraLedger['outputs']): void {
