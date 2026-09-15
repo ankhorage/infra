@@ -77,7 +77,7 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
   const firstUp = requireSuccess(
     await upInfraEnvironmentAsync({ projectId, manifest, environment: 'production' }, dependencies),
   );
-  let ledger: InfraLedger = firstUp.ledger;
+  const firstLedger: InfraLedger = firstUp.ledger;
   expect(firstUp.targets).toEqual([
     {
       id: 'server',
@@ -92,24 +92,21 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
     },
   ]);
   expect(fixture.k3s.lastAccess).toHaveLength(1);
-  const access = fixture.k3s.lastAccess[0];
+  const [access] = fixture.k3s.lastAccess;
   expect(access?.transport.kind).toBe('ssh');
   expect(access?.transport.kind === 'ssh' && access.transport.host).toBe('203.0.113.10');
   expect(JSON.stringify(firstUp)).not.toContain('phase10-private-key');
   expect(JSON.stringify(firstUp)).not.toContain('phase10-service-role-key');
-  expect(fixture.kubernetes.serializedResources()).toContain(`\"host\":\"${domain}\"`);
+  expect(fixture.kubernetes.serializedResources()).toContain(`"host":"${domain}"`);
   expect(fixture.kubernetes.serializedResources()).toContain('PersistentVolumeClaim');
   expect(firstUp.resources.some(({ persistent }) => persistent)).toBe(true);
-  expect(
-    firstUp.outputs.some(
-      ({ name, value, visibility }) =>
-        name === 'url' && value === publicBaseUrl && visibility === 'public',
-    ),
-  ).toBe(true);
+  const urlOutput = firstUp.outputs.find(({ name }) => name === 'url');
+  expect(urlOutput?.value).toBe(publicBaseUrl);
+  expect(urlOutput?.visibility).toBe('public');
 
   const status = requireSuccess(
     await statusInfraEnvironmentAsync(
-      { projectId, manifest, environment: 'production', previous: ledger },
+      { projectId, manifest, environment: 'production', previous: firstLedger },
       dependencies,
     ),
   );
@@ -117,7 +114,7 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
 
   const converged = requireSuccess(
     await planInfraEnvironmentAsync(
-      { projectId, manifest, environment: 'production', previous: ledger },
+      { projectId, manifest, environment: 'production', previous: firstLedger },
       dependencies,
     ),
   );
@@ -126,20 +123,20 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
   const identitiesBeforeRestart = resourceIdentities(firstUp.resources);
   const down = requireSuccess(
     await downInfraEnvironmentAsync(
-      { projectId, manifest, environment: 'production', previous: ledger },
+      { projectId, manifest, environment: 'production', previous: firstLedger },
       dependencies,
     ),
   );
-  ledger = down.ledger;
+  const { ledger: downLedger } = down;
   expect(fixture.k3s.state).toBe('stopped');
 
   const resumed = requireSuccess(
     await upInfraEnvironmentAsync(
-      { projectId, manifest, environment: 'production', previous: ledger },
+      { projectId, manifest, environment: 'production', previous: downLedger },
       dependencies,
     ),
   );
-  ledger = resumed.ledger;
+  const { ledger: resumedLedger } = resumed;
   expect(fixture.k3s.state).toBe('ready');
   expect(resourceIdentities(resumed.resources)).toEqual(identitiesBeforeRestart);
 
@@ -149,7 +146,7 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
         projectId,
         manifest,
         environment: 'production',
-        previous: ledger,
+        previous: resumedLedger,
         confirmation: { projectId, environment: 'production' },
         persistence: { policy: 'retain' },
       },
