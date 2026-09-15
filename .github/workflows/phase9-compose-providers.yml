@@ -25,7 +25,16 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.4.2'
-      - run: bun update @ankhorage/docker-compose@^0.5.3 @ankhorage/supabase@^0.4.7
+      - name: Consume released provider fixes
+        shell: bash
+        run: |
+          for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            if bun update @ankhorage/docker-compose@^0.5.3 @ankhorage/supabase@^0.4.7; then
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
       - run: bun run build
       - run: bun run check-types
       - run: bun run lint
