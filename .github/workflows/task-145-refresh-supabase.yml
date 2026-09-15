@@ -1,4 +1,4 @@
-name: Task 145 refresh Supabase consumer
+name: Task 145 refresh Supabase lock
 
 on:
   push:
@@ -36,23 +36,8 @@ jobs:
         with:
           bun-version: '1.4.2'
 
-      - name: Update Supabase consumer version
-        run: |
-          node <<'NODE'
-          const fs = require('node:fs');
-          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          packageJson.devDependencies['@ankhorage/supabase'] = '^0.5.1';
-          fs.writeFileSync('package.json', `${JSON.stringify(packageJson, null, 2)}\n`);
-
-          for (const path of [
-            '.github/workflows/phase8-local-minikube-supabase.yml',
-            '.github/workflows/phase10-minikube-supabase-recovery.yml',
-          ]) {
-            const content = fs.readFileSync(path, 'utf8');
-            fs.writeFileSync(path, content.replaceAll('0.5.0', '0.5.1'));
-          }
-          NODE
-          bun install
+      - name: Refresh lockfile
+        run: bun install
 
       - name: Verify resolved Supabase package
         run: |
@@ -63,11 +48,11 @@ jobs:
           console.log(`Supabase provider: ${pkg.version}`);
           '
 
-      - name: Commit consumer rollout
+      - name: Commit refreshed lockfile
         run: |
-          git rm .github/workflows/task-145-refresh-supabase.yml
           git config user.name 'ankhorage-renovate-sync[bot]'
           git config user.email 'ankhorage-renovate-sync[bot]@users.noreply.github.com'
-          git add package.json bun.lock .github/workflows/phase8-local-minikube-supabase.yml .github/workflows/phase10-minikube-supabase-recovery.yml
-          git commit -m 'test: consume Supabase 0.5.1'
+          git add bun.lock
+          git diff --cached --quiet && exit 0
+          git commit -m 'test: refresh Supabase 0.5.1 lockfile'
           git push origin HEAD:test/145-s3-backup-recovery
