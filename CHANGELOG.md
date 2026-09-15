@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 5.1.1
+
+### Patch Changes
+
+- 0771f29: Add reproducible local Minikube + Supabase Phase 8 parity acceptance against the released provider-neutral adapters and runtime fixes.
+
 ## 5.1.0
 
 ### Minor Changes
