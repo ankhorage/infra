@@ -1,18 +1,18 @@
 import type {
   InfraLedger,
   InfraManifest,
-  InfraResult,
   InfraResourceIdentity,
+  InfraResult,
 } from '@ankhorage/contracts/infra';
 import {
   createInfraAdapter as createHetznerInfraAdapter,
-  infraAdapterDescriptor as hetznerInfraAdapterDescriptor,
   type HetznerCloudApi,
   type HetznerCloudObservation,
   type HetznerDesiredCompute,
   type HetznerHostKeyProbe,
   type HetznerProjectIdentity,
   type HetznerResourceId,
+  infraAdapterDescriptor as hetznerInfraAdapterDescriptor,
 } from '@ankhorage/hetzner';
 import {
   createInfraAdapter as createK3sInfraAdapter,
@@ -75,10 +75,7 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
   expect(initialPlan.actions.some(({ operation }) => operation === 'create')).toBe(true);
 
   const firstUp = requireSuccess(
-    await upInfraEnvironmentAsync(
-      { projectId, manifest, environment: 'production' },
-      dependencies,
-    ),
+    await upInfraEnvironmentAsync({ projectId, manifest, environment: 'production' }, dependencies),
   );
   let ledger: InfraLedger = firstUp.ledger;
   expect(firstUp.targets).toEqual([
@@ -409,9 +406,7 @@ class FakeKubernetesApi implements KubernetesApi {
   observeAsync(reference: KubernetesResourceReference): Promise<KubernetesResourceObservation> {
     return Promise.resolve({
       state: 'ready',
-      ...(reference.kind === 'Service'
-        ? { publicOutputs: { endpoint: publicBaseUrl } }
-        : {}),
+      ...(reference.kind === 'Service' ? { publicOutputs: { endpoint: publicBaseUrl } } : {}),
     });
   }
 
