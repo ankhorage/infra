@@ -30,7 +30,15 @@ jobs:
 
       - name: Refresh released Supabase provider
         run: |
-          bun update --lockfile-only @ankhorage/supabase
+          resolved=false
+          for attempt in 1 2 3 4; do
+            if bun update --lockfile-only @ankhorage/supabase; then
+              resolved=true
+              break
+            fi
+            sleep 15
+          done
+          test "${resolved}" = true
           test -z "$(git diff --name-only | grep -v '^bun.lock$')"
           bun install --frozen-lockfile
           bun --eval '
