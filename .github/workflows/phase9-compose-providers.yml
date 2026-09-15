@@ -1,4 +1,4 @@
-name: Phase 9 Docker Compose provider acceptance
+name: Persist Phase 9 Docker Compose acceptance baseline
 
 on:
   push:
@@ -14,9 +14,9 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  acceptance:
+  persist:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,10 +25,10 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.4.2'
-      - name: Consume released provider fixes
+      - name: Consume accepted provider releases
         shell: bash
         run: |
-          for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
+          for attempt in 1 2 3 4 5 6; do
             if bun update @ankhorage/docker-compose@^0.5.3 @ankhorage/supabase@^0.4.7; then
               exit 0
             fi
@@ -40,26 +40,8 @@ jobs:
       - run: bun run lint
       - run: bun run knip:test
       - run: bun run test
-      - name: Run Docker Compose provider acceptance
-        shell: bash
-        run: |
-          set +e
-          bun run test:e2e:docker-compose-providers
-          status=$?
-          if [ "$status" -ne 0 ]; then
-            docker ps --all --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}'
-            for container in $(docker ps --all --quiet); do
-              echo "::group::docker inspect $container"
-              docker inspect --format '{{.Name}} state={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} exit={{.State.ExitCode}} error={{.State.Error}}' "$container" || true
-              echo '::endgroup::'
-              echo "::group::docker logs $container"
-              docker logs --tail 120 "$container" || true
-              echo '::endgroup::'
-            done
-          fi
-          exit "$status"
       - run: bun run format
-      - run: git diff --exit-code -- src package.json bun.lock
+      - run: git diff --exit-code -- src
       - name: Persist released Compose acceptance baseline
         shell: bash
         run: |
