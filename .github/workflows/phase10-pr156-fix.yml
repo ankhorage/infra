@@ -49,12 +49,12 @@ jobs:
                   raise SystemExit(f'missing replacement: {old!r}')
               text = text.replace(old, new, 1)
           remaining = "{ projectId, manifest, environment: 'production', previous: ledger }"
-          if text.count(remaining) != 2:
-              raise SystemExit(f'expected 2 remaining ledger references, got {text.count(remaining)}')
+          if text.count(remaining) != 3:
+              raise SystemExit(f'expected 3 remaining ledger references, got {text.count(remaining)}')
           text = text.replace(
               remaining,
               "{ projectId, manifest, environment: 'production', previous: firstLedger }",
-              2,
+              3,
           )
           path.write_text(text)
           PY
