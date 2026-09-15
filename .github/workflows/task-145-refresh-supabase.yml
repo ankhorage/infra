@@ -1,0 +1,73 @@
+name: Task 145 refresh Supabase consumer
+
+on:
+  push:
+    branches:
+      - test/145-s3-backup-recovery
+    paths:
+      - '.github/workflows/task-145-refresh-supabase.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create scoped repository token
+        id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.ANKHORAGE_RENOVATE_SYNC_CLIENT_ID }}
+          private-key: ${{ secrets.ANKHORAGE_RENOVATE_SYNC_PRIVATE_KEY }}
+          owner: ankhorage
+          repositories: infra
+          permission-contents: write
+
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: test/145-s3-backup-recovery
+          fetch-depth: 0
+          token: ${{ steps.token.outputs.token }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+
+      - name: Update Supabase consumer version
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          packageJson.devDependencies['@ankhorage/supabase'] = '^0.5.1';
+          fs.writeFileSync('package.json', `${JSON.stringify(packageJson, null, 2)}\n`);
+
+          for (const path of [
+            '.github/workflows/phase8-local-minikube-supabase.yml',
+            '.github/workflows/phase10-minikube-supabase-recovery.yml',
+          ]) {
+            const content = fs.readFileSync(path, 'utf8');
+            fs.writeFileSync(path, content.replaceAll('0.5.0', '0.5.1'));
+          }
+          NODE
+          bun install
+
+      - name: Verify resolved Supabase package
+        run: |
+          bun --eval '
+          const entry = import.meta.resolve("@ankhorage/supabase");
+          const pkg = await Bun.file(new URL("../package.json", entry)).json();
+          if (pkg.version !== "0.5.1") throw new Error(`Expected Supabase 0.5.1, got ${pkg.version}`);
+          console.log(`Supabase provider: ${pkg.version}`);
+          '
+
+      - name: Commit consumer rollout
+        run: |
+          git rm .github/workflows/task-145-refresh-supabase.yml
+          git config user.name 'ankhorage-renovate-sync[bot]'
+          git config user.email 'ankhorage-renovate-sync[bot]@users.noreply.github.com'
+          git add package.json bun.lock .github/workflows/phase8-local-minikube-supabase.yml .github/workflows/phase10-minikube-supabase-recovery.yml
+          git commit -m 'test: consume Supabase 0.5.1'
+          git push origin HEAD:test/145-s3-backup-recovery
