@@ -35,7 +35,7 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/contracts": "^19.0.0"
+    "@ankhorage/contracts": "^19.1.0"
   },
   "files": [
     "dist",
@@ -100,6 +100,7 @@
     "prepack": "bun run build",
     "test": "bun test src",
     "test:e2e": "ANKH_INFRA_COMPOSITION_E2E=1 bun test src/infraComposition.integration.test.ts",
+    "test:e2e:minikube-supabase": "ANKH_INFRA_MINIKUBE_SUPABASE_E2E=1 bun test src/localMinikubeSupabase.integration.test.ts",
     "typecheck": "bun x tsc --noEmit -p tsconfig.json",
     "check-types": "bun run typecheck",
     "version-packages": "ankhorage-changeset version",
@@ -114,10 +115,10 @@
     "@ankhorage/hetzner": "^0.3.0",
     "@ankhorage/k3s": "^0.3.0",
     "@ankhorage/local": "^0.3.0",
-    "@ankhorage/minikube": "^0.3.0",
+    "@ankhorage/minikube": "^0.4.1",
     "@ankhorage/paradox": "^0.1.24",
     "@ankhorage/r2": "^0.2.0",
-    "@ankhorage/supabase": "^0.2.0",
+    "@ankhorage/supabase": "^0.4.5",
     "@ankhorage/supabase-vault": "^0.3.1",
     "@types/bun": "^1.4.1",
     "@types/node": "^25.6.0",
