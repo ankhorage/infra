@@ -31,4 +31,21 @@ jobs:
       - run: bun run check-types
       - run: bun run lint
       - run: bun run knip:test
-      - run: bun run test:e2e:docker-compose-providers
+      - name: Run Docker Compose provider acceptance
+        shell: bash
+        run: |
+          set +e
+          bun run test:e2e:docker-compose-providers
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            docker ps --all --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}'
+            for container in $(docker ps --all --quiet); do
+              echo "::group::docker inspect $container"
+              docker inspect --format '{{.Name}} state={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} exit={{.State.ExitCode}} error={{.State.Error}}' "$container" || true
+              echo '::endgroup::'
+              echo "::group::docker logs $container"
+              docker logs --tail 120 "$container" || true
+              echo '::endgroup::'
+            done
+          fi
+          exit "$status"
