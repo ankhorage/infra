@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 5.1.2
+
+### Patch Changes
+
+- 343eefe: Prove in the real local Minikube acceptance that reconciliation prunes stale Infra-owned resources without deleting unrelated Kubernetes resources.
+
 ## 5.1.1
 
 ### Patch Changes
