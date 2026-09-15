@@ -271,7 +271,15 @@ async function readLatestBackupPointerAsync(): Promise<string> {
 async function findPodAsync(prefix: string, excludedPrefix?: string): Promise<string> {
   const names = (
     await runAsync(
-      ['kubectl', 'get', 'pods', '--namespace', namespace, '-o', 'jsonpath={.items[*].metadata.name}'],
+      [
+        'kubectl',
+        'get',
+        'pods',
+        '--namespace',
+        namespace,
+        '-o',
+        'jsonpath={.items[*].metadata.name}',
+      ],
       'list Supabase pods',
     )
   ).split(' ');
@@ -297,9 +305,7 @@ function createDependencies(): InfraOrchestrationDependencies {
     },
     secrets: {
       resolveAsync: ({ ref, key }) =>
-        Promise.resolve(
-          failure('unexpected-secret', `Unexpected managed secret ${ref}/${key}.`),
-        ),
+        Promise.resolve(failure('unexpected-secret', `Unexpected managed secret ${ref}/${key}.`)),
     },
   };
 }
