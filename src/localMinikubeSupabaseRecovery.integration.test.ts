@@ -103,8 +103,9 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_RECOVERY_E2E !== '1')(
       );
       expect(finalDestroy.ledger).toBeNull();
     } catch (error) {
-      await dumpFailureDiagnosticsAsync();
-      throw error;
+      const diagnostics = await collectFailureDiagnosticsAsync();
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`${message}\nRecovery diagnostics: ${diagnostics}`);
     } finally {
       await runAllowFailureAsync(['minikube', 'delete', '-p', profile]);
       await stopMinioAsync();
@@ -293,68 +294,31 @@ async function findPodAsync(prefix: string, excludedPrefix?: string): Promise<st
   return name;
 }
 
-async function dumpFailureDiagnosticsAsync(): Promise<void> {
-  await reportEndpointAsync('/auth/v1/health', false);
-  await reportEndpointAsync('/storage/v1/status', false);
-  await reportEndpointAsync('/storage/v1/bucket', true);
-  await runDiagnosticAsync(['docker', 'logs', minioContainer, '--tail=160']);
-  await runDiagnosticAsync(['kubectl', 'get', 'pods', '--namespace', namespace, '-o', 'wide']);
-  await runDiagnosticAsync(['kubectl', 'get', 'pvc', '--namespace', namespace]);
-  await runDiagnosticAsync([
-    'kubectl',
-    'get',
-    'events',
-    '--namespace',
-    namespace,
-    '--sort-by=.lastTimestamp',
+async function collectFailureDiagnosticsAsync(): Promise<string> {
+  const [auth, storageStatus, buckets] = await Promise.all([
+    readEndpointDiagnosticAsync('/auth/v1/health', false),
+    readEndpointDiagnosticAsync('/storage/v1/status', false),
+    readEndpointDiagnosticAsync('/storage/v1/bucket', true),
   ]);
-  const pods = await listPodsAllowFailureAsync();
-  for (const pod of pods) {
-    await runDiagnosticAsync([
-      'kubectl',
-      'logs',
-      '--namespace',
-      namespace,
-      pod,
-      '--all-containers',
-      '--tail=160',
-    ]);
-  }
+  return [auth, storageStatus, buckets].join(' | ');
 }
 
-async function reportEndpointAsync(path: string, authenticated: boolean): Promise<void> {
+async function readEndpointDiagnosticAsync(path: string, authenticated: boolean): Promise<string> {
   const response = await fetch(`${baseUrl}${path}`, {
     headers: authenticated
       ? { Authorization: `Bearer ${serviceRoleKey}`, apikey: serviceRoleKey }
       : undefined,
   }).catch(() => undefined);
-  const status = response === undefined ? 'unreachable' : String(response.status);
-  process.stderr.write(`[recovery-diagnostic] GET ${path}: ${status}\n`);
+  if (response === undefined) return `${path}=unreachable`;
+  const body = redactDiagnosticText((await response.text()).slice(0, 500));
+  return `${path}=${response.status}:${body}`;
 }
 
-async function listPodsAllowFailureAsync(): Promise<readonly string[]> {
-  const process = Bun.spawn(
-    [
-      'kubectl',
-      'get',
-      'pods',
-      '--namespace',
-      namespace,
-      '-o',
-      'jsonpath={.items[*].metadata.name}',
-    ],
-    { stdout: 'pipe', stderr: 'ignore' },
-  );
-  const [exitCode, stdout] = await Promise.all([
-    process.exited,
-    new Response(process.stdout).text(),
-  ]);
-  return exitCode === 0 ? stdout.trim().split(' ').filter((name) => name.length > 0) : [];
-}
-
-async function runDiagnosticAsync(command: readonly string[]): Promise<void> {
-  const process = Bun.spawn(command, { stdout: 'inherit', stderr: 'inherit' });
-  await process.exited;
+function redactDiagnosticText(value: string): string {
+  return value
+    .replaceAll(s3SecretKey, '[redacted]')
+    .replaceAll(serviceRoleKey, '[redacted]')
+    .replaceAll(jwtSecret, '[redacted]');
 }
 
 function createDependencies(): InfraOrchestrationDependencies {
