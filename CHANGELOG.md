@@ -1,5 +1,17 @@
 # @ankhorage/infra
 
+## 5.1.6
+
+### Patch Changes
+
+- 57da4cf: Prove the released Hetzner, k3s, Supabase and R2 composition with independent object-storage ownership and privileged output isolation.
+
+## 5.1.5
+
+### Patch Changes
+
+- 7da18cd: Make project Infra destroy idempotent when no stored ownership state exists, avoiding provider resolution for never-provisioned or already-destroyed environments.
+
 ## 5.1.4
 
 ### Patch Changes
