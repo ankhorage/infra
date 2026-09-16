@@ -15,7 +15,7 @@
         "@ankhorage/hetzner": "^0.3.0",
         "@ankhorage/k3s": "^0.4.1",
         "@ankhorage/local": "^0.3.0",
-        "@ankhorage/minikube": "^0.4.3",
+        "@ankhorage/minikube": "^0.4.4",
         "@ankhorage/paradox": "^0.1.24",
         "@ankhorage/r2": "^0.2.0",
         "@ankhorage/supabase": "^0.5.4",
@@ -49,7 +49,7 @@
 
     "@ankhorage/local": ["@ankhorage/local@0.3.0", "", { "dependencies": { "@ankhorage/contracts": "^19.0.0" } }, "sha512-TdF1LyEhOl6ahMJNVn3zb15a3rZjSliRdd7RQcDufeBre2qeeCSBHxcc2ipbCRGtY6oa3/gaunkBVhbCvOEEBA=="],
 
-    "@ankhorage/minikube": ["@ankhorage/minikube@0.4.3", "", { "dependencies": { "@ankhorage/contracts": "^19.4.0", "@ankhorage/kubernetes": "^0.8.0" } }, "sha512-M4wNrpE99ple/PBlDxFLiB9YBtE6bg0O+z2+hzd1z1i7EpV75Uq6fM6iyJ4qNLYi3PbXFdfsPw2ZTZa7zS0QEw=="],
+    "@ankhorage/minikube": ["@ankhorage/minikube@0.4.4", "", { "dependencies": { "@ankhorage/contracts": "^19.4.0", "@ankhorage/kubernetes": "^0.8.0" } }, "sha512-0HTtu7D2dEtpQzTOjX1pm7a2sIQU1BF2zXRSvz4TnjCx/1XxFRvm07enQBdHWMiSMkn1S1aRVJtln6kdtq4GcQ=="],
 
     "@ankhorage/paradox": ["@ankhorage/paradox@0.1.24", "", { "dependencies": { "ts-morph": "^28.0.0" }, "bin": { "paradox": "dist/cli/standalone.js" } }, "sha512-4fZOo8QFZuzQEVH+f2ekb8vEWUuiWxs45lwMBgR3yNgJ2lZdyr98sdN60Rn7bsKE9LUhr56gqaO2p1xtrI6Kyg=="],
 
