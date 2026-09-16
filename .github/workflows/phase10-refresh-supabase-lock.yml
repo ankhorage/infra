@@ -26,8 +26,23 @@ jobs:
         with:
           bun-version: '1.4.2'
 
+      - name: Wait for Supabase registry visibility
+        run: |
+          for attempt in $(seq 1 30); do
+            if [ "$(npm view '@ankhorage/supabase@0.5.3' version 2>/dev/null || true)" = '0.5.3' ]; then
+              echo 'Supabase 0.5.3 is visible in npm.'
+              exit 0
+            fi
+            if [ "$attempt" -eq 30 ]; then
+              echo 'Supabase 0.5.3 did not become visible in npm.' >&2
+              exit 1
+            fi
+            sleep 10
+          done
+
       - name: Refresh Supabase dependency and acceptance pins
         run: |
+          rm -rf "$HOME/.bun/install/cache"
           bun add --dev '@ankhorage/supabase@^0.5.3'
           sed -i 's/supabase.version !== "0.5.2"/supabase.version !== "0.5.3"/g; s/Expected Supabase 0.5.2/Expected Supabase 0.5.3/g' \
             .github/workflows/phase8-local-minikube-supabase.yml \
