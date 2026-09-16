@@ -18,6 +18,35 @@ afterEach(async () => {
   temporaryPaths.clear();
 });
 
+test('destroy is idempotent without stored ownership state or provider resolution', async () => {
+  const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-project-lifecycle-'));
+  temporaryPaths.add(projectPath);
+  const destroyRequests: InfraDestroyOperationRequest[] = [];
+  const lifecycle = createProjectInfraLifecycle({
+    services: {
+      createDependencies: () => {
+        throw new Error('Provider dependencies must not resolve without stored ownership state.');
+      },
+      operations: createOperations(destroyRequests),
+    },
+  });
+  const request = {
+    projectId: 'sample',
+    projectPath,
+    manifest: { environments: { local: desired }, modules: [] },
+    environment: 'local' as const,
+  };
+
+  const destroyed = await lifecycle.destroyAsync({
+    ...request,
+    confirmation: { projectId: 'sample', environment: 'local' },
+    persistence: { policy: 'retain' },
+  });
+
+  expect(destroyed).toEqual(success({ environment: 'local', ledger: null }));
+  expect(destroyRequests).toEqual([]);
+});
+
 test('runs typed project lifecycle operations with canonical state and artifact ownership', async () => {
   const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'infra-project-lifecycle-'));
   temporaryPaths.add(projectPath);
