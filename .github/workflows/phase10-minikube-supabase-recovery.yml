@@ -83,7 +83,7 @@ jobs:
           const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();
 
           if (contracts.version !== "20.0.0") throw new Error(`Expected Contracts 20.0.0, got ${contracts.version}`);
-          if (supabase.version !== "0.5.1") throw new Error(`Expected Supabase 0.5.1, got ${supabase.version}`);
+          if (supabase.version !== "0.5.2") throw new Error(`Expected Supabase 0.5.2, got ${supabase.version}`);
           if (minikube.version !== "0.4.2") throw new Error(`Expected Minikube 0.4.2, got ${minikube.version}`);
           if (driver.version !== "0.8.1") throw new Error(`Expected Kubernetes 0.8.1, got ${driver.version}`);
 
