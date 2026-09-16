@@ -79,7 +79,7 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_RECOVERY_E2E !== '1')(
       await writeDatabaseMarkerAsync();
       await uploadStorageObjectAsync();
       await forceFreshBackupAsync();
-      expect(await readLatestBackupPointerAsync()).toMatch(/^database\/.+\.dump$/);
+      expect(await readLatestBackupPointerAsync()).toMatch(/^database\/\d{8}T\d{6}Z$/);
 
       const destroyed = requireSuccess(
         await destroyInfraEnvironmentAsync(
