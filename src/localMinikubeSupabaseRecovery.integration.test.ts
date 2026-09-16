@@ -295,23 +295,58 @@ async function findPodAsync(prefix: string, excludedPrefix?: string): Promise<st
 }
 
 async function collectFailureDiagnosticsAsync(): Promise<string> {
-  const [auth, storageStatus, buckets, databaseLogs] = await Promise.all([
-    readEndpointDiagnosticAsync('/auth/v1/health', false),
-    readEndpointDiagnosticAsync('/storage/v1/status', false),
-    readEndpointDiagnosticAsync('/storage/v1/bucket', true),
-    readDatabaseLogsAsync(),
-  ]);
-  return [auth, storageStatus, buckets, databaseLogs].join(' | ');
+  const [auth, storageStatus, buckets, databaseState, databaseLogs, previousDatabaseLogs] =
+    await Promise.all([
+      readEndpointDiagnosticAsync('/auth/v1/health', false),
+      readEndpointDiagnosticAsync('/storage/v1/status', false),
+      readEndpointDiagnosticAsync('/storage/v1/bucket', true),
+      readDatabaseStateAsync(),
+      readDatabaseLogsAsync(false),
+      readDatabaseLogsAsync(true),
+    ]);
+  return [auth, storageStatus, buckets, databaseState, databaseLogs, previousDatabaseLogs].join(
+    ' | ',
+  );
 }
 
-async function readDatabaseLogsAsync(): Promise<string> {
+async function readDatabaseStateAsync(): Promise<string> {
   const pod = await findPodAsync('supabase-db-', 'supabase-db-backup-').catch(() => undefined);
-  if (pod === undefined) return 'database-logs=unavailable';
-  const logs = await runAsync(
-    ['kubectl', 'logs', '--namespace', namespace, pod, '--container', 'supabase-db', '--tail=200'],
-    'read database recovery logs',
+  if (pod === undefined) return 'database-state=unavailable';
+  const state = await runAsync(
+    [
+      'kubectl',
+      'get',
+      'pod',
+      pod,
+      '--namespace',
+      namespace,
+      '-o',
+      'jsonpath={.status.containerStatuses[?(@.name=="supabase-db")].restartCount}',
+    ],
+    'read database restart state',
   ).catch((error: unknown) => (error instanceof Error ? error.message : String(error)));
-  return `database-logs=${redactDiagnosticText(logs).slice(-4_000)}`;
+  return `database-restarts=${redactDiagnosticText(state)}`;
+}
+
+async function readDatabaseLogsAsync(previous: boolean): Promise<string> {
+  const pod = await findPodAsync('supabase-db-', 'supabase-db-backup-').catch(() => undefined);
+  const label = previous ? 'database-previous-logs' : 'database-logs';
+  if (pod === undefined) return `${label}=unavailable`;
+  const logs = await runAsync(
+    [
+      'kubectl',
+      'logs',
+      '--namespace',
+      namespace,
+      pod,
+      '--container',
+      'supabase-db',
+      ...(previous ? ['--previous'] : []),
+      '--tail=240',
+    ],
+    `read ${label}`,
+  ).catch((error: unknown) => (error instanceof Error ? error.message : String(error)));
+  return `${label}=${redactDiagnosticText(logs).slice(-6_000)}`;
 }
 
 async function readEndpointDiagnosticAsync(path: string, authenticated: boolean): Promise<string> {
