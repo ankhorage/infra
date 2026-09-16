@@ -26,36 +26,16 @@ jobs:
         with:
           bun-version: '1.4.2'
 
-      - name: Wait for Supabase registry visibility
-        run: |
-          for attempt in $(seq 1 30); do
-            if [ "$(npm view '@ankhorage/supabase@0.5.3' version 2>/dev/null || true)" = '0.5.3' ]; then
-              echo 'Supabase 0.5.3 is visible in npm.'
-              exit 0
-            fi
-            if [ "$attempt" -eq 30 ]; then
-              echo 'Supabase 0.5.3 did not become visible in npm.' >&2
-              exit 1
-            fi
-            sleep 10
-          done
-
-      - name: Refresh Supabase dependency and acceptance pins
+      - name: Refresh Supabase dependency lock
         run: |
           rm -rf "$HOME/.bun/install/cache"
+          npm view '@ankhorage/supabase@0.5.3' version
           bun add --dev '@ankhorage/supabase@^0.5.3'
-          sed -i 's/supabase.version !== "0.5.2"/supabase.version !== "0.5.3"/g; s/Expected Supabase 0.5.2/Expected Supabase 0.5.3/g' \
-            .github/workflows/phase8-local-minikube-supabase.yml \
-            .github/workflows/phase10-minikube-supabase-recovery.yml
-          rm .github/workflows/phase10-refresh-supabase-lock.yml
 
       - name: Commit refreshed lock
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add package.json bun.lock \
-            .github/workflows/phase8-local-minikube-supabase.yml \
-            .github/workflows/phase10-minikube-supabase-recovery.yml \
-            .github/workflows/phase10-refresh-supabase-lock.yml
+          git add package.json bun.lock
           git commit -m 'chore: update Supabase recovery dependency'
           git push origin HEAD:test/145-s3-backup-recovery
