@@ -120,7 +120,7 @@
     "@ankhorage/minikube": "^0.4.4",
     "@ankhorage/paradox": "^0.1.24",
     "@ankhorage/r2": "^0.2.0",
-    "@ankhorage/supabase": "^0.5.4",
+    "@ankhorage/supabase": "^0.5.6",
     "@ankhorage/supabase-vault": "^0.3.1",
     "@types/bun": "^1.4.1",
     "@types/node": "^25.6.0",
