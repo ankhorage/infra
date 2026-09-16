@@ -1,0 +1,57 @@
+name: Phase 10 refresh Supabase lock
+
+on:
+  push:
+    branches:
+      - test/145-s3-backup-recovery
+    paths:
+      - 'package.json'
+      - '.github/workflows/phase10-refresh-supabase-lock.yml'
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: test/145-s3-backup-recovery
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+
+      - name: Refresh Supabase resolution
+        run: bun update @ankhorage/supabase
+
+      - name: Verify resolution
+        run: |
+          bun --eval '
+          const pkg = await Bun.file("package.json").json();
+          if (pkg.devDependencies["@ankhorage/supabase"] !== "^0.5.2") {
+            throw new Error(`Expected package range ^0.5.2, got ${pkg.devDependencies["@ankhorage/supabase"]}`);
+          }
+          const entry = import.meta.resolve("@ankhorage/supabase");
+          const resolved = await Bun.file(new URL("../package.json", entry)).json();
+          if (resolved.version !== "0.5.2") throw new Error(`Expected Supabase 0.5.2, got ${resolved.version}`);
+          '
+
+      - name: Commit refreshed lockfile
+        run: |
+          if git diff --quiet -- bun.lock; then
+            echo 'bun.lock already resolves Supabase 0.5.2.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add bun.lock
+          git commit -m 'chore: refresh Supabase recovery lock'
+          git push origin HEAD:test/145-s3-backup-recovery
