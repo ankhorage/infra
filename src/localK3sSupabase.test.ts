@@ -64,10 +64,14 @@ test('runs local k3s and Supabase through the portable compute lifecycle', async
   const fixture = new LocalK3sFixture();
   const dependencies = createDependencies(fixture);
 
-  const initialPlan = requireSuccess(await planInfraEnvironmentAsync({ projectId, manifest }, dependencies));
+  const initialPlan = requireSuccess(
+    await planInfraEnvironmentAsync({ projectId, manifest }, dependencies),
+  );
   expect(initialPlan.actions.some(({ operation }) => operation === 'create')).toBe(true);
 
-  const firstUp = requireSuccess(await upInfraEnvironmentAsync({ projectId, manifest }, dependencies));
+  const firstUp = requireSuccess(
+    await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
+  );
   const firstLedger: InfraLedger = firstUp.ledger;
   expect(firstUp.targets).toEqual([target]);
   expect([...new Set(fixture.loadedPackages)].sort()).toEqual(
@@ -88,7 +92,12 @@ test('runs local k3s and Supabase through the portable compute lifecycle', async
   expect(JSON.stringify(firstUp)).not.toContain('infra164-postgres-password');
 
   const outputs = requireSuccess(
-    getInfraEnvironmentOutputs({ projectId, manifest, environment: 'local', previous: firstLedger }),
+    getInfraEnvironmentOutputs({
+      projectId,
+      manifest,
+      environment: 'local',
+      previous: firstLedger,
+    }),
   );
   expect(outputs.outputs).toEqual(firstUp.outputs);
   expect(
@@ -97,7 +106,9 @@ test('runs local k3s and Supabase through the portable compute lifecycle', async
         environmentVariable === 'EXPO_PUBLIC_SUPABASE_URL' && value === publicBaseUrl,
     ),
   ).toBe(true);
-  expect(outputs.outputs.some(({ name, value }) => name === 'bucket' && value === bucket)).toBe(true);
+  expect(
+    outputs.outputs.some(({ name, value }) => name === 'bucket' && value === bucket),
+  ).toBe(true);
 
   const status = requireSuccess(
     await statusInfraEnvironmentAsync(
