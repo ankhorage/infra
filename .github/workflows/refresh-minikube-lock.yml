@@ -1,4 +1,4 @@
-name: Refresh Supabase recovery dependency
+name: Refresh Supabase recovery lock
 
 on:
   push:
@@ -26,21 +26,17 @@ jobs:
         with:
           bun-version: '1.4.2'
 
-      - name: Update Supabase recovery dependency
-        run: |
-          sed -i 's/"@ankhorage\/supabase": "\^0\.5\.3"/"@ankhorage\/supabase": "^0.5.4"/' package.json
-          sed -i 's/Supabase 0\.5\.3/Supabase 0.5.4/g' .github/workflows/phase8-local-minikube-supabase.yml .github/workflows/phase10-minikube-supabase-recovery.yml
-          sed -i 's/supabase\.version !== "0\.5\.3"/supabase.version !== "0.5.4"/g' .github/workflows/phase8-local-minikube-supabase.yml .github/workflows/phase10-minikube-supabase-recovery.yml
-          bun install
+      - name: Refresh lockfile
+        run: bun install
 
-      - name: Commit dependency refresh when changed
+      - name: Commit lockfile when changed
         run: |
-          if git diff --quiet -- package.json bun.lock .github/workflows/phase8-local-minikube-supabase.yml .github/workflows/phase10-minikube-supabase-recovery.yml; then
-            echo 'Supabase recovery dependency already current.'
+          if git diff --quiet -- bun.lock; then
+            echo 'Supabase recovery lock already current.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add package.json bun.lock .github/workflows/phase8-local-minikube-supabase.yml .github/workflows/phase10-minikube-supabase-recovery.yml
-          git commit -m 'chore: refresh Supabase recovery dependency'
+          git add bun.lock
+          git commit -m 'chore: refresh Supabase recovery lock'
           git push origin HEAD:test/145-s3-backup-recovery
