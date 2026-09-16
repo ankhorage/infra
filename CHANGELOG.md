@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 5.1.5
+
+### Patch Changes
+
+- 7da18cd: Make project Infra destroy idempotent when no stored ownership state exists, avoiding provider resolution for never-provisioned or already-destroyed environments.
+
 ## 5.1.4
 
 ### Patch Changes
