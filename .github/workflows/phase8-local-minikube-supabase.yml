@@ -72,20 +72,24 @@ jobs:
           import { createRequire } from "node:module";
           import { dirname, resolve } from "node:path";
 
+          const packageJson = await Bun.file("package.json").json();
           const minikubeEntry = import.meta.resolve("@ankhorage/minikube");
           const minikube = await Bun.file(new URL("../package.json", minikubeEntry)).json();
           const supabaseEntry = import.meta.resolve("@ankhorage/supabase");
           const supabase = await Bun.file(new URL("../package.json", supabaseEntry)).json();
+          const supabaseRange = packageJson.devDependencies?.["@ankhorage/supabase"];
           const minikubeRequire = createRequire(minikubeEntry);
           const driverEntry = minikubeRequire.resolve("@ankhorage/kubernetes");
           const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();
 
           if (minikube.version !== "0.4.2") throw new Error(`Expected Minikube 0.4.2, got ${minikube.version}`);
-          if (supabase.version !== "0.4.9") throw new Error(`Expected Supabase 0.4.9, got ${supabase.version}`);
+          if (typeof supabaseRange !== "string" || !Bun.semver.satisfies(supabase.version, supabaseRange)) {
+            throw new Error(`Expected Supabase ${supabaseRange ?? "<missing range>"}, got ${supabase.version}`);
+          }
           if (driver.version !== "0.8.0") throw new Error(`Expected Kubernetes 0.8.0, got ${driver.version}`);
 
           console.log(`Minikube runtime: ${minikube.version}`);
-          console.log(`Supabase provider: ${supabase.version}`);
+          console.log(`Supabase provider: ${supabase.version} (${supabaseRange})`);
           console.log(`Minikube Kubernetes driver: ${driver.version}`);
           console.log("Image-seeded persistence baseline verified.");
           '
