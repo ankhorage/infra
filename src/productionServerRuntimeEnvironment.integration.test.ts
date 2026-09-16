@@ -18,7 +18,7 @@ import {
 } from '@ankhorage/k3s';
 import { expect, test } from 'bun:test';
 
-import { upInfraEnvironmentAsync, type InfraOrchestrationDependencies } from './index.js';
+import { type InfraOrchestrationDependencies, upInfraEnvironmentAsync } from './index.js';
 
 const projectId = 'infra162-server-runtime-environment';
 const serverImage = 'example/server:production';
@@ -130,7 +130,7 @@ function createDependencies(fixture: ProductionServerFixture): InfraOrchestratio
       },
     },
     credentials: {
-      resolveAsync: () => Promise.resolve(success({ privateKey: 'fixture-private-key' })),
+      resolveAsync: () => Promise.resolve(success({ token: 'fixture-token' })),
     },
     secrets: {
       resolveAsync: () =>
