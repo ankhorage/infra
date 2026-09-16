@@ -106,9 +106,9 @@ test('runs local k3s and Supabase through the portable compute lifecycle', async
         environmentVariable === 'EXPO_PUBLIC_SUPABASE_URL' && value === publicBaseUrl,
     ),
   ).toBe(true);
-  expect(
-    outputs.outputs.some(({ name, value }) => name === 'bucket' && value === bucket),
-  ).toBe(true);
+  expect(outputs.outputs.some(({ name, value }) => name === 'bucket' && value === bucket)).toBe(
+    true,
+  );
 
   const status = requireSuccess(
     await statusInfraEnvironmentAsync(
