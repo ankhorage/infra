@@ -70,7 +70,15 @@ export function createProjectInfraLifecycle(
       return result;
     },
     async destroyAsync(request) {
-      const prepared = await prepareProjectOperationAsync(request, services, true);
+      const state = await services.readState(request.projectPath, request.environment);
+      if (state === null) {
+        return {
+          ok: true,
+          value: { environment: request.environment, ledger: null },
+          diagnostics: [],
+        };
+      }
+      const prepared = await prepareProjectOperationAsync(request, services, true, state);
       const result = await services.operations.destroy(
         {
           ...prepared.operation,
@@ -109,8 +117,9 @@ async function prepareProjectOperationAsync(
   request: ProjectInfraOperationRequest,
   services: ReturnType<typeof createInfraCommandServices>,
   useStoredDesired = false,
+  knownState?: InfraStoredState,
 ): Promise<PreparedProjectOperation> {
-  const state = await services.readState(request.projectPath, request.environment);
+  const state = knownState ?? (await services.readState(request.projectPath, request.environment));
   const currentDesired = readEnvironment(request.manifest, request.environment);
   const desired = useStoredDesired && state !== null ? state.desired : currentDesired;
   if (desired === undefined) {
