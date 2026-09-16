@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 5.1.6
+
+### Patch Changes
+
+- 57da4cf: Prove the released Hetzner, k3s, Supabase and R2 composition with independent object-storage ownership and privileged output isolation.
+
 ## 5.1.5
 
 ### Patch Changes
