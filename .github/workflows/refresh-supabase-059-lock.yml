@@ -1,0 +1,58 @@
+name: Refresh Supabase 0.5.9 recovery lock
+
+on:
+  push:
+    branches:
+      - test/145-s3-backup-recovery
+    paths:
+      - '.github/workflows/refresh-supabase-059-lock.yml'
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: test/145-s3-backup-recovery
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Verify published Supabase version
+        run: |
+          for attempt in $(seq 1 30); do
+            if [ "$(npm view @ankhorage/supabase@0.5.9 version --registry=https://registry.npmjs.org 2>/dev/null || true)" = '0.5.9' ]; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo 'Supabase 0.5.9 is not visible on npmjs.org.' >&2
+          exit 1
+
+      - name: Refresh lockfile
+        run: bun install
+
+      - name: Commit lockfile and remove helper
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/refresh-supabase-059-lock.yml
+          git add bun.lock
+          git commit -m 'chore: refresh Supabase 0.5.9 recovery lock'
+          git push origin HEAD:test/145-s3-backup-recovery
