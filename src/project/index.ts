@@ -1,3 +1,4 @@
+export { createProjectInfraCredentialPort } from '../features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.js';
 export { readStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.js';
 export { removeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.js';
 export { resolveInfraProjectAsync } from '../features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.js';
