@@ -1,0 +1,33 @@
+name: Format refresh
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Format repository and remove helper workflow
+        run: |
+          bun run format
+          rm .github/workflows/format-refresh.yml
+      - name: Commit formatting
+        run: |
+          git config user.name "ankhorage-format-refresh[bot]"
+          git config user.email "ankhorage-format-refresh[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "style: format generated infra documentation"
+          git push origin "HEAD:${{ github.head_ref }}"
