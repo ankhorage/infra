@@ -23,8 +23,26 @@ jobs:
         with:
           bun-version: 1.4.2
 
-      - name: Update released Supabase provider
-        run: bun add --dev @ankhorage/supabase@^0.5.10
+      - name: Verify npm registry publication
+        shell: bash
+        run: |
+          echo "npm registry: $(npm config get registry)"
+          npm view @ankhorage/supabase version --registry=https://registry.npmjs.org
+          curl --fail --silent --show-error \
+            https://registry.npmjs.org/@ankhorage%2fsupabase \
+            --output /tmp/supabase-registry.json
+          node <<'NODE'
+          const registry = require('/tmp/supabase-registry.json');
+          console.log(`npm latest: ${registry['dist-tags']?.latest ?? '<missing>'}`);
+          console.log(`npm has 0.5.10: ${registry.versions?.['0.5.10'] !== undefined}`);
+          if (registry.versions?.['0.5.10'] === undefined) process.exit(2);
+          NODE
+
+      - name: Update released Supabase provider with a fresh Bun cache
+        shell: bash
+        run: |
+          rm -rf "$HOME/.bun/install/cache"
+          bun add --dev @ankhorage/supabase@^0.5.10
 
       - name: Commit dependency update
         shell: bash
