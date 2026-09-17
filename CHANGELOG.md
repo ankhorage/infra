@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.2
+
+### Patch Changes
+
+- e707284: Render standalone Infra help from the canonical provider manifest through the shared Ankh CLI help runtime.
+
 ## 7.1.1
 
 ### Patch Changes
