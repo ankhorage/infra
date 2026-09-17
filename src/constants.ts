@@ -8,6 +8,7 @@ import packageJson from '../package.json';
 
 export const INFRA_PACKAGE_NAME = packageJson.name;
 export const INFRA_PACKAGE_VERSION = packageJson.version;
+export const INFRA_PACKAGE_DESCRIPTION = packageJson.description;
 export const INFRA_COMMAND_CATEGORY = 'infra' as const satisfies AnkhCommandCategory;
 export const INFRA_CAPABILITIES = [
   'infra.validate',
