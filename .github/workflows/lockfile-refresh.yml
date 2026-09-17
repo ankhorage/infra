@@ -1,0 +1,26 @@
+name: Lockfile refresh
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Refresh lockfile
+        run: bun install --lockfile-only
+      - name: Upload lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: refreshed-bun-lock
+          path: bun.lock
+          if-no-files-found: error
