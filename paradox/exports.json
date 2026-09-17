@@ -8,14 +8,16 @@
     "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
     "sourceLocation": {
       "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
-      "line": 7,
+      "line": 11,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [
       {
-        "label": "(environment: Readonly<Record<string, string | undefined>>) => { resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+        "label": "(environment: Readonly<Record<string, string | undefined>>) => import(\"@ankhorage/contracts\").InfraCredentialPort",
         "parameters": [
           {
             "name": "environment",
@@ -24,7 +26,7 @@
             "description": null
           }
         ],
-        "returnType": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+        "returnType": "import(\"@ankhorage/contracts\").InfraCredentialPort",
         "returnDescription": null
       }
     ],
@@ -43,7 +45,9 @@
       "line": 7,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [
       {
@@ -75,8 +79,12 @@
       "line": 4,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["InfraAdapterPackageResolver"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [
+      "InfraAdapterPackageResolver"
+    ],
     "signatures": [
       {
         "label": "() => InfraAdapterPackageResolver",
@@ -100,7 +108,9 @@
       "line": 22,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [
       "InfraDestroyOperationRequest",
       "InfraDestroyOperationResult",
@@ -142,7 +152,9 @@
       "line": 15,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [
       "InfraDownOperationResult",
       "InfraOperationRequest",
@@ -184,7 +196,9 @@
       "line": 15,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [
       "InfraGenerateOperationResult",
       "InfraOperationRequest",
@@ -226,8 +240,13 @@
       "line": 8,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["InfraOperationRequest", "InfraOutputsOperationResult"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [
+      "InfraOperationRequest",
+      "InfraOutputsOperationResult"
+    ],
     "signatures": [
       {
         "label": "(request: InfraOperationRequest) => InfraOutputsOperationResult",
@@ -258,7 +277,9 @@
       "line": 7,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -291,7 +312,9 @@
       "line": 3,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -317,7 +340,9 @@
       "line": 72,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -392,7 +417,9 @@
       "line": 126,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -410,7 +437,9 @@
       "line": 121,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -443,7 +472,9 @@
       "line": 119,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -461,7 +492,9 @@
       "line": 114,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -494,7 +527,9 @@
       "line": 103,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -512,7 +547,9 @@
       "line": 97,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -552,7 +589,9 @@
       "line": 63,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -613,8 +652,12 @@
       "line": 57,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["InfraAdapterPackageResolver"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [
+      "InfraAdapterPackageResolver"
+    ],
     "signatures": [],
     "members": [
       {
@@ -627,7 +670,7 @@
       {
         "name": "credentials",
         "kind": "property",
-        "type": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+        "type": "import(\"@ankhorage/contracts\").InfraCredentialPort",
         "required": true,
         "description": null
       },
@@ -653,7 +696,9 @@
       "line": 112,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -671,7 +716,9 @@
       "line": 107,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -704,7 +751,9 @@
       "line": 95,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -722,7 +771,9 @@
       "line": 105,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -740,7 +791,9 @@
       "line": 43,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -780,7 +833,9 @@
       "line": 93,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -798,7 +853,9 @@
       "line": 83,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -816,7 +873,9 @@
       "line": 85,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -870,7 +929,9 @@
       "line": 81,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
@@ -888,7 +949,9 @@
       "line": 77,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -914,7 +977,9 @@
       "line": 8,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [
       {
@@ -946,7 +1011,9 @@
       "line": 13,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [
       "InfraOperationRequest",
       "InfraOrchestrationDependencies",
@@ -988,8 +1055,13 @@
       "line": 49,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["ResolvedInfraAdapters", "ResolvedInfraEnvironment"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [
+      "ResolvedInfraAdapters",
+      "ResolvedInfraEnvironment"
+    ],
     "signatures": [],
     "members": [
       {
@@ -1042,7 +1114,9 @@
       "line": 37,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -1082,7 +1156,9 @@
       "line": 24,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [],
     "signatures": [],
     "members": [
@@ -1122,8 +1198,13 @@
       "line": 21,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["InfraAdapterPackageResolver", "ResolvedInfraAdapters"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [
+      "InfraAdapterPackageResolver",
+      "ResolvedInfraAdapters"
+    ],
     "signatures": [
       {
         "label": "(environment: InfraEnvironmentSpec, resolver: InfraAdapterPackageResolver) => Promise<InfraResult<ResolvedInfraAdapters>>",
@@ -1160,8 +1241,12 @@
       "line": 10,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
-    "relatedSymbols": ["ResolvedInfraEnvironment"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [
+      "ResolvedInfraEnvironment"
+    ],
     "signatures": [
       {
         "label": "(request: InfraEnvironmentResolutionRequest) => InfraResult<ResolvedInfraEnvironment>",
@@ -1192,7 +1277,9 @@
       "line": 12,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [
       "InfraOperationRequest",
       "InfraOrchestrationDependencies",
@@ -1224,17 +1311,19 @@
   },
   {
     "name": "upInfraEnvironmentAsync",
-    "description": "Validate and reconcile compute, contributed workloads, runtime and services in dependency order.",
+    "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
     "isReadme": false,
     "examples": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
     "sourceLocation": {
       "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-      "line": 25,
+      "line": 26,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [
       "InfraOperationRequest",
       "InfraOrchestrationDependencies",
@@ -1276,7 +1365,9 @@
       "line": 9,
       "column": 1
     },
-    "exportPaths": ["src/index.ts"],
+    "exportPaths": [
+      "src/index.ts"
+    ],
     "relatedSymbols": [
       "InfraOperationRequest",
       "InfraOrchestrationDependencies",
