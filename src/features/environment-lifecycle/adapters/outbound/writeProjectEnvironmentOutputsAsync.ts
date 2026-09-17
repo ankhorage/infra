@@ -1,9 +1,9 @@
-import { pathExists } from '@ankhorage/utility/node/fs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
 import type { InfraOutput } from '@ankhorage/contracts/infra';
+import { pathExists } from '@ankhorage/utility/node/fs';
 
 const ENVIRONMENT_NAME_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/u;
 const ENVIRONMENT_ASSIGNMENT_PATTERN = /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=/u;
@@ -44,10 +44,7 @@ function collectEnvironmentValues(outputs: readonly InfraOutput[]): ReadonlyMap<
 }
 
 /*** Merge managed environment values without changing unrelated lines or retaining duplicate managed keys. */
-function mergeEnvironmentFile(
-  current: string,
-  values: ReadonlyMap<string, string>,
-): string {
+function mergeEnvironmentFile(current: string, values: ReadonlyMap<string, string>): string {
   const normalized = current.replaceAll('\r\n', '\n');
   const lines = normalized.length === 0 ? [] : normalized.split('\n');
   if (lines.at(-1) === '') lines.pop();
