@@ -1,8 +1,9 @@
 import type { InfraCommandServices } from '../../../types/infraCli.js';
-import { createEnvironmentInfraCredentialPort } from '../adapters/outbound/createEnvironmentInfraCredentialPort.js';
 import { createEnvironmentInfraSecretPort } from '../adapters/outbound/createEnvironmentInfraSecretPort.js';
 import { createNodeInfraAdapterPackageResolver } from '../adapters/outbound/createNodeInfraAdapterPackageResolver.js';
+import { createProjectInfraCredentialPort } from '../adapters/outbound/createProjectInfraCredentialPort.js';
 import { readStoredInfraStateAsync } from '../adapters/outbound/readStoredInfraStateAsync.js';
+import { removeStoredInfraCredentialsAsync } from '../adapters/outbound/removeStoredInfraCredentialsAsync.js';
 import { removeStoredInfraStateAsync } from '../adapters/outbound/removeStoredInfraStateAsync.js';
 import { resolveInfraProjectAsync } from '../adapters/outbound/resolveInfraProjectAsync.js';
 import { writeInfraGeneratedArtifactsAsync } from '../adapters/outbound/writeInfraGeneratedArtifactsAsync.js';
@@ -25,6 +26,7 @@ export function createInfraCommandServices(
     readState: overrides.readState ?? readStoredInfraStateAsync,
     writeState: overrides.writeState ?? writeStoredInfraStateAsync,
     removeState: overrides.removeState ?? removeStoredInfraStateAsync,
+    removeCredentials: overrides.removeCredentials ?? removeStoredInfraCredentialsAsync,
     writeArtifacts: overrides.writeArtifacts ?? writeInfraGeneratedArtifactsAsync,
     operations: overrides.operations ?? {
       validate: validateInfraEnvironmentAsync,
@@ -38,9 +40,13 @@ export function createInfraCommandServices(
     },
     createDependencies:
       overrides.createDependencies ??
-      ((context) => ({
+      ((context, scope) => ({
         adapterResolver: createNodeInfraAdapterPackageResolver(),
-        credentials: createEnvironmentInfraCredentialPort(context.env),
+        credentials: createProjectInfraCredentialPort({
+          projectPath: scope.projectPath,
+          environment: scope.environment,
+          processEnvironment: context.env,
+        }),
         secrets: createEnvironmentInfraSecretPort(context.env),
       })),
   };
