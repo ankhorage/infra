@@ -4,23 +4,29 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   lockfile:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout pull request branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.2
       - name: Refresh lockfile
         run: bun install --lockfile-only
-      - name: Upload lockfile
-        uses: actions/upload-artifact@v4
-        with:
-          name: refreshed-bun-lock
-          path: bun.lock
-          if-no-files-found: error
+      - name: Commit lockfile when changed
+        run: |
+          if git diff --quiet -- bun.lock; then
+            exit 0
+          fi
+          git config user.name "ankhorage-lockfile-refresh[bot]"
+          git config user.email "ankhorage-lockfile-refresh[bot]@users.noreply.github.com"
+          git add bun.lock
+          git commit -m "chore(deps): refresh bun lockfile"
+          git push origin "HEAD:${{ github.head_ref }}"
