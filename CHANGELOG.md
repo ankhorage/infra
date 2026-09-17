@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.0
+
+### Minor Changes
+
+- afc7347: Persist provider-generated control-plane credential bundles inside Infra-owned project/environment state, reuse them across fresh processes, and remove them only with complete environment destruction.
+
 ## 7.0.0
 
 ### Major Changes
