@@ -8,14 +8,14 @@
     "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
     "sourceLocation": {
       "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
-      "line": 7,
+      "line": 11,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
     "relatedSymbols": [],
     "signatures": [
       {
-        "label": "(environment: Readonly<Record<string, string | undefined>>) => { resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+        "label": "(environment: Readonly<Record<string, string | undefined>>) => import(\"@ankhorage/contracts\").InfraCredentialPort",
         "parameters": [
           {
             "name": "environment",
@@ -24,7 +24,7 @@
             "description": null
           }
         ],
-        "returnType": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+        "returnType": "import(\"@ankhorage/contracts\").InfraCredentialPort",
         "returnDescription": null
       }
     ],
@@ -627,7 +627,7 @@
       {
         "name": "credentials",
         "kind": "property",
-        "type": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+        "type": "import(\"@ankhorage/contracts\").InfraCredentialPort",
         "required": true,
         "description": null
       },
@@ -1224,14 +1224,14 @@
   },
   {
     "name": "upInfraEnvironmentAsync",
-    "description": "Validate and reconcile compute, contributed workloads, runtime and services in dependency order.",
+    "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
     "isReadme": false,
     "examples": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
     "sourceLocation": {
       "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-      "line": 25,
+      "line": 26,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],

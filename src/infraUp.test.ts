@@ -27,7 +27,7 @@ const environment = {
 const manifest = { environments: { local: environment }, modules: [] } as const;
 
 describe('environment up orchestration', () => {
-  it('validates before mutation and reconciles compute, runtime and deduplicated services', async () => {
+  it('validates before mutation and prepares services before workload materialization', async () => {
     const calls: string[] = [];
     const observedRuntimeDesired: InfraRuntimeDesiredState[] = [];
     const observedServiceOutputs: InfraOutput[][] = [];
@@ -39,9 +39,11 @@ describe('environment up orchestration', () => {
       'local.validate',
       'supabase.validate',
       'cerbos.validate',
+      'local.ensure',
+      'supabase.prepare',
+      'cerbos.prepare',
       'supabase.workloads',
       'cerbos.workloads',
-      'local.ensure',
       'docker-compose.validate',
       'docker-compose.ensure',
       'supabase.reconcile',
@@ -81,6 +83,27 @@ describe('environment up orchestration', () => {
     expect(calls).toEqual(['local.validate', 'supabase.validate']);
   });
 
+  it('stops before workload materialization when service preparation fails', async () => {
+    const calls: string[] = [];
+    const dependencies = createDependencies(calls, [], [], 'supabase.prepare');
+    const result = await upInfraEnvironmentAsync({ projectId: 'sample', manifest }, dependencies);
+
+    expect(result.ok).toBe(false);
+    expect(result.diagnostics.map(({ code }) => code)).toEqual([
+      'compute-warning',
+      'fixture-failure',
+    ]);
+    expect(calls).toEqual([
+      'local.validate',
+      'supabase.validate',
+      'cerbos.validate',
+      'local.ensure',
+      'supabase.prepare',
+    ]);
+    expect(calls).not.toContain('supabase.workloads');
+    expect(calls).not.toContain('docker-compose.ensure');
+  });
+
   it('does not reconcile services after a runtime failure', async () => {
     const calls: string[] = [];
     const dependencies = createDependencies(calls, [], [], 'docker-compose.ensure');
@@ -100,7 +123,11 @@ function createDependencies(
 ): InfraOrchestrationDependencies {
   return {
     adapterResolver: createResolver(calls, runtimeDesired, serviceOutputs, failure),
-    credentials: { resolveAsync: () => Promise.resolve(success({})) },
+    credentials: {
+      findAsync: () => Promise.resolve(success(null)),
+      resolveAsync: () => Promise.resolve(success({})),
+      persistAsync: () => Promise.resolve(success(null)),
+    },
     secrets: { resolveAsync: () => Promise.resolve(success('secret')) },
   };
 }
@@ -199,6 +226,7 @@ function createService(
     descriptor: descriptor as InfraServiceAdapter['descriptor'],
     validateAsync: () => recordAsync(calls, `${descriptor.id}.validate`, failure, null),
     planAsync: () => Promise.resolve(success([])),
+    prepareAsync: () => recordAsync(calls, `${descriptor.id}.prepare`, failure, null),
     desiredWorkloadsAsync: () =>
       recordAsync(calls, `${descriptor.id}.workloads`, failure, [workload(descriptor.id)]),
     reconcileAsync: (_context, outputs) => {

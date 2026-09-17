@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v5.1.4",
+      "value": "v6.0.0",
       "color": "cb3837"
     },
     {
@@ -483,6 +483,12 @@
       "exports": ["prepareInfraOperationAsync"]
     },
     {
+      "path": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/features/environment-lifecycle/utils/appendInfraFailure.ts"],
+      "exports": ["prepareInfraServicesAsync"]
+    },
+    {
       "path": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
       "isEntrypoint": false,
       "dependencies": [
@@ -506,6 +512,7 @@
       "isEntrypoint": false,
       "dependencies": [
         "src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts",
+        "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts",
         "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts",
         "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
@@ -838,14 +845,14 @@
       "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
-        "line": 7,
+        "line": 11,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
       "relatedSymbols": [],
       "signatures": [
         {
-          "label": "(environment: Readonly<Record<string, string | undefined>>) => { resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+          "label": "(environment: Readonly<Record<string, string | undefined>>) => import(\"@ankhorage/contracts\").InfraCredentialPort",
           "parameters": [
             {
               "name": "environment",
@@ -854,7 +861,7 @@
               "description": null
             }
           ],
-          "returnType": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+          "returnType": "import(\"@ankhorage/contracts\").InfraCredentialPort",
           "returnDescription": null
         }
       ],
@@ -1457,7 +1464,7 @@
         {
           "name": "credentials",
           "kind": "property",
-          "type": "{ resolveAsync(reference: import(\"@ankhorage/contracts\").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }",
+          "type": "import(\"@ankhorage/contracts\").InfraCredentialPort",
           "required": true,
           "description": null
         },
@@ -2054,14 +2061,14 @@
     },
     {
       "name": "upInfraEnvironmentAsync",
-      "description": "Validate and reconcile compute, contributed workloads, runtime and services in dependency order.",
+      "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
       "isReadme": false,
       "examples": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "line": 25,
+        "line": 26,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
@@ -2387,7 +2394,25 @@
       "description": "Resolve execution-only control-plane credentials from exact-name or prefixed environment data.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
-        "line": 7,
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "name": "findCredential",
+      "description": "Find and parse an optional credential bundle from the environment without treating absence as failure.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
+        "line": 44,
+        "column": 1
+      }
+    },
+    {
+      "name": "prefixedCredentialName",
+      "description": "Build the canonical prefixed environment variable name for one credential reference.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
+        "line": 58,
         "column": 1
       }
     },
@@ -2396,16 +2421,16 @@
       "description": "Parse JSON credential bundles; token variables also support their conventional scalar form.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
-        "line": 29,
+        "line": 63,
         "column": 1
       }
     },
     {
-      "name": "isRecord",
-      "description": "Narrow JSON credential bundles.",
+      "name": "isStringRecord",
+      "description": "Narrow credential bundle values to a string-only record.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
-        "line": 50,
+        "line": 82,
         "column": 1
       }
     },
@@ -2680,6 +2705,15 @@
       }
     },
     {
+      "name": "prepareInfraServicesAsync",
+      "description": "Run optional mutating service preparation before runtime workload materialization.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts",
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
       "name": "resolveInfraAdaptersAsync",
       "description": "Resolve exactly the selected provider packages and validate their public adapter boundaries.",
       "sourceLocation": {
@@ -2843,10 +2877,10 @@
     },
     {
       "name": "upInfraEnvironmentAsync",
-      "description": "Validate and reconcile compute, contributed workloads, runtime and services in dependency order.",
+      "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "line": 25,
+        "line": 26,
         "column": 1
       }
     },
@@ -2855,7 +2889,7 @@
       "description": "Reconcile service-owned external state after its runtime workloads expose outputs.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "line": 105,
+        "line": 109,
         "column": 1
       }
     },
@@ -2900,7 +2934,7 @@
       "description": "Resolve one explicit project/environment request with its prior ownership state and dependencies.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
-        "line": 108,
+        "line": 116,
         "column": 1
       }
     },
@@ -2909,7 +2943,7 @@
       "description": "Read one exact environment without inventing a fallback.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
-        "line": 141,
+        "line": 150,
         "column": 1
       }
     },
@@ -2918,7 +2952,7 @@
       "description": "Replace one selected environment while preserving all other manifest state.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
-        "line": 151,
+        "line": 160,
         "column": 1
       }
     },
@@ -3322,7 +3356,7 @@
       "name": "upInfraEnvironmentAsync",
       "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
       "symbolName": "upInfraEnvironmentAsync",
-      "description": "Validate and reconcile compute, contributed workloads, runtime and services in dependency order.",
+      "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
       "isReadme": false
     },
     {
@@ -4337,6 +4371,11 @@
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts"
       },
       {
+        "fromPath": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts",
+        "toPath": "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts"
+      },
+      {
         "fromPath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "toPath": "src/types/infraOrchestration.ts",
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts"
@@ -4394,6 +4433,11 @@
       {
         "fromPath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
         "toPath": "src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
+        "toPath": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts",
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
       },
       {
@@ -5042,6 +5086,12 @@
       },
       {
         "fromSymbol": "destroyAsync",
+        "toSymbol": "readState",
+        "callExpression": "services.readState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
         "toSymbol": "prepareProjectOperationAsync",
         "callExpression": "prepareProjectOperationAsync",
         "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
@@ -5293,9 +5343,21 @@
         "sourcePath": "src/features/environment-lifecycle/utils/retainUnchangedAdapterResources.ts"
       },
       {
+        "fromSymbol": "findAsync",
+        "toSymbol": "findCredential",
+        "callExpression": "findCredential",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
+      },
+      {
         "fromSymbol": "resolveAsync",
-        "toSymbol": "normalizeInfraEnvironmentKey",
-        "callExpression": "normalizeInfraEnvironmentKey",
+        "toSymbol": "findCredential",
+        "callExpression": "findCredential",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "prefixedCredentialName",
+        "callExpression": "prefixedCredentialName",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
       },
       {
@@ -5305,15 +5367,33 @@
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
       },
       {
-        "fromSymbol": "resolveAsync",
+        "fromSymbol": "persistAsync",
+        "toSymbol": "createInfraFailure",
+        "callExpression": "createInfraFailure",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "findCredential",
+        "toSymbol": "prefixedCredentialName",
+        "callExpression": "prefixedCredentialName",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "findCredential",
         "toSymbol": "parseCredentialBundle",
         "callExpression": "parseCredentialBundle",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
       },
       {
+        "fromSymbol": "prefixedCredentialName",
+        "toSymbol": "normalizeInfraEnvironmentKey",
+        "callExpression": "normalizeInfraEnvironmentKey",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
+      },
+      {
         "fromSymbol": "parseCredentialBundle",
-        "toSymbol": "isRecord",
-        "callExpression": "isRecord",
+        "toSymbol": "isStringRecord",
+        "callExpression": "isStringRecord",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
       },
       {
@@ -5641,6 +5721,12 @@
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts"
       },
       {
+        "fromSymbol": "prepareInfraServicesAsync",
+        "toSymbol": "appendInfraFailure",
+        "callExpression": "appendInfraFailure",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts"
+      },
+      {
         "fromSymbol": "resolveInfraAdaptersAsync",
         "toSymbol": "getSelectedCatalogEntries",
         "callExpression": "getSelectedCatalogEntries",
@@ -5846,6 +5932,12 @@
       },
       {
         "fromSymbol": "upInfraEnvironmentAsync",
+        "toSymbol": "prepareInfraServicesAsync",
+        "callExpression": "prepareInfraServicesAsync",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
+      },
+      {
+        "fromSymbol": "upInfraEnvironmentAsync",
         "toSymbol": "collectInfraWorkloadsAsync",
         "callExpression": "collectInfraWorkloadsAsync",
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
@@ -5890,12 +5982,7 @@
     "typeReferences": [
       {
         "fromSymbol": "createEnvironmentInfraCredentialPort",
-        "toType": "InfraControlPlaneCredentialRef",
-        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
-      },
-      {
-        "fromSymbol": "createEnvironmentInfraCredentialPort",
-        "toType": "InfraResult",
+        "toType": "InfraCredentialPort",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
       },
       {
@@ -6155,7 +6242,7 @@
       },
       {
         "fromSymbol": "InfraOrchestrationDependencies",
-        "toType": "InfraControlPlaneCredentialRef",
+        "toType": "InfraCredentialPort",
         "sourcePath": "src/types/infraOrchestration.ts"
       },
       {
@@ -6166,11 +6253,6 @@
       {
         "fromSymbol": "InfraOrchestrationDependencies",
         "toType": "InfraSecretReference",
-        "sourcePath": "src/types/infraOrchestration.ts"
-      },
-      {
-        "fromSymbol": "InfraOrchestrationDependencies",
-        "toType": "Readonly",
         "sourcePath": "src/types/infraOrchestration.ts"
       },
       {

@@ -326,7 +326,7 @@
                 data-target="src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"
               >
                 src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts
-                <small>3 functions</small>
+                <small>5 functions</small>
               </button>
             </li>
             <li>
@@ -467,6 +467,16 @@
               >
                 src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts
                 <small>5 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts"
+              >
+                src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts
+                <small>1 function</small>
               </button>
             </li>
             <li>
@@ -705,7 +715,7 @@
             <div class="summary">
               <div><strong>38</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>71</strong><span class="muted">modules</span></div>
+              <div><strong>72</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -1311,6 +1321,20 @@
             </article>
             <article
               class="item"
+              data-search="src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts src/features/environment-lifecycle/utils/appendInfraFailure.ts prepareInfraServicesAsync"
+            >
+              <h3>
+                src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts
+              </h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong>
+                <code>src/features/environment-lifecycle/utils/appendInfraFailure.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <code>prepareInfraServicesAsync</code></p>
+            </article>
+            <article
+              class="item"
               data-search="src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts src/types/infraOrchestration.ts resolveInfraAdaptersAsync"
             >
               <h3>
@@ -1344,7 +1368,7 @@
             </article>
             <article
               class="item"
-              data-search="src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts src/features/environment-lifecycle/utils/appendInfraFailure.ts src/features/environment-lifecycle/utils/createInfraExecutionContext.ts src/features/environment-lifecycle/utils/createInfraLedger.ts src/features/environment-lifecycle/utils/mergeInfraOutputs.ts src/types/infraOrchestration.ts upInfraEnvironmentAsync"
+              data-search="src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts src/features/environment-lifecycle/utils/appendInfraFailure.ts src/features/environment-lifecycle/utils/createInfraExecutionContext.ts src/features/environment-lifecycle/utils/createInfraLedger.ts src/features/environment-lifecycle/utils/mergeInfraOutputs.ts src/types/infraOrchestration.ts upInfraEnvironmentAsync"
             >
               <h3>
                 src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts
@@ -1354,6 +1378,9 @@
                 <strong>Dependencies:</strong>
                 <code
                   >src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts</code
+                >,
+                <code
+                  >src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts</code
                 >,
                 <code
                   >src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts</code
@@ -1809,13 +1836,13 @@
               <article
                 class="item"
                 id="symbol-createenvironmentinfracredentialport"
-                data-search='createEnvironmentInfraCredentialPort function src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Resolve execution-only control-plane credentials from exact-name or prefixed environment data. (environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; { resolveAsync(reference: import("@ankhorage/contracts").InfraControlPlaneCredentialRef): Promise&lt;InfraResult&lt;Readonly&lt;Record&lt;string, string&gt;&gt;&gt;&gt;; }'
+                data-search='createEnvironmentInfraCredentialPort function src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Resolve execution-only control-plane credentials from exact-name or prefixed environment data. (environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; import("@ankhorage/contracts").InfraCredentialPort'
               >
                 <h4>createEnvironmentInfraCredentialPort</h4>
                 <p class="muted">
                   function •
                   <code
-                    >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:7:1</code
+                    >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:11:1</code
                   >
                 </p>
                 <p>
@@ -1827,7 +1854,7 @@
                 <div>
                   <h5>Signature</h5>
                   <pre>
-(environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; { resolveAsync(reference: import(&quot;@ankhorage/contracts&quot;).InfraControlPlaneCredentialRef): Promise&lt;InfraResult&lt;Readonly&lt;Record&lt;string, string&gt;&gt;&gt;&gt;; }</pre>
+(environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; import(&quot;@ankhorage/contracts&quot;).InfraCredentialPort</pre>
                   <table>
                     <thead>
                       <tr>
@@ -1850,12 +1877,7 @@
                   </table>
                   <p>
                     <strong>Returns:</strong>
-                    <code
-                      >{ resolveAsync(reference:
-                      import(&quot;@ankhorage/contracts&quot;).InfraControlPlaneCredentialRef):
-                      Promise&lt;InfraResult&lt;Readonly&lt;Record&lt;string,
-                      string&gt;&gt;&gt;&gt;; }</code
-                    >
+                    <code>import(&quot;@ankhorage/contracts&quot;).InfraCredentialPort</code>
                   </p>
                 </div>
               </article>
@@ -2472,18 +2494,18 @@
               <article
                 class="item"
                 id="symbol-upinfraenvironmentasync"
-                data-search='upInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts Validate and reconcile compute, contributed workloads, runtime and services in dependency order. InfraOperationRequest InfraOrchestrationDependencies InfraUpOperationResult (request: import("../../../../index.js").InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraUpOperationResult&gt;'
+                data-search='upInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts Validate and reconcile compute, service preparation, workloads, runtime and services in order. InfraOperationRequest InfraOrchestrationDependencies InfraUpOperationResult (request: import("../../../../index.js").InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraUpOperationResult&gt;'
               >
                 <h4>upInfraEnvironmentAsync</h4>
                 <p class="muted">
                   function •
                   <code
-                    >src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:25:1</code
+                    >src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:26:1</code
                   >
                 </p>
                 <p>
-                  Validate and reconcile compute, contributed workloads, runtime and services in
-                  dependency order.
+                  Validate and reconcile compute, service preparation, workloads, runtime and
+                  services in order.
                 </p>
                 <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
                 <div>
@@ -3067,12 +3089,7 @@
                       <td><code>credentials</code></td>
                       <td>property</td>
                       <td>
-                        <code
-                          >{ resolveAsync(reference:
-                          import(&quot;@ankhorage/contracts&quot;).InfraControlPlaneCredentialRef):
-                          Promise&lt;InfraResult&lt;Readonly&lt;Record&lt;string,
-                          string&gt;&gt;&gt;&gt;; }</code
-                        >
+                        <code>import(&quot;@ankhorage/contracts&quot;).InfraCredentialPort</code>
                       </td>
                       <td>yes</td>
                       <td></td>
@@ -3854,6 +3871,11 @@
                 module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts
                 module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts
                 --&gt; module_src_types_infraOrchestration_ts
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts&quot;]
+                package__ankhorage_infra -.-&gt;
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
+                --&gt; module_src_features_environment_lifecycle_utils_appendInfraFailure_ts
                 module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts&quot;]
                 package__ankhorage_infra -.-&gt;
                 module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts
@@ -3878,6 +3900,9 @@
                 module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
                 --&gt;
                 module_src_features_environment_lifecycle_application_use_cases_collectInfraWorkloadsAsync_ts
+                module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
+                --&gt;
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
                 module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
                 --&gt;
                 module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts
@@ -4299,6 +4324,9 @@ graph TD
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts --&gt; module_src_features_environment_lifecycle_utils_appendInfraFailure_ts
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts --&gt; module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts --&gt; module_src_types_infraOrchestration_ts
+  module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts&quot;]
+  package__ankhorage_infra -.-&gt; module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
+  module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts --&gt; module_src_features_environment_lifecycle_utils_appendInfraFailure_ts
   module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts --&gt; module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
@@ -4311,6 +4339,7 @@ graph TD
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_collectInfraWorkloadsAsync_ts
+  module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraAdaptersAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts
@@ -4472,6 +4501,7 @@ graph TD
                 module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts[&quot;src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts&quot;]
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts&quot;]
@@ -4705,6 +4735,8 @@ graph TD
                 module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts
                 module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts
                 --&gt; module_src_types_infraOrchestration_ts
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
+                --&gt; module_src_features_environment_lifecycle_utils_appendInfraFailure_ts
                 module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts
                 --&gt;
                 module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
@@ -4720,6 +4752,9 @@ graph TD
                 module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
                 --&gt;
                 module_src_features_environment_lifecycle_application_use_cases_collectInfraWorkloadsAsync_ts
+                module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
+                --&gt;
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
                 module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
                 --&gt;
                 module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts
@@ -4899,6 +4934,7 @@ graph LR
   module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts[&quot;src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts&quot;]
+  module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts&quot;]
@@ -5055,12 +5091,14 @@ graph LR
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts --&gt; module_src_features_environment_lifecycle_utils_appendInfraFailure_ts
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts --&gt; module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts --&gt; module_src_types_infraOrchestration_ts
+  module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts --&gt; module_src_features_environment_lifecycle_utils_appendInfraFailure_ts
   module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts --&gt; module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
   module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_utils_appendInfraFailure_ts
   module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_collectInfraWorkloadsAsync_ts
+  module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraAdaptersAsync_ts
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts --&gt; module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts
@@ -5168,6 +5206,7 @@ graph LR
                 module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts[&quot;src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts&quot;]
+                module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts&quot;]
                 module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts&quot;]
@@ -5367,6 +5406,7 @@ graph LR
   module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts[&quot;src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_prepareInfraOperationAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts&quot;]
+  module_src_features_environment_lifecycle_application_use_cases_prepareInfraServicesAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_resolveInfraAdaptersAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts&quot;]
   module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts[&quot;src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts&quot;]
@@ -6032,7 +6072,7 @@ sequenceDiagram
               <h3>createEnvironmentInfraCredentialPort</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:7:1</code
+                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:11:1</code
                 >
               </p>
               <p>
@@ -6042,12 +6082,41 @@ sequenceDiagram
             </article>
             <article
               class="item"
+              data-search="findCredential src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Find and parse an optional credential bundle from the environment without treating absence as failure."
+            >
+              <h3>findCredential</h3>
+              <p class="muted">
+                <code
+                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:44:1</code
+                >
+              </p>
+              <p>
+                Find and parse an optional credential bundle from the environment without treating
+                absence as failure.
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="prefixedCredentialName src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Build the canonical prefixed environment variable name for one credential reference."
+            >
+              <h3>prefixedCredentialName</h3>
+              <p class="muted">
+                <code
+                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:58:1</code
+                >
+              </p>
+              <p>
+                Build the canonical prefixed environment variable name for one credential reference.
+              </p>
+            </article>
+            <article
+              class="item"
               data-search="parseCredentialBundle src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Parse JSON credential bundles; token variables also support their conventional scalar form."
             >
               <h3>parseCredentialBundle</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:29:1</code
+                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:63:1</code
                 >
               </p>
               <p>
@@ -6057,15 +6126,15 @@ sequenceDiagram
             </article>
             <article
               class="item"
-              data-search="isRecord src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Narrow JSON credential bundles."
+              data-search="isStringRecord src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Narrow credential bundle values to a string-only record."
             >
-              <h3>isRecord</h3>
+              <h3>isStringRecord</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:50:1</code
+                  >src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:82:1</code
                 >
               </p>
-              <p>Narrow JSON credential bundles.</p>
+              <p>Narrow credential bundle values to a string-only record.</p>
             </article>
           </section>
         </section>
@@ -6635,6 +6704,32 @@ sequenceDiagram
           </section>
         </section>
         <section
+          id="view-src-features-environment-lifecycle-application-use-cases-prepareinfraservicesasync-ts"
+          class="view"
+          data-view="src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>
+              src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts
+            </h2>
+            <article
+              class="item"
+              data-search="prepareInfraServicesAsync src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts Run optional mutating service preparation before runtime workload materialization."
+            >
+              <h3>prepareInfraServicesAsync</h3>
+              <p class="muted">
+                <code
+                  >src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts:11:1</code
+                >
+              </p>
+              <p>
+                Run optional mutating service preparation before runtime workload materialization.
+              </p>
+            </article>
+          </section>
+        </section>
+        <section
           id="view-src-features-environment-lifecycle-application-use-cases-resolveinfraadaptersasync-ts"
           class="view"
           data-view="src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts"
@@ -6906,17 +7001,17 @@ sequenceDiagram
             </h2>
             <article
               class="item"
-              data-search="upInfraEnvironmentAsync src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts Validate and reconcile compute, contributed workloads, runtime and services in dependency order."
+              data-search="upInfraEnvironmentAsync src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts Validate and reconcile compute, service preparation, workloads, runtime and services in order."
             >
               <h3>upInfraEnvironmentAsync</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:25:1</code
+                  >src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:26:1</code
                 >
               </p>
               <p>
-                Validate and reconcile compute, contributed workloads, runtime and services in
-                dependency order.
+                Validate and reconcile compute, service preparation, workloads, runtime and services
+                in order.
               </p>
             </article>
             <article
@@ -6926,7 +7021,7 @@ sequenceDiagram
               <h3>reconcileServicesAsync</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:105:1</code
+                  >src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:109:1</code
                 >
               </p>
               <p>
@@ -7040,7 +7135,7 @@ sequenceDiagram
               <h3>prepareProjectOperationAsync</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:108:1</code
+                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:116:1</code
                 >
               </p>
               <p>
@@ -7055,7 +7150,7 @@ sequenceDiagram
               <h3>readEnvironment</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:141:1</code
+                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:150:1</code
                 >
               </p>
               <p>Read one exact environment without inventing a fallback.</p>
@@ -7067,7 +7162,7 @@ sequenceDiagram
               <h3>replaceEnvironment</h3>
               <p class="muted">
                 <code
-                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:151:1</code
+                  >src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:160:1</code
                 >
               </p>
               <p>Replace one selected environment while preserving all other manifest state.</p>

@@ -4,15 +4,15 @@
 
 Kind: `function`
 Module: `src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts`
-Source: `src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:7:1`
+Source: `src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:11:1`
 
 Resolve execution-only control-plane credentials from exact-name or prefixed environment data.
 
 ### Signatures
 
-- `(environment: Readonly<Record<string, string | undefined>>) => { resolveAsync(reference: import("@ankhorage/contracts").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }`
+- `(environment: Readonly<Record<string, string | undefined>>) => import("@ankhorage/contracts").InfraCredentialPort`
   - environment: `Readonly<Record<string, string | undefined>>`
-  - returns: `{ resolveAsync(reference: import("@ankhorage/contracts").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }`
+  - returns: `import("@ankhorage/contracts").InfraCredentialPort`
 
 ## createEnvironmentInfraSecretPort
 
@@ -227,11 +227,11 @@ Source: `src/types/infraOrchestration.ts:57:1`
 
 ### Members
 
-| Name            | Kind     | Type                                                                                                                                                  | Required | Description |
-| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| adapterResolver | property | `InfraAdapterPackageResolver`                                                                                                                         | yes      |             |
-| credentials     | property | `{ resolveAsync(reference: import("@ankhorage/contracts").InfraControlPlaneCredentialRef): Promise<InfraResult<Readonly<Record<string, string>>>>; }` | yes      |             |
-| secrets         | property | `{ resolveAsync(reference: import("@ankhorage/contracts").InfraSecretReference): Promise<InfraResult<string>>; }`                                     | yes      |             |
+| Name            | Kind     | Type                                                                                                              | Required | Description |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| adapterResolver | property | `InfraAdapterPackageResolver`                                                                                     | yes      |             |
+| credentials     | property | `import("@ankhorage/contracts").InfraCredentialPort`                                                              | yes      |             |
+| secrets         | property | `{ resolveAsync(reference: import("@ankhorage/contracts").InfraSecretReference): Promise<InfraResult<string>>; }` | yes      |             |
 
 ## InfraOutputsOperationResult
 
@@ -445,9 +445,9 @@ Aggregate provider-neutral compute, runtime and service status.
 
 Kind: `function`
 Module: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts`
-Source: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:25:1`
+Source: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:26:1`
 
-Validate and reconcile compute, contributed workloads, runtime and services in dependency order.
+Validate and reconcile compute, service preparation, workloads, runtime and services in order.
 
 ### Signatures
 
