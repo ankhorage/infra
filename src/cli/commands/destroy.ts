@@ -35,6 +35,7 @@ export const destroy = {
     await services.writeArtifacts(operation.project.projectPath, [], operation.state?.ledger);
     if (result.value.ledger === null) {
       await services.removeState(operation.project.projectPath, environment);
+      await services.removeCredentials(operation.project.projectPath, environment);
     } else {
       await services.writeState(operation.project.projectPath, {
         schemaVersion: 1,
