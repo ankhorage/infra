@@ -7,6 +7,7 @@ import { removeStoredInfraCredentialsAsync } from '../adapters/outbound/removeSt
 import { removeStoredInfraStateAsync } from '../adapters/outbound/removeStoredInfraStateAsync.js';
 import { resolveInfraProjectAsync } from '../adapters/outbound/resolveInfraProjectAsync.js';
 import { writeInfraGeneratedArtifactsAsync } from '../adapters/outbound/writeInfraGeneratedArtifactsAsync.js';
+import { writeProjectEnvironmentOutputsAsync } from '../adapters/outbound/writeProjectEnvironmentOutputsAsync.js';
 import { writeStoredInfraStateAsync } from '../adapters/outbound/writeStoredInfraStateAsync.js';
 import { destroyInfraEnvironmentAsync } from '../application/use-cases/destroyInfraEnvironmentAsync.js';
 import { downInfraEnvironmentAsync } from '../application/use-cases/downInfraEnvironmentAsync.js';
@@ -28,6 +29,8 @@ export function createInfraCommandServices(
     removeState: overrides.removeState ?? removeStoredInfraStateAsync,
     removeCredentials: overrides.removeCredentials ?? removeStoredInfraCredentialsAsync,
     writeArtifacts: overrides.writeArtifacts ?? writeInfraGeneratedArtifactsAsync,
+    writeEnvironmentOutputs:
+      overrides.writeEnvironmentOutputs ?? writeProjectEnvironmentOutputsAsync,
     operations: overrides.operations ?? {
       validate: validateInfraEnvironmentAsync,
       plan: planInfraEnvironmentAsync,

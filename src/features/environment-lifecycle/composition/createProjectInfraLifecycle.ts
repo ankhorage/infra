@@ -49,6 +49,11 @@ export function createProjectInfraLifecycle(
         desired: prepared.desired,
         ledger: result.value.ledger,
       });
+      await services.writeEnvironmentOutputs(
+        request.projectPath,
+        request.environment,
+        result.value.outputs,
+      );
       return result;
     },
     async statusAsync(request) {

@@ -19,6 +19,11 @@ export const up = {
       desired: operation.desired,
       ledger: result.value.ledger,
     });
+    await services.writeEnvironmentOutputs(
+      operation.project.projectPath,
+      result.value.environment,
+      result.value.outputs,
+    );
     writeInfraStructured(request.context, request.arguments.format, {
       environment: result.value.environment,
       resources: result.value.resources.length,
