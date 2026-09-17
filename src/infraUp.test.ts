@@ -88,7 +88,11 @@ describe('environment up orchestration', () => {
     const dependencies = createDependencies(calls, [], [], 'supabase.prepare');
     const result = await upInfraEnvironmentAsync({ projectId: 'sample', manifest }, dependencies);
 
-    expect(result).toMatchObject({ ok: false, diagnostics: [{ code: 'fixture-failure' }] });
+    expect(result.ok).toBe(false);
+    expect(result.diagnostics.map(({ code }) => code)).toEqual([
+      'compute-warning',
+      'fixture-failure',
+    ]);
     expect(calls).toEqual([
       'local.validate',
       'supabase.validate',
