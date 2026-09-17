@@ -18,10 +18,11 @@ import { createInfraExecutionContext } from '../../utils/createInfraExecutionCon
 import { createInfraLedger } from '../../utils/createInfraLedger.js';
 import { mergeInfraOutputs } from '../../utils/mergeInfraOutputs.js';
 import { collectInfraWorkloadsAsync } from './collectInfraWorkloadsAsync.js';
+import { prepareInfraServicesAsync } from './prepareInfraServicesAsync.js';
 import { resolveInfraAdaptersAsync } from './resolveInfraAdaptersAsync.js';
 import { validateInfraAdaptersAsync } from './validateInfraAdaptersAsync.js';
 
-/*** Validate and reconcile compute, contributed workloads, runtime and services in dependency order. */
+/*** Validate and reconcile compute, service preparation, workloads, runtime and services in order. */
 export async function upInfraEnvironmentAsync(
   request: InfraUpRequest,
   dependencies: InfraOrchestrationDependencies,
@@ -43,15 +44,18 @@ export async function upInfraEnvironmentAsync(
   const validation = await validateInfraAdaptersAsync(context, adapters.value);
   if (!validation.ok) return appendInfraFailure(diagnostics, validation);
   diagnostics.push(...validation.diagnostics);
-  const workloads = await collectInfraWorkloadsAsync(context, adapters.value.services);
-  if (!workloads.ok) return appendInfraFailure(diagnostics, workloads);
-  diagnostics.push(...workloads.diagnostics);
   const compute = await adapters.value.compute.ensureAsync(
     context,
     environment.value.desired.deployment.compute,
   );
   if (!compute.ok) return appendInfraFailure(diagnostics, compute);
   diagnostics.push(...compute.diagnostics);
+  const preparation = await prepareInfraServicesAsync(context, adapters.value.services);
+  if (!preparation.ok) return appendInfraFailure(diagnostics, preparation);
+  diagnostics.push(...preparation.diagnostics);
+  const workloads = await collectInfraWorkloadsAsync(context, adapters.value.services);
+  if (!workloads.ok) return appendInfraFailure(diagnostics, workloads);
+  diagnostics.push(...workloads.diagnostics);
   const runtimeDesired = {
     selection: environment.value.desired.deployment.runtime,
     targets: compute.value.targets,
