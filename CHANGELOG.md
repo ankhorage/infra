@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.1
+
+### Patch Changes
+
+- 7440682: Expose the project-scoped credential port constructor from `@ankhorage/infra/project` for downstream host composition without exposing credential storage details.
+
 ## 7.1.0
 
 ### Minor Changes
