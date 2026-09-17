@@ -75,7 +75,11 @@ test('non-local output materialization leaves the local app environment untouche
 });
 
 test('standalone up delegates local public output materialization through the shared service', async () => {
-  const writes: { environment: string; outputs: readonly InfraOutput[]; projectPath: string }[] = [];
+  const writes: {
+    environment: string;
+    outputs: readonly InfraOutput[];
+    projectPath: string;
+  }[] = [];
   const manifest = createAppManifest('sample', {
     environments: { local: desired },
     modules: [],
@@ -196,7 +200,9 @@ function createOperations(): InfraLifecycleOperations {
       Promise.resolve(success({ projectId: request.projectId, environment: 'local', actions: [] })),
     generate: () => Promise.resolve(success({ environment: 'local', artifacts: [], ledger })),
     up: () =>
-      Promise.resolve(success({ environment: 'local', targets: [], resources: [], outputs, ledger })),
+      Promise.resolve(
+        success({ environment: 'local', targets: [], resources: [], outputs, ledger }),
+      ),
     status: (request) =>
       Promise.resolve(
         success({
