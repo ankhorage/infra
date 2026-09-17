@@ -1,3 +1,6 @@
+import { isHelpToken, renderProviderHelp } from '@ankhorage/ankh';
+
+import { INFRA_PACKAGE_DESCRIPTION } from '../constants.js';
 import type {
   InfraCommandContext,
   InfraCommandRunResult,
@@ -5,8 +8,8 @@ import type {
   RunInfraCommandImpl,
 } from '../types/infraCli.js';
 import { createDefaultInfraCommandContext } from './createDefaultInfraCommandContext.js';
+import { createInfraRuntimeProvider } from './createInfraRuntimeProvider.js';
 import { findInfraCommand } from './findInfraCommand.js';
-import { renderInfraRootHelp } from './renderInfraRootHelp.js';
 import { renderUnknownInfraCommand } from './renderUnknownInfraCommand.js';
 import { runInfraCommandAsync } from './runInfraCommandAsync.js';
 
@@ -19,7 +22,13 @@ export async function runInfraCliAsync(
   const runCommand = options.runCommandImpl ?? runInfraCommandAsync;
   const [firstToken, ...restTokens] = argv;
   if (firstToken === undefined || isHelpToken(firstToken)) {
-    context.writeStdout(renderInfraRootHelp(context.version));
+    context.writeStdout(
+      renderProviderHelp({
+        commandPrefix: ['ankhorage-infra'],
+        description: INFRA_PACKAGE_DESCRIPTION,
+        manifest: createInfraRuntimeProvider(),
+      }),
+    );
     return { exitCode: 0 };
   }
   if (isVersionToken(firstToken)) {
@@ -38,11 +47,6 @@ interface InfraCliOptions {
   readonly context?: InfraCommandContext;
   readonly runCommandImpl?: RunInfraCommandImpl;
   readonly services?: Partial<InfraCommandServices>;
-}
-
-/*** Recognize standalone help tokens. */
-function isHelpToken(value: string): boolean {
-  return value === '--help' || value === '-h' || value === 'help';
 }
 
 /*** Recognize standalone version tokens. */
