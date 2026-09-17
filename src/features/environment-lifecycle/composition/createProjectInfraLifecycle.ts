@@ -1,9 +1,14 @@
-import type { InfraEnvironmentSpec, InfraManifest } from '@ankhorage/contracts/infra';
+import type {
+  InfraEnvironmentSpec,
+  InfraManifest,
+  InfraResult,
+} from '@ankhorage/contracts/infra';
 
 import { INFRA_PACKAGE_VERSION } from '../../../constants.js';
 import type { InfraOperationRequest, InfraStoredState } from '../../../types/infraOrchestration.js';
 import type {
   CreateProjectInfraLifecycleOptions,
+  ProjectInfraDestroyRequest,
   ProjectInfraLifecycle,
   ProjectInfraOperationRequest,
 } from '../../../types/infraProject.js';
@@ -72,6 +77,9 @@ export function createProjectInfraLifecycle(
     async destroyAsync(request) {
       const state = await services.readState(request.projectPath, request.environment);
       if (state === null) {
+        const safety = validateCredentialStateDestroy(request);
+        if (!safety.ok) return safety;
+        await services.removeCredentials(request.projectPath, request.environment);
         return {
           ok: true,
           value: { environment: request.environment, ledger: null },
@@ -89,9 +97,10 @@ export function createProjectInfraLifecycle(
       );
       if (!result.ok) return result;
       await services.writeArtifacts(request.projectPath, [], prepared.state?.ledger);
-      if (result.value.ledger === null)
+      if (result.value.ledger === null) {
         await services.removeState(request.projectPath, request.environment);
-      else {
+        await services.removeCredentials(request.projectPath, request.environment);
+      } else {
         await services.writeState(request.projectPath, {
           schemaVersion: 1,
           desired: prepared.desired,
@@ -142,8 +151,33 @@ async function prepareProjectOperationAsync(
       ...(state === null ? {} : { previous: state.ledger, previousDesired: state.desired }),
       ...(request.signal === undefined ? {} : { signal: request.signal }),
     },
-    dependencies: services.createDependencies(context),
+    dependencies: services.createDependencies(context, {
+      projectPath: request.projectPath,
+      environment: request.environment,
+    }),
   };
+}
+
+/*** Require exact scope confirmation before deleting orphaned project credential state. */
+function validateCredentialStateDestroy(
+  request: ProjectInfraDestroyRequest,
+): InfraResult<null> {
+  if (
+    request.confirmation.projectId !== request.projectId ||
+    request.confirmation.environment !== request.environment
+  ) {
+    return {
+      ok: false,
+      diagnostics: [
+        {
+          severity: 'error',
+          code: 'infra-destroy-confirmation-mismatch',
+          message: 'Infra destroy confirmation must exactly match the selected project and environment.',
+        },
+      ],
+    };
+  }
+  return { ok: true, value: null, diagnostics: [] };
 }
 
 /*** Read one exact environment without inventing a fallback. */
