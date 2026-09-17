@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   validate:
@@ -31,7 +31,18 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
+
+      - name: Commit generated lockfile
+        if: github.event_name == 'pull_request'
+        run: |
+          if ! git diff --quiet -- bun.lock; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add bun.lock
+            git commit -m "chore(deps): refresh Infra lockfile"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
 
       - name: Run build
         run: |
@@ -41,8 +52,15 @@ jobs:
             echo "No build script found; skipping."
           fi
 
+      - name: Validate opted-in APM owner release
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.ankh?.apm === undefined ? 1 : 0)"; then
+            bun run test:apm
+            ./node_modules/.bin/ankhorage-apm-release validate . --allow-owner-code
+          fi
+
       - name: Validate Ankhorage repository
-        run: bunx @ankhorage/ankh doctor validate .
+        run: BUN_INSTALL_CACHE_DIR="${RUNNER_TEMP}/doctor-cache" bunx @ankhorage/doctor@0.10.14 validate .
 
       - name: Run lint
         run: |
