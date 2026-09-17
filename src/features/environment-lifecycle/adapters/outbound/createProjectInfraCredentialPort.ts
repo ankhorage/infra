@@ -8,6 +8,7 @@ import type {
   InfraCredentialPort,
   InfraResult,
 } from '@ankhorage/contracts/infra';
+import { isRecord, isRecordOf } from '@ankhorage/utility/object';
 
 import { createInfraFailure } from '../../utils/createInfraFailure.js';
 import { normalizeInfraEnvironmentKey } from '../../utils/normalizeInfraEnvironmentKey.js';
@@ -165,12 +166,12 @@ function isStoredCredentialBundle(value: unknown): value is StoredCredentialBund
 
 /*** Recognize string-only opaque provider credential bundles. */
 function isStringRecord(value: unknown): value is Readonly<Record<string, string>> {
-  return isRecord(value) && Object.values(value).every((entry) => typeof entry === 'string');
+  return isRecordOf(value, isString);
 }
 
-/*** Narrow arbitrary JSON and filesystem error objects. */
-function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+/*** Narrow one unknown value to a string. */
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
 }
 
 /*** Recognize only the filesystem's absent-file failure. */
