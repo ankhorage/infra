@@ -46,7 +46,8 @@ function findCredential(
   reference: InfraControlPlaneCredentialRef,
 ): InfraResult<Readonly<Record<string, string>> | null> {
   const prefixedName = prefixedCredentialName(reference.name);
-  const rawValue = Reflect.get(environment, reference.name) ?? Reflect.get(environment, prefixedName);
+  const rawValue =
+    Reflect.get(environment, reference.name) ?? Reflect.get(environment, prefixedName);
   if (rawValue === undefined || rawValue.length === 0) {
     return { ok: true, value: null, diagnostics: [] };
   }
