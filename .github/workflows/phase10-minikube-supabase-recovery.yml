@@ -78,6 +78,7 @@ jobs:
           const contractsRange = packageJson.dependencies?.["@ankhorage/contracts"];
           const supabaseEntry = import.meta.resolve("@ankhorage/supabase");
           const supabase = await Bun.file(new URL("../package.json", supabaseEntry)).json();
+          const supabaseRange = packageJson.devDependencies?.["@ankhorage/supabase"];
           const minikubeEntry = import.meta.resolve("@ankhorage/minikube");
           const minikube = await Bun.file(new URL("../package.json", minikubeEntry)).json();
           const minikubeRequire = createRequire(minikubeEntry);
@@ -87,12 +88,14 @@ jobs:
           if (typeof contractsRange !== "string" || !Bun.semver.satisfies(contracts.version, contractsRange)) {
             throw new Error(`Expected Contracts ${contractsRange ?? "<missing range>"}, got ${contracts.version}`);
           }
-          if (supabase.version !== "0.5.9") throw new Error(`Expected Supabase 0.5.9, got ${supabase.version}`);
+          if (typeof supabaseRange !== "string" || !Bun.semver.satisfies(supabase.version, supabaseRange)) {
+            throw new Error(`Expected Supabase ${supabaseRange ?? "<missing range>"}, got ${supabase.version}`);
+          }
           if (minikube.version !== "0.4.4") throw new Error(`Expected Minikube 0.4.4, got ${minikube.version}`);
           if (driver.version !== "0.8.1") throw new Error(`Expected Kubernetes 0.8.1, got ${driver.version}`);
 
           console.log(`Contracts: ${contracts.version} (${contractsRange})`);
-          console.log(`Supabase provider: ${supabase.version}`);
+          console.log(`Supabase provider: ${supabase.version} (${supabaseRange})`);
           console.log(`Minikube runtime: ${minikube.version}`);
           console.log(`Minikube Kubernetes driver: ${driver.version}`);
           '
