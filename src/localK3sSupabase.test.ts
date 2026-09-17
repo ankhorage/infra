@@ -500,3 +500,7 @@ function requireSuccess<T>(result: InfraResult<T>): T {
 function success<T>(value: T): InfraResult<T> {
   return { ok: true, value, diagnostics: [] };
 }
+
+function failure(code: string, message: string): InfraResult<never> {
+  return { ok: false, diagnostics: [{ severity: 'error', code, message }] };
+}
