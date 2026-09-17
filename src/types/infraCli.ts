@@ -6,6 +6,7 @@ import type { readStoredInfraStateAsync } from '../features/environment-lifecycl
 import type { removeStoredInfraCredentialsAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.js';
 import type { removeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.js';
 import type { writeInfraGeneratedArtifactsAsync } from '../features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.js';
+import type { writeProjectEnvironmentOutputsAsync } from '../features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.js';
 import type { writeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.js';
 import type { destroyInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.js';
 import type { downInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.js';
@@ -95,6 +96,7 @@ export interface InfraCommandServices {
   readonly removeState: typeof removeStoredInfraStateAsync;
   readonly removeCredentials: typeof removeStoredInfraCredentialsAsync;
   readonly writeArtifacts: typeof writeInfraGeneratedArtifactsAsync;
+  readonly writeEnvironmentOutputs: typeof writeProjectEnvironmentOutputsAsync;
   readonly operations: InfraLifecycleOperations;
   readonly createDependencies: (
     context: InfraCommandContext,
