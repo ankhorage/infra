@@ -1,4 +1,9 @@
-import type { InfraManifest, InfraResult } from '@ankhorage/contracts/infra';
+import type {
+  InfraControlPlaneCredentialRef,
+  InfraCredentialPort,
+  InfraManifest,
+  InfraResult,
+} from '@ankhorage/contracts/infra';
 import {
   createInfraAdapter as createHetznerInfraAdapter,
   type HetznerCloudApi,
@@ -189,9 +194,7 @@ function createDependencies(fixture: ProductionR2Fixture): InfraOrchestrationDep
         }
       },
     },
-    credentials: {
-      resolveAsync: ({ name }) => Promise.resolve(resolveCredential(name)),
-    },
+    credentials: createCredentialPort(),
     secrets: {
       resolveAsync: () =>
         Promise.resolve({
@@ -202,6 +205,32 @@ function createDependencies(fixture: ProductionR2Fixture): InfraOrchestrationDep
         }),
     },
   };
+}
+
+function createCredentialPort(): InfraCredentialPort {
+  return {
+    findAsync: (reference) => Promise.resolve(findCredential(reference)),
+    resolveAsync: ({ name }) => Promise.resolve(resolveCredential(name)),
+    persistAsync: (reference) =>
+      Promise.resolve({
+        ok: false,
+        diagnostics: [
+          {
+            severity: 'error',
+            code: 'unexpected-credential-persist',
+            message: `Production fixture must not persist credential ${reference.name}.`,
+          },
+        ],
+      }),
+  };
+}
+
+function findCredential(
+  reference: InfraControlPlaneCredentialRef,
+): InfraResult<Readonly<Record<string, string>> | null> {
+  return reference.name === 'SUPABASE_BOOTSTRAP'
+    ? resolveCredential(reference.name)
+    : success(null);
 }
 
 function resolveCredential(name: string): InfraResult<Readonly<Record<string, string>>> {

@@ -1,6 +1,8 @@
 import { createHmac } from 'node:crypto';
 
 import type {
+  InfraControlPlaneCredentialRef,
+  InfraCredentialPort,
   InfraLedger,
   InfraManifest,
   InfraResourceIdentity,
@@ -430,21 +432,46 @@ function redactDiagnosticText(value: string): string {
 function createDependencies(): InfraOrchestrationDependencies {
   return {
     adapterResolver: createNodeInfraAdapterPackageResolver(),
-    credentials: {
-      resolveAsync: ({ name }) =>
-        Promise.resolve(
-          name === 'SUPABASE_BOOTSTRAP'
-            ? success(supabaseCredentials())
-            : name === 'S3_PERSISTENCE'
-              ? success({ accessKeyId: s3AccessKey, secretAccessKey: s3SecretKey })
-              : failure('unexpected-credential', `Unexpected credential reference: ${name}`),
-        ),
-    },
+    credentials: createCredentialPort(),
     secrets: {
       resolveAsync: ({ ref, key }) =>
         Promise.resolve(failure('unexpected-secret', `Unexpected managed secret ${ref}/${key}.`)),
     },
   };
+}
+
+function createCredentialPort(): InfraCredentialPort {
+  return {
+    findAsync: (reference) => Promise.resolve(findCredential(reference)),
+    resolveAsync: (reference) => Promise.resolve(resolveCredential(reference)),
+    persistAsync: (reference) =>
+      Promise.resolve(
+        failure(
+          'unexpected-credential-persist',
+          `Recovery acceptance must not persist credential ${reference.name}.`,
+        ),
+      ),
+  };
+}
+
+function findCredential(
+  reference: InfraControlPlaneCredentialRef,
+): InfraResult<Readonly<Record<string, string>> | null> {
+  if (reference.name === 'SUPABASE_BOOTSTRAP') return success(supabaseCredentials());
+  if (reference.name === 'S3_PERSISTENCE') {
+    return success({ accessKeyId: s3AccessKey, secretAccessKey: s3SecretKey });
+  }
+  return success(null);
+}
+
+function resolveCredential(
+  reference: InfraControlPlaneCredentialRef,
+): InfraResult<Readonly<Record<string, string>>> {
+  if (reference.name === 'SUPABASE_BOOTSTRAP') return success(supabaseCredentials());
+  if (reference.name === 'S3_PERSISTENCE') {
+    return success({ accessKeyId: s3AccessKey, secretAccessKey: s3SecretKey });
+  }
+  return failure('unexpected-credential', `Unexpected credential reference: ${reference.name}`);
 }
 
 function createDestroyRequest(

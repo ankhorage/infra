@@ -1,6 +1,8 @@
-import { createHmac } from 'node:crypto';
+import { createHash } from 'node:crypto';
 
 import type {
+  InfraControlPlaneCredentialRef,
+  InfraCredentialPort,
   InfraLedger,
   InfraManifest,
   InfraResourceIdentity,
@@ -19,16 +21,7 @@ import type { InfraOrchestrationDependencies } from './types/infraOrchestration.
 const projectId = 'infra145-compose-providers';
 const baseUrl = 'http://127.0.0.1:54322';
 const bucket = 'phase9-acceptance';
-const jwtSecret = 'phase9-jwt-secret-that-is-at-least-thirty-two-characters';
-const credentials = {
-  postgresPassword: 'phase9-postgres-password',
-  jwtSecret,
-  anonKey: createJwt('anon'),
-  serviceRoleKey: createJwt('service_role'),
-  realtimeSecretKeyBase: 'r'.repeat(64),
-  realtimeDatabaseEncryptionKey: '0123456789abcdef',
-  pgMetaCryptoKey: 'phase9-meta-crypto-key-that-is-at-least-32-characters',
-} as const;
+const bootstrapCredential = { source: 'control-plane', name: 'SUPABASE_BOOTSTRAP' } as const;
 const manifest = {
   environments: {
     local: {
@@ -59,7 +52,8 @@ const manifest = {
 test.skipIf(process.env.ANKH_INFRA_DOCKER_COMPOSE_PROVIDERS_E2E !== '1')(
   'runs Supabase and Cerbos through the provider-neutral Docker Compose lifecycle',
   async () => {
-    const dependencies = createDependencies();
+    const credentialPort = new MemoryCredentialPort();
+    const dependencies = createDependencies(credentialPort);
     let ledger: InfraLedger | undefined;
 
     try {
@@ -72,7 +66,10 @@ test.skipIf(process.env.ANKH_INFRA_DOCKER_COMPOSE_PROVIDERS_E2E !== '1')(
         await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
       );
       ledger = firstLedger;
-      assertProviderNeutralOutputs(firstOutputs);
+      expect(credentialPort.persistCount).toBe(1);
+      const firstCredentials = credentialPort.readRequired();
+      const firstCredentialFingerprint = credentialFingerprint(firstCredentials);
+      assertProviderNeutralOutputs(firstOutputs, firstCredentials);
 
       const status = requireSuccess(
         await statusInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
@@ -98,7 +95,9 @@ test.skipIf(process.env.ANKH_INFRA_DOCKER_COMPOSE_PROVIDERS_E2E !== '1')(
         await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
       );
       ledger = resumedLedger;
-      assertProviderNeutralOutputs(resumedOutputs);
+      expect(credentialPort.persistCount).toBe(1);
+      expect(credentialFingerprint(credentialPort.readRequired())).toBe(firstCredentialFingerprint);
+      assertProviderNeutralOutputs(resumedOutputs, firstCredentials);
 
       const health = await fetch(`${baseUrl}/auth/v1/health`);
       expect(health.ok).toBe(true);
@@ -123,20 +122,10 @@ test.skipIf(process.env.ANKH_INFRA_DOCKER_COMPOSE_PROVIDERS_E2E !== '1')(
   900_000,
 );
 
-function createDependencies(): InfraOrchestrationDependencies {
+function createDependencies(credentials: InfraCredentialPort): InfraOrchestrationDependencies {
   return {
     adapterResolver: createNodeInfraAdapterPackageResolver(),
-    credentials: {
-      resolveAsync: (reference) =>
-        Promise.resolve(
-          reference.name === 'SUPABASE_BOOTSTRAP'
-            ? success(credentials)
-            : failure(
-                'unexpected-control-plane-credential',
-                `Unexpected control-plane credential ${reference.name}.`,
-              ),
-        ),
-    },
+    credentials,
     secrets: {
       resolveAsync: (reference) =>
         Promise.resolve(
@@ -147,6 +136,73 @@ function createDependencies(): InfraOrchestrationDependencies {
         ),
     },
   };
+}
+
+class MemoryCredentialPort implements InfraCredentialPort {
+  private values: Readonly<Record<string, string>> | null = null;
+  persistCount = 0;
+
+  findAsync(
+    reference: InfraControlPlaneCredentialRef,
+  ): Promise<InfraResult<Readonly<Record<string, string>> | null>> {
+    if (reference.name !== bootstrapCredential.name) return Promise.resolve(success(null));
+    return Promise.resolve(success(this.values === null ? null : { ...this.values }));
+  }
+
+  resolveAsync(
+    reference: InfraControlPlaneCredentialRef,
+  ): Promise<InfraResult<Readonly<Record<string, string>>>> {
+    if (reference.name === bootstrapCredential.name && this.values !== null) {
+      return Promise.resolve(success({ ...this.values }));
+    }
+    return Promise.resolve(
+      failure(
+        'unexpected-control-plane-credential',
+        `Unexpected or missing control-plane credential ${reference.name}.`,
+      ),
+    );
+  }
+
+  persistAsync(
+    reference: InfraControlPlaneCredentialRef,
+    values: Readonly<Record<string, string>>,
+  ): Promise<InfraResult<null>> {
+    if (reference.name !== bootstrapCredential.name) {
+      return Promise.resolve(
+        failure(
+          'unexpected-control-plane-credential',
+          `Unexpected control-plane credential ${reference.name}.`,
+        ),
+      );
+    }
+    this.values = { ...values };
+    this.persistCount += 1;
+    return Promise.resolve(success(null));
+  }
+
+  readRequired(): Readonly<Record<string, string>> {
+    if (this.values === null) throw new Error('Expected generated Supabase bootstrap credentials.');
+    return { ...this.values };
+  }
+}
+
+function credentialFingerprint(values: Readonly<Record<string, string>>): string {
+  const canonical = Object.entries(values)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => `${key}\u0000${value}`)
+    .join('\u0001');
+  return createHash('sha256').update(canonical).digest('hex');
+}
+
+function privilegedCredentialValues(values: Readonly<Record<string, string>>): readonly string[] {
+  const { anonKey: _anonKey, ...privileged } = values;
+  return Object.values(privileged);
+}
+
+function readAnonKey(values: Readonly<Record<string, string>>): string {
+  const { anonKey } = values;
+  if (anonKey === undefined) throw new Error('Expected generated Supabase anonKey.');
+  return anonKey;
 }
 
 function createDestroyRequest(
@@ -167,14 +223,14 @@ function persistentIdentities(ledger: InfraLedger): readonly InfraResourceIdenti
   return ledger.resources.filter(({ persistent }) => persistent).map(({ identity }) => identity);
 }
 
-function assertProviderNeutralOutputs(outputs: InfraLedger['outputs']): void {
+function assertProviderNeutralOutputs(
+  outputs: InfraLedger['outputs'],
+  credentials: Readonly<Record<string, string>>,
+): void {
   const serialized = JSON.stringify(outputs);
-  expect(serialized).not.toContain(credentials.serviceRoleKey);
-  expect(serialized).not.toContain(credentials.postgresPassword);
-  expect(serialized).not.toContain(credentials.jwtSecret);
-  expect(serialized).not.toContain(credentials.realtimeSecretKeyBase);
-  expect(serialized).not.toContain(credentials.realtimeDatabaseEncryptionKey);
-  expect(serialized).not.toContain(credentials.pgMetaCryptoKey);
+  for (const secret of privilegedCredentialValues(credentials)) {
+    expect(serialized).not.toContain(secret);
+  }
   expect(serialized.toLowerCase()).not.toContain('kubernetes');
   expect(serialized.toLowerCase()).not.toContain('minikube');
   expect(
@@ -190,7 +246,7 @@ function assertProviderNeutralOutputs(outputs: InfraLedger['outputs']): void {
       ({ owner, environmentVariable, value }) =>
         owner.adapter === 'supabase' &&
         environmentVariable === 'EXPO_PUBLIC_SUPABASE_ANON_KEY' &&
-        value === credentials.anonKey,
+        value === readAnonKey(credentials),
     ),
   ).toBe(true);
   expect(
@@ -207,23 +263,6 @@ function assertProviderNeutralOutputs(outputs: InfraLedger['outputs']): void {
         value === 'http://cerbos:3592',
     ),
   ).toBe(true);
-}
-
-function createJwt(role: 'anon' | 'service_role'): string {
-  const encodedHeader = encodeJwtPart({ alg: 'HS256', typ: 'JWT' });
-  const encodedPayload = encodeJwtPart({
-    role,
-    iss: 'supabase',
-    iat: 1_700_000_000,
-    exp: 4_102_444_800,
-  });
-  const unsigned = `${encodedHeader}.${encodedPayload}`;
-  const signature = createHmac('sha256', jwtSecret).update(unsigned).digest('base64url');
-  return `${unsigned}.${signature}`;
-}
-
-function encodeJwtPart(value: Readonly<Record<string, string | number>>): string {
-  return Buffer.from(JSON.stringify(value)).toString('base64url');
 }
 
 function requireSuccess<T>(result: InfraResult<T>): T {

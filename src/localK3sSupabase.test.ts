@@ -1,5 +1,9 @@
+import { createHash } from 'node:crypto';
+
 import type {
   InfraComputeTarget,
+  InfraControlPlaneCredentialRef,
+  InfraCredentialPort,
   InfraLedger,
   InfraManifest,
   InfraResourceIdentity,
@@ -38,6 +42,7 @@ import type { InfraOrchestrationDependencies } from './types/infraOrchestration.
 const projectId = 'infra164-local-k3s-supabase';
 const publicBaseUrl = 'http://127.0.0.1:54321';
 const bucket = 'infra164-bucket';
+const bootstrapCredential = { source: 'control-plane', name: 'SUPABASE_BOOTSTRAP' } as const;
 const target: Extract<InfraComputeTarget, { kind: 'local-host' }> = {
   id: 'local',
   kind: 'local-host',
@@ -73,6 +78,10 @@ test('runs local k3s and Supabase through the portable compute lifecycle', async
     await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
   );
   const firstLedger: InfraLedger = firstUp.ledger;
+  expect(fixture.credentials.persistCount).toBe(1);
+  const firstCredentials = fixture.credentials.readRequired();
+  const firstCredentialFingerprint = credentialFingerprint(firstCredentials);
+  assertPrivilegedValuesAbsent(firstUp, firstCredentials);
   expect(firstUp.targets).toEqual([target]);
   expect([...new Set(fixture.loadedPackages)].sort()).toEqual(
     [
@@ -88,8 +97,6 @@ test('runs local k3s and Supabase through the portable compute lifecycle', async
   expect(fixture.kubernetes.serializedResources()).toContain('/etc/postgresql-custom');
   expect(fixture.kubernetes.serializedResources()).toContain('.ankhorage-image-seeded');
   expect(fixture.supabase.buckets.has(bucket)).toBe(true);
-  expect(JSON.stringify(firstUp)).not.toContain('infra164-service-role-key');
-  expect(JSON.stringify(firstUp)).not.toContain('infra164-postgres-password');
 
   const outputs = requireSuccess(
     getInfraEnvironmentOutputs({
@@ -144,6 +151,11 @@ test('runs local k3s and Supabase through the portable compute lifecycle', async
   expect(fixture.k3s.state).toBe('ready');
   expect(resumed.targets).toEqual([target]);
   expect(resourceIdentities(resumed.resources)).toEqual(identitiesBeforeRestart);
+  expect(fixture.credentials.persistCount).toBe(1);
+  expect(credentialFingerprint(fixture.credentials.readRequired())).toBe(
+    firstCredentialFingerprint,
+  );
+  assertPrivilegedValuesAbsent(resumed, firstCredentials);
 
   const destroyed = requireSuccess(
     await destroyInfraEnvironmentAsync(
@@ -171,6 +183,7 @@ class LocalK3sFixture {
   readonly k3s = new FakeK3sControlPlane();
   readonly kubernetes = this.k3s.api;
   readonly supabase = new FakeSupabaseControlPlane();
+  readonly credentials = new MemoryCredentialPort();
   readonly loadedPackages: string[] = [];
 }
 
@@ -201,9 +214,7 @@ function createDependencies(fixture: LocalK3sFixture): InfraOrchestrationDepende
         }
       },
     },
-    credentials: {
-      resolveAsync: ({ name }) => Promise.resolve(resolveCredential(name)),
-    },
+    credentials: fixture.credentials,
     secrets: {
       resolveAsync: () =>
         Promise.resolve({
@@ -216,29 +227,72 @@ function createDependencies(fixture: LocalK3sFixture): InfraOrchestrationDepende
   };
 }
 
-function resolveCredential(name: string): InfraResult<Readonly<Record<string, string>>> {
-  if (name === 'SUPABASE_BOOTSTRAP') {
-    return success({
-      postgresPassword: 'infra164-postgres-password',
-      jwtSecret: 'infra164-jwt-secret-0123456789abcdef',
-      anonKey: 'infra164-anon-key',
-      serviceRoleKey: 'infra164-service-role-key',
-      realtimeSecretKeyBase:
-        'infra164-realtime-secret-key-base-0123456789abcdefghijklmnopqrstuvwxyz',
-      realtimeDatabaseEncryptionKey: '1234567890abcdef',
-      pgMetaCryptoKey: 'infra164-pg-meta-crypto-key-0123456789abcdef',
-    });
+class MemoryCredentialPort implements InfraCredentialPort {
+  private values: Readonly<Record<string, string>> | null = null;
+  persistCount = 0;
+
+  findAsync(
+    reference: InfraControlPlaneCredentialRef,
+  ): Promise<InfraResult<Readonly<Record<string, string>> | null>> {
+    if (reference.name !== bootstrapCredential.name) return Promise.resolve(success(null));
+    return Promise.resolve(success(this.values === null ? null : { ...this.values }));
   }
-  return {
-    ok: false,
-    diagnostics: [
-      {
-        severity: 'error',
-        code: 'unexpected-credential',
-        message: `Unexpected credential reference: ${name}`,
-      },
-    ],
-  };
+
+  resolveAsync(
+    reference: InfraControlPlaneCredentialRef,
+  ): Promise<InfraResult<Readonly<Record<string, string>>>> {
+    if (reference.name === bootstrapCredential.name && this.values !== null) {
+      return Promise.resolve(success({ ...this.values }));
+    }
+    return Promise.resolve(
+      failure(
+        'unexpected-credential',
+        `Unexpected or missing credential reference: ${reference.name}`,
+      ),
+    );
+  }
+
+  persistAsync(
+    reference: InfraControlPlaneCredentialRef,
+    values: Readonly<Record<string, string>>,
+  ): Promise<InfraResult<null>> {
+    if (reference.name !== bootstrapCredential.name) {
+      return Promise.resolve(
+        failure('unexpected-credential', `Unexpected credential reference: ${reference.name}`),
+      );
+    }
+    this.values = { ...values };
+    this.persistCount += 1;
+    return Promise.resolve(success(null));
+  }
+
+  readRequired(): Readonly<Record<string, string>> {
+    if (this.values === null) throw new Error('Expected generated Supabase bootstrap credentials.');
+    return { ...this.values };
+  }
+}
+
+function credentialFingerprint(values: Readonly<Record<string, string>>): string {
+  const canonical = Object.entries(values)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => `${key}\u0000${value}`)
+    .join('\u0001');
+  return createHash('sha256').update(canonical).digest('hex');
+}
+
+function privilegedCredentialValues(values: Readonly<Record<string, string>>): readonly string[] {
+  const { anonKey: _anonKey, ...privileged } = values;
+  return Object.values(privileged);
+}
+
+function assertPrivilegedValuesAbsent(
+  value: unknown,
+  credentials: Readonly<Record<string, string>>,
+): void {
+  const serialized = JSON.stringify(value);
+  for (const secret of privilegedCredentialValues(credentials)) {
+    expect(serialized).not.toContain(secret);
+  }
 }
 
 class FakeLocalHostProbe implements LocalHostProbe {
@@ -445,4 +499,8 @@ function requireSuccess<T>(result: InfraResult<T>): T {
 
 function success<T>(value: T): InfraResult<T> {
   return { ok: true, value, diagnostics: [] };
+}
+
+function failure(code: string, message: string): InfraResult<never> {
+  return { ok: false, diagnostics: [{ severity: 'error', code, message }] };
 }

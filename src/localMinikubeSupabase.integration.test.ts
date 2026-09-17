@@ -1,4 +1,7 @@
-import { createHmac } from 'node:crypto';
+import { createHash } from 'node:crypto';
+import { promises as fs } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 import type {
   InfraLedger,
@@ -8,13 +11,8 @@ import type {
 } from '@ankhorage/contracts/infra';
 import { expect, test } from 'bun:test';
 
-import { createNodeInfraAdapterPackageResolver } from './features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.js';
-import { destroyInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.js';
-import { downInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.js';
-import { planInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.js';
-import { statusInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.js';
-import { upInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.js';
-import type { InfraOrchestrationDependencies } from './types/infraOrchestration.js';
+import { createProjectInfraCredentialPort } from './features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.js';
+import { createProjectInfraLifecycle } from './project/index.js';
 
 const projectId = 'infra145-minikube-supabase';
 const acceptanceNamespace = `${projectId}-local`;
@@ -23,15 +21,9 @@ const bucket = 'phase8-acceptance';
 const staleOwnedConfigMap = 'phase8-stale-owned';
 const unrelatedConfigMap = 'phase8-unrelated';
 const staleOwnedResourceId = 'stale:phase8-owned';
-const jwtSecret = 'phase8-jwt-secret-that-is-at-least-thirty-two-characters';
-const credentials = {
-  postgresPassword: 'phase8-postgres-password',
-  jwtSecret,
-  anonKey: createJwt('anon'),
-  serviceRoleKey: createJwt('service_role'),
-  realtimeSecretKeyBase: 'r'.repeat(64),
-  realtimeDatabaseEncryptionKey: '0123456789abcdef',
-  pgMetaCryptoKey: 'phase8-meta-crypto-key-that-is-at-least-32-characters',
+const bootstrapCredential = {
+  source: 'control-plane',
+  name: 'SUPABASE_BOOTSTRAP',
 } as const;
 const manifest = {
   environments: {
@@ -56,52 +48,60 @@ const manifest = {
 } as const satisfies InfraManifest;
 
 test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
-  'runs local Minikube and Supabase through the provider-neutral lifecycle',
+  'bootstraps fresh local Minikube and Supabase through the project lifecycle',
   async () => {
-    const dependencies = createDependencies();
+    const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'ankh-infra170-minikube-'));
+    const isolatedProjectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'ankh-infra170-isolated-'));
+    const request = createOperationRequest(projectPath);
     let ledger: InfraLedger | undefined;
+    let destroyed = false;
 
     try {
-      const initialPlan = requireSuccess(
-        await planInfraEnvironmentAsync({ projectId, manifest }, dependencies),
-      );
+      const firstLifecycle = createProjectInfraLifecycle();
+      const initialPlan = requireSuccess(await firstLifecycle.planAsync(request));
       expect(initialPlan.actions.some(({ operation }) => operation === 'create')).toBe(true);
 
-      const { ledger: firstLedger, outputs: firstOutputs } = requireSuccess(
-        await upInfraEnvironmentAsync({ projectId, manifest }, dependencies),
-      );
-      ledger = firstLedger;
-      assertSafePublicOutputs(firstOutputs);
+      const firstUp = requireSuccess(await firstLifecycle.upAsync(request));
+      ({ ledger } = firstUp);
+      const firstCredentials = await resolveBootstrapCredentialsAsync(projectPath);
+      const firstFingerprint = credentialFingerprint(firstCredentials);
+      assertSafePublicOutputs(firstUp.outputs, firstCredentials);
+      assertSecretFree(firstUp, firstCredentials);
+      await assertStoredStateSecretFreeAsync(projectPath, firstCredentials);
+      await assertCredentialFilePermissionsAsync(projectPath);
       expect(
-        firstOutputs.some(
+        firstUp.outputs.some(
           ({ owner, name, value }) =>
             owner.adapter === 'minikube' && name === 'localUrl' && value === baseUrl,
         ),
       ).toBe(true);
       expect(
-        firstOutputs.some(
+        firstUp.outputs.some(
           ({ environmentVariable, value }) =>
             environmentVariable === 'EXPO_PUBLIC_SUPABASE_URL' && value === baseUrl,
         ),
       ).toBe(true);
-      expect(firstOutputs.some(({ name, value }) => name === 'bucket' && value === bucket)).toBe(
+      expect(firstUp.outputs.some(({ name, value }) => name === 'bucket' && value === bucket)).toBe(
         true,
       );
 
-      const status = requireSuccess(
-        await statusInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
-      );
+      const secondLifecycle = createProjectInfraLifecycle();
+      const status = requireSuccess(await secondLifecycle.statusAsync(request));
       expect(status.state).toBe('ready');
 
-      const convergedPlan = requireSuccess(
-        await planInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
-      );
+      const convergedPlan = requireSuccess(await secondLifecycle.planAsync(request));
       expect(convergedPlan.actions.every(({ operation }) => operation === 'noop')).toBe(true);
+      assertSecretFree(convergedPlan, firstCredentials);
+
+      const secondUp = requireSuccess(await secondLifecycle.upAsync(request));
+      ({ ledger } = secondUp);
+      expect(credentialFingerprint(await resolveBootstrapCredentialsAsync(projectPath))).toBe(
+        firstFingerprint,
+      );
+      expect(resourceIdentities(secondUp.resources)).toEqual(resourceIdentities(firstUp.resources));
 
       await createStaleOwnershipFixturesAsync();
-      const stalePlan = requireSuccess(
-        await planInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
-      );
+      const stalePlan = requireSuccess(await secondLifecycle.planAsync(request));
       expect(
         stalePlan.actions.some(
           ({ operation, owner }) =>
@@ -109,10 +109,8 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
         ),
       ).toBe(true);
 
-      const { ledger: prunedLedger } = requireSuccess(
-        await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
-      );
-      ledger = prunedLedger;
+      const pruned = requireSuccess(await secondLifecycle.upAsync(request));
+      ({ ledger } = pruned);
       expect(await configMapExistsAsync(staleOwnedConfigMap)).toBe(false);
       expect(await configMapExistsAsync(unrelatedConfigMap)).toBe(true);
       await runKubectlAsync([
@@ -124,35 +122,53 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
         '--ignore-not-found=true',
       ]);
 
-      const { ledger: downLedger } = requireSuccess(
-        await downInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
+      const down = requireSuccess(await secondLifecycle.downAsync(request));
+      ({ ledger } = down);
+      expect(credentialFingerprint(await resolveBootstrapCredentialsAsync(projectPath))).toBe(
+        firstFingerprint,
       );
-      ledger = downLedger;
 
-      const { ledger: resumedLedger, outputs: resumedOutputs } = requireSuccess(
-        await upInfraEnvironmentAsync({ projectId, manifest, previous: ledger }, dependencies),
+      const resumedLifecycle = createProjectInfraLifecycle();
+      const resumed = requireSuccess(await resumedLifecycle.upAsync(request));
+      ({ ledger } = resumed);
+      expect(credentialFingerprint(await resolveBootstrapCredentialsAsync(projectPath))).toBe(
+        firstFingerprint,
       );
-      ledger = resumedLedger;
-      assertSafePublicOutputs(resumedOutputs);
+      assertSafePublicOutputs(resumed.outputs, firstCredentials);
+      assertSecretFree(resumed, firstCredentials);
+      await assertStoredStateSecretFreeAsync(projectPath, firstCredentials);
 
       const health = await fetch(`${baseUrl}/auth/v1/health`);
       expect(health.ok).toBe(true);
 
-      const destroyed = requireSuccess(
-        await destroyInfraEnvironmentAsync(
-          createDestroyRequest(ledger, persistentIdentities(ledger)),
-          dependencies,
-        ),
+      const isolatedPort = createProjectInfraCredentialPort({
+        projectPath: isolatedProjectPath,
+        environment: 'local',
+        processEnvironment: {},
+      });
+      expect(await isolatedPort.persistAsync(bootstrapCredential, firstCredentials)).toMatchObject({
+        ok: true,
+      });
+      const isolatedFingerprint = credentialFingerprint(
+        requireSuccess(await isolatedPort.resolveAsync(bootstrapCredential)),
       );
-      ledger = destroyed.ledger ?? undefined;
-      expect(destroyed.ledger).toBeNull();
+
+      const destroyResult = requireSuccess(
+        await resumedLifecycle.destroyAsync(createDestroyRequest(projectPath, ledger)),
+      );
+      ledger = undefined;
+      destroyed = true;
+      expect(destroyResult.ledger).toBeNull();
+      expect(await findBootstrapCredentialsAsync(projectPath)).toBeNull();
+      expect(
+        credentialFingerprint(requireSuccess(await isolatedPort.resolveAsync(bootstrapCredential))),
+      ).toBe(isolatedFingerprint);
     } finally {
-      if (ledger !== undefined) {
-        await destroyInfraEnvironmentAsync(
-          createDestroyRequest(ledger, persistentIdentities(ledger)),
-          dependencies,
-        );
+      if (!destroyed && ledger !== undefined) {
+        await createProjectInfraLifecycle().destroyAsync(createDestroyRequest(projectPath, ledger));
       }
+      await fs.rm(projectPath, { recursive: true, force: true });
+      await fs.rm(isolatedProjectPath, { recursive: true, force: true });
     }
   },
   900_000,
@@ -227,43 +243,24 @@ async function runKubectlAsync(args: readonly string[]): Promise<string> {
   return stdout.trim();
 }
 
-function createDependencies(): InfraOrchestrationDependencies {
+function createOperationRequest(projectPath: string) {
   return {
-    adapterResolver: createNodeInfraAdapterPackageResolver(),
-    credentials: {
-      resolveAsync: (reference) =>
-        Promise.resolve(
-          reference.name === 'SUPABASE_BOOTSTRAP'
-            ? success(credentials)
-            : failure(
-                'unexpected-control-plane-credential',
-                `Unexpected control-plane credential ${reference.name}.`,
-              ),
-        ),
-    },
-    secrets: {
-      resolveAsync: (reference) =>
-        Promise.resolve(
-          failure(
-            'unexpected-managed-secret',
-            `Unexpected managed secret ${reference.ref}/${reference.key}.`,
-          ),
-        ),
-    },
+    projectId,
+    projectPath,
+    manifest,
+    environment: 'local' as const,
+    executionEnvironment: {},
   };
 }
 
-function createDestroyRequest(
-  previous: InfraLedger,
-  confirmedResources: readonly InfraResourceIdentity[],
-) {
+function createDestroyRequest(projectPath: string, previous: InfraLedger) {
   return {
-    projectId,
-    manifest,
-    environment: 'local' as const,
-    previous,
+    ...createOperationRequest(projectPath),
     confirmation: { projectId, environment: 'local' as const },
-    persistence: { policy: 'delete' as const, confirmedResources },
+    persistence: {
+      policy: 'delete' as const,
+      confirmedResources: persistentIdentities(previous),
+    },
   };
 }
 
@@ -271,48 +268,104 @@ function persistentIdentities(ledger: InfraLedger): readonly InfraResourceIdenti
   return ledger.resources.filter(({ persistent }) => persistent).map(({ identity }) => identity);
 }
 
-function assertSafePublicOutputs(outputs: InfraLedger['outputs']): void {
+function resourceIdentities(
+  resources: readonly { readonly identity: InfraResourceIdentity }[],
+): readonly string[] {
+  return resources
+    .map(({ identity }) =>
+      [identity.projectId, identity.environment, identity.adapter, identity.resourceId].join(':'),
+    )
+    .sort();
+}
+
+async function resolveBootstrapCredentialsAsync(
+  projectPath: string,
+): Promise<Readonly<Record<string, string>>> {
+  const port = createProjectInfraCredentialPort({
+    projectPath,
+    environment: 'local',
+    processEnvironment: {},
+  });
+  return requireSuccess(await port.resolveAsync(bootstrapCredential));
+}
+
+async function findBootstrapCredentialsAsync(
+  projectPath: string,
+): Promise<Readonly<Record<string, string>> | null> {
+  const port = createProjectInfraCredentialPort({
+    projectPath,
+    environment: 'local',
+    processEnvironment: {},
+  });
+  return requireSuccess(await port.findAsync(bootstrapCredential));
+}
+
+function credentialFingerprint(values: Readonly<Record<string, string>>): string {
+  const canonical = Object.entries(values)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => `${key}\u0000${value}`)
+    .join('\u0001');
+  return createHash('sha256').update(canonical).digest('hex');
+}
+
+function privilegedCredentialValues(values: Readonly<Record<string, string>>): readonly string[] {
+  const { anonKey: _anonKey, ...privileged } = values;
+  return Object.values(privileged);
+}
+
+function assertSafePublicOutputs(
+  outputs: InfraLedger['outputs'],
+  credentials: Readonly<Record<string, string>>,
+): void {
   const serialized = JSON.stringify(outputs);
-  expect(serialized).not.toContain(credentials.serviceRoleKey);
-  expect(serialized).not.toContain(credentials.postgresPassword);
-  expect(serialized).not.toContain(credentials.jwtSecret);
-  expect(serialized).not.toContain(credentials.realtimeSecretKeyBase);
-  expect(serialized).not.toContain(credentials.realtimeDatabaseEncryptionKey);
-  expect(serialized).not.toContain(credentials.pgMetaCryptoKey);
+  for (const value of privilegedCredentialValues(credentials)) {
+    expect(serialized).not.toContain(value);
+  }
+  const { anonKey } = credentials;
+  if (anonKey === undefined) throw new Error('Expected generated Supabase anonKey.');
   expect(
     outputs.some(
       ({ environmentVariable, value }) =>
-        environmentVariable === 'EXPO_PUBLIC_SUPABASE_ANON_KEY' && value === credentials.anonKey,
+        environmentVariable === 'EXPO_PUBLIC_SUPABASE_ANON_KEY' && value === anonKey,
     ),
   ).toBe(true);
 }
 
-function createJwt(role: 'anon' | 'service_role'): string {
-  const encodedHeader = encodeJwtPart({ alg: 'HS256', typ: 'JWT' });
-  const encodedPayload = encodeJwtPart({
-    role,
-    iss: 'supabase',
-    iat: 1_700_000_000,
-    exp: 4_102_444_800,
-  });
-  const unsigned = `${encodedHeader}.${encodedPayload}`;
-  const signature = createHmac('sha256', jwtSecret).update(unsigned).digest('base64url');
-  return `${unsigned}.${signature}`;
+function assertSecretFree(value: unknown, credentials: Readonly<Record<string, string>>): void {
+  const serialized = JSON.stringify(value);
+  for (const secret of privilegedCredentialValues(credentials)) {
+    expect(serialized).not.toContain(secret);
+  }
 }
 
-function encodeJwtPart(value: Readonly<Record<string, string | number>>): string {
-  return Buffer.from(JSON.stringify(value)).toString('base64url');
+async function assertStoredStateSecretFreeAsync(
+  projectPath: string,
+  credentials: Readonly<Record<string, string>>,
+): Promise<void> {
+  const state = await fs.readFile(
+    path.join(projectPath, '.ankh', 'infra', 'local', 'state.json'),
+    'utf8',
+  );
+  for (const secret of privilegedCredentialValues(credentials)) {
+    expect(state).not.toContain(secret);
+  }
+}
+
+async function assertCredentialFilePermissionsAsync(projectPath: string): Promise<void> {
+  if (process.platform === 'win32') return;
+  const digest = createHash('sha256').update(bootstrapCredential.name).digest('hex');
+  const credentialPath = path.join(
+    projectPath,
+    '.ankh',
+    'infra',
+    'local',
+    'credentials',
+    `${digest}.json`,
+  );
+  expect((await fs.stat(credentialPath)).mode & 0o777).toBe(0o600);
 }
 
 function requireSuccess<T>(result: InfraResult<T>): T {
   if (!result.ok) throw new Error(result.diagnostics.map(({ message }) => message).join(' '));
   return result.value;
-}
-
-function success<T>(value: T): InfraResult<T> {
-  return { ok: true, value, diagnostics: [] };
-}
-
-function failure(code: string, message: string): InfraResult<never> {
-  return { ok: false, diagnostics: [{ severity: 'error', code, message }] };
 }
