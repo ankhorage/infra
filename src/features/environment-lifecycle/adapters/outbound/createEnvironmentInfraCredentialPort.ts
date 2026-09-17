@@ -18,7 +18,9 @@ export function createEnvironmentInfraCredentialPort(
     resolveAsync(reference) {
       const found = findCredential(environment, reference);
       if (!found.ok) return Promise.resolve(found);
-      if (found.value !== null) return Promise.resolve(found);
+      if (found.value !== null) {
+        return Promise.resolve({ ok: true, value: found.value, diagnostics: found.diagnostics });
+      }
       const prefixedName = prefixedCredentialName(reference.name);
       return Promise.resolve(
         createInfraFailure(
