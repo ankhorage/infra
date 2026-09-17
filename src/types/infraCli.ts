@@ -80,7 +80,7 @@ export interface InfraLifecycleOperations {
   readonly destroy: typeof destroyInfraEnvironmentAsync;
 }
 
-export interface InfraDependencyScope {
+interface InfraDependencyScope {
   readonly projectPath: string;
   readonly environment: AppEnvironmentId;
 }
