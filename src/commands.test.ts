@@ -1,12 +1,14 @@
+import { renderProviderHelp } from '@ankhorage/ankh';
 import type { AppManifest } from '@ankhorage/contracts';
 import type { InfraEnvironmentSpec, InfraLedger, InfraResult } from '@ankhorage/contracts/infra';
 import { describe, expect, test } from 'bun:test';
 
 import { INFRA_COMMANDS } from './cli/constants.js';
+import { createInfraRuntimeProvider } from './cli/createInfraRuntimeProvider.js';
 import { createProviderCommandDescriptors } from './cli/createProviderCommandDescriptors.js';
 import { findInfraCommand } from './cli/findInfraCommand.js';
-import { renderInfraRootHelp } from './cli/renderInfraRootHelp.js';
 import { runInfraCommandAsync } from './cli/runInfraCommandAsync.js';
+import { INFRA_PACKAGE_DESCRIPTION } from './constants.js';
 import { createAppManifest, createCapturedCommandContext } from './testSupport.js';
 import type { InfraCommandServices, InfraLifecycleOperations } from './types/infraCli.js';
 import type { InfraDestroyOperationRequest } from './types/infraOrchestration.js';
@@ -16,7 +18,11 @@ describe('canonical Infra commands', () => {
     const names = ['validate', 'plan', 'generate', 'up', 'status', 'outputs', 'down', 'destroy'];
     expect(INFRA_COMMANDS.map(({ standaloneName }) => standaloneName)).toEqual(names);
     expect(createProviderCommandDescriptors().map(({ path }) => path.join(' '))).toEqual(names);
-    const help = renderInfraRootHelp('9.9.9');
+    const help = renderProviderHelp({
+      commandPrefix: ['ankhorage-infra'],
+      description: INFRA_PACKAGE_DESCRIPTION,
+      manifest: createInfraRuntimeProvider(),
+    });
     for (const name of names) expect(help).toContain(name);
     expect(help).not.toContain('port-forward');
     expect(help).not.toContain('reset');

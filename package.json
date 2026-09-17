@@ -35,6 +35,7 @@
     "openapi"
   ],
   "dependencies": {
+    "@ankhorage/ankh": "^0.9.1",
     "@ankhorage/contracts": "^21.0.0",
     "@ankhorage/utility": "^1.2.0"
   },
@@ -111,9 +112,8 @@
     "knip:test": "bun run knip:check"
   },
   "devDependencies": {
-    "@ankhorage/ankh": "^0.8.11",
     "@ankhorage/cerbos": "^0.2.0",
-    "@ankhorage/devtools": "^1.14.0",
+    "@ankhorage/devtools": "^1.15.3",
     "@ankhorage/docker-compose": "^0.5.3",
     "@ankhorage/hetzner": "^0.3.0",
     "@ankhorage/k3s": "^0.4.1",
