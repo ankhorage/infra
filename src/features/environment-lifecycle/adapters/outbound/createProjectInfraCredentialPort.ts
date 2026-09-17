@@ -14,31 +14,15 @@ import { normalizeInfraEnvironmentKey } from '../../utils/normalizeInfraEnvironm
 import { resolveInfraEnvironmentStateDirectory } from '../../utils/resolveInfraEnvironmentStateDirectory.js';
 import { createEnvironmentInfraCredentialPort } from './createEnvironmentInfraCredentialPort.js';
 
-interface ProjectInfraCredentialPortOptions {
-  readonly projectPath: string;
-  readonly environment: AppEnvironmentId;
-  readonly processEnvironment: Readonly<Record<string, string | undefined>>;
-}
-
-interface StoredCredentialBundle {
-  readonly schemaVersion: 1;
-  readonly name: string;
-  readonly values: Readonly<Record<string, string>>;
-}
-
 /*** Resolve explicit environment overrides before durable project-local bootstrap credentials. */
 export function createProjectInfraCredentialPort(
   options: ProjectInfraCredentialPortOptions,
 ): InfraCredentialPort {
   const environmentPort = createEnvironmentInfraCredentialPort(options.processEnvironment);
   return {
-    async findAsync(reference) {
-      const overridden = await environmentPort.findAsync(reference);
-      if (!overridden.ok || overridden.value !== null) return overridden;
-      return readStoredCredentialAsync(options, reference);
-    },
+    findAsync: (reference) => findProjectCredentialAsync(options, environmentPort, reference),
     async resolveAsync(reference) {
-      const found = await this.findAsync(reference);
+      const found = await findProjectCredentialAsync(options, environmentPort, reference);
       if (!found.ok) return found;
       if (found.value !== null) {
         return { ok: true, value: found.value, diagnostics: found.diagnostics };
@@ -55,6 +39,29 @@ export function createProjectInfraCredentialPort(
       return writeStoredCredentialAsync(options, reference, values);
     },
   };
+}
+
+interface ProjectInfraCredentialPortOptions {
+  readonly projectPath: string;
+  readonly environment: AppEnvironmentId;
+  readonly processEnvironment: Readonly<Record<string, string | undefined>>;
+}
+
+interface StoredCredentialBundle {
+  readonly schemaVersion: 1;
+  readonly name: string;
+  readonly values: Readonly<Record<string, string>>;
+}
+
+/*** Resolve environment precedence before falling through to project-local state. */
+async function findProjectCredentialAsync(
+  options: ProjectInfraCredentialPortOptions,
+  environmentPort: InfraCredentialPort,
+  reference: InfraControlPlaneCredentialRef,
+): Promise<InfraResult<Readonly<Record<string, string>> | null>> {
+  const overridden = await environmentPort.findAsync(reference);
+  if (!overridden.ok || overridden.value !== null) return overridden;
+  return readStoredCredentialAsync(options, reference);
 }
 
 /*** Read one exact credential bundle without enumerating or exposing sibling credentials. */
@@ -101,11 +108,20 @@ async function writeStoredCredentialAsync(
     await restrictPermissionsAsync(credentialPath, 0o600);
     return { ok: true, value: null, diagnostics: [] };
   } catch {
-    await fs.rm(temporaryPath, { force: true }).catch(() => undefined);
+    await removeTemporaryCredentialAsync(temporaryPath);
     return createInfraFailure(
       'infra-control-plane-credential-store-write-failed',
       `Control-plane credential ${reference.name} could not be persisted to project state.`,
     );
+  }
+}
+
+/*** Remove an abandoned unique temporary credential file without masking the original write failure. */
+async function removeTemporaryCredentialAsync(temporaryPath: string): Promise<void> {
+  try {
+    await fs.rm(temporaryPath, { force: true });
+  } catch {
+    return;
   }
 }
 
