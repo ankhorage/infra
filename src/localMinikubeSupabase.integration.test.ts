@@ -51,9 +51,7 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
   'bootstraps fresh local Minikube and Supabase through the project lifecycle',
   async () => {
     const projectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'ankh-infra170-minikube-'));
-    const isolatedProjectPath = await fs.mkdtemp(
-      path.join(os.tmpdir(), 'ankh-infra170-isolated-'),
-    );
+    const isolatedProjectPath = await fs.mkdtemp(path.join(os.tmpdir(), 'ankh-infra170-isolated-'));
     const request = createOperationRequest(projectPath);
     let ledger: InfraLedger | undefined;
     let destroyed = false;
@@ -64,7 +62,7 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       expect(initialPlan.actions.some(({ operation }) => operation === 'create')).toBe(true);
 
       const firstUp = requireSuccess(await firstLifecycle.upAsync(request));
-      ledger = firstUp.ledger;
+      ({ ledger } = firstUp);
       const firstCredentials = await resolveBootstrapCredentialsAsync(projectPath);
       const firstFingerprint = credentialFingerprint(firstCredentials);
       assertSafePublicOutputs(firstUp.outputs, firstCredentials);
@@ -96,7 +94,7 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       assertSecretFree(convergedPlan, firstCredentials);
 
       const secondUp = requireSuccess(await secondLifecycle.upAsync(request));
-      ledger = secondUp.ledger;
+      ({ ledger } = secondUp);
       expect(credentialFingerprint(await resolveBootstrapCredentialsAsync(projectPath))).toBe(
         firstFingerprint,
       );
@@ -112,7 +110,7 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       ).toBe(true);
 
       const pruned = requireSuccess(await secondLifecycle.upAsync(request));
-      ledger = pruned.ledger;
+      ({ ledger } = pruned);
       expect(await configMapExistsAsync(staleOwnedConfigMap)).toBe(false);
       expect(await configMapExistsAsync(unrelatedConfigMap)).toBe(true);
       await runKubectlAsync([
@@ -125,14 +123,14 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
       ]);
 
       const down = requireSuccess(await secondLifecycle.downAsync(request));
-      ledger = down.ledger;
+      ({ ledger } = down);
       expect(credentialFingerprint(await resolveBootstrapCredentialsAsync(projectPath))).toBe(
         firstFingerprint,
       );
 
       const resumedLifecycle = createProjectInfraLifecycle();
       const resumed = requireSuccess(await resumedLifecycle.upAsync(request));
-      ledger = resumed.ledger;
+      ({ ledger } = resumed);
       expect(credentialFingerprint(await resolveBootstrapCredentialsAsync(projectPath))).toBe(
         firstFingerprint,
       );
@@ -310,9 +308,7 @@ function credentialFingerprint(values: Readonly<Record<string, string>>): string
   return createHash('sha256').update(canonical).digest('hex');
 }
 
-function privilegedCredentialValues(
-  values: Readonly<Record<string, string>>,
-): readonly string[] {
+function privilegedCredentialValues(values: Readonly<Record<string, string>>): readonly string[] {
   const { anonKey: _anonKey, ...privileged } = values;
   return Object.values(privileged);
 }
@@ -335,10 +331,7 @@ function assertSafePublicOutputs(
   ).toBe(true);
 }
 
-function assertSecretFree(
-  value: unknown,
-  credentials: Readonly<Record<string, string>>,
-): void {
+function assertSecretFree(value: unknown, credentials: Readonly<Record<string, string>>): void {
   const serialized = JSON.stringify(value);
   for (const secret of privilegedCredentialValues(credentials)) {
     expect(serialized).not.toContain(secret);
