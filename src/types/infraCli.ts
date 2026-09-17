@@ -3,6 +3,7 @@ import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
 import type { InfraEnvironmentSpec } from '@ankhorage/contracts/infra';
 
 import type { readStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.js';
+import type { removeStoredInfraCredentialsAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.js';
 import type { removeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.js';
 import type { writeInfraGeneratedArtifactsAsync } from '../features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.js';
 import type { writeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.js';
@@ -79,6 +80,11 @@ export interface InfraLifecycleOperations {
   readonly destroy: typeof destroyInfraEnvironmentAsync;
 }
 
+export interface InfraDependencyScope {
+  readonly projectPath: string;
+  readonly environment: AppEnvironmentId;
+}
+
 export interface InfraCommandServices {
   readonly resolveProject: (options: {
     readonly cwd: string;
@@ -87,9 +93,13 @@ export interface InfraCommandServices {
   readonly readState: typeof readStoredInfraStateAsync;
   readonly writeState: typeof writeStoredInfraStateAsync;
   readonly removeState: typeof removeStoredInfraStateAsync;
+  readonly removeCredentials: typeof removeStoredInfraCredentialsAsync;
   readonly writeArtifacts: typeof writeInfraGeneratedArtifactsAsync;
   readonly operations: InfraLifecycleOperations;
-  readonly createDependencies: (context: InfraCommandContext) => InfraOrchestrationDependencies;
+  readonly createDependencies: (
+    context: InfraCommandContext,
+    scope: InfraDependencyScope,
+  ) => InfraOrchestrationDependencies;
 }
 
 export interface RunInfraCommandOptions {
