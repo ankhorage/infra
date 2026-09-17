@@ -1,8 +1,4 @@
-import type {
-  InfraEnvironmentSpec,
-  InfraManifest,
-  InfraResult,
-} from '@ankhorage/contracts/infra';
+import type { InfraEnvironmentSpec, InfraManifest, InfraResult } from '@ankhorage/contracts/infra';
 
 import { INFRA_PACKAGE_VERSION } from '../../../constants.js';
 import type { InfraOperationRequest, InfraStoredState } from '../../../types/infraOrchestration.js';
@@ -159,9 +155,7 @@ async function prepareProjectOperationAsync(
 }
 
 /*** Require exact scope confirmation before deleting orphaned project credential state. */
-function validateCredentialStateDestroy(
-  request: ProjectInfraDestroyRequest,
-): InfraResult<null> {
+function validateCredentialStateDestroy(request: ProjectInfraDestroyRequest): InfraResult<null> {
   if (
     request.confirmation.projectId !== request.projectId ||
     request.confirmation.environment !== request.environment
@@ -172,7 +166,8 @@ function validateCredentialStateDestroy(
         {
           severity: 'error',
           code: 'infra-destroy-confirmation-mismatch',
-          message: 'Infra destroy confirmation must exactly match the selected project and environment.',
+          message:
+            'Infra destroy confirmation must exactly match the selected project and environment.',
         },
       ],
     };

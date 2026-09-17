@@ -101,8 +101,7 @@ function createCredentialOperations(
     validate: () => Promise.resolve(success({ environment: 'local' })),
     plan: (request) =>
       Promise.resolve(success({ projectId: request.projectId, environment: 'local', actions: [] })),
-    generate: () =>
-      Promise.resolve(success({ environment: 'local', artifacts: [], ledger })),
+    generate: () => Promise.resolve(success({ environment: 'local', artifacts: [], ledger })),
     up: async (_request, dependencies) => {
       const found = await dependencies.credentials.findAsync(bootstrap);
       if (!found.ok) return { ok: false, diagnostics: found.diagnostics };

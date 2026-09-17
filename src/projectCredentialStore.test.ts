@@ -94,9 +94,9 @@ it('uses restrictive permissions and leaves no partial files after concurrent wr
     expect(entries.some((entry) => entry.endsWith('.tmp'))).toBe(false);
     if (process.platform !== 'win32') {
       expect((await fs.stat(directory)).mode & 0o777).toBe(0o700);
-      expect((await fs.stat(credentialPath(projectPath, 'local', bootstrap.name))).mode & 0o777).toBe(
-        0o600,
-      );
+      expect(
+        (await fs.stat(credentialPath(projectPath, 'local', bootstrap.name))).mode & 0o777,
+      ).toBe(0o600);
     }
   });
 });

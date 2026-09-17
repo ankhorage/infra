@@ -161,7 +161,9 @@ function invalidCredentialStore(name: string): InfraResult<never> {
 /*** Recognize the private stored credential record. */
 function isStoredCredentialBundle(value: unknown): value is StoredCredentialBundle {
   if (!isRecord(value)) return false;
-  return value.schemaVersion === 1 && typeof value.name === 'string' && isStringRecord(value.values);
+  return (
+    value.schemaVersion === 1 && typeof value.name === 'string' && isStringRecord(value.values)
+  );
 }
 
 /*** Recognize string-only opaque provider credential bundles. */
