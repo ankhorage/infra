@@ -40,6 +40,13 @@ import type { InfraOrchestrationDependencies } from './types/infraOrchestration.
 const projectId = 'infra145-production';
 const publicBaseUrl = 'https://api.production.example.test';
 const domain = 'api.production.example.test';
+const persistenceTarget = {
+  endpoint: 'https://s3.production.example.test',
+  region: 'eu-central-1',
+  bucket: 'infra145-database-backups',
+  credentials: { source: 'control-plane', name: 'S3_PERSISTENCE' },
+  forcePathStyle: true,
+} as const;
 
 const manifest = {
   environments: {
@@ -54,8 +61,17 @@ const manifest = {
         compute: { provider: 'hetzner', location: 'fsn1', serverType: 'cx23' },
         runtime: { provider: 'k3s', topology: { servers: 1, agents: 0 } },
       },
-      database: { provider: 'supabase', tier: 'prod' },
+      database: {
+        provider: 'supabase',
+        tier: 'prod',
+        backup: { mode: 'scheduled', target: persistenceTarget, intervalHours: 24 },
+      },
       auth: { provider: 'supabase' },
+      objectStorage: {
+        provider: 'supabase',
+        buckets: ['media'],
+        backend: { ...persistenceTarget, bucket: 'infra145-storage' },
+      },
       networking: {
         domain,
         publicBaseUrl,
@@ -106,10 +122,15 @@ test('composes Hetzner, k3s, Kubernetes and Supabase while retaining compute for
   expect(access?.transport.kind === 'ssh' && access.transport.host).toBe('203.0.113.10');
   expect(JSON.stringify(firstUp)).not.toContain('phase10-private-key');
   expect(JSON.stringify(firstUp)).not.toContain('phase10-service-role-key');
+  expect(JSON.stringify(firstUp)).not.toContain('phase10-s3-secret-key');
   expect(fixture.kubernetes.serializedResources()).toContain(`"host":"${domain}"`);
   expect(fixture.kubernetes.serializedResources()).toContain('PersistentVolumeClaim');
   expect(fixture.kubernetes.serializedResources()).toContain('/etc/postgresql-custom');
   expect(fixture.kubernetes.serializedResources()).toContain('.ankhorage-image-seeded');
+  expect(fixture.kubernetes.serializedResources()).toContain('supabase-db-backup');
+  expect(
+    fixture.kubernetes.resources.filter(({ kind }) => kind === 'PersistentVolumeClaim'),
+  ).toHaveLength(2);
   expect(firstUp.resources.some(({ persistent }) => persistent)).toBe(true);
   const urlOutput = firstUp.outputs.find(({ name }) => name === 'url');
   expect(urlOutput?.value).toBe(publicBaseUrl);
@@ -231,6 +252,9 @@ function resolveCredential(name: string): InfraResult<Readonly<Record<string, st
       publicKey: 'ssh-ed25519 AAAA phase10',
       privateKey: 'phase10-private-key',
     });
+  }
+  if (name === 'S3_PERSISTENCE') {
+    return success({ accessKeyId: 'phase10-s3-access', secretAccessKey: 'phase10-s3-secret-key' });
   }
   if (name === 'SUPABASE_BOOTSTRAP') {
     return success({

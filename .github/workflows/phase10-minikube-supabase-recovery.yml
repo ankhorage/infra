@@ -1,10 +1,10 @@
-name: Phase 8 local Minikube Supabase
+name: Phase 10 Minikube Supabase recovery
 
 on:
   pull_request:
     paths:
-      - '.github/workflows/phase8-local-minikube-supabase.yml'
-      - 'src/localMinikubeSupabase.integration.test.ts'
+      - '.github/workflows/phase10-minikube-supabase-recovery.yml'
+      - 'src/localMinikubeSupabaseRecovery.integration.test.ts'
       - 'src/features/environment-lifecycle/**'
       - 'package.json'
       - 'bun.lock'
@@ -19,7 +19,7 @@ env:
 jobs:
   acceptance:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
 
     steps:
       - name: Checkout repository
@@ -66,43 +66,44 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Verify resolved runtime package versions
+      - name: Verify production persistence packages
         run: |
           bun --eval '
           import { createRequire } from "node:module";
           import { dirname, resolve } from "node:path";
 
-          const packageJson = await Bun.file("package.json").json();
-          const minikubeEntry = import.meta.resolve("@ankhorage/minikube");
-          const minikube = await Bun.file(new URL("../package.json", minikubeEntry)).json();
+          const contractsEntry = import.meta.resolve("@ankhorage/contracts/infra");
+          const contracts = await Bun.file(new URL("../package.json", contractsEntry)).json();
           const supabaseEntry = import.meta.resolve("@ankhorage/supabase");
           const supabase = await Bun.file(new URL("../package.json", supabaseEntry)).json();
-          const supabaseRange = packageJson.devDependencies?.["@ankhorage/supabase"];
+          const minikubeEntry = import.meta.resolve("@ankhorage/minikube");
+          const minikube = await Bun.file(new URL("../package.json", minikubeEntry)).json();
           const minikubeRequire = createRequire(minikubeEntry);
           const driverEntry = minikubeRequire.resolve("@ankhorage/kubernetes");
           const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();
 
+          if (contracts.version !== "20.0.0") throw new Error(`Expected Contracts 20.0.0, got ${contracts.version}`);
+          if (supabase.version !== "0.5.9") throw new Error(`Expected Supabase 0.5.9, got ${supabase.version}`);
           if (minikube.version !== "0.4.4") throw new Error(`Expected Minikube 0.4.4, got ${minikube.version}`);
-          if (typeof supabaseRange !== "string" || !Bun.semver.satisfies(supabase.version, supabaseRange)) {
-            throw new Error(`Expected Supabase ${supabaseRange ?? "<missing range>"}, got ${supabase.version}`);
-          }
           if (driver.version !== "0.8.1") throw new Error(`Expected Kubernetes 0.8.1, got ${driver.version}`);
 
+          console.log(`Contracts: ${contracts.version}`);
+          console.log(`Supabase provider: ${supabase.version}`);
           console.log(`Minikube runtime: ${minikube.version}`);
-          console.log(`Supabase provider: ${supabase.version} (${supabaseRange})`);
           console.log(`Minikube Kubernetes driver: ${driver.version}`);
-          console.log("Image-seeded persistence baseline verified.");
           '
 
-      - name: Run local Minikube Supabase acceptance
-        run: bun run test:e2e:minikube-supabase
+      - name: Run backup and fresh-cluster recovery acceptance
+        run: bun run test:e2e:minikube-supabase-recovery
 
-      - name: Collect Supabase workload diagnostics
+      - name: Collect recovery diagnostics
         if: failure()
         env:
-          ACCEPTANCE_NAMESPACE: infra145-minikube-supabase-local
+          ACCEPTANCE_NAMESPACE: infra145-minikube-supabase-recovery-local
         run: |
+          docker logs infra145-minio-recovery --tail=240 || true
           kubectl get pods --all-namespaces -o wide || true
+          kubectl get pvc --all-namespaces || true
           kubectl get events -n "${ACCEPTANCE_NAMESPACE}" --sort-by=.lastTimestamp || true
 
           for pod in $(kubectl get pods -n "${ACCEPTANCE_NAMESPACE}" -o name 2>/dev/null); do
@@ -112,19 +113,17 @@ jobs:
             echo
             echo "::endgroup::"
 
-            echo "::group::${pod} previous logs"
-            kubectl logs -n "${ACCEPTANCE_NAMESPACE}" "${pod}" --all-containers --previous --tail=160 || true
-            echo "::endgroup::"
-
             echo "::group::${pod} current logs"
-            kubectl logs -n "${ACCEPTANCE_NAMESPACE}" "${pod}" --all-containers --tail=160 || true
+            kubectl logs -n "${ACCEPTANCE_NAMESPACE}" "${pod}" --all-containers --tail=240 || true
             echo "::endgroup::"
           done
 
       - name: Collect Minikube diagnostics
         if: failure()
-        run: minikube -p infra145-minikube-supabase logs || true
+        run: minikube -p infra145-minikube-supabase-recovery logs || true
 
-      - name: Delete acceptance profile
+      - name: Cleanup acceptance infrastructure
         if: always()
-        run: minikube delete -p infra145-minikube-supabase || true
+        run: |
+          minikube delete -p infra145-minikube-supabase-recovery || true
+          docker rm --force infra145-minio-recovery || true
