@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 6.0.0
+
+### Major Changes
+
+- 99a0dbd: Align Infra with Contracts 20 and add production S3 backup/recovery acceptance for the Supabase production slice.
+
 ## 5.1.6
 
 ### Patch Changes
