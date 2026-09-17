@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.0.0
+
+### Major Changes
+
+- 1778b96: Add provider-neutral service preparation before workload materialization and extend trusted control-plane credential hosts with optional lookup and explicit persistence so providers can prepare bootstrap state without runtime-specific coupling. Read-only lifecycle operations remain side-effect free.
+
 ## 6.0.0
 
 ### Major Changes
