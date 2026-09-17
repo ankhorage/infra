@@ -37,7 +37,10 @@ export async function prepareInfraCommandOperationAsync(
       ...(request.arguments.environment === undefined ? {} : { environment }),
       ...(state === null ? {} : { previous: state.ledger, previousDesired: state.desired }),
     },
-    dependencies: services.createDependencies(request.context),
+    dependencies: services.createDependencies(request.context, {
+      projectPath: project.projectPath,
+      environment,
+    }),
   };
 }
 
