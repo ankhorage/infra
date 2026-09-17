@@ -2,8 +2,6 @@ import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
 import { APP_ENVIRONMENT_IDS } from '@ankhorage/contracts/environments';
 import path from 'path';
 
-const INFRA_STATE_ROOT = '.ankh/infra';
-
 /*** Build the canonical project-local state directory for one closed Infra environment. */
 export function resolveInfraEnvironmentStateDirectory(
   projectPath: string,
@@ -14,3 +12,5 @@ export function resolveInfraEnvironmentStateDirectory(
   }
   return path.join(projectPath, INFRA_STATE_ROOT, environment);
 }
+
+const INFRA_STATE_ROOT = '.ankh/infra';
