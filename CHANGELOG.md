@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.3
+
+### Patch Changes
+
+- 2da5618: Materialize public local Infra outputs that declare environment-variable names into the generated app `.env.local`, preserving unrelated entries while keeping secret outputs as references.
+
 ## 7.1.2
 
 ### Patch Changes
