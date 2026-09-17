@@ -3,8 +3,14 @@ import { expect, it } from 'bun:test';
 
 import { createEnvironmentInfraCredentialPort } from './features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort';
 
-const bundleReference = { source: 'control-plane', name: 'FIXTURE_BOOTSTRAP' } as const satisfies InfraControlPlaneCredentialRef;
-const tokenReference = { source: 'control-plane', name: 'FIXTURE_TOKEN' } as const satisfies InfraControlPlaneCredentialRef;
+const bundleReference = {
+  source: 'control-plane',
+  name: 'FIXTURE_BOOTSTRAP',
+} as const satisfies InfraControlPlaneCredentialRef;
+const tokenReference = {
+  source: 'control-plane',
+  name: 'FIXTURE_TOKEN',
+} as const satisfies InfraControlPlaneCredentialRef;
 
 it('finds exact and prefixed environment credentials without mutating state', async () => {
   const port = createEnvironmentInfraCredentialPort({
