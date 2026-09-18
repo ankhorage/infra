@@ -5,13 +5,13 @@
     "": {
       "name": "@ankhorage/infra",
       "dependencies": {
-        "@ankhorage/ankh": "^0.10.2",
+        "@ankhorage/ankh": "^0.10.3",
         "@ankhorage/contracts": "^21.0.0",
         "@ankhorage/utility": "^1.2.0",
       },
       "devDependencies": {
         "@ankhorage/cerbos": "^0.2.0",
-        "@ankhorage/devtools": "^1.16.0",
+        "@ankhorage/devtools": "^1.17.0",
         "@ankhorage/docker-compose": "^0.5.3",
         "@ankhorage/hetzner": "^0.3.0",
         "@ankhorage/k3s": "^0.4.1",
@@ -28,7 +28,7 @@
     },
   },
   "packages": {
-    "@ankhorage/ankh": ["@ankhorage/ankh@0.10.2", "", { "dependencies": { "@ankhorage/contracts": "^12.0.1", "yaml": "^2.8.1" }, "bin": { "ankh": "dist/bin.js" } }, "sha512-H48T1fNUZeui9zNElIldw9XOAK1r7NL2GE/4sF2w3eS9iyYPRvDrwnWsqrjQNdZdH/x83vxfWNVSIHMhkPaaag=="],
+    "@ankhorage/ankh": ["@ankhorage/ankh@0.10.3", "", { "dependencies": { "@ankhorage/contracts": "^22.0.1", "yaml": "^2.8.1" }, "bin": { "ankh": "dist/bin.js" } }, "sha512-gJT6VNS4oWJVy2NipAiYmPKdeBusDLxbqX5uZV1ZGp5GUvZw4yaHBsr1SAJo26cIyGZoDNEpBKCWYr/EquiM7Q=="],
 
     "@ankhorage/apm": ["@ankhorage/apm@0.6.0", "", { "dependencies": { "@ankhorage/project-detector": "^0.1.0", "@ankhorage/utility": "^1.1.0", "jsonc-parser": "^3.3.1", "semver": "^7.8.5", "yaml": "^2.9.1" }, "peerDependencies": { "@ankhorage/ankh": "^0.8.13" }, "optionalPeers": ["@ankhorage/ankh"], "bin": { "apm": "dist/cli/runAsync.js" } }, "sha512-mqa04cbczVyqzks9qduqJxRuSn2hKMTRjq9/42CrWXZDb+nmTxxxY38OHKXSdwu9Tv0Y+zs6rGAferB/QY8Huw=="],
 
@@ -38,7 +38,7 @@
 
     "@ankhorage/contracts": ["@ankhorage/contracts@21.0.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0", "@ankhorage/utility": "^0.8.0", "expo-splash-screen": "~57.0.9" } }, "sha512-DBBVuGObV+dCS939cCDfXbpfV/iaoGg6E/FVFoS70n9QN72FKYP+aBn3TSQH3cRz+vfgecUcmOuYqNXYu9wDXw=="],
 
-    "@ankhorage/devtools": ["@ankhorage/devtools@1.16.0", "", { "dependencies": { "@ankhorage/apm": "^0.6.0", "@ankhorage/project-detector": "^0.1.0", "@ankhorage/utility": "^0.5.1", "@changesets/cli": "^3.0.2", "@eslint/compat": "^2.1.1", "@eslint/js": "^10.0.1", "@next/eslint-plugin-next": "^16.3.5", "eslint": "^10.10.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.6", "eslint-plugin-react": "^7.37.5", "eslint-plugin-react-hooks": "^7.0.0", "eslint-plugin-react-native": "^5.0.0", "eslint-plugin-security": "^4.0.1", "eslint-plugin-simple-import-sort": "^14.0.0", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.34.0", "prettier": "^3.9.6", "typescript-eslint": "^8.69.0" }, "bin": { "ankhorage-knip": "dist/cli/bin/knip.js", "ankhorage-eslint": "dist/cli/bin/eslint.js", "ankhorage-prettier": "dist/cli/bin/prettier.js", "ankhorage-changeset": "dist/cli/bin/changeset.js", "ankhorage-apm-release": "dist/cli/bin/apm-release.js" } }, "sha512-7hTQGzWBeCCp/7Kvm+UnHbLgw9/44O9sd1XoS8yz9YBSBC6279/GP1wPSkHGOF7nV+eW+LNiLLz5BkoDktdaBw=="],
+    "@ankhorage/devtools": ["@ankhorage/devtools@1.17.0", "", { "dependencies": { "@ankhorage/apm": "^0.6.0", "@ankhorage/project-detector": "^0.1.0", "@ankhorage/utility": "^0.5.1", "@changesets/cli": "^3.0.2", "@eslint/compat": "^2.1.1", "@eslint/js": "^10.0.1", "@next/eslint-plugin-next": "^16.3.5", "eslint": "^10.10.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.6", "eslint-plugin-react": "^7.37.5", "eslint-plugin-react-hooks": "^7.0.0", "eslint-plugin-react-native": "^5.0.0", "eslint-plugin-security": "^4.0.1", "eslint-plugin-simple-import-sort": "^14.0.0", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.34.0", "prettier": "^3.9.6", "typescript-eslint": "^8.69.0" }, "bin": { "ankhorage-knip": "dist/cli/bin/knip.js", "ankhorage-eslint": "dist/cli/bin/eslint.js", "ankhorage-prettier": "dist/cli/bin/prettier.js", "ankhorage-changeset": "dist/cli/bin/changeset.js", "ankhorage-apm-release": "dist/cli/bin/apm-release.js" } }, "sha512-ZDok2EUBKKt5ZfKG47XF0JIGZ6q8FHDugi7LaKs0vY3KxxJv+1mvufVrmmjDFSKjoFtm/w5yxvdaU7DgMT6u9A=="],
 
     "@ankhorage/docker-compose": ["@ankhorage/docker-compose@0.5.3", "", { "dependencies": { "@ankhorage/contracts": "^19.1.0" } }, "sha512-D3NX2qNEVoAviFPHNrd20d5bib2nTN7ccWzLLFKqyGEEBcrkg1VDNsgNyzvrkChRgr23Eeyw3mRWBpDSGnOAbg=="],
 
@@ -1510,7 +1510,7 @@
 
     "zod-validation-error": ["zod-validation-error@4.0.2", "", { "peerDependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ=="],
 
-    "@ankhorage/ankh/@ankhorage/contracts": ["@ankhorage/contracts@12.0.1", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0" } }, "sha512-r3arTg1z4EEkrhiPAqG1rOwIwv8Ytjco2NQdF8GFsIHOpZ0tmRxih1UvGaQzg4j27vtWMrzvVvqfBWl/HswkWQ=="],
+    "@ankhorage/ankh/@ankhorage/contracts": ["@ankhorage/contracts@22.0.2", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.1", "@ankhorage/utility": "^0.8.0" } }, "sha512-vveHCid2j997431Q1Vdvzb/r3fE2B8IH39tzzVnKBOZGHeDz2dQs+msqk453mKn5mi4NhecG6m2XvPb4ClD/AQ=="],
 
     "@ankhorage/cerbos/@ankhorage/contracts": ["@ankhorage/contracts@17.0.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0", "@ankhorage/utility": "^0.8.0", "expo-splash-screen": "~57.0.9" } }, "sha512-bI0o+sKoNixpxCf0YOMBc8dvXxHFkGrBprUGTiBQE7CyIX/8txdCgLMvtUai/Ggl0HGyNMxHbDMDqcaCeF57WQ=="],
 
@@ -1727,6 +1727,10 @@
     "terser/commander": ["commander@2.20.3", "", {}, "sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ=="],
 
     "wrap-ansi/strip-ansi": ["strip-ansi@6.0.1", "", { "dependencies": { "ansi-regex": "^5.0.1" } }, "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A=="],
+
+    "@ankhorage/ankh/@ankhorage/contracts/@ankhorage/color-theory": ["@ankhorage/color-theory@0.3.1", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-PqGeC16IkWzTA3Qig3T1p6CE6oN6JC1fv83cJ8SdohY5vlNE1YqJAZsLkzCy59ylJOwgPITA98TRH3jIVnlGBw=="],
+
+    "@ankhorage/ankh/@ankhorage/contracts/@ankhorage/utility": ["@ankhorage/utility@0.8.0", "", {}, "sha512-0ywzdqu1pO+n9yNhbJE5+JD4CeUQ1GEvMGbh8pccr8ieLFlYgTKMFWxH3XUk0Mw6P2ngelQU+PHC+kjJ/xL8Uw=="],
 
     "@ankhorage/cerbos/@ankhorage/contracts/@ankhorage/utility": ["@ankhorage/utility@0.8.0", "", {}, "sha512-0ywzdqu1pO+n9yNhbJE5+JD4CeUQ1GEvMGbh8pccr8ieLFlYgTKMFWxH3XUk0Mw6P2ngelQU+PHC+kjJ/xL8Uw=="],
 
