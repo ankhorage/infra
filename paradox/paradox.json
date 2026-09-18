@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v6.0.0",
+      "value": "v7.1.4",
       "color": "cb3837"
     },
     {
@@ -82,7 +82,9 @@
   "readmeCli": null,
   "readmeConfig": null,
   "config": null,
-  "entrypoints": ["src/index.ts"],
+  "entrypoints": [
+    "src/index.ts"
+  ],
   "modules": [
     {
       "path": "package.json",
@@ -93,7 +95,9 @@
     {
       "path": "src/cli/bin.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/cli/runInfraCliAsync.ts"],
+      "dependencies": [
+        "src/cli/runInfraCliAsync.ts"
+      ],
       "exports": []
     },
     {
@@ -108,7 +112,9 @@
         "src/types/infraCli.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["destroy"]
+      "exports": [
+        "destroy"
+      ]
     },
     {
       "path": "src/cli/commands/down.ts",
@@ -120,7 +126,9 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["down"]
+      "exports": [
+        "down"
+      ]
     },
     {
       "path": "src/cli/commands/generate.ts",
@@ -132,7 +140,9 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["generate"]
+      "exports": [
+        "generate"
+      ]
     },
     {
       "path": "src/cli/commands/outputs.ts",
@@ -145,7 +155,9 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["outputs"]
+      "exports": [
+        "outputs"
+      ]
     },
     {
       "path": "src/cli/commands/plan.ts",
@@ -157,7 +169,9 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["plan"]
+      "exports": [
+        "plan"
+      ]
     },
     {
       "path": "src/cli/commands/status.ts",
@@ -169,7 +183,9 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["status"]
+      "exports": [
+        "status"
+      ]
     },
     {
       "path": "src/cli/commands/up.ts",
@@ -181,7 +197,9 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["up"]
+      "exports": [
+        "up"
+      ]
     },
     {
       "path": "src/cli/commands/validate.ts",
@@ -193,7 +211,9 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["validate"]
+      "exports": [
+        "validate"
+      ]
     },
     {
       "path": "src/cli/constants.ts",
@@ -208,13 +228,20 @@
         "src/cli/commands/up.ts",
         "src/cli/commands/validate.ts"
       ],
-      "exports": ["INFRA_COMMANDS"]
+      "exports": [
+        "INFRA_COMMANDS"
+      ]
     },
     {
       "path": "src/cli/createDefaultInfraCommandContext.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/constants.ts", "src/types/infraCli.ts"],
-      "exports": ["createDefaultInfraCommandContext"]
+      "dependencies": [
+        "src/constants.ts",
+        "src/types/infraCli.ts"
+      ],
+      "exports": [
+        "createDefaultInfraCommandContext"
+      ]
     },
     {
       "path": "src/cli/createInfraRuntimeProvider.ts",
@@ -226,24 +253,37 @@
         "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["createInfraRuntimeProvider"]
+      "exports": [
+        "createInfraRuntimeProvider"
+      ]
     },
     {
       "path": "src/cli/createProviderCommandDescriptors.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/cli/constants.ts"],
-      "exports": ["createProviderCommandDescriptors"]
+      "dependencies": [
+        "src/cli/constants.ts"
+      ],
+      "exports": [
+        "createProviderCommandDescriptors"
+      ]
     },
     {
       "path": "src/cli/findInfraCommand.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/cli/constants.ts", "src/types/infraCli.ts"],
-      "exports": ["findInfraCommand"]
+      "dependencies": [
+        "src/cli/constants.ts",
+        "src/types/infraCli.ts"
+      ],
+      "exports": [
+        "findInfraCommand"
+      ]
     },
     {
       "path": "src/cli/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/cli/createInfraRuntimeProvider.ts"],
+      "dependencies": [
+        "src/cli/createInfraRuntimeProvider.ts"
+      ],
       "exports": [
         "createInfraRuntimeProvider",
         "CreateInfraRuntimeProviderOptions",
@@ -253,29 +293,28 @@
       ]
     },
     {
-      "path": "src/cli/renderInfraRootHelp.ts",
-      "isEntrypoint": false,
-      "dependencies": ["src/cli/constants.ts", "src/constants.ts"],
-      "exports": ["renderInfraRootHelp"]
-    },
-    {
       "path": "src/cli/renderUnknownInfraCommand.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["renderUnknownInfraCommand"]
+      "exports": [
+        "renderUnknownInfraCommand"
+      ]
     },
     {
       "path": "src/cli/runInfraCliAsync.ts",
       "isEntrypoint": false,
       "dependencies": [
         "src/cli/createDefaultInfraCommandContext.ts",
+        "src/cli/createInfraRuntimeProvider.ts",
         "src/cli/findInfraCommand.ts",
-        "src/cli/renderInfraRootHelp.ts",
         "src/cli/renderUnknownInfraCommand.ts",
         "src/cli/runInfraCommandAsync.ts",
+        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["runInfraCliAsync"]
+      "exports": [
+        "runInfraCliAsync"
+      ]
     },
     {
       "path": "src/cli/runInfraCommandAsync.ts",
@@ -285,45 +324,68 @@
         "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["runInfraCommandAsync"]
+      "exports": [
+        "runInfraCommandAsync"
+      ]
     },
     {
       "path": "src/cli/utils/prepareInfraCommandOperationAsync.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraCli.ts"],
-      "exports": ["prepareInfraCommandOperationAsync"]
+      "dependencies": [
+        "src/types/infraCli.ts"
+      ],
+      "exports": [
+        "prepareInfraCommandOperationAsync"
+      ]
     },
     {
       "path": "src/cli/utils/requireInfraSuccess.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraCli.ts"],
-      "exports": ["requireInfraSuccess"]
+      "dependencies": [
+        "src/types/infraCli.ts"
+      ],
+      "exports": [
+        "requireInfraSuccess"
+      ]
     },
     {
       "path": "src/cli/utils/resolveInfraPersistence.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["resolveInfraPersistence"]
+      "exports": [
+        "resolveInfraPersistence"
+      ]
     },
     {
       "path": "src/cli/utils/writeInfraEnvironmentOutputs.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraCli.ts"],
-      "exports": ["writeInfraEnvironmentOutputs"]
+      "dependencies": [
+        "src/types/infraCli.ts"
+      ],
+      "exports": [
+        "writeInfraEnvironmentOutputs"
+      ]
     },
     {
       "path": "src/cli/utils/writeInfraStructured.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraCli.ts"],
-      "exports": ["writeInfraStructured"]
+      "dependencies": [
+        "src/types/infraCli.ts"
+      ],
+      "exports": [
+        "writeInfraStructured"
+      ]
     },
     {
       "path": "src/constants.ts",
       "isEntrypoint": false,
-      "dependencies": ["package.json"],
+      "dependencies": [
+        "package.json"
+      ],
       "exports": [
         "INFRA_CAPABILITIES",
         "INFRA_COMMAND_CATEGORY",
+        "INFRA_PACKAGE_DESCRIPTION",
         "INFRA_PACKAGE_METADATA",
         "INFRA_PACKAGE_NAME",
         "INFRA_PACKAGE_VERSION"
@@ -336,7 +398,9 @@
         "src/features/environment-lifecycle/utils/createInfraFailure.ts",
         "src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts"
       ],
-      "exports": ["createEnvironmentInfraCredentialPort"]
+      "exports": [
+        "createEnvironmentInfraCredentialPort"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
@@ -345,7 +409,9 @@
         "src/features/environment-lifecycle/utils/createInfraFailure.ts",
         "src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts"
       ],
-      "exports": ["createEnvironmentInfraSecretPort"]
+      "exports": [
+        "createEnvironmentInfraSecretPort"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts",
@@ -353,7 +419,22 @@
       "dependencies": [
         "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts"
       ],
-      "exports": ["createNodeInfraAdapterPackageResolver"]
+      "exports": [
+        "createNodeInfraAdapterPackageResolver"
+      ]
+    },
+    {
+      "path": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
+        "src/features/environment-lifecycle/utils/createInfraFailure.ts",
+        "src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts",
+        "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts"
+      ],
+      "exports": [
+        "createProjectInfraCredentialPort"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
@@ -363,19 +444,39 @@
         "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["readStoredInfraStateAsync"]
+      "exports": [
+        "readStoredInfraStateAsync"
+      ]
+    },
+    {
+      "path": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts"
+      ],
+      "exports": [
+        "removeStoredInfraCredentialsAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/features/environment-lifecycle/utils/resolveInfraStatePath.ts"],
-      "exports": ["removeStoredInfraStateAsync"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts"
+      ],
+      "exports": [
+        "removeStoredInfraStateAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraProject.ts"],
-      "exports": ["resolveInfraProjectAsync"]
+      "dependencies": [
+        "src/types/infraProject.ts"
+      ],
+      "exports": [
+        "resolveInfraProjectAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
@@ -384,7 +485,17 @@
         "src/features/environment-lifecycle/utils/resolveProjectFile.ts",
         "src/types/infraProject.ts"
       ],
-      "exports": ["writeInfraGeneratedArtifactsAsync"]
+      "exports": [
+        "writeInfraGeneratedArtifactsAsync"
+      ]
+    },
+    {
+      "path": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "writeProjectEnvironmentOutputsAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts",
@@ -394,19 +505,28 @@
         "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["writeStoredInfraStateAsync"]
+      "exports": [
+        "writeStoredInfraStateAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["InfraAdapterPackageModule", "InfraAdapterPackageResolver"]
+      "exports": [
+        "InfraAdapterPackageModule",
+        "InfraAdapterPackageResolver"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/features/environment-lifecycle/utils/appendInfraFailure.ts"],
-      "exports": ["collectInfraWorkloadsAsync"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/appendInfraFailure.ts"
+      ],
+      "exports": [
+        "collectInfraWorkloadsAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
@@ -420,7 +540,9 @@
         "src/features/environment-lifecycle/utils/mergeInfraResources.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["destroyInfraEnvironmentAsync"]
+      "exports": [
+        "destroyInfraEnvironmentAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
@@ -433,7 +555,9 @@
         "src/features/environment-lifecycle/utils/retainUnchangedAdapterResources.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["downInfraEnvironmentAsync"]
+      "exports": [
+        "downInfraEnvironmentAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
@@ -446,7 +570,9 @@
         "src/features/environment-lifecycle/utils/mergeInfraResources.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["generateInfraEnvironmentAsync"]
+      "exports": [
+        "generateInfraEnvironmentAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
@@ -455,7 +581,9 @@
         "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["getInfraEnvironmentOutputs"]
+      "exports": [
+        "getInfraEnvironmentOutputs"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
@@ -466,7 +594,9 @@
         "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["planInfraEnvironmentAsync"]
+      "exports": [
+        "planInfraEnvironmentAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
@@ -480,13 +610,19 @@
         "src/features/environment-lifecycle/utils/createInfraExecutionContext.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["prepareInfraOperationAsync"]
+      "exports": [
+        "prepareInfraOperationAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/features/environment-lifecycle/utils/appendInfraFailure.ts"],
-      "exports": ["prepareInfraServicesAsync"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/appendInfraFailure.ts"
+      ],
+      "exports": [
+        "prepareInfraServicesAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
@@ -495,7 +631,9 @@
         "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["resolveInfraAdaptersAsync"]
+      "exports": [
+        "resolveInfraAdaptersAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
@@ -505,7 +643,9 @@
         "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["statusInfraEnvironmentAsync"]
+      "exports": [
+        "statusInfraEnvironmentAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
@@ -522,7 +662,9 @@
         "src/features/environment-lifecycle/utils/mergeInfraOutputs.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["upInfraEnvironmentAsync"]
+      "exports": [
+        "upInfraEnvironmentAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts",
@@ -531,7 +673,9 @@
         "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["validateInfraAdaptersAsync"]
+      "exports": [
+        "validateInfraAdaptersAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
@@ -540,19 +684,23 @@
         "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
         "src/types/infraOrchestration.ts"
       ],
-      "exports": ["validateInfraEnvironmentAsync"]
+      "exports": [
+        "validateInfraEnvironmentAsync"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
       "isEntrypoint": false,
       "dependencies": [
-        "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
         "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
         "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts",
+        "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
+        "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
         "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
         "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
+        "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts",
         "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
         "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
@@ -564,7 +712,9 @@
         "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
         "src/types/infraCli.ts"
       ],
-      "exports": ["createInfraCommandServices"]
+      "exports": [
+        "createInfraCommandServices"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
@@ -575,97 +725,153 @@
         "src/types/infraOrchestration.ts",
         "src/types/infraProject.ts"
       ],
-      "exports": ["createProjectInfraLifecycle"]
+      "exports": [
+        "createProjectInfraLifecycle"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["orderInfraPlanActions"]
+      "exports": [
+        "orderInfraPlanActions"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraOrchestration.ts"],
-      "exports": ["resolveInfraEnvironment"]
+      "dependencies": [
+        "src/types/infraOrchestration.ts"
+      ],
+      "exports": [
+        "resolveInfraEnvironment"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["appendInfraFailure"]
+      "exports": [
+        "appendInfraFailure"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/createInfraExecutionContext.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraOrchestration.ts"],
-      "exports": ["createInfraExecutionContext"]
+      "dependencies": [
+        "src/types/infraOrchestration.ts"
+      ],
+      "exports": [
+        "createInfraExecutionContext"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/createInfraFailure.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["createInfraFailure"]
+      "exports": [
+        "createInfraFailure"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/createInfraLedger.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["createInfraLedger"]
+      "exports": [
+        "createInfraLedger"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/infraIdentityKey.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["infraIdentityKey"]
+      "exports": [
+        "infraIdentityKey"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraOrchestration.ts"],
-      "exports": ["isInfraStoredState"]
+      "dependencies": [
+        "src/types/infraOrchestration.ts"
+      ],
+      "exports": [
+        "isInfraStoredState"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/mergeInfraOutputs.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/features/environment-lifecycle/utils/infraIdentityKey.ts"],
-      "exports": ["mergeInfraOutputs"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/infraIdentityKey.ts"
+      ],
+      "exports": [
+        "mergeInfraOutputs"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/mergeInfraResources.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/features/environment-lifecycle/utils/infraIdentityKey.ts"],
-      "exports": ["mergeInfraResources"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/infraIdentityKey.ts"
+      ],
+      "exports": [
+        "mergeInfraResources"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["normalizeInfraEnvironmentKey"]
+      "exports": [
+        "normalizeInfraEnvironmentKey"
+      ]
+    },
+    {
+      "path": "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "resolveInfraEnvironmentStateDirectory"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts",
       "isEntrypoint": false,
-      "dependencies": [],
-      "exports": ["resolveInfraStatePath"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts"
+      ],
+      "exports": [
+        "resolveInfraStatePath"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/resolveProjectFile.ts",
       "isEntrypoint": false,
       "dependencies": [],
-      "exports": ["resolveProjectFile"]
+      "exports": [
+        "resolveProjectFile"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/retainUnchangedAdapterOutputs.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/features/environment-lifecycle/utils/mergeInfraOutputs.ts"],
-      "exports": ["retainUnchangedAdapterOutputs"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/mergeInfraOutputs.ts"
+      ],
+      "exports": [
+        "retainUnchangedAdapterOutputs"
+      ]
     },
     {
       "path": "src/features/environment-lifecycle/utils/retainUnchangedAdapterResources.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/features/environment-lifecycle/utils/mergeInfraResources.ts"],
-      "exports": ["retainUnchangedAdapterResources"]
+      "dependencies": [
+        "src/features/environment-lifecycle/utils/mergeInfraResources.ts"
+      ],
+      "exports": [
+        "retainUnchangedAdapterResources"
+      ]
     },
     {
       "path": "src/index.ts",
@@ -729,6 +935,7 @@
       "isEntrypoint": false,
       "dependencies": [],
       "exports": [
+        "createProjectInfraCredentialPort",
         "createProjectInfraLifecycle",
         "CreateProjectInfraLifecycleOptions",
         "InfraArtifactWriteResult",
@@ -747,7 +954,9 @@
     {
       "path": "src/testSupport.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraCli.ts"],
+      "dependencies": [
+        "src/types/infraCli.ts"
+      ],
       "exports": [
         "CapturedCommandContext",
         "createAppManifest",
@@ -760,8 +969,10 @@
       "isEntrypoint": false,
       "dependencies": [
         "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
+        "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
         "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
         "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
+        "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts",
         "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
         "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
@@ -824,7 +1035,10 @@
     {
       "path": "src/types/infraProject.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/types/infraCli.ts", "src/types/infraOrchestration.ts"],
+      "dependencies": [
+        "src/types/infraCli.ts",
+        "src/types/infraOrchestration.ts"
+      ],
       "exports": [
         "CreateProjectInfraLifecycleOptions",
         "InfraArtifactWriteResult",
@@ -848,7 +1062,9 @@
         "line": 11,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [
         {
@@ -880,7 +1096,9 @@
         "line": 7,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [
         {
@@ -912,8 +1130,12 @@
         "line": 4,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["InfraAdapterPackageResolver"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "InfraAdapterPackageResolver"
+      ],
       "signatures": [
         {
           "label": "() => InfraAdapterPackageResolver",
@@ -937,7 +1159,9 @@
         "line": 22,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraDestroyOperationRequest",
         "InfraDestroyOperationResult",
@@ -979,7 +1203,9 @@
         "line": 15,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraDownOperationResult",
         "InfraOperationRequest",
@@ -1021,7 +1247,9 @@
         "line": 15,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraGenerateOperationResult",
         "InfraOperationRequest",
@@ -1063,8 +1291,13 @@
         "line": 8,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["InfraOperationRequest", "InfraOutputsOperationResult"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "InfraOperationRequest",
+        "InfraOutputsOperationResult"
+      ],
       "signatures": [
         {
           "label": "(request: InfraOperationRequest) => InfraOutputsOperationResult",
@@ -1095,7 +1328,9 @@
         "line": 7,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1128,7 +1363,9 @@
         "line": 3,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1154,7 +1391,9 @@
         "line": 72,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1229,7 +1468,9 @@
         "line": 126,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1247,7 +1488,9 @@
         "line": 121,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1280,7 +1523,9 @@
         "line": 119,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1298,7 +1543,9 @@
         "line": 114,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1331,7 +1578,9 @@
         "line": 103,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1349,7 +1598,9 @@
         "line": 97,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1389,7 +1640,9 @@
         "line": 63,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1450,8 +1703,12 @@
         "line": 57,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["InfraAdapterPackageResolver"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "InfraAdapterPackageResolver"
+      ],
       "signatures": [],
       "members": [
         {
@@ -1490,7 +1747,9 @@
         "line": 112,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1508,7 +1767,9 @@
         "line": 107,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1541,7 +1802,9 @@
         "line": 95,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1559,7 +1822,9 @@
         "line": 105,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1577,7 +1842,9 @@
         "line": 43,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1617,7 +1884,9 @@
         "line": 93,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1635,7 +1904,9 @@
         "line": 83,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1653,7 +1924,9 @@
         "line": 85,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1707,7 +1980,9 @@
         "line": 81,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [],
@@ -1725,7 +2000,9 @@
         "line": 77,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1751,7 +2028,9 @@
         "line": 8,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [
         {
@@ -1783,7 +2062,9 @@
         "line": 13,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraOperationRequest",
         "InfraOrchestrationDependencies",
@@ -1825,8 +2106,13 @@
         "line": 49,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["ResolvedInfraAdapters", "ResolvedInfraEnvironment"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "ResolvedInfraAdapters",
+        "ResolvedInfraEnvironment"
+      ],
       "signatures": [],
       "members": [
         {
@@ -1879,7 +2165,9 @@
         "line": 37,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1919,7 +2207,9 @@
         "line": 24,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [],
       "signatures": [],
       "members": [
@@ -1959,8 +2249,13 @@
         "line": 21,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["InfraAdapterPackageResolver", "ResolvedInfraAdapters"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "InfraAdapterPackageResolver",
+        "ResolvedInfraAdapters"
+      ],
       "signatures": [
         {
           "label": "(environment: InfraEnvironmentSpec, resolver: InfraAdapterPackageResolver) => Promise<InfraResult<ResolvedInfraAdapters>>",
@@ -1997,8 +2292,12 @@
         "line": 10,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
-      "relatedSymbols": ["ResolvedInfraEnvironment"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "ResolvedInfraEnvironment"
+      ],
       "signatures": [
         {
           "label": "(request: InfraEnvironmentResolutionRequest) => InfraResult<ResolvedInfraEnvironment>",
@@ -2029,7 +2328,9 @@
         "line": 12,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraOperationRequest",
         "InfraOrchestrationDependencies",
@@ -2071,7 +2372,9 @@
         "line": 26,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraOperationRequest",
         "InfraOrchestrationDependencies",
@@ -2113,7 +2416,9 @@
         "line": 9,
         "column": 1
       },
-      "exportPaths": ["src/index.ts"],
+      "exportPaths": [
+        "src/index.ts"
+      ],
       "relatedSymbols": [
         "InfraOperationRequest",
         "InfraOrchestrationDependencies",
@@ -2151,7 +2456,7 @@
       "description": "Require the explicit destroy environment after CLI parsing.",
       "sourceLocation": {
         "filePath": "src/cli/commands/destroy.ts",
-        "line": 54,
+        "line": 55,
         "column": 1
       }
     },
@@ -2192,15 +2497,6 @@
       }
     },
     {
-      "name": "renderInfraRootHelp",
-      "description": "Render the standalone Infra command surface and environment safety rules.",
-      "sourceLocation": {
-        "filePath": "src/cli/renderInfraRootHelp.ts",
-        "line": 5,
-        "column": 1
-      }
-    },
-    {
       "name": "renderUnknownInfraCommand",
       "description": "Render an invalid standalone Infra command without guessing intent.",
       "sourceLocation": {
@@ -2214,16 +2510,7 @@
       "description": "Dispatch the standalone executable arguments through the canonical Infra command surface.",
       "sourceLocation": {
         "filePath": "src/cli/runInfraCliAsync.ts",
-        "line": 14,
-        "column": 1
-      }
-    },
-    {
-      "name": "isHelpToken",
-      "description": "Recognize standalone help tokens.",
-      "sourceLocation": {
-        "filePath": "src/cli/runInfraCliAsync.ts",
-        "line": 44,
+        "line": 17,
         "column": 1
       }
     },
@@ -2232,7 +2519,7 @@
       "description": "Recognize standalone version tokens.",
       "sourceLocation": {
         "filePath": "src/cli/runInfraCliAsync.ts",
-        "line": 49,
+        "line": 53,
         "column": 1
       }
     },
@@ -2322,7 +2609,7 @@
       "description": "Select one exact environment specification from the canonical manifest.",
       "sourceLocation": {
         "filePath": "src/cli/utils/prepareInfraCommandOperationAsync.ts",
-        "line": 45,
+        "line": 48,
         "column": 1
       }
     },
@@ -2331,7 +2618,7 @@
       "description": "Replace one environment while preserving the rest of the canonical manifest.",
       "sourceLocation": {
         "filePath": "src/cli/utils/prepareInfraCommandOperationAsync.ts",
-        "line": 55,
+        "line": 58,
         "column": 1
       }
     },
@@ -2453,6 +2740,123 @@
       }
     },
     {
+      "name": "createProjectInfraCredentialPort",
+      "description": "Resolve explicit environment overrides before durable project-local bootstrap credentials.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 19,
+        "column": 1
+      }
+    },
+    {
+      "name": "findProjectCredentialAsync",
+      "description": "Resolve environment precedence before falling through to project-local state.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 58,
+        "column": 1
+      }
+    },
+    {
+      "name": "readStoredCredentialAsync",
+      "description": "Read one exact credential bundle without enumerating or exposing sibling credentials.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 69,
+        "column": 1
+      }
+    },
+    {
+      "name": "writeStoredCredentialAsync",
+      "description": "Persist one opaque bundle atomically with restrictive local-host permissions.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 91,
+        "column": 1
+      }
+    },
+    {
+      "name": "removeTemporaryCredentialAsync",
+      "description": "Remove an abandoned unique temporary credential file without masking the original write failure.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 121,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveCredentialPath",
+      "description": "Resolve one credential to an opaque hash-named file inside its project/environment scope.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 130,
+        "column": 1
+      }
+    },
+    {
+      "name": "restrictPermissionsAsync",
+      "description": "Apply owner-only permissions where the host platform supports POSIX file modes.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 140,
+        "column": 1
+      }
+    },
+    {
+      "name": "missingCredential",
+      "description": "Create the canonical missing-credential diagnostic after every trusted source was checked.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 145,
+        "column": 1
+      }
+    },
+    {
+      "name": "invalidCredentialStore",
+      "description": "Reject malformed persisted state without exposing or replacing any stored value.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 154,
+        "column": 1
+      }
+    },
+    {
+      "name": "isStoredCredentialBundle",
+      "description": "Recognize the private stored credential record.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 162,
+        "column": 1
+      }
+    },
+    {
+      "name": "isStringRecord",
+      "description": "Recognize string-only opaque provider credential bundles.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 170,
+        "column": 1
+      }
+    },
+    {
+      "name": "isString",
+      "description": "Narrow one unknown value to a string.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 175,
+        "column": 1
+      }
+    },
+    {
+      "name": "isMissingFile",
+      "description": "Recognize only the filesystem's absent-file failure.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "line": 180,
+        "column": 1
+      }
+    },
+    {
       "name": "readStoredInfraStateAsync",
       "description": "Read exact environment state; malformed ownership state fails closed rather than disappearing.",
       "sourceLocation": {
@@ -2476,6 +2880,15 @@
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
         "line": 32,
+        "column": 1
+      }
+    },
+    {
+      "name": "removeStoredInfraCredentialsAsync",
+      "description": "Remove only persisted generated credential state for one explicit project environment.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
+        "line": 9,
         "column": 1
       }
     },
@@ -2575,6 +2988,51 @@
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
         "line": 9,
+        "column": 1
+      }
+    },
+    {
+      "name": "writeProjectEnvironmentOutputsAsync",
+      "description": "Materialize public local Infra outputs into the project app environment while preserving unrelated entries.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
+        "line": 12,
+        "column": 1
+      }
+    },
+    {
+      "name": "collectEnvironmentValues",
+      "description": "Collect only browser-safe public outputs that explicitly declare an environment variable.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
+        "line": 34,
+        "column": 1
+      }
+    },
+    {
+      "name": "mergeEnvironmentFile",
+      "description": "Merge managed environment values without changing unrelated lines or retaining duplicate managed keys.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
+        "line": 47,
+        "column": 1
+      }
+    },
+    {
+      "name": "readEnvironmentAssignmentName",
+      "description": "Read an environment assignment name without interpreting or mutating its value.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
+        "line": 77,
+        "column": 1
+      }
+    },
+    {
+      "name": "serializeEnvironmentValue",
+      "description": "Serialize one primitive Infra output as a quoted dotenv value.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
+        "line": 82,
         "column": 1
       }
     },
@@ -2916,7 +3374,7 @@
       "description": "Compose command use cases with filesystem, environment-value and package-resolver adapters.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
-        "line": 20,
+        "line": 22,
         "column": 1
       }
     },
@@ -2925,7 +3383,7 @@
       "description": "Create the typed project-facing Infra lifecycle backed by canonical use cases and ownership state.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
-        "line": 13,
+        "line": 14,
         "column": 1
       }
     },
@@ -2934,7 +3392,16 @@
       "description": "Resolve one explicit project/environment request with its prior ownership state and dependencies.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
-        "line": 116,
+        "line": 126,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateCredentialStateDestroy",
+      "description": "Require exact scope confirmation before deleting orphaned project credential state.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
+        "line": 163,
         "column": 1
       }
     },
@@ -2943,7 +3410,7 @@
       "description": "Read one exact environment without inventing a fallback.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
-        "line": 150,
+        "line": 184,
         "column": 1
       }
     },
@@ -2952,7 +3419,7 @@
       "description": "Replace one selected environment while preserving all other manifest state.",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
-        "line": 160,
+        "line": 194,
         "column": 1
       }
     },
@@ -3187,6 +3654,15 @@
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts",
         "line": 2,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveInfraEnvironmentStateDirectory",
+      "description": "Build the canonical project-local state directory for one closed Infra environment.",
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts",
+        "line": 6,
         "column": 1
       }
     },
@@ -3571,14 +4047,9 @@
         "sourcePath": "src/cli/index.ts"
       },
       {
-        "fromPath": "src/cli/renderInfraRootHelp.ts",
+        "fromPath": "src/cli/runInfraCliAsync.ts",
         "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/renderInfraRootHelp.ts"
-      },
-      {
-        "fromPath": "src/cli/renderInfraRootHelp.ts",
-        "toPath": "src/cli/constants.ts",
-        "sourcePath": "src/cli/renderInfraRootHelp.ts"
+        "sourcePath": "src/cli/runInfraCliAsync.ts"
       },
       {
         "fromPath": "src/cli/runInfraCliAsync.ts",
@@ -3592,12 +4063,12 @@
       },
       {
         "fromPath": "src/cli/runInfraCliAsync.ts",
-        "toPath": "src/cli/findInfraCommand.ts",
+        "toPath": "src/cli/createInfraRuntimeProvider.ts",
         "sourcePath": "src/cli/runInfraCliAsync.ts"
       },
       {
         "fromPath": "src/cli/runInfraCliAsync.ts",
-        "toPath": "src/cli/renderInfraRootHelp.ts",
+        "toPath": "src/cli/findInfraCommand.ts",
         "sourcePath": "src/cli/runInfraCliAsync.ts"
       },
       {
@@ -3629,6 +4100,11 @@
         "fromPath": "src/metadata/index.ts",
         "toPath": "src/constants.ts",
         "sourcePath": "src/metadata/index.ts"
+      },
+      {
+        "fromPath": "src/project/index.ts",
+        "toPath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "sourcePath": "src/project/index.ts"
       },
       {
         "fromPath": "src/project/index.ts",
@@ -3677,12 +4153,22 @@
       },
       {
         "fromPath": "src/types/infraCli.ts",
+        "toPath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
+        "sourcePath": "src/types/infraCli.ts"
+      },
+      {
+        "fromPath": "src/types/infraCli.ts",
         "toPath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
         "sourcePath": "src/types/infraCli.ts"
       },
       {
         "fromPath": "src/types/infraCli.ts",
         "toPath": "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
+        "sourcePath": "src/types/infraCli.ts"
+      },
+      {
+        "fromPath": "src/types/infraCli.ts",
+        "toPath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "sourcePath": "src/types/infraCli.ts"
       },
       {
@@ -3997,11 +4483,6 @@
       },
       {
         "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
-        "toPath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
-        "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
-      },
-      {
-        "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
         "toPath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
         "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
       },
@@ -4012,7 +4493,17 @@
       },
       {
         "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
+        "toPath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
         "toPath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
+        "toPath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
         "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
       },
       {
@@ -4028,6 +4519,11 @@
       {
         "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
         "toPath": "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
+        "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
+        "toPath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
       },
       {
@@ -4121,6 +4617,11 @@
         "sourcePath": "src/features/environment-lifecycle/utils/mergeInfraResources.ts"
       },
       {
+        "fromPath": "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts",
+        "toPath": "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts",
+        "sourcePath": "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts"
+      },
+      {
         "fromPath": "src/features/environment-lifecycle/utils/retainUnchangedAdapterOutputs.ts",
         "toPath": "src/features/environment-lifecycle/utils/mergeInfraOutputs.ts",
         "sourcePath": "src/features/environment-lifecycle/utils/retainUnchangedAdapterOutputs.ts"
@@ -4156,6 +4657,26 @@
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts"
       },
       {
+        "fromPath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "toPath": "src/features/environment-lifecycle/utils/createInfraFailure.ts",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "toPath": "src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "toPath": "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
+        "toPath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
         "fromPath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
         "toPath": "src/types/infraOrchestration.ts",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts"
@@ -4169,6 +4690,11 @@
         "fromPath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
         "toPath": "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
+        "toPath": "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts"
       },
       {
         "fromPath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
@@ -4528,8 +5054,14 @@
       },
       {
         "fromSymbol": "runInfraCliAsync",
-        "toSymbol": "renderInfraRootHelp",
-        "callExpression": "renderInfraRootHelp",
+        "toSymbol": "renderProviderHelp",
+        "callExpression": "renderProviderHelp",
+        "sourcePath": "src/cli/runInfraCliAsync.ts"
+      },
+      {
+        "fromSymbol": "runInfraCliAsync",
+        "toSymbol": "createInfraRuntimeProvider",
+        "callExpression": "createInfraRuntimeProvider",
         "sourcePath": "src/cli/runInfraCliAsync.ts"
       },
       {
@@ -4668,6 +5200,12 @@
         "fromSymbol": "run",
         "toSymbol": "removeState",
         "callExpression": "services.removeState",
+        "sourcePath": "src/cli/commands/destroy.ts"
+      },
+      {
+        "fromSymbol": "run",
+        "toSymbol": "removeCredentials",
+        "callExpression": "services.removeCredentials",
         "sourcePath": "src/cli/commands/destroy.ts"
       },
       {
@@ -4852,6 +5390,12 @@
       },
       {
         "fromSymbol": "run",
+        "toSymbol": "writeEnvironmentOutputs",
+        "callExpression": "services.writeEnvironmentOutputs",
+        "sourcePath": "src/cli/commands/up.ts"
+      },
+      {
+        "fromSymbol": "run",
         "toSymbol": "writeInfraStructured",
         "callExpression": "writeInfraStructured",
         "sourcePath": "src/cli/commands/up.ts"
@@ -4960,8 +5504,8 @@
       },
       {
         "fromSymbol": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
-        "toSymbol": "createEnvironmentInfraCredentialPort",
-        "callExpression": "createEnvironmentInfraCredentialPort",
+        "toSymbol": "createProjectInfraCredentialPort",
+        "callExpression": "createProjectInfraCredentialPort",
         "sourcePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts"
       },
       {
@@ -5043,6 +5587,12 @@
         "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
       },
       {
+        "fromSymbol": "upAsync",
+        "toSymbol": "writeEnvironmentOutputs",
+        "callExpression": "services.writeEnvironmentOutputs",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
         "fromSymbol": "statusAsync",
         "toSymbol": "prepareProjectOperationAsync",
         "callExpression": "prepareProjectOperationAsync",
@@ -5088,6 +5638,18 @@
         "fromSymbol": "destroyAsync",
         "toSymbol": "readState",
         "callExpression": "services.readState",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "validateCredentialStateDestroy",
+        "callExpression": "validateCredentialStateDestroy",
+        "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "removeCredentials",
+        "callExpression": "services.removeCredentials",
         "sourcePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"
       },
       {
@@ -5331,6 +5893,12 @@
         "sourcePath": "src/features/environment-lifecycle/utils/mergeInfraResources.ts"
       },
       {
+        "fromSymbol": "resolveInfraStatePath",
+        "toSymbol": "resolveInfraEnvironmentStateDirectory",
+        "callExpression": "resolveInfraEnvironmentStateDirectory",
+        "sourcePath": "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts"
+      },
+      {
         "fromSymbol": "retainUnchangedAdapterOutputs",
         "toSymbol": "mergeInfraOutputs",
         "callExpression": "mergeInfraOutputs",
@@ -5409,6 +5977,168 @@
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts"
       },
       {
+        "fromSymbol": "createProjectInfraCredentialPort",
+        "toSymbol": "createEnvironmentInfraCredentialPort",
+        "callExpression": "createEnvironmentInfraCredentialPort",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "findAsync",
+        "toSymbol": "findProjectCredentialAsync",
+        "callExpression": "findProjectCredentialAsync",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "findProjectCredentialAsync",
+        "callExpression": "findProjectCredentialAsync",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "missingCredential",
+        "callExpression": "missingCredential",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "persistAsync",
+        "toSymbol": "isStringRecord",
+        "callExpression": "isStringRecord",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "persistAsync",
+        "toSymbol": "createInfraFailure",
+        "callExpression": "createInfraFailure",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "persistAsync",
+        "toSymbol": "writeStoredCredentialAsync",
+        "callExpression": "writeStoredCredentialAsync",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "findProjectCredentialAsync",
+        "toSymbol": "readStoredCredentialAsync",
+        "callExpression": "readStoredCredentialAsync",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "readStoredCredentialAsync",
+        "toSymbol": "resolveCredentialPath",
+        "callExpression": "resolveCredentialPath",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "readStoredCredentialAsync",
+        "toSymbol": "isStoredCredentialBundle",
+        "callExpression": "isStoredCredentialBundle",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "readStoredCredentialAsync",
+        "toSymbol": "invalidCredentialStore",
+        "callExpression": "invalidCredentialStore",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "readStoredCredentialAsync",
+        "toSymbol": "isMissingFile",
+        "callExpression": "isMissingFile",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "readStoredCredentialAsync",
+        "toSymbol": "createInfraFailure",
+        "callExpression": "createInfraFailure",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "writeStoredCredentialAsync",
+        "toSymbol": "resolveCredentialPath",
+        "callExpression": "resolveCredentialPath",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "writeStoredCredentialAsync",
+        "toSymbol": "randomUUID",
+        "callExpression": "randomUUID",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "writeStoredCredentialAsync",
+        "toSymbol": "restrictPermissionsAsync",
+        "callExpression": "restrictPermissionsAsync",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "writeStoredCredentialAsync",
+        "toSymbol": "removeTemporaryCredentialAsync",
+        "callExpression": "removeTemporaryCredentialAsync",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "writeStoredCredentialAsync",
+        "toSymbol": "createInfraFailure",
+        "callExpression": "createInfraFailure",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "resolveCredentialPath",
+        "toSymbol": "createHash",
+        "callExpression": "createHash",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "resolveCredentialPath",
+        "toSymbol": "resolveInfraEnvironmentStateDirectory",
+        "callExpression": "resolveInfraEnvironmentStateDirectory",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "missingCredential",
+        "toSymbol": "normalizeInfraEnvironmentKey",
+        "callExpression": "normalizeInfraEnvironmentKey",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "missingCredential",
+        "toSymbol": "createInfraFailure",
+        "callExpression": "createInfraFailure",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "invalidCredentialStore",
+        "toSymbol": "createInfraFailure",
+        "callExpression": "createInfraFailure",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "isStoredCredentialBundle",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "isStoredCredentialBundle",
+        "toSymbol": "isStringRecord",
+        "callExpression": "isStringRecord",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "isStringRecord",
+        "toSymbol": "isRecordOf",
+        "callExpression": "isRecordOf",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
+        "fromSymbol": "isMissingFile",
+        "toSymbol": "isRecord",
+        "callExpression": "isRecord",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts"
+      },
+      {
         "fromSymbol": "readStoredInfraStateAsync",
         "toSymbol": "resolveInfraStatePath",
         "callExpression": "resolveInfraStatePath",
@@ -5431,6 +6161,12 @@
         "toSymbol": "isRecord",
         "callExpression": "isRecord",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts"
+      },
+      {
+        "fromSymbol": "removeStoredInfraCredentialsAsync",
+        "toSymbol": "resolveInfraEnvironmentStateDirectory",
+        "callExpression": "resolveInfraEnvironmentStateDirectory",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts"
       },
       {
         "fromSymbol": "removeStoredInfraStateAsync",
@@ -5509,6 +6245,36 @@
         "toSymbol": "resolveProjectFile",
         "callExpression": "resolveProjectFile",
         "sourcePath": "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts"
+      },
+      {
+        "fromSymbol": "writeProjectEnvironmentOutputsAsync",
+        "toSymbol": "collectEnvironmentValues",
+        "callExpression": "collectEnvironmentValues",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts"
+      },
+      {
+        "fromSymbol": "writeProjectEnvironmentOutputsAsync",
+        "toSymbol": "pathExists",
+        "callExpression": "pathExists",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts"
+      },
+      {
+        "fromSymbol": "writeProjectEnvironmentOutputsAsync",
+        "toSymbol": "mergeEnvironmentFile",
+        "callExpression": "mergeEnvironmentFile",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts"
+      },
+      {
+        "fromSymbol": "mergeEnvironmentFile",
+        "toSymbol": "readEnvironmentAssignmentName",
+        "callExpression": "readEnvironmentAssignmentName",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts"
+      },
+      {
+        "fromSymbol": "mergeEnvironmentFile",
+        "toSymbol": "serializeEnvironmentValue",
+        "callExpression": "serializeEnvironmentValue",
+        "sourcePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts"
       },
       {
         "fromSymbol": "writeStoredInfraStateAsync",

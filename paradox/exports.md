@@ -108,10 +108,10 @@ Source: `src/features/environment-lifecycle/application/ports/outbound/infraAdap
 
 ### Members
 
-| Name                   | Kind     | Type                     | Required | Description |
-| ---------------------- | -------- | ------------------------ | -------- | ----------- |
-| createInfraAdapter     | property | `() => unknown`          | yes      |             |
-| infraAdapterDescriptor | property | `InfraAdapterDescriptor` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| createInfraAdapter | property | `() => unknown` | yes |  |
+| infraAdapterDescriptor | property | `InfraAdapterDescriptor` | yes |  |
 
 ## InfraAdapterPackageResolver
 
@@ -121,9 +121,9 @@ Source: `src/features/environment-lifecycle/application/ports/outbound/infraAdap
 
 ### Members
 
-| Name      | Kind   | Type                                        | Required | Description |
-| --------- | ------ | ------------------------------------------- | -------- | ----------- |
-| loadAsync | method | `(packageName: string) => Promise<unknown>` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| loadAsync | method | `(packageName: string) => Promise<unknown>` | yes |  |
 
 ## InfraDestroyOperationRequest
 
@@ -133,16 +133,16 @@ Source: `src/types/infraOrchestration.ts:72:1`
 
 ### Members
 
-| Name            | Kind     | Type                                                                                                                                                             | Required | Description |
-| --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| confirmation    | property | `{ readonly projectId: string; readonly environment: AppEnvironmentId; }`                                                                                        | yes      |             |
-| environment     | property | `string \| undefined`                                                                                                                                            | no       |             |
-| manifest        | property | `InfraManifest`                                                                                                                                                  | yes      |             |
-| persistence     | property | `{ readonly policy: "retain"; } \| { readonly policy: "delete"; readonly confirmedResources: readonly import("@ankhorage/contracts").InfraResourceIdentity[]; }` | yes      |             |
-| previous        | property | `InfraLedger \| undefined`                                                                                                                                       | no       |             |
-| previousDesired | property | `InfraEnvironmentSpec \| undefined`                                                                                                                              | no       |             |
-| projectId       | property | `string`                                                                                                                                                         | yes      |             |
-| signal          | property | `any`                                                                                                                                                            | no       |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| confirmation | property | `{ readonly projectId: string; readonly environment: AppEnvironmentId; }` | yes |  |
+| environment | property | `string \| undefined` | no |  |
+| manifest | property | `InfraManifest` | yes |  |
+| persistence | property | `{ readonly policy: "retain"; } \| { readonly policy: "delete"; readonly confirmedResources: readonly import("@ankhorage/contracts").InfraResourceIdentity[]; }` | yes |  |
+| previous | property | `InfraLedger \| undefined` | no |  |
+| previousDesired | property | `InfraEnvironmentSpec \| undefined` | no |  |
+| projectId | property | `string` | yes |  |
+| signal | property | `any` | no |  |
 
 ## InfraDestroyOperationResult
 
@@ -158,10 +158,10 @@ Source: `src/types/infraOrchestration.ts:121:1`
 
 ### Members
 
-| Name        | Kind     | Type                                   | Required | Description |
-| ----------- | -------- | -------------------------------------- | -------- | ----------- |
-| environment | property | `"local" \| "preview" \| "production"` | yes      |             |
-| ledger      | property | `InfraLedger \| null`                  | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| environment | property | `"local" \| "preview" \| "production"` | yes |  |
+| ledger | property | `InfraLedger \| null` | yes |  |
 
 ## InfraDownOperationResult
 
@@ -177,10 +177,10 @@ Source: `src/types/infraOrchestration.ts:114:1`
 
 ### Members
 
-| Name        | Kind     | Type                                   | Required | Description |
-| ----------- | -------- | -------------------------------------- | -------- | ----------- |
-| environment | property | `"local" \| "preview" \| "production"` | yes      |             |
-| ledger      | property | `InfraLedger`                          | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| environment | property | `"local" \| "preview" \| "production"` | yes |  |
+| ledger | property | `InfraLedger` | yes |  |
 
 ## InfraGenerateOperationResult
 
@@ -196,11 +196,11 @@ Source: `src/types/infraOrchestration.ts:97:1`
 
 ### Members
 
-| Name        | Kind     | Type                                   | Required | Description |
-| ----------- | -------- | -------------------------------------- | -------- | ----------- |
-| artifacts   | property | `readonly InfraGeneratedArtifact[]`    | yes      |             |
-| environment | property | `"local" \| "preview" \| "production"` | yes      |             |
-| ledger      | property | `InfraLedger`                          | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| artifacts | property | `readonly InfraGeneratedArtifact[]` | yes |  |
+| environment | property | `"local" \| "preview" \| "production"` | yes |  |
+| ledger | property | `InfraLedger` | yes |  |
 
 ## InfraOperationRequest
 
@@ -210,14 +210,14 @@ Source: `src/types/infraOrchestration.ts:63:1`
 
 ### Members
 
-| Name            | Kind     | Type                                | Required | Description |
-| --------------- | -------- | ----------------------------------- | -------- | ----------- |
-| environment     | property | `string \| undefined`               | no       |             |
-| manifest        | property | `InfraManifest`                     | yes      |             |
-| previous        | property | `InfraLedger \| undefined`          | no       |             |
-| previousDesired | property | `InfraEnvironmentSpec \| undefined` | no       |             |
-| projectId       | property | `string`                            | yes      |             |
-| signal          | property | `any`                               | no       |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| environment | property | `string \| undefined` | no |  |
+| manifest | property | `InfraManifest` | yes |  |
+| previous | property | `InfraLedger \| undefined` | no |  |
+| previousDesired | property | `InfraEnvironmentSpec \| undefined` | no |  |
+| projectId | property | `string` | yes |  |
+| signal | property | `any` | no |  |
 
 ## InfraOrchestrationDependencies
 
@@ -227,11 +227,11 @@ Source: `src/types/infraOrchestration.ts:57:1`
 
 ### Members
 
-| Name            | Kind     | Type                                                                                                              | Required | Description |
-| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| adapterResolver | property | `InfraAdapterPackageResolver`                                                                                     | yes      |             |
-| credentials     | property | `import("@ankhorage/contracts").InfraCredentialPort`                                                              | yes      |             |
-| secrets         | property | `{ resolveAsync(reference: import("@ankhorage/contracts").InfraSecretReference): Promise<InfraResult<string>>; }` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| adapterResolver | property | `InfraAdapterPackageResolver` | yes |  |
+| credentials | property | `import("@ankhorage/contracts").InfraCredentialPort` | yes |  |
+| secrets | property | `{ resolveAsync(reference: import("@ankhorage/contracts").InfraSecretReference): Promise<InfraResult<string>>; }` | yes |  |
 
 ## InfraOutputsOperationResult
 
@@ -247,10 +247,10 @@ Source: `src/types/infraOrchestration.ts:107:1`
 
 ### Members
 
-| Name        | Kind     | Type                                   | Required | Description |
-| ----------- | -------- | -------------------------------------- | -------- | ----------- |
-| environment | property | `"local" \| "preview" \| "production"` | yes      |             |
-| outputs     | property | `readonly InfraOutput[]`               | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| environment | property | `"local" \| "preview" \| "production"` | yes |  |
+| outputs | property | `readonly InfraOutput[]` | yes |  |
 
 ## InfraPlanOperationResult
 
@@ -272,11 +272,11 @@ Source: `src/types/infraOrchestration.ts:43:1`
 
 ### Members
 
-| Name          | Kind     | Type                   | Required | Description |
-| ------------- | -------- | ---------------------- | -------- | ----------- |
-| desired       | property | `InfraEnvironmentSpec` | yes      |             |
-| ledger        | property | `InfraLedger`          | yes      |             |
-| schemaVersion | property | `1`                    | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| desired | property | `InfraEnvironmentSpec` | yes |  |
+| ledger | property | `InfraLedger` | yes |  |
+| schemaVersion | property | `1` | yes |  |
 
 ## InfraUpOperationResult
 
@@ -298,13 +298,13 @@ Source: `src/types/infraOrchestration.ts:85:1`
 
 ### Members
 
-| Name        | Kind     | Type                                   | Required | Description |
-| ----------- | -------- | -------------------------------------- | -------- | ----------- |
-| environment | property | `"local" \| "preview" \| "production"` | yes      |             |
-| ledger      | property | `InfraLedger`                          | yes      |             |
-| outputs     | property | `readonly InfraOutput[]`               | yes      |             |
-| resources   | property | `readonly InfraOwnedResource[]`        | yes      |             |
-| targets     | property | `readonly InfraComputeTarget[]`        | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| environment | property | `"local" \| "preview" \| "production"` | yes |  |
+| ledger | property | `InfraLedger` | yes |  |
+| outputs | property | `readonly InfraOutput[]` | yes |  |
+| resources | property | `readonly InfraOwnedResource[]` | yes |  |
+| targets | property | `readonly InfraComputeTarget[]` | yes |  |
 
 ## InfraValidateOperationResult
 
@@ -320,9 +320,9 @@ Source: `src/types/infraOrchestration.ts:77:1`
 
 ### Members
 
-| Name        | Kind     | Type                                   | Required | Description |
-| ----------- | -------- | -------------------------------------- | -------- | ----------- |
-| environment | property | `"local" \| "preview" \| "production"` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| environment | property | `"local" \| "preview" \| "production"` | yes |  |
 
 ## orderInfraPlanActions
 
@@ -361,13 +361,13 @@ Source: `src/types/infraOrchestration.ts:49:1`
 
 ### Members
 
-| Name           | Kind     | Type                                                                | Required | Description |
-| -------------- | -------- | ------------------------------------------------------------------- | -------- | ----------- |
-| adapters       | property | `ResolvedInfraAdapters`                                             | yes      |             |
-| compute        | property | `InfraComputeSnapshot`                                              | yes      |             |
-| context        | property | `InfraExecutionContext`                                             | yes      |             |
-| environment    | property | `ResolvedInfraEnvironment`                                          | yes      |             |
-| runtimeDesired | property | `InfraRuntimeDesiredState<"minikube" \| "k3s" \| "docker-compose">` | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| adapters | property | `ResolvedInfraAdapters` | yes |  |
+| compute | property | `InfraComputeSnapshot` | yes |  |
+| context | property | `InfraExecutionContext` | yes |  |
+| environment | property | `ResolvedInfraEnvironment` | yes |  |
+| runtimeDesired | property | `InfraRuntimeDesiredState<"minikube" \| "k3s" \| "docker-compose">` | yes |  |
 
 ## ResolvedInfraAdapters
 
@@ -377,11 +377,11 @@ Source: `src/types/infraOrchestration.ts:37:1`
 
 ### Members
 
-| Name     | Kind     | Type                                                                         | Required | Description |
-| -------- | -------- | ---------------------------------------------------------------------------- | -------- | ----------- |
-| compute  | property | `InfraComputeAdapter<import("@ankhorage/contracts").InfraComputeProviderId>` | yes      |             |
-| runtime  | property | `InfraRuntimeAdapter<"minikube" \| "k3s" \| "docker-compose">`               | yes      |             |
-| services | property | `readonly InfraServiceAdapter[]`                                             | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| compute | property | `InfraComputeAdapter<import("@ankhorage/contracts").InfraComputeProviderId>` | yes |  |
+| runtime | property | `InfraRuntimeAdapter<"minikube" \| "k3s" \| "docker-compose">` | yes |  |
+| services | property | `readonly InfraServiceAdapter[]` | yes |  |
 
 ## ResolvedInfraEnvironment
 
@@ -391,11 +391,11 @@ Source: `src/types/infraOrchestration.ts:24:1`
 
 ### Members
 
-| Name     | Kind     | Type                                   | Required | Description |
-| -------- | -------- | -------------------------------------- | -------- | ----------- |
-| desired  | property | `InfraEnvironmentSpec`                 | yes      |             |
-| id       | property | `"local" \| "preview" \| "production"` | yes      |             |
-| manifest | property | `InfraManifest`                        | yes      |             |
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| desired | property | `InfraEnvironmentSpec` | yes |  |
+| id | property | `"local" \| "preview" \| "production"` | yes |  |
+| manifest | property | `InfraManifest` | yes |  |
 
 ## resolveInfraAdaptersAsync
 
