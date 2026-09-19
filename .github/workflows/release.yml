@@ -308,7 +308,6 @@ jobs:
 
       - name: Create the scoped rollout token
         id: rollout-token
-        if: needs.release.outputs.package_name == '@ankhorage/devtools'
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.ANKHORAGE_RENOVATE_SYNC_CLIENT_ID }}
@@ -317,29 +316,37 @@ jobs:
           repositories: renovate
           permission-contents: write
 
-      - name: Trigger the Devtools consumer rollout
-        if: needs.release.outputs.package_name == '@ankhorage/devtools'
+      - name: Trigger the package consumer rollout
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           PUBLISHED_PACKAGE_NAME: ${{ needs.release.outputs.package_name }}
           PUBLISHED_PACKAGE_VERSION: ${{ needs.release.outputs.package_version }}
+          PUBLISHED_SOURCE_REPOSITORY: ${{ github.repository }}
         with:
           github-token: ${{ steps.rollout-token.outputs.token }}
           script: |
             const release = {
               name: process.env.PUBLISHED_PACKAGE_NAME,
               version: process.env.PUBLISHED_PACKAGE_VERSION,
+              sourceRepository: process.env.PUBLISHED_SOURCE_REPOSITORY,
             };
             if (
-              release.name !== '@ankhorage/devtools' ||
-              !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(release.version)
+              !/^@ankhorage\/[a-z0-9][a-z0-9-]*$/.test(release.name ?? '') ||
+              !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(release.version ?? '') ||
+              !/^ankhorage\/[a-z0-9-]+$/.test(release.sourceRepository ?? '')
             ) {
-              throw new Error('Changesets must report one exact published Devtools version.');
+              throw new Error(
+                'Changesets must report one exact published Ankhorage package identity.',
+              );
             }
 
             await github.rest.repos.createDispatchEvent({
               owner: 'ankhorage',
               repo: 'renovate',
-              event_type: 'devtools-release',
-              client_payload: { version: release.version },
+              event_type: 'package-release',
+              client_payload: {
+                package_name: release.name,
+                version: release.version,
+                source_repository: release.sourceRepository,
+              },
             });
