@@ -113,7 +113,7 @@
   },
   "devDependencies": {
     "@ankhorage/cerbos": "^0.2.0",
-    "@ankhorage/devtools": "^1.18.5",
+    "@ankhorage/devtools": "^2.0.0",
     "@ankhorage/docker-compose": "^0.5.3",
     "@ankhorage/hetzner": "^0.3.0",
     "@ankhorage/k3s": "^0.4.1",
