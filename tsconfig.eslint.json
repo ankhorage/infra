@@ -17,6 +17,13 @@
     "baseUrl": ".",
     "types": ["bun", "node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "eslint.config.mjs", ".prettierrc.js"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "examples/**/*.ts",
+    "examples/**/*.tsx",
+    "eslint.config.mjs",
+    ".prettierrc.js"
+  ],
   "exclude": ["dist", "node_modules"]
 }
