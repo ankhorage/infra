@@ -2,4 +2,4 @@
 '@ankhorage/infra': patch
 ---
 
-Update dependencies from Renovate pull request #214.
+Update Ankhorage dependencies: `@ankhorage/contracts`, `@ankhorage/local`, `@ankhorage/paradox`, `@ankhorage/supabase-vault`, `@ankhorage/utility`.
