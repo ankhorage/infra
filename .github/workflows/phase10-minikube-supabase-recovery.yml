@@ -67,10 +67,10 @@ jobs:
           cd /tmp
           curl --fail --location --silent --show-error \
             --output "minio.${MINIO_VERSION}" \
-            "https://dl.min.io/server/minio/release/linux-amd64/archive/minio.${MINIO_VERSION}"
+            "https://dl.min.io/community/server/minio/release/linux-amd64/archive/minio.${MINIO_VERSION}"
           curl --fail --location --silent --show-error \
             --output "minio.${MINIO_VERSION}.sha256sum" \
-            "https://dl.min.io/server/minio/release/linux-amd64/archive/minio.${MINIO_VERSION}.sha256sum"
+            "https://dl.min.io/community/server/minio/release/linux-amd64/archive/minio.${MINIO_VERSION}.sha256sum"
           sha256sum --check --status "minio.${MINIO_VERSION}.sha256sum"
           sudo install "minio.${MINIO_VERSION}" /usr/local/bin/minio
           minio --version
