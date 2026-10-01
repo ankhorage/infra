@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.18
+
+### Patch Changes
+
+- db04d54: Update dependencies: `@ankhorage/contracts`, `@ankhorage/minikube`.
+
 ## 7.1.17
 
 ### Patch Changes
