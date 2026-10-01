@@ -88,7 +88,7 @@ export function createAppManifest(
         },
       },
     },
-    modules: [],
+    modules: {},
   },
 ): AppManifest {
   return {
@@ -99,7 +99,7 @@ export function createAppManifest(
       category: 'developer_tools',
       themeId: 'default',
     },
-    themes: [],
+    themes: {},
     activeThemeId: 'default',
     infra,
     navigator: {

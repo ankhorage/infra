@@ -69,7 +69,7 @@ export async function prepareInfraOperationAsync(
       compute.value.targets.length > 0
         ? compute.value.targets
         : (request.previous?.targets ?? compute.value.targets),
-    workloads: [...(environment.value.desired.workloads ?? []), ...workloads.value],
+    workloads: [...Object.values(environment.value.desired.workloads ?? {}), ...workloads.value],
     availableOutputs: mergeOutputs(request.previous?.outputs ?? [], compute.value.outputs),
   };
   if (runtimeDesired.targets.length === 0) {

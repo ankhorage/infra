@@ -2,4 +2,4 @@
 '@ankhorage/infra': patch
 ---
 
-Document Infra usage from a runnable public example and keep Renovate configuration out of package documentation.
+Document Infra usage from a runnable public example, keep Renovate configuration out of package documentation, and align the runtime dependency graph with current Contracts collection semantics.
