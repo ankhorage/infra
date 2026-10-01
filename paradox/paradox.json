@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.1.18",
+      "value": "v7.1.19",
       "color": "cb3837"
     },
     {
@@ -1472,7 +1472,7 @@
         {
           "name": "signal",
           "kind": "property",
-          "type": "any",
+          "type": "AbortSignal | undefined",
           "required": false,
           "description": null
         }
@@ -1721,7 +1721,7 @@
         {
           "name": "signal",
           "kind": "property",
-          "type": "any",
+          "type": "AbortSignal | undefined",
           "required": false,
           "description": null
         }
@@ -7295,6 +7295,11 @@
       },
       {
         "fromSymbol": "InfraDestroyOperationRequest",
+        "toType": "AbortSignal",
+        "sourcePath": "src/types/infraOrchestration.ts"
+      },
+      {
+        "fromSymbol": "InfraDestroyOperationRequest",
         "toType": "AppEnvironmentId",
         "sourcePath": "src/types/infraOrchestration.ts"
       },
@@ -7336,6 +7341,11 @@
       {
         "fromSymbol": "InfraGenerateResult",
         "toType": "InfraLedger",
+        "sourcePath": "src/types/infraOrchestration.ts"
+      },
+      {
+        "fromSymbol": "InfraOperationRequest",
+        "toType": "AbortSignal",
         "sourcePath": "src/types/infraOrchestration.ts"
       },
       {

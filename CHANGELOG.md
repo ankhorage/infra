@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.19
+
+### Patch Changes
+
+- b4c711c: Update dependencies: `@types/bun`, `@types/node`, `typescript`.
+
 ## 7.1.18
 
 ### Patch Changes

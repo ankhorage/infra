@@ -142,7 +142,7 @@ Source: `src/types/infraOrchestration.ts:72:1`
 | previous | property | `InfraLedger \| undefined` | no |  |
 | previousDesired | property | `InfraEnvironmentSpec \| undefined` | no |  |
 | projectId | property | `string` | yes |  |
-| signal | property | `any` | no |  |
+| signal | property | `AbortSignal \| undefined` | no |  |
 
 ## InfraDestroyOperationResult
 
@@ -217,7 +217,7 @@ Source: `src/types/infraOrchestration.ts:63:1`
 | previous | property | `InfraLedger \| undefined` | no |  |
 | previousDesired | property | `InfraEnvironmentSpec \| undefined` | no |  |
 | projectId | property | `string` | yes |  |
-| signal | property | `any` | no |  |
+| signal | property | `AbortSignal \| undefined` | no |  |
 
 ## InfraOrchestrationDependencies
 

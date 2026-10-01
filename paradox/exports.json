@@ -418,7 +418,7 @@
       {
         "name": "signal",
         "kind": "property",
-        "type": "any",
+        "type": "AbortSignal | undefined",
         "required": false,
         "description": null
       }
@@ -667,7 +667,7 @@
       {
         "name": "signal",
         "kind": "property",
-        "type": "any",
+        "type": "AbortSignal | undefined",
         "required": false,
         "description": null
       }
