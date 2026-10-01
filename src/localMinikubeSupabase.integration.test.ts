@@ -40,11 +40,11 @@ const manifest = {
       },
       database: { provider: 'supabase', tier: 'dev' },
       auth: { provider: 'supabase' },
-      objectStorage: { provider: 'supabase', buckets: [bucket] },
+      objectStorage: { provider: 'supabase', buckets: { [bucket]: true } },
       networking: { publicBaseUrl: baseUrl },
     },
   },
-  modules: [],
+  modules: {},
 } as const satisfies InfraManifest;
 
 test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_E2E !== '1')(
