@@ -81,9 +81,11 @@ jobs:
           const supabaseRange = packageJson.devDependencies?.["@ankhorage/supabase"];
           const minikubeEntry = import.meta.resolve("@ankhorage/minikube");
           const minikube = await Bun.file(new URL("../package.json", minikubeEntry)).json();
+          const minikubeRange = packageJson.devDependencies?.["@ankhorage/minikube"];
           const minikubeRequire = createRequire(minikubeEntry);
           const driverEntry = minikubeRequire.resolve("@ankhorage/kubernetes");
           const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();
+          const driverRange = minikube.dependencies?.["@ankhorage/kubernetes"];
 
           if (typeof contractsRange !== "string" || !Bun.semver.satisfies(contracts.version, contractsRange)) {
             throw new Error(`Expected Contracts ${contractsRange ?? "<missing range>"}, got ${contracts.version}`);
@@ -91,13 +93,17 @@ jobs:
           if (typeof supabaseRange !== "string" || !Bun.semver.satisfies(supabase.version, supabaseRange)) {
             throw new Error(`Expected Supabase ${supabaseRange ?? "<missing range>"}, got ${supabase.version}`);
           }
-          if (minikube.version !== "0.4.4") throw new Error(`Expected Minikube 0.4.4, got ${minikube.version}`);
-          if (driver.version !== "0.8.1") throw new Error(`Expected Kubernetes 0.8.1, got ${driver.version}`);
+          if (typeof minikubeRange !== "string" || !Bun.semver.satisfies(minikube.version, minikubeRange)) {
+            throw new Error(`Expected Minikube ${minikubeRange ?? "<missing range>"}, got ${minikube.version}`);
+          }
+          if (typeof driverRange !== "string" || !Bun.semver.satisfies(driver.version, driverRange)) {
+            throw new Error(`Expected Kubernetes ${driverRange ?? "<missing range>"}, got ${driver.version}`);
+          }
 
           console.log(`Contracts: ${contracts.version} (${contractsRange})`);
           console.log(`Supabase provider: ${supabase.version} (${supabaseRange})`);
-          console.log(`Minikube runtime: ${minikube.version}`);
-          console.log(`Minikube Kubernetes driver: ${driver.version}`);
+          console.log(`Minikube runtime: ${minikube.version} (${minikubeRange})`);
+          console.log(`Minikube Kubernetes driver: ${driver.version} (${driverRange})`);
           '
 
       - name: Run backup and fresh-cluster recovery acceptance
