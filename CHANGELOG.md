@@ -1,5 +1,12 @@
 # @ankhorage/infra
 
+## 7.1.36
+
+### Patch Changes
+
+- eaaf902: Update dependencies: `@types/node`.
+- 4a316cb: Update dependencies: `@ankhorage/minikube`, `@ankhorage/utility`.
+
 ## 7.1.35
 
 ### Patch Changes
