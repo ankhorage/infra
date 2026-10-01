@@ -3,42 +3,62 @@
 
 # INFRA
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v7.1.6](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v7.1.7](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![paradox: canonical](././paradox/badges/docs.svg)
 
 Executable infra provider and standalone CLI for Ankhorage project workflows.
 
 ## Usage
 
-### Provider-neutral infrastructure lifecycle
+### CLI
 
-`@ankhorage/infra` resolves only the compute, runtime, and service adapter packages selected by
-an environment-aware Infra manifest. Its typed use cases own orchestration, dependency ordering,
-safe outputs, deterministic artifacts, and environment-scoped ownership state. Provider packages
-own all technology-specific implementation.
+Ankhorage packages expose their command-line interface through `ankh`. Use `ankh --help` to discover available package commands, or run a package command with `--help` for package-specific usage.
 
-The standalone CLI and `ankh infra` expose the same lifecycle:
+```zsh
+# Install the Ankhorage CLI
+bun add --global @ankhorage/ankh
 
-- `validate`
-- `plan`
-- `generate`
-- `up`
-- `status`
-- `outputs`
-- `down`
-- `destroy`
+# Show usage information for infra
+ankh infra --help
+```
 
-`local` is the only default environment. Destruction always requires an explicit environment and
-exact `<project>:<environment>` confirmation. Persistent resources remain retained unless each
-exact owned resource is separately authorized with `--delete-resource <adapter>:<resourceId>`.
-Environment-style outputs print only explicitly public values with an environment-variable name;
-secret outputs remain references.
+### Explore Infra commands
 
-Source: `src/readme-usage.ts`
+Inspect the commands exposed by the standalone Infra provider.
+
+The provider owns the validation, planning, generation, and lifecycle command surface. Select
+an environment explicitly before destructive operations.
 
 ```ts
-import { runInfraCliAsync } from './cli/runInfraCliAsync.js';
+import { createInfraRuntimeProvider } from '@ankhorage/infra/cli';
+```
 
-await runInfraCliAsync(['--help']);
+## Configuration
+
+### Example
+
+```ts
+import { defineParadoxConfig } from '@ankhorage/paradox';
+
+export default defineParadoxConfig({
+  mode: 'write',
+
+  docs: {
+    title: 'INFRA',
+    description: 'Executable infra provider and standalone CLI for Ankhorage project workflows.',
+    usage: {
+      entrypoints: ['examples/basic-usage/main.ts'],
+    },
+  },
+
+  package: {
+    root: '.',
+    entrypoints: ['src/index.ts'],
+  },
+
+  output: {
+    dir: './paradox',
+  },
+});
 ```
 
 ## Generated documentation

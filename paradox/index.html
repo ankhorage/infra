@@ -426,7 +426,24 @@
         <li><code>src/index.ts</code></li>
       </ul>
     </section>
+    <section class="panel" data-search="usage ankh infra --help Explore Infra commands Inspect the commands exposed by the standalone Infra provider.&#10;&#10;The provider owns the validation, planning, generation, and lifecycle command surface. Select&#10;an environment explicitly before destructive operations. examples/basic-usage/main.ts">
+    <h2>Usage</h2>
+    <article class="item">
+      <h3>CLI</h3>
+      <pre>ankh infra --help</pre>
+    </article>
+    <article class="item" data-search="Explore Infra commands Inspect the commands exposed by the standalone Infra provider.&#10;&#10;The provider owns the validation, planning, generation, and lifecycle command surface. Select&#10;an environment explicitly before destructive operations. examples/basic-usage/main.ts">
+    <h3>Explore Infra commands</h3>
+    <p class="muted"><code>examples/basic-usage/main.ts</code></p>
+    <p>Inspect the commands exposed by the standalone Infra provider.
+
+The provider owns the validation, planning, generation, and lifecycle command surface. Select
+an environment explicitly before destructive operations.</p>
     
+    <pre>import { createInfraRuntimeProvider } from &#39;@ankhorage/infra/cli&#39;;</pre>
+  </article>
+  </section>
+    <section class="panel"><h2>Policy</h2><p>No documentation findings.</p></section>
     <section class="panel">
       <h2>Modules</h2>
       <article class="item" data-search="package.json">
@@ -811,10 +828,12 @@
       
             <section>
               <h3>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts</h3>
-              <article class="item" id="symbol-createenvironmentinfracredentialport" data-search="createEnvironmentInfraCredentialPort function src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Resolve execution-only control-plane credentials from exact-name or prefixed environment data. (environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; import(&quot;@ankhorage/contracts&quot;).InfraCredentialPort">
+              <article class="item" id="symbol-createenvironmentinfracredentialport" data-search="createEnvironmentInfraCredentialPort  function src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Resolve execution-only control-plane credentials from exact-name or prefixed environment data. (environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; import(&quot;@ankhorage/contracts&quot;).InfraCredentialPort">
     <h4>createEnvironmentInfraCredentialPort</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:11:1</code></p>
     <p>Resolve execution-only control-plane credentials from exact-name or prefixed environment data.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     <div>
@@ -838,10 +857,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts</h3>
-              <article class="item" id="symbol-createenvironmentinfrasecretport" data-search="createEnvironmentInfraSecretPort function src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts Resolve explicitly addressed secret values from environment data without serializing them. (environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; { resolveAsync(reference: import(&quot;@ankhorage/contracts&quot;).InfraSecretReference): Promise&lt;import(&quot;@ankhorage/contracts&quot;).InfraResult&lt;string&gt;&gt;; }">
+              <article class="item" id="symbol-createenvironmentinfrasecretport" data-search="createEnvironmentInfraSecretPort  function src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts Resolve explicitly addressed secret values from environment data without serializing them. (environment: Readonly&lt;Record&lt;string, string | undefined&gt;&gt;) =&gt; { resolveAsync(reference: import(&quot;@ankhorage/contracts&quot;).InfraSecretReference): Promise&lt;import(&quot;@ankhorage/contracts&quot;).InfraResult&lt;string&gt;&gt;; }">
     <h4>createEnvironmentInfraSecretPort</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts:7:1</code></p>
     <p>Resolve explicitly addressed secret values from environment data without serializing them.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     <div>
@@ -865,10 +886,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts</h3>
-              <article class="item" id="symbol-createnodeinfraadapterpackageresolver" data-search="createNodeInfraAdapterPackageResolver function src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts Load only a catalog-selected package through the host module resolver. InfraAdapterPackageResolver () =&gt; InfraAdapterPackageResolver">
+              <article class="item" id="symbol-createnodeinfraadapterpackageresolver" data-search="createNodeInfraAdapterPackageResolver  function src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts Load only a catalog-selected package through the host module resolver. InfraAdapterPackageResolver () =&gt; InfraAdapterPackageResolver">
     <h4>createNodeInfraAdapterPackageResolver</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts:4:1</code></p>
     <p>Load only a catalog-selected package through the host module resolver.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraAdapterPackageResolver</li></ul></div>
     <div>
@@ -882,9 +905,11 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts</h3>
-              <article class="item" id="symbol-infraadapterpackagemodule" data-search="InfraAdapterPackageModule type src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts ">
+              <article class="item" id="symbol-infraadapterpackagemodule" data-search="InfraAdapterPackageModule  type src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts ">
     <h4>InfraAdapterPackageModule</h4>
+    
     <p class="muted">type • <code>src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts:7:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -907,9 +932,11 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infraadapterpackageresolver" data-search="InfraAdapterPackageResolver type src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts ">
+  </article><article class="item" id="symbol-infraadapterpackageresolver" data-search="InfraAdapterPackageResolver  type src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts ">
     <h4>InfraAdapterPackageResolver</h4>
+    
     <p class="muted">type • <code>src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts:3:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -930,10 +957,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts</h3>
-              <article class="item" id="symbol-destroyinfraenvironmentasync" data-search="destroyInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts Destroy exact owned resources in reverse dependency order behind explicit scope confirmation. InfraDestroyOperationRequest InfraDestroyOperationResult InfraOrchestrationDependencies (request: InfraDestroyOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraDestroyOperationResult&gt;">
+              <article class="item" id="symbol-destroyinfraenvironmentasync" data-search="destroyInfraEnvironmentAsync  function src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts Destroy exact owned resources in reverse dependency order behind explicit scope confirmation. InfraDestroyOperationRequest InfraDestroyOperationResult InfraOrchestrationDependencies (request: InfraDestroyOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraDestroyOperationResult&gt;">
     <h4>destroyInfraEnvironmentAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts:22:1</code></p>
     <p>Destroy exact owned resources in reverse dependency order behind explicit scope confirmation.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraDestroyOperationRequest</li><li class="chip">InfraDestroyOperationResult</li><li class="chip">InfraOrchestrationDependencies</li></ul></div>
     <div>
@@ -962,10 +991,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts</h3>
-              <article class="item" id="symbol-downinfraenvironmentasync" data-search="downInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts Reversibly suspend services and runtime while retaining compute and persistent data. InfraDownOperationResult InfraOperationRequest InfraOrchestrationDependencies (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraDownOperationResult&gt;">
+              <article class="item" id="symbol-downinfraenvironmentasync" data-search="downInfraEnvironmentAsync  function src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts Reversibly suspend services and runtime while retaining compute and persistent data. InfraDownOperationResult InfraOperationRequest InfraOrchestrationDependencies (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraDownOperationResult&gt;">
     <h4>downInfraEnvironmentAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts:15:1</code></p>
     <p>Reversibly suspend services and runtime while retaining compute and persistent data.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraDownOperationResult</li><li class="chip">InfraOperationRequest</li><li class="chip">InfraOrchestrationDependencies</li></ul></div>
     <div>
@@ -994,10 +1025,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts</h3>
-              <article class="item" id="symbol-generateinfraenvironmentasync" data-search="generateInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts Generate deterministic review artifacts without mutating local or remote infrastructure. InfraGenerateOperationResult InfraOperationRequest InfraOrchestrationDependencies (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraGenerateOperationResult&gt;">
+              <article class="item" id="symbol-generateinfraenvironmentasync" data-search="generateInfraEnvironmentAsync  function src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts Generate deterministic review artifacts without mutating local or remote infrastructure. InfraGenerateOperationResult InfraOperationRequest InfraOrchestrationDependencies (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraGenerateOperationResult&gt;">
     <h4>generateInfraEnvironmentAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts:15:1</code></p>
     <p>Generate deterministic review artifacts without mutating local or remote infrastructure.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraGenerateOperationResult</li><li class="chip">InfraOperationRequest</li><li class="chip">InfraOrchestrationDependencies</li></ul></div>
     <div>
@@ -1026,10 +1059,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts</h3>
-              <article class="item" id="symbol-getinfraenvironmentoutputs" data-search="getInfraEnvironmentOutputs function src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts Return only safe serialized public outputs and secret references from the canonical ledger. InfraOperationRequest InfraOutputsOperationResult (request: InfraOperationRequest) =&gt; InfraOutputsOperationResult">
+              <article class="item" id="symbol-getinfraenvironmentoutputs" data-search="getInfraEnvironmentOutputs  function src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts Return only safe serialized public outputs and secret references from the canonical ledger. InfraOperationRequest InfraOutputsOperationResult (request: InfraOperationRequest) =&gt; InfraOutputsOperationResult">
     <h4>getInfraEnvironmentOutputs</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts:8:1</code></p>
     <p>Return only safe serialized public outputs and secret references from the canonical ledger.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraOperationRequest</li><li class="chip">InfraOutputsOperationResult</li></ul></div>
     <div>
@@ -1053,10 +1088,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts</h3>
-              <article class="item" id="symbol-planinfraenvironmentasync" data-search="planInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts Aggregate a side-effect-free dependency-ordered plan from all selected adapters. InfraOperationRequest InfraOrchestrationDependencies InfraPlanOperationResult (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraPlanOperationResult&gt;">
+              <article class="item" id="symbol-planinfraenvironmentasync" data-search="planInfraEnvironmentAsync  function src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts Aggregate a side-effect-free dependency-ordered plan from all selected adapters. InfraOperationRequest InfraOrchestrationDependencies InfraPlanOperationResult (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraPlanOperationResult&gt;">
     <h4>planInfraEnvironmentAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts:13:1</code></p>
     <p>Aggregate a side-effect-free dependency-ordered plan from all selected adapters.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraOperationRequest</li><li class="chip">InfraOrchestrationDependencies</li><li class="chip">InfraPlanOperationResult</li></ul></div>
     <div>
@@ -1085,10 +1122,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts</h3>
-              <article class="item" id="symbol-resolveinfraadaptersasync" data-search="resolveInfraAdaptersAsync function src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Resolve exactly the selected provider packages and validate their public adapter boundaries. InfraAdapterPackageResolver ResolvedInfraAdapters (environment: InfraEnvironmentSpec, resolver: InfraAdapterPackageResolver) =&gt; Promise&lt;InfraResult&lt;ResolvedInfraAdapters&gt;&gt;">
+              <article class="item" id="symbol-resolveinfraadaptersasync" data-search="resolveInfraAdaptersAsync  function src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Resolve exactly the selected provider packages and validate their public adapter boundaries. InfraAdapterPackageResolver ResolvedInfraAdapters (environment: InfraEnvironmentSpec, resolver: InfraAdapterPackageResolver) =&gt; Promise&lt;InfraResult&lt;ResolvedInfraAdapters&gt;&gt;">
     <h4>resolveInfraAdaptersAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:21:1</code></p>
     <p>Resolve exactly the selected provider packages and validate their public adapter boundaries.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraAdapterPackageResolver</li><li class="chip">ResolvedInfraAdapters</li></ul></div>
     <div>
@@ -1117,10 +1156,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts</h3>
-              <article class="item" id="symbol-statusinfraenvironmentasync" data-search="statusInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts Aggregate provider-neutral compute, runtime and service status. InfraOperationRequest InfraOrchestrationDependencies InfraStatusOperationResult (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraStatusOperationResult&gt;">
+              <article class="item" id="symbol-statusinfraenvironmentasync" data-search="statusInfraEnvironmentAsync  function src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts Aggregate provider-neutral compute, runtime and service status. InfraOperationRequest InfraOrchestrationDependencies InfraStatusOperationResult (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraStatusOperationResult&gt;">
     <h4>statusInfraEnvironmentAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts:12:1</code></p>
     <p>Aggregate provider-neutral compute, runtime and service status.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraOperationRequest</li><li class="chip">InfraOrchestrationDependencies</li><li class="chip">InfraStatusOperationResult</li></ul></div>
     <div>
@@ -1149,10 +1190,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts</h3>
-              <article class="item" id="symbol-upinfraenvironmentasync" data-search="upInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts Validate and reconcile compute, service preparation, workloads, runtime and services in order. InfraOperationRequest InfraOrchestrationDependencies InfraUpOperationResult (request: import(&quot;../../../../index.js&quot;).InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraUpOperationResult&gt;">
+              <article class="item" id="symbol-upinfraenvironmentasync" data-search="upInfraEnvironmentAsync  function src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts Validate and reconcile compute, service preparation, workloads, runtime and services in order. InfraOperationRequest InfraOrchestrationDependencies InfraUpOperationResult (request: import(&quot;../../../../index.js&quot;).InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraUpOperationResult&gt;">
     <h4>upInfraEnvironmentAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:26:1</code></p>
     <p>Validate and reconcile compute, service preparation, workloads, runtime and services in order.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraOperationRequest</li><li class="chip">InfraOrchestrationDependencies</li><li class="chip">InfraUpOperationResult</li></ul></div>
     <div>
@@ -1181,10 +1224,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts</h3>
-              <article class="item" id="symbol-validateinfraenvironmentasync" data-search="validateInfraEnvironmentAsync function src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts Validate one environment and every selected adapter without mutating infrastructure. InfraOperationRequest InfraOrchestrationDependencies InfraValidateOperationResult (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraValidateOperationResult&gt;">
+              <article class="item" id="symbol-validateinfraenvironmentasync" data-search="validateInfraEnvironmentAsync  function src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts Validate one environment and every selected adapter without mutating infrastructure. InfraOperationRequest InfraOrchestrationDependencies InfraValidateOperationResult (request: InfraOperationRequest, dependencies: InfraOrchestrationDependencies) =&gt; Promise&lt;InfraValidateOperationResult&gt;">
     <h4>validateInfraEnvironmentAsync</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts:9:1</code></p>
     <p>Validate one environment and every selected adapter without mutating infrastructure.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraOperationRequest</li><li class="chip">InfraOrchestrationDependencies</li><li class="chip">InfraValidateOperationResult</li></ul></div>
     <div>
@@ -1213,10 +1258,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/domain/orderInfraPlanActions.ts</h3>
-              <article class="item" id="symbol-orderinfraplanactions" data-search="orderInfraPlanActions function src/features/environment-lifecycle/domain/orderInfraPlanActions.ts Order plan actions dependency-first and reject duplicate owners or dependency cycles. (actions: readonly InfraPlanAction[]) =&gt; InfraResult&lt;readonly InfraPlanAction[]&gt;">
+              <article class="item" id="symbol-orderinfraplanactions" data-search="orderInfraPlanActions  function src/features/environment-lifecycle/domain/orderInfraPlanActions.ts Order plan actions dependency-first and reject duplicate owners or dependency cycles. (actions: readonly InfraPlanAction[]) =&gt; InfraResult&lt;readonly InfraPlanAction[]&gt;">
     <h4>orderInfraPlanActions</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/domain/orderInfraPlanActions.ts:8:1</code></p>
     <p>Order plan actions dependency-first and reject duplicate owners or dependency cycles.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     <div>
@@ -1240,10 +1287,12 @@
             </section>
             <section>
               <h3>src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts</h3>
-              <article class="item" id="symbol-resolveinfraenvironment" data-search="resolveInfraEnvironment function src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts Resolve one explicitly configured environment while keeping local as the only safe default. ResolvedInfraEnvironment (request: InfraEnvironmentResolutionRequest) =&gt; InfraResult&lt;ResolvedInfraEnvironment&gt;">
+              <article class="item" id="symbol-resolveinfraenvironment" data-search="resolveInfraEnvironment  function src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts Resolve one explicitly configured environment while keeping local as the only safe default. ResolvedInfraEnvironment (request: InfraEnvironmentResolutionRequest) =&gt; InfraResult&lt;ResolvedInfraEnvironment&gt;">
     <h4>resolveInfraEnvironment</h4>
+    
     <p class="muted">function • <code>src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts:10:1</code></p>
     <p>Resolve one explicitly configured environment while keeping local as the only safe default.</p>
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">ResolvedInfraEnvironment</li></ul></div>
     <div>
@@ -1267,9 +1316,11 @@
             </section>
             <section>
               <h3>src/types/infraOrchestration.ts</h3>
-              <article class="item" id="symbol-infradestroyoperationrequest" data-search="InfraDestroyOperationRequest type src/types/infraOrchestration.ts ">
+              <article class="item" id="symbol-infradestroyoperationrequest" data-search="InfraDestroyOperationRequest  type src/types/infraOrchestration.ts ">
     <h4>InfraDestroyOperationRequest</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:72:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1328,17 +1379,21 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infradestroyoperationresult" data-search="InfraDestroyOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infradestroyoperationresult" data-search="InfraDestroyOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraDestroyOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:126:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infradestroyresult" data-search="InfraDestroyResult type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infradestroyresult" data-search="InfraDestroyResult  type src/types/infraOrchestration.ts ">
     <h4>InfraDestroyResult</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:121:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1361,17 +1416,21 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infradownoperationresult" data-search="InfraDownOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infradownoperationresult" data-search="InfraDownOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraDownOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:119:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infradownresult" data-search="InfraDownResult type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infradownresult" data-search="InfraDownResult  type src/types/infraOrchestration.ts ">
     <h4>InfraDownResult</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:114:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1394,17 +1453,21 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infragenerateoperationresult" data-search="InfraGenerateOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infragenerateoperationresult" data-search="InfraGenerateOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraGenerateOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:103:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infragenerateresult" data-search="InfraGenerateResult type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infragenerateresult" data-search="InfraGenerateResult  type src/types/infraOrchestration.ts ">
     <h4>InfraGenerateResult</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:97:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1433,9 +1496,11 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infraoperationrequest" data-search="InfraOperationRequest type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infraoperationrequest" data-search="InfraOperationRequest  type src/types/infraOrchestration.ts ">
     <h4>InfraOperationRequest</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:63:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1482,9 +1547,11 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infraorchestrationdependencies" data-search="InfraOrchestrationDependencies type src/types/infraOrchestration.ts  InfraAdapterPackageResolver">
+  </article><article class="item" id="symbol-infraorchestrationdependencies" data-search="InfraOrchestrationDependencies  type src/types/infraOrchestration.ts  InfraAdapterPackageResolver">
     <h4>InfraOrchestrationDependencies</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:57:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">InfraAdapterPackageResolver</li></ul></div>
@@ -1513,17 +1580,21 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infraoutputsoperationresult" data-search="InfraOutputsOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infraoutputsoperationresult" data-search="InfraOutputsOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraOutputsOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:112:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infraoutputsresult" data-search="InfraOutputsResult type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infraoutputsresult" data-search="InfraOutputsResult  type src/types/infraOrchestration.ts ">
     <h4>InfraOutputsResult</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:107:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1546,25 +1617,31 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infraplanoperationresult" data-search="InfraPlanOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infraplanoperationresult" data-search="InfraPlanOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraPlanOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:95:1</code></p>
     
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infrastatusoperationresult" data-search="InfraStatusOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infrastatusoperationresult" data-search="InfraStatusOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraStatusOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:105:1</code></p>
     
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infrastoredstate" data-search="InfraStoredState type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infrastoredstate" data-search="InfraStoredState  type src/types/infraOrchestration.ts ">
     <h4>InfraStoredState</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:43:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1593,25 +1670,31 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infraupoperationresult" data-search="InfraUpOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infraupoperationresult" data-search="InfraUpOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraUpOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:93:1</code></p>
     
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infrauprequest" data-search="InfraUpRequest unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infrauprequest" data-search="InfraUpRequest  unknown src/types/infraOrchestration.ts ">
     <h4>InfraUpRequest</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:83:1</code></p>
     
+    
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infraupresult" data-search="InfraUpResult type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infraupresult" data-search="InfraUpResult  type src/types/infraOrchestration.ts ">
     <h4>InfraUpResult</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:85:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1652,17 +1735,21 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-infravalidateoperationresult" data-search="InfraValidateOperationResult unknown src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infravalidateoperationresult" data-search="InfraValidateOperationResult  unknown src/types/infraOrchestration.ts ">
     <h4>InfraValidateOperationResult</h4>
+    
     <p class="muted">unknown • <code>src/types/infraOrchestration.ts:81:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
     
     
-  </article><article class="item" id="symbol-infravalidateresult" data-search="InfraValidateResult type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-infravalidateresult" data-search="InfraValidateResult  type src/types/infraOrchestration.ts ">
     <h4>InfraValidateResult</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:77:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1679,9 +1766,11 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-preparedinfraoperation" data-search="PreparedInfraOperation type src/types/infraOrchestration.ts  ResolvedInfraAdapters ResolvedInfraEnvironment">
+  </article><article class="item" id="symbol-preparedinfraoperation" data-search="PreparedInfraOperation  type src/types/infraOrchestration.ts  ResolvedInfraAdapters ResolvedInfraEnvironment">
     <h4>PreparedInfraOperation</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:49:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">ResolvedInfraAdapters</li><li class="chip">ResolvedInfraEnvironment</li></ul></div>
@@ -1722,9 +1811,11 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-resolvedinfraadapters" data-search="ResolvedInfraAdapters type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-resolvedinfraadapters" data-search="ResolvedInfraAdapters  type src/types/infraOrchestration.ts ">
     <h4>ResolvedInfraAdapters</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:37:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -1753,9 +1844,11 @@
           </tr>
     </tbody>
   </table>
-  </article><article class="item" id="symbol-resolvedinfraenvironment" data-search="ResolvedInfraEnvironment type src/types/infraOrchestration.ts ">
+  </article><article class="item" id="symbol-resolvedinfraenvironment" data-search="ResolvedInfraEnvironment  type src/types/infraOrchestration.ts ">
     <h4>ResolvedInfraEnvironment</h4>
+    
     <p class="muted">type • <code>src/types/infraOrchestration.ts:24:1</code></p>
+    
     
     <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
     <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
@@ -3561,6 +3654,7 @@
     <h3>requireEnvironment</h3>
     <p class="muted"><code>src/cli/commands/destroy.ts:55:1</code></p>
     <p>Require the explicit destroy environment after CLI parsing.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-createdefaultinfracommandcontext-ts" class="view" data-view="src/cli/createDefaultInfraCommandContext.ts" hidden>
@@ -3570,6 +3664,7 @@
     <h3>createDefaultInfraCommandContext</h3>
     <p class="muted"><code>src/cli/createDefaultInfraCommandContext.ts:5:1</code></p>
     <p>Create the process-backed command context used by the standalone executable.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-createinfraruntimeprovider-ts" class="view" data-view="src/cli/createInfraRuntimeProvider.ts" hidden>
@@ -3579,6 +3674,7 @@
     <h3>createInfraRuntimeProvider</h3>
     <p class="muted"><code>src/cli/createInfraRuntimeProvider.ts:15:1</code></p>
     <p>Compose the canonical Infra command surface as an Ankh runtime provider.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-createprovidercommanddescriptors-ts" class="view" data-view="src/cli/createProviderCommandDescriptors.ts" hidden>
@@ -3588,6 +3684,7 @@
     <h3>createProviderCommandDescriptors</h3>
     <p class="muted"><code>src/cli/createProviderCommandDescriptors.ts:6:1</code></p>
     <p>Expose the same eight commands through Ankh provider discovery.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-findinfracommand-ts" class="view" data-view="src/cli/findInfraCommand.ts" hidden>
@@ -3597,6 +3694,7 @@
     <h3>findInfraCommand</h3>
     <p class="muted"><code>src/cli/findInfraCommand.ts:5:1</code></p>
     <p>Resolve one exact standalone Infra command name without guessing intent.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-renderunknowninfracommand-ts" class="view" data-view="src/cli/renderUnknownInfraCommand.ts" hidden>
@@ -3606,6 +3704,7 @@
     <h3>renderUnknownInfraCommand</h3>
     <p class="muted"><code>src/cli/renderUnknownInfraCommand.ts:2:1</code></p>
     <p>Render an invalid standalone Infra command without guessing intent.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-runinfracliasync-ts" class="view" data-view="src/cli/runInfraCliAsync.ts" hidden>
@@ -3615,10 +3714,12 @@
     <h3>runInfraCliAsync</h3>
     <p class="muted"><code>src/cli/runInfraCliAsync.ts:17:1</code></p>
     <p>Dispatch the standalone executable arguments through the canonical Infra command surface.</p>
+    
   </article><article class="item" data-search="isVersionToken src/cli/runInfraCliAsync.ts Recognize standalone version tokens.">
     <h3>isVersionToken</h3>
     <p class="muted"><code>src/cli/runInfraCliAsync.ts:53:1</code></p>
     <p>Recognize standalone version tokens.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-runinfracommandasync-ts" class="view" data-view="src/cli/runInfraCommandAsync.ts" hidden>
@@ -3628,34 +3729,42 @@
     <h3>runInfraCommandAsync</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:14:1</code></p>
     <p>Run one standalone or provider-backed Infra command through the shared typed lifecycle.</p>
+    
   </article><article class="item" data-search="parseCommandArguments src/cli/runInfraCommandAsync.ts Parse the common project, environment, output and destruction options.">
     <h3>parseCommandArguments</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:35:1</code></p>
     <p>Parse the common project, environment, output and destruction options.</p>
+    
   </article><article class="item" data-search="parseEnvironment src/cli/runInfraCommandAsync.ts Parse one environment identifier against the canonical closed set.">
     <h3>parseEnvironment</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:75:1</code></p>
     <p>Parse one environment identifier against the canonical closed set.</p>
+    
   </article><article class="item" data-search="parseFormat src/cli/runInfraCommandAsync.ts Parse the supported command output formats.">
     <h3>parseFormat</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:82:1</code></p>
     <p>Parse the supported command output formats.</p>
+    
   </article><article class="item" data-search="readOptionValue src/cli/runInfraCommandAsync.ts Read one required CLI option value.">
     <h3>readOptionValue</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:88:1</code></p>
     <p>Read one required CLI option value.</p>
+    
   </article><article class="item" data-search="renderCommandHelp src/cli/runInfraCommandAsync.ts Render command-specific standalone and provider usage.">
     <h3>renderCommandHelp</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:95:1</code></p>
     <p>Render command-specific standalone and provider usage.</p>
+    
   </article><article class="item" data-search="getErrorMessage src/cli/runInfraCommandAsync.ts Normalize arbitrary command failures for the CLI boundary.">
     <h3>getErrorMessage</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:107:1</code></p>
     <p>Normalize arbitrary command failures for the CLI boundary.</p>
+    
   </article><article class="item" data-search="isHelpToken src/cli/runInfraCommandAsync.ts Recognize the command-local help tokens.">
     <h3>isHelpToken</h3>
     <p class="muted"><code>src/cli/runInfraCommandAsync.ts:112:1</code></p>
     <p>Recognize the command-local help tokens.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-utils-prepareinfracommandoperationasync-ts" class="view" data-view="src/cli/utils/prepareInfraCommandOperationAsync.ts" hidden>
@@ -3665,14 +3774,17 @@
     <h3>prepareInfraCommandOperationAsync</h3>
     <p class="muted"><code>src/cli/utils/prepareInfraCommandOperationAsync.ts:11:1</code></p>
     <p>Resolve one command&#39;s project, desired environment, stored ownership and adapter dependencies.</p>
+    
   </article><article class="item" data-search="environmentDesired src/cli/utils/prepareInfraCommandOperationAsync.ts Select one exact environment specification from the canonical manifest.">
     <h3>environmentDesired</h3>
     <p class="muted"><code>src/cli/utils/prepareInfraCommandOperationAsync.ts:48:1</code></p>
     <p>Select one exact environment specification from the canonical manifest.</p>
+    
   </article><article class="item" data-search="replaceEnvironment src/cli/utils/prepareInfraCommandOperationAsync.ts Replace one environment while preserving the rest of the canonical manifest.">
     <h3>replaceEnvironment</h3>
     <p class="muted"><code>src/cli/utils/prepareInfraCommandOperationAsync.ts:58:1</code></p>
     <p>Replace one environment while preserving the rest of the canonical manifest.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-utils-requireinfrasuccess-ts" class="view" data-view="src/cli/utils/requireInfraSuccess.ts" hidden>
@@ -3682,10 +3794,12 @@
     <h3>requireInfraSuccess</h3>
     <p class="muted"><code>src/cli/utils/requireInfraSuccess.ts:6:1</code></p>
     <p>Emit diagnostics and narrow a provider-neutral result before command rendering continues.</p>
+    
   </article><article class="item" data-search="writeDiagnostics src/cli/utils/requireInfraSuccess.ts Render diagnostics to the matching process channel without provider-specific formatting.">
     <h3>writeDiagnostics</h3>
     <p class="muted"><code>src/cli/utils/requireInfraSuccess.ts:15:1</code></p>
     <p>Render diagnostics to the matching process channel without provider-specific formatting.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-utils-resolveinfrapersistence-ts" class="view" data-view="src/cli/utils/resolveInfraPersistence.ts" hidden>
@@ -3695,6 +3809,7 @@
     <h3>resolveInfraPersistence</h3>
     <p class="muted"><code>src/cli/utils/resolveInfraPersistence.ts:4:1</code></p>
     <p>Convert explicit owned-resource selectors into the canonical persistent deletion policy.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-utils-writeinfraenvironmentoutputs-ts" class="view" data-view="src/cli/utils/writeInfraEnvironmentOutputs.ts" hidden>
@@ -3704,10 +3819,12 @@
     <h3>writeInfraEnvironmentOutputs</h3>
     <p class="muted"><code>src/cli/utils/writeInfraEnvironmentOutputs.ts:6:1</code></p>
     <p>Print public environment-variable outputs while keeping secret values as references.</p>
+    
   </article><article class="item" data-search="quoteEnvironmentValue src/cli/utils/writeInfraEnvironmentOutputs.ts Quote one scalar value for portable shell environment consumption.">
     <h3>quoteEnvironmentValue</h3>
     <p class="muted"><code>src/cli/utils/writeInfraEnvironmentOutputs.ts:22:1</code></p>
     <p>Quote one scalar value for portable shell environment consumption.</p>
+    
   </article>
     </section>
   </section><section id="view-src-cli-utils-writeinfrastructured-ts" class="view" data-view="src/cli/utils/writeInfraStructured.ts" hidden>
@@ -3717,6 +3834,7 @@
     <h3>writeInfraStructured</h3>
     <p class="muted"><code>src/cli/utils/writeInfraStructured.ts:4:1</code></p>
     <p>Render one serializable command result in the requested human or compact JSON form.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-createenvironmentinfracredentialport-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts" hidden>
@@ -3726,22 +3844,27 @@
     <h3>createEnvironmentInfraCredentialPort</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:11:1</code></p>
     <p>Resolve execution-only control-plane credentials from exact-name or prefixed environment data.</p>
+    
   </article><article class="item" data-search="findCredential src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Find and parse an optional credential bundle from the environment without treating absence as failure.">
     <h3>findCredential</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:44:1</code></p>
     <p>Find and parse an optional credential bundle from the environment without treating absence as failure.</p>
+    
   </article><article class="item" data-search="prefixedCredentialName src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Build the canonical prefixed environment variable name for one credential reference.">
     <h3>prefixedCredentialName</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:58:1</code></p>
     <p>Build the canonical prefixed environment variable name for one credential reference.</p>
+    
   </article><article class="item" data-search="parseCredentialBundle src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Parse JSON credential bundles; token variables also support their conventional scalar form.">
     <h3>parseCredentialBundle</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:63:1</code></p>
     <p>Parse JSON credential bundles; token variables also support their conventional scalar form.</p>
+    
   </article><article class="item" data-search="isStringRecord src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts Narrow credential bundle values to a string-only record.">
     <h3>isStringRecord</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts:82:1</code></p>
     <p>Narrow credential bundle values to a string-only record.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-createenvironmentinfrasecretport-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts" hidden>
@@ -3751,6 +3874,7 @@
     <h3>createEnvironmentInfraSecretPort</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts:7:1</code></p>
     <p>Resolve explicitly addressed secret values from environment data without serializing them.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-createnodeinfraadapterpackageresolver-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts" hidden>
@@ -3760,6 +3884,7 @@
     <h3>createNodeInfraAdapterPackageResolver</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts:4:1</code></p>
     <p>Load only a catalog-selected package through the host module resolver.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-createprojectinfracredentialport-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts" hidden>
@@ -3769,54 +3894,67 @@
     <h3>createProjectInfraCredentialPort</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:19:1</code></p>
     <p>Resolve explicit environment overrides before durable project-local bootstrap credentials.</p>
+    
   </article><article class="item" data-search="findProjectCredentialAsync src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Resolve environment precedence before falling through to project-local state.">
     <h3>findProjectCredentialAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:58:1</code></p>
     <p>Resolve environment precedence before falling through to project-local state.</p>
+    
   </article><article class="item" data-search="readStoredCredentialAsync src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Read one exact credential bundle without enumerating or exposing sibling credentials.">
     <h3>readStoredCredentialAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:69:1</code></p>
     <p>Read one exact credential bundle without enumerating or exposing sibling credentials.</p>
+    
   </article><article class="item" data-search="writeStoredCredentialAsync src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Persist one opaque bundle atomically with restrictive local-host permissions.">
     <h3>writeStoredCredentialAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:91:1</code></p>
     <p>Persist one opaque bundle atomically with restrictive local-host permissions.</p>
+    
   </article><article class="item" data-search="removeTemporaryCredentialAsync src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Remove an abandoned unique temporary credential file without masking the original write failure.">
     <h3>removeTemporaryCredentialAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:121:1</code></p>
     <p>Remove an abandoned unique temporary credential file without masking the original write failure.</p>
+    
   </article><article class="item" data-search="resolveCredentialPath src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Resolve one credential to an opaque hash-named file inside its project/environment scope.">
     <h3>resolveCredentialPath</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:130:1</code></p>
     <p>Resolve one credential to an opaque hash-named file inside its project/environment scope.</p>
+    
   </article><article class="item" data-search="restrictPermissionsAsync src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Apply owner-only permissions where the host platform supports POSIX file modes.">
     <h3>restrictPermissionsAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:140:1</code></p>
     <p>Apply owner-only permissions where the host platform supports POSIX file modes.</p>
+    
   </article><article class="item" data-search="missingCredential src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Create the canonical missing-credential diagnostic after every trusted source was checked.">
     <h3>missingCredential</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:145:1</code></p>
     <p>Create the canonical missing-credential diagnostic after every trusted source was checked.</p>
+    
   </article><article class="item" data-search="invalidCredentialStore src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Reject malformed persisted state without exposing or replacing any stored value.">
     <h3>invalidCredentialStore</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:154:1</code></p>
     <p>Reject malformed persisted state without exposing or replacing any stored value.</p>
+    
   </article><article class="item" data-search="isStoredCredentialBundle src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Recognize the private stored credential record.">
     <h3>isStoredCredentialBundle</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:162:1</code></p>
     <p>Recognize the private stored credential record.</p>
+    
   </article><article class="item" data-search="isStringRecord src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Recognize string-only opaque provider credential bundles.">
     <h3>isStringRecord</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:170:1</code></p>
     <p>Recognize string-only opaque provider credential bundles.</p>
+    
   </article><article class="item" data-search="isString src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Narrow one unknown value to a string.">
     <h3>isString</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:175:1</code></p>
     <p>Narrow one unknown value to a string.</p>
+    
   </article><article class="item" data-search="isMissingFile src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts Recognize only the filesystem&#39;s absent-file failure.">
     <h3>isMissingFile</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts:180:1</code></p>
     <p>Recognize only the filesystem&#39;s absent-file failure.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-readstoredinfrastateasync-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts" hidden>
@@ -3826,14 +3964,17 @@
     <h3>readStoredInfraStateAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts:9:1</code></p>
     <p>Read exact environment state; malformed ownership state fails closed rather than disappearing.</p>
+    
   </article><article class="item" data-search="isMissingFile src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts Recognize only the filesystem&#39;s absent-file failure.">
     <h3>isMissingFile</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts:27:1</code></p>
     <p>Recognize only the filesystem&#39;s absent-file failure.</p>
+    
   </article><article class="item" data-search="isRecord src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts Narrow filesystem error values.">
     <h3>isRecord</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts:32:1</code></p>
     <p>Narrow filesystem error values.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-removestoredinfracredentialsasync-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts" hidden>
@@ -3843,6 +3984,7 @@
     <h3>removeStoredInfraCredentialsAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts:9:1</code></p>
     <p>Remove only persisted generated credential state for one explicit project environment.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-removestoredinfrastateasync-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts" hidden>
@@ -3852,6 +3994,7 @@
     <h3>removeStoredInfraStateAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts:7:1</code></p>
     <p>Remove only the exact selected environment state after a complete destroy.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-resolveinfraprojectasync-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts" hidden>
@@ -3861,38 +4004,47 @@
     <h3>resolveInfraProjectAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:8:1</code></p>
     <p>Resolve one manifest-backed Infra project from the workspace and optional project selector.</p>
+    
   </article><article class="item" data-search="resolveProjectPath src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>resolveProjectPath</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:46:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="readProjectManifest src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>readProjectManifest</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:57:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="findWorkspaceRoot src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>findWorkspaceRoot</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:81:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="inferProjectId src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>inferProjectId</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:94:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="validateExplicitProjectId src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>validateExplicitProjectId</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:104:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="isDirectory src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>isDirectory</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:122:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="pathExists src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>pathExists</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:131:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="getErrorMessage src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts ">
     <h3>getErrorMessage</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts:140:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-writeinfrageneratedartifactsasync-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts" hidden>
@@ -3902,6 +4054,7 @@
     <h3>writeInfraGeneratedArtifactsAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts:9:1</code></p>
     <p>Write validated generated artifacts and remove only stale paths from the prior ledger.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-writeprojectenvironmentoutputsasync-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts" hidden>
@@ -3911,22 +4064,27 @@
     <h3>writeProjectEnvironmentOutputsAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts:12:1</code></p>
     <p>Materialize public local Infra outputs into the project app environment while preserving unrelated entries.</p>
+    
   </article><article class="item" data-search="collectEnvironmentValues src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts Collect only browser-safe public outputs that explicitly declare an environment variable.">
     <h3>collectEnvironmentValues</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts:34:1</code></p>
     <p>Collect only browser-safe public outputs that explicitly declare an environment variable.</p>
+    
   </article><article class="item" data-search="mergeEnvironmentFile src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts Merge managed environment values without changing unrelated lines or retaining duplicate managed keys.">
     <h3>mergeEnvironmentFile</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts:47:1</code></p>
     <p>Merge managed environment values without changing unrelated lines or retaining duplicate managed keys.</p>
+    
   </article><article class="item" data-search="readEnvironmentAssignmentName src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts Read an environment assignment name without interpreting or mutating its value.">
     <h3>readEnvironmentAssignmentName</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts:77:1</code></p>
     <p>Read an environment assignment name without interpreting or mutating its value.</p>
+    
   </article><article class="item" data-search="serializeEnvironmentValue src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts Serialize one primitive Infra output as a quoted dotenv value.">
     <h3>serializeEnvironmentValue</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts:82:1</code></p>
     <p>Serialize one primitive Infra output as a quoted dotenv value.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-adapters-outbound-writestoredinfrastateasync-ts" class="view" data-view="src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts" hidden>
@@ -3936,6 +4094,7 @@
     <h3>writeStoredInfraStateAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts:9:1</code></p>
     <p>Persist serializable desired identity plus a secret-safe canonical ledger atomically.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-collectinfraworkloadsasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts" hidden>
@@ -3945,6 +4104,7 @@
     <h3>collectInfraWorkloadsAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts:12:1</code></p>
     <p>Collect each service workload graph once in deterministic adapter order.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-destroyinfraenvironmentasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts" hidden>
@@ -3954,14 +4114,17 @@
     <h3>destroyInfraEnvironmentAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts:22:1</code></p>
     <p>Destroy exact owned resources in reverse dependency order behind explicit scope confirmation.</p>
+    
   </article><article class="item" data-search="validateDestroyRequest src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts Refuse cross-project confirmation and unowned persistent deletion before any mutation.">
     <h3>validateDestroyRequest</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts:97:1</code></p>
     <p>Refuse cross-project confirmation and unowned persistent deletion before any mutation.</p>
+    
   </article><article class="item" data-search="destroyFailure src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts Create one stable non-provider-specific destroy safety failure.">
     <h3>destroyFailure</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts:129:1</code></p>
     <p>Create one stable non-provider-specific destroy safety failure.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-downinfraenvironmentasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts" hidden>
@@ -3971,6 +4134,7 @@
     <h3>downInfraEnvironmentAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts:15:1</code></p>
     <p>Reversibly suspend services and runtime while retaining compute and persistent data.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-generateinfraenvironmentasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts" hidden>
@@ -3980,6 +4144,7 @@
     <h3>generateInfraEnvironmentAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts:15:1</code></p>
     <p>Generate deterministic review artifacts without mutating local or remote infrastructure.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-getinfraenvironmentoutputs-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts" hidden>
@@ -3989,6 +4154,7 @@
     <h3>getInfraEnvironmentOutputs</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts:8:1</code></p>
     <p>Return only safe serialized public outputs and secret references from the canonical ledger.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-planinfraenvironmentasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts" hidden>
@@ -3998,6 +4164,7 @@
     <h3>planInfraEnvironmentAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts:13:1</code></p>
     <p>Aggregate a side-effect-free dependency-ordered plan from all selected adapters.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-prepareinfraoperationasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts" hidden>
@@ -4007,22 +4174,27 @@
     <h3>prepareInfraOperationAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts:16:1</code></p>
     <p>Resolve and validate one operation without creating, updating or deleting infrastructure.</p>
+    
   </article><article class="item" data-search="hasSameProviderSelection src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts Compare provider identity only; configuration changes remain normal in-place reconciliation.">
     <h3>hasSameProviderSelection</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts:100:1</code></p>
     <p>Compare provider identity only; configuration changes remain normal in-place reconciliation.</p>
+    
   </article><article class="item" data-search="providerSelection src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts Read the closed provider slots in stable capability order.">
     <h3>providerSelection</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts:108:1</code></p>
     <p>Read the closed provider slots in stable capability order.</p>
+    
   </article><article class="item" data-search="mergeOutputs src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts Prefer freshly inspected outputs while preserving unrelated safe prior values.">
     <h3>mergeOutputs</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts:123:1</code></p>
     <p>Prefer freshly inspected outputs while preserving unrelated safe prior values.</p>
+    
   </article><article class="item" data-search="outputKey src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts Create one stable public-or-secret output identity without reading its value.">
     <h3>outputKey</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts:132:1</code></p>
     <p>Create one stable public-or-secret output identity without reading its value.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-prepareinfraservicesasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts" hidden>
@@ -4032,6 +4204,7 @@
     <h3>prepareInfraServicesAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts:11:1</code></p>
     <p>Run optional mutating service preparation before runtime workload materialization.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-resolveinfraadaptersasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts" hidden>
@@ -4041,66 +4214,82 @@
     <h3>resolveInfraAdaptersAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:21:1</code></p>
     <p>Resolve exactly the selected provider packages and validate their public adapter boundaries.</p>
+    
   </article><article class="item" data-search="orderServiceAdapters src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Order services by selected capability dependencies while preserving catalog order for peers.">
     <h3>orderServiceAdapters</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:54:1</code></p>
     <p>Order services by selected capability dependencies while preserving catalog order for peers.</p>
+    
   </article><article class="item" data-search="hasCapability src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Compare catalog capability values across descriptor union members.">
     <h3>hasCapability</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:78:1</code></p>
     <p>Compare catalog capability values across descriptor union members.</p>
+    
   </article><article class="item" data-search="instantiateModules src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Invoke selected factories safely and require their instances to match the module descriptor.">
     <h3>instantiateModules</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:83:1</code></p>
     <p>Invoke selected factories safely and require their instances to match the module descriptor.</p>
+    
   </article><article class="item" data-search="getSelectedCatalogEntries src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Select each configured adapter once, including multi-capability service providers.">
     <h3>getSelectedCatalogEntries</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:114:1</code></p>
     <p>Select each configured adapter once, including multi-capability service providers.</p>
+    
   </article><article class="item" data-search="loadModuleAsync src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Convert module-resolution errors into provider-safe diagnostics without importing alternatives.">
     <h3>loadModuleAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:128:1</code></p>
     <p>Convert module-resolution errors into provider-safe diagnostics without importing alternatives.</p>
+    
   </article><article class="item" data-search="isInfraAdapterPackageModule src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Validate the runtime shape of a dynamically loaded provider package.">
     <h3>isInfraAdapterPackageModule</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:149:1</code></p>
     <p>Validate the runtime shape of a dynamically loaded provider package.</p>
+    
   </article><article class="item" data-search="isComputeAdapter src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Validate one compute adapter instance without trusting a dynamic module cast.">
     <h3>isComputeAdapter</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:158:1</code></p>
     <p>Validate one compute adapter instance without trusting a dynamic module cast.</p>
+    
   </article><article class="item" data-search="isRuntimeAdapter src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Validate one runtime adapter instance without trusting a dynamic module cast.">
     <h3>isRuntimeAdapter</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:170:1</code></p>
     <p>Validate one runtime adapter instance without trusting a dynamic module cast.</p>
+    
   </article><article class="item" data-search="isServiceAdapter src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Validate one service adapter instance without trusting a dynamic module cast.">
     <h3>isServiceAdapter</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:182:1</code></p>
     <p>Validate one service adapter instance without trusting a dynamic module cast.</p>
+    
   </article><article class="item" data-search="isAdapterForDescriptor src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Match a factory result to the exact descriptor selected from its module.">
     <h3>isAdapterForDescriptor</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:194:1</code></p>
     <p>Match a factory result to the exact descriptor selected from its module.</p>
+    
   </article><article class="item" data-search="hasAdapterMethods src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Check a dynamic adapter descriptor kind and its required lifecycle methods.">
     <h3>hasAdapterMethods</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:211:1</code></p>
     <p>Check a dynamic adapter descriptor kind and its required lifecycle methods.</p>
+    
   </article><article class="item" data-search="validateInstances src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Ensure factories returned exactly one matching compute/runtime adapter and every service.">
     <h3>validateInstances</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:225:1</code></p>
     <p>Ensure factories returned exactly one matching compute/runtime adapter and every service.</p>
+    
   </article><article class="item" data-search="instanceDiagnostic src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Create an adapter-factory diagnostic without exposing module exception details.">
     <h3>instanceDiagnostic</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:245:1</code></p>
     <p>Create an adapter-factory diagnostic without exposing module exception details.</p>
+    
   </article><article class="item" data-search="adapterFailure src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Create a failed adapter resolution result.">
     <h3>adapterFailure</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:250:1</code></p>
     <p>Create a failed adapter resolution result.</p>
+    
   </article><article class="item" data-search="isRecord src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts Narrow dynamically loaded module and adapter values.">
     <h3>isRecord</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts:255:1</code></p>
     <p>Narrow dynamically loaded module and adapter values.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-statusinfraenvironmentasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts" hidden>
@@ -4110,10 +4299,12 @@
     <h3>statusInfraEnvironmentAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts:12:1</code></p>
     <p>Aggregate provider-neutral compute, runtime and service status.</p>
+    
   </article><article class="item" data-search="aggregateInfraStatus src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts Select the most actionable canonical status, treating an empty environment as absent.">
     <h3>aggregateInfraStatus</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts:63:1</code></p>
     <p>Select the most actionable canonical status, treating an empty environment as absent.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-upinfraenvironmentasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts" hidden>
@@ -4123,10 +4314,12 @@
     <h3>upInfraEnvironmentAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:26:1</code></p>
     <p>Validate and reconcile compute, service preparation, workloads, runtime and services in order.</p>
+    
   </article><article class="item" data-search="reconcileServicesAsync src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts Reconcile service-owned external state after its runtime workloads expose outputs.">
     <h3>reconcileServicesAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:109:1</code></p>
     <p>Reconcile service-owned external state after its runtime workloads expose outputs.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-validateinfraadaptersasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts" hidden>
@@ -4136,6 +4329,7 @@
     <h3>validateInfraAdaptersAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts:11:1</code></p>
     <p>Validate compute and service configuration before any mutating adapter call.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-application-use-cases-validateinfraenvironmentasync-ts" class="view" data-view="src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts" hidden>
@@ -4145,6 +4339,7 @@
     <h3>validateInfraEnvironmentAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts:9:1</code></p>
     <p>Validate one environment and every selected adapter without mutating infrastructure.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-composition-createinfracommandservices-ts" class="view" data-view="src/features/environment-lifecycle/composition/createInfraCommandServices.ts" hidden>
@@ -4154,6 +4349,7 @@
     <h3>createInfraCommandServices</h3>
     <p class="muted"><code>src/features/environment-lifecycle/composition/createInfraCommandServices.ts:22:1</code></p>
     <p>Compose command use cases with filesystem, environment-value and package-resolver adapters.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-composition-createprojectinfralifecycle-ts" class="view" data-view="src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts" hidden>
@@ -4163,22 +4359,27 @@
     <h3>createProjectInfraLifecycle</h3>
     <p class="muted"><code>src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:14:1</code></p>
     <p>Create the typed project-facing Infra lifecycle backed by canonical use cases and ownership state.</p>
+    
   </article><article class="item" data-search="prepareProjectOperationAsync src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Resolve one explicit project/environment request with its prior ownership state and dependencies.">
     <h3>prepareProjectOperationAsync</h3>
     <p class="muted"><code>src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:126:1</code></p>
     <p>Resolve one explicit project/environment request with its prior ownership state and dependencies.</p>
+    
   </article><article class="item" data-search="validateCredentialStateDestroy src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Require exact scope confirmation before deleting orphaned project credential state.">
     <h3>validateCredentialStateDestroy</h3>
     <p class="muted"><code>src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:163:1</code></p>
     <p>Require exact scope confirmation before deleting orphaned project credential state.</p>
+    
   </article><article class="item" data-search="readEnvironment src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Read one exact environment without inventing a fallback.">
     <h3>readEnvironment</h3>
     <p class="muted"><code>src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:184:1</code></p>
     <p>Read one exact environment without inventing a fallback.</p>
+    
   </article><article class="item" data-search="replaceEnvironment src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts Replace one selected environment while preserving all other manifest state.">
     <h3>replaceEnvironment</h3>
     <p class="muted"><code>src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts:194:1</code></p>
     <p>Replace one selected environment while preserving all other manifest state.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-domain-orderinfraplanactions-ts" class="view" data-view="src/features/environment-lifecycle/domain/orderInfraPlanActions.ts" hidden>
@@ -4188,18 +4389,22 @@
     <h3>orderInfraPlanActions</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/orderInfraPlanActions.ts:8:1</code></p>
     <p>Order plan actions dependency-first and reject duplicate owners or dependency cycles.</p>
+    
   </article><article class="item" data-search="visitAction src/features/environment-lifecycle/domain/orderInfraPlanActions.ts Visit one plan node and its in-plan dependencies exactly once.">
     <h3>visitAction</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/orderInfraPlanActions.ts:24:1</code></p>
     <p>Visit one plan node and its in-plan dependencies exactly once.</p>
+    
   </article><article class="item" data-search="identityKey src/features/environment-lifecycle/domain/orderInfraPlanActions.ts Create a collision-safe key for one provider-owned resource identity.">
     <h3>identityKey</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/orderInfraPlanActions.ts:48:1</code></p>
     <p>Create a collision-safe key for one provider-owned resource identity.</p>
+    
   </article><article class="item" data-search="invalidPlan src/features/environment-lifecycle/domain/orderInfraPlanActions.ts Reject an invalid aggregated plan without exposing provider internals.">
     <h3>invalidPlan</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/orderInfraPlanActions.ts:53:1</code></p>
     <p>Reject an invalid aggregated plan without exposing provider internals.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-domain-resolveinfraenvironment-ts" class="view" data-view="src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts" hidden>
@@ -4209,18 +4414,22 @@
     <h3>resolveInfraEnvironment</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts:10:1</code></p>
     <p>Resolve one explicitly configured environment while keeping local as the only safe default.</p>
+    
   </article><article class="item" data-search="getEnvironment src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts Read a closed environment key without an open object-injection boundary.">
     <h3>getEnvironment</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts:40:1</code></p>
     <p>Read a closed environment key without an open object-injection boundary.</p>
+    
   </article><article class="item" data-search="isAppEnvironmentId src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts Narrow a CLI environment string through the canonical Contracts vocabulary.">
     <h3>isAppEnvironmentId</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts:55:1</code></p>
     <p>Narrow a CLI environment string through the canonical Contracts vocabulary.</p>
+    
   </article><article class="item" data-search="failure src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts Create a stable environment-resolution diagnostic.">
     <h3>failure</h3>
     <p class="muted"><code>src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts:60:1</code></p>
     <p>Create a stable environment-resolution diagnostic.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-appendinfrafailure-ts" class="view" data-view="src/features/environment-lifecycle/utils/appendInfraFailure.ts" hidden>
@@ -4230,6 +4439,7 @@
     <h3>appendInfraFailure</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/appendInfraFailure.ts:4:1</code></p>
     <p>Preserve earlier safe diagnostics when a later lifecycle stage fails.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-createinfraexecutioncontext-ts" class="view" data-view="src/features/environment-lifecycle/utils/createInfraExecutionContext.ts" hidden>
@@ -4239,6 +4449,7 @@
     <h3>createInfraExecutionContext</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/createInfraExecutionContext.ts:10:1</code></p>
     <p>Create one execution context without copying resolved secret values into serializable state.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-createinfrafailure-ts" class="view" data-view="src/features/environment-lifecycle/utils/createInfraFailure.ts" hidden>
@@ -4248,6 +4459,7 @@
     <h3>createInfraFailure</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/createInfraFailure.ts:4:1</code></p>
     <p>Create one sanitized provider-neutral Infra failure.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-createinfraledger-ts" class="view" data-view="src/features/environment-lifecycle/utils/createInfraLedger.ts" hidden>
@@ -4257,6 +4469,7 @@
     <h3>createInfraLedger</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/createInfraLedger.ts:10:1</code></p>
     <p>Create deterministic serializable lifecycle state without resolved credential or secret values.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-infraidentitykey-ts" class="view" data-view="src/features/environment-lifecycle/utils/infraIdentityKey.ts" hidden>
@@ -4266,6 +4479,7 @@
     <h3>infraIdentityKey</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/infraIdentityKey.ts:4:1</code></p>
     <p>Create a stable collision-safe key for an Infra-owned resource.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-isinfrastoredstate-ts" class="view" data-view="src/features/environment-lifecycle/utils/isInfraStoredState.ts" hidden>
@@ -4275,42 +4489,52 @@
     <h3>isInfraStoredState</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:11:1</code></p>
     <p>Validate persisted ownership state before any provider receives it.</p>
+    
   </article><article class="item" data-search="isInfraLedger src/features/environment-lifecycle/utils/isInfraStoredState.ts Validate the canonical ledger&#39;s serializable outer boundary.">
     <h3>isInfraLedger</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:21:1</code></p>
     <p>Validate the canonical ledger&#39;s serializable outer boundary.</p>
+    
   </article><article class="item" data-search="isComputeTarget src/features/environment-lifecycle/utils/isInfraStoredState.ts Validate portable compute targets without accepting resolved credential payloads.">
     <h3>isComputeTarget</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:45:1</code></p>
     <p>Validate portable compute targets without accepting resolved credential payloads.</p>
+    
   </article><article class="item" data-search="isOwnedResource src/features/environment-lifecycle/utils/isInfraStoredState.ts Validate one exact resource plus its dependency identities.">
     <h3>isOwnedResource</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:66:1</code></p>
     <p>Validate one exact resource plus its dependency identities.</p>
+    
   </article><article class="item" data-search="isOutput src/features/environment-lifecycle/utils/isInfraStoredState.ts Enforce the public-value versus secret-reference output union at rest.">
     <h3>isOutput</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:78:1</code></p>
     <p>Enforce the public-value versus secret-reference output union at rest.</p>
+    
   </article><article class="item" data-search="isArtifactIdentity src/features/environment-lifecycle/utils/isInfraStoredState.ts Validate one generated-artifact ledger identity without accepting file content.">
     <h3>isArtifactIdentity</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:102:1</code></p>
     <p>Validate one generated-artifact ledger identity without accepting file content.</p>
+    
   </article><article class="item" data-search="isScopedIdentity src/features/environment-lifecycle/utils/isInfraStoredState.ts Validate scope, adapter catalog identity, and resource ID.">
     <h3>isScopedIdentity</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:111:1</code></p>
     <p>Validate scope, adapter catalog identity, and resource ID.</p>
+    
   </article><article class="item" data-search="isControlPlaneReference src/features/environment-lifecycle/utils/isInfraStoredState.ts Validate an unresolved control-plane credential identity.">
     <h3>isControlPlaneReference</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:122:1</code></p>
     <p>Validate an unresolved control-plane credential identity.</p>
+    
   </article><article class="item" data-search="isSecretReference src/features/environment-lifecycle/utils/isInfraStoredState.ts Validate an unresolved secret reference scoped to this exact ledger.">
     <h3>isSecretReference</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:127:1</code></p>
     <p>Validate an unresolved secret reference scoped to this exact ledger.</p>
+    
   </article><article class="item" data-search="isRecord src/features/environment-lifecycle/utils/isInfraStoredState.ts Narrow parsed values.">
     <h3>isRecord</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/isInfraStoredState.ts:139:1</code></p>
     <p>Narrow parsed values.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-mergeinfraoutputs-ts" class="view" data-view="src/features/environment-lifecycle/utils/mergeInfraOutputs.ts" hidden>
@@ -4320,6 +4544,7 @@
     <h3>mergeInfraOutputs</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/mergeInfraOutputs.ts:6:1</code></p>
     <p>Merge output identities while preferring the last adapter result for each owner and name.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-mergeinfraresources-ts" class="view" data-view="src/features/environment-lifecycle/utils/mergeInfraResources.ts" hidden>
@@ -4329,6 +4554,7 @@
     <h3>mergeInfraResources</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/mergeInfraResources.ts:6:1</code></p>
     <p>Merge resource identities while preferring the last adapter result for each owner.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-normalizeinfraenvironmentkey-ts" class="view" data-view="src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts" hidden>
@@ -4338,6 +4564,7 @@
     <h3>normalizeInfraEnvironmentKey</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts:2:1</code></p>
     <p>Convert arbitrary credential and secret identifiers into stable environment-variable segments.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-resolveinfraenvironmentstatedirectory-ts" class="view" data-view="src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts" hidden>
@@ -4347,6 +4574,7 @@
     <h3>resolveInfraEnvironmentStateDirectory</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts:6:1</code></p>
     <p>Build the canonical project-local state directory for one closed Infra environment.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-resolveinfrastatepath-ts" class="view" data-view="src/features/environment-lifecycle/utils/resolveInfraStatePath.ts" hidden>
@@ -4356,6 +4584,7 @@
     <h3>resolveInfraStatePath</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/resolveInfraStatePath.ts:7:1</code></p>
     <p>Build an exact state-file path from a closed canonical environment identifier.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-resolveprojectfile-ts" class="view" data-view="src/features/environment-lifecycle/utils/resolveProjectFile.ts" hidden>
@@ -4365,6 +4594,7 @@
     <h3>resolveProjectFile</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/resolveProjectFile.ts:6:1</code></p>
     <p>Resolve one generated path inside the project while protecting Infra state and traversal.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-retainunchangedadapteroutputs-ts" class="view" data-view="src/features/environment-lifecycle/utils/retainUnchangedAdapterOutputs.ts" hidden>
@@ -4374,6 +4604,7 @@
     <h3>retainUnchangedAdapterOutputs</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/retainUnchangedAdapterOutputs.ts:6:1</code></p>
     <p>Keep prior outputs not owned by adapters that returned a replacement snapshot.</p>
+    
   </article>
     </section>
   </section><section id="view-src-features-environment-lifecycle-utils-retainunchangedadapterresources-ts" class="view" data-view="src/features/environment-lifecycle/utils/retainUnchangedAdapterResources.ts" hidden>
@@ -4383,6 +4614,7 @@
     <h3>retainUnchangedAdapterResources</h3>
     <p class="muted"><code>src/features/environment-lifecycle/utils/retainUnchangedAdapterResources.ts:6:1</code></p>
     <p>Keep prior resources not owned by adapters that returned a replacement snapshot.</p>
+    
   </article>
     </section>
   </section><section id="view-src-testsupport-ts" class="view" data-view="src/testSupport.ts" hidden>
@@ -4392,14 +4624,17 @@
     <h3>createCapturedCommandContext</h3>
     <p class="muted"><code>src/testSupport.ts:14:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="createWorkspaceFixture src/testSupport.ts ">
     <h3>createWorkspaceFixture</h3>
     <p class="muted"><code>src/testSupport.ts:38:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article><article class="item" data-search="createAppManifest src/testSupport.ts ">
     <h3>createAppManifest</h3>
     <p class="muted"><code>src/testSupport.ts:80:1</code></p>
     <p class="empty">No description available.</p>
+    
   </article>
     </section>
   </section>

@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.1.6",
+      "value": "v7.1.7",
       "color": "cb3837"
     },
     {
@@ -55,32 +55,35 @@
     },
     {
       "id": "docs",
-      "label": "docs",
-      "value": "paradox",
-      "color": "0f766e"
+      "label": "paradox",
+      "value": "canonical",
+      "color": "0a7f3f"
     }
   ],
   "usage": {
     "packageName": "@ankhorage/infra",
-    "commands": [
-      {
-        "name": "ankhorage-infra",
-        "command": "bunx @ankhorage/infra"
-      }
-    ]
+    "command": "ankh infra --help"
   },
-  "readmeUsageDescription": null,
-  "readmeUsage": [
+  "usageEntries": [
     {
-      "title": "Provider-neutral infrastructure lifecycle",
-      "description": "Provider-neutral infrastructure lifecycle\n\n`@ankhorage/infra` resolves only the compute, runtime, and service adapter packages selected by\nan environment-aware Infra manifest. Its typed use cases own orchestration, dependency ordering,\nsafe outputs, deterministic artifacts, and environment-scoped ownership state. Provider packages\nown all technology-specific implementation.\n\nThe standalone CLI and `ankh infra` expose the same lifecycle:\n\n- `validate`\n- `plan`\n- `generate`\n- `up`\n- `status`\n- `outputs`\n- `down`\n- `destroy`\n\n`local` is the only default environment. Destruction always requires an explicit environment and\nexact `<project>:<environment>` confirmation. Persistent resources remain retained unless each\nexact owned resource is separately authorized with `--delete-resource <adapter>:<resourceId>`.\nEnvironment-style outputs print only explicitly public values with an environment-variable name;\nsecret outputs remain references.",
+      "area": "examples",
+      "title": "Explore Infra commands",
+      "description": "Inspect the commands exposed by the standalone Infra provider.\n\nThe provider owns the validation, planning, generation, and lifecycle command surface. Select\nan environment explicitly before destructive operations.",
       "language": "ts",
-      "code": "import { runInfraCliAsync } from './cli/runInfraCliAsync.js';\n\nawait runInfraCliAsync(['--help']);",
-      "sourcePath": "src/readme-usage.ts"
+      "code": "import { createInfraRuntimeProvider } from '@ankhorage/infra/cli';",
+      "sourcePath": "examples/basic-usage/main.ts",
+      "isReadme": true,
+      "see": [],
+      "security": []
     }
   ],
-  "readmeCli": null,
-  "readmeConfig": null,
+  "exampleCount": 1,
+  "findings": [],
+  "readmeConfig": {
+    "language": "ts",
+    "code": "import { defineParadoxConfig } from '@ankhorage/paradox';\n\nexport default defineParadoxConfig({\n  mode: 'write',\n\n  docs: {\n    title: 'INFRA',\n    description: 'Executable infra provider and standalone CLI for Ankhorage project workflows.',\n    usage: {\n      entrypoints: ['examples/basic-usage/main.ts'],\n    },\n  },\n\n  package: {\n    root: '.',\n    entrypoints: ['src/index.ts'],\n  },\n\n  output: {\n    dir: './paradox',\n  },\n});",
+    "sourcePath": "paradox.config.ts"
+  },
   "config": null,
   "entrypoints": [
     "src/index.ts"
@@ -1052,9 +1055,11 @@
   "exports": [
     {
       "name": "createEnvironmentInfraCredentialPort",
+      "title": null,
       "description": "Resolve execution-only control-plane credentials from exact-name or prefixed environment data.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
       "sourceLocation": {
@@ -1086,9 +1091,11 @@
     },
     {
       "name": "createEnvironmentInfraSecretPort",
+      "title": null,
       "description": "Resolve explicitly addressed secret values from environment data without serializing them.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
       "sourceLocation": {
@@ -1120,9 +1127,11 @@
     },
     {
       "name": "createNodeInfraAdapterPackageResolver",
+      "title": null,
       "description": "Load only a catalog-selected package through the host module resolver.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts",
       "sourceLocation": {
@@ -1149,9 +1158,11 @@
     },
     {
       "name": "destroyInfraEnvironmentAsync",
+      "title": null,
       "description": "Destroy exact owned resources in reverse dependency order behind explicit scope confirmation.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
       "sourceLocation": {
@@ -1193,9 +1204,11 @@
     },
     {
       "name": "downInfraEnvironmentAsync",
+      "title": null,
       "description": "Reversibly suspend services and runtime while retaining compute and persistent data.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
       "sourceLocation": {
@@ -1237,9 +1250,11 @@
     },
     {
       "name": "generateInfraEnvironmentAsync",
+      "title": null,
       "description": "Generate deterministic review artifacts without mutating local or remote infrastructure.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
       "sourceLocation": {
@@ -1281,9 +1296,11 @@
     },
     {
       "name": "getInfraEnvironmentOutputs",
+      "title": null,
       "description": "Return only safe serialized public outputs and secret references from the canonical ledger.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
       "sourceLocation": {
@@ -1318,9 +1335,11 @@
     },
     {
       "name": "InfraAdapterPackageModule",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
       "sourceLocation": {
@@ -1353,9 +1372,11 @@
     },
     {
       "name": "InfraAdapterPackageResolver",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
       "sourceLocation": {
@@ -1381,9 +1402,11 @@
     },
     {
       "name": "InfraDestroyOperationRequest",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1458,9 +1481,11 @@
     },
     {
       "name": "InfraDestroyOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1478,9 +1503,11 @@
     },
     {
       "name": "InfraDestroyResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1513,9 +1540,11 @@
     },
     {
       "name": "InfraDownOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1533,9 +1562,11 @@
     },
     {
       "name": "InfraDownResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1568,9 +1599,11 @@
     },
     {
       "name": "InfraGenerateOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1588,9 +1621,11 @@
     },
     {
       "name": "InfraGenerateResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1630,9 +1665,11 @@
     },
     {
       "name": "InfraOperationRequest",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1693,9 +1730,11 @@
     },
     {
       "name": "InfraOrchestrationDependencies",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1737,9 +1776,11 @@
     },
     {
       "name": "InfraOutputsOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1757,9 +1798,11 @@
     },
     {
       "name": "InfraOutputsResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1792,9 +1835,11 @@
     },
     {
       "name": "InfraPlanOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1812,9 +1857,11 @@
     },
     {
       "name": "InfraStatusOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1832,9 +1879,11 @@
     },
     {
       "name": "InfraStoredState",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1874,9 +1923,11 @@
     },
     {
       "name": "InfraUpOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1894,9 +1945,11 @@
     },
     {
       "name": "InfraUpRequest",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1914,9 +1967,11 @@
     },
     {
       "name": "InfraUpResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1970,9 +2025,11 @@
     },
     {
       "name": "InfraValidateOperationResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "unknown",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -1990,9 +2047,11 @@
     },
     {
       "name": "InfraValidateResult",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -2018,9 +2077,11 @@
     },
     {
       "name": "orderInfraPlanActions",
+      "title": null,
       "description": "Order plan actions dependency-first and reject duplicate owners or dependency cycles.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
       "sourceLocation": {
@@ -2052,9 +2113,11 @@
     },
     {
       "name": "planInfraEnvironmentAsync",
+      "title": null,
       "description": "Aggregate a side-effect-free dependency-ordered plan from all selected adapters.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
       "sourceLocation": {
@@ -2096,9 +2159,11 @@
     },
     {
       "name": "PreparedInfraOperation",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -2155,9 +2220,11 @@
     },
     {
       "name": "ResolvedInfraAdapters",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -2197,9 +2264,11 @@
     },
     {
       "name": "ResolvedInfraEnvironment",
+      "title": null,
       "description": null,
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "type",
       "modulePath": "src/types/infraOrchestration.ts",
       "sourceLocation": {
@@ -2239,9 +2308,11 @@
     },
     {
       "name": "resolveInfraAdaptersAsync",
+      "title": null,
       "description": "Resolve exactly the selected provider packages and validate their public adapter boundaries.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
       "sourceLocation": {
@@ -2282,9 +2353,11 @@
     },
     {
       "name": "resolveInfraEnvironment",
+      "title": null,
       "description": "Resolve one explicitly configured environment while keeping local as the only safe default.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
       "sourceLocation": {
@@ -2318,9 +2391,11 @@
     },
     {
       "name": "statusInfraEnvironmentAsync",
+      "title": null,
       "description": "Aggregate provider-neutral compute, runtime and service status.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
       "sourceLocation": {
@@ -2362,9 +2437,11 @@
     },
     {
       "name": "upInfraEnvironmentAsync",
+      "title": null,
       "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
       "sourceLocation": {
@@ -2406,9 +2483,11 @@
     },
     {
       "name": "validateInfraEnvironmentAsync",
+      "title": null,
       "description": "Validate one environment and every selected adapter without mutating infrastructure.",
       "isReadme": false,
-      "examples": [],
+      "see": [],
+      "security": [],
       "kind": "function",
       "modulePath": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
       "sourceLocation": {
@@ -2454,6 +2533,8 @@
     {
       "name": "requireEnvironment",
       "description": "Require the explicit destroy environment after CLI parsing.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/commands/destroy.ts",
         "line": 55,
@@ -2463,6 +2544,8 @@
     {
       "name": "createDefaultInfraCommandContext",
       "description": "Create the process-backed command context used by the standalone executable.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/createDefaultInfraCommandContext.ts",
         "line": 5,
@@ -2472,6 +2555,8 @@
     {
       "name": "createInfraRuntimeProvider",
       "description": "Compose the canonical Infra command surface as an Ankh runtime provider.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/createInfraRuntimeProvider.ts",
         "line": 15,
@@ -2481,6 +2566,8 @@
     {
       "name": "createProviderCommandDescriptors",
       "description": "Expose the same eight commands through Ankh provider discovery.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/createProviderCommandDescriptors.ts",
         "line": 6,
@@ -2490,6 +2577,8 @@
     {
       "name": "findInfraCommand",
       "description": "Resolve one exact standalone Infra command name without guessing intent.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/findInfraCommand.ts",
         "line": 5,
@@ -2499,6 +2588,8 @@
     {
       "name": "renderUnknownInfraCommand",
       "description": "Render an invalid standalone Infra command without guessing intent.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/renderUnknownInfraCommand.ts",
         "line": 2,
@@ -2508,6 +2599,8 @@
     {
       "name": "runInfraCliAsync",
       "description": "Dispatch the standalone executable arguments through the canonical Infra command surface.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCliAsync.ts",
         "line": 17,
@@ -2517,6 +2610,8 @@
     {
       "name": "isVersionToken",
       "description": "Recognize standalone version tokens.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCliAsync.ts",
         "line": 53,
@@ -2526,6 +2621,8 @@
     {
       "name": "runInfraCommandAsync",
       "description": "Run one standalone or provider-backed Infra command through the shared typed lifecycle.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 14,
@@ -2535,6 +2632,8 @@
     {
       "name": "parseCommandArguments",
       "description": "Parse the common project, environment, output and destruction options.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 35,
@@ -2544,6 +2643,8 @@
     {
       "name": "parseEnvironment",
       "description": "Parse one environment identifier against the canonical closed set.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 75,
@@ -2553,6 +2654,8 @@
     {
       "name": "parseFormat",
       "description": "Parse the supported command output formats.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 82,
@@ -2562,6 +2665,8 @@
     {
       "name": "readOptionValue",
       "description": "Read one required CLI option value.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 88,
@@ -2571,6 +2676,8 @@
     {
       "name": "renderCommandHelp",
       "description": "Render command-specific standalone and provider usage.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 95,
@@ -2580,6 +2687,8 @@
     {
       "name": "getErrorMessage",
       "description": "Normalize arbitrary command failures for the CLI boundary.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 107,
@@ -2589,6 +2698,8 @@
     {
       "name": "isHelpToken",
       "description": "Recognize the command-local help tokens.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/runInfraCommandAsync.ts",
         "line": 112,
@@ -2598,6 +2709,8 @@
     {
       "name": "prepareInfraCommandOperationAsync",
       "description": "Resolve one command's project, desired environment, stored ownership and adapter dependencies.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "line": 11,
@@ -2607,6 +2720,8 @@
     {
       "name": "environmentDesired",
       "description": "Select one exact environment specification from the canonical manifest.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "line": 48,
@@ -2616,6 +2731,8 @@
     {
       "name": "replaceEnvironment",
       "description": "Replace one environment while preserving the rest of the canonical manifest.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "line": 58,
@@ -2625,6 +2742,8 @@
     {
       "name": "requireInfraSuccess",
       "description": "Emit diagnostics and narrow a provider-neutral result before command rendering continues.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/requireInfraSuccess.ts",
         "line": 6,
@@ -2634,6 +2753,8 @@
     {
       "name": "writeDiagnostics",
       "description": "Render diagnostics to the matching process channel without provider-specific formatting.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/requireInfraSuccess.ts",
         "line": 15,
@@ -2643,6 +2764,8 @@
     {
       "name": "resolveInfraPersistence",
       "description": "Convert explicit owned-resource selectors into the canonical persistent deletion policy.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/resolveInfraPersistence.ts",
         "line": 4,
@@ -2652,6 +2775,8 @@
     {
       "name": "writeInfraEnvironmentOutputs",
       "description": "Print public environment-variable outputs while keeping secret values as references.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/writeInfraEnvironmentOutputs.ts",
         "line": 6,
@@ -2661,6 +2786,8 @@
     {
       "name": "quoteEnvironmentValue",
       "description": "Quote one scalar value for portable shell environment consumption.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/writeInfraEnvironmentOutputs.ts",
         "line": 22,
@@ -2670,6 +2797,8 @@
     {
       "name": "writeInfraStructured",
       "description": "Render one serializable command result in the requested human or compact JSON form.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/cli/utils/writeInfraStructured.ts",
         "line": 4,
@@ -2679,6 +2808,8 @@
     {
       "name": "createEnvironmentInfraCredentialPort",
       "description": "Resolve execution-only control-plane credentials from exact-name or prefixed environment data.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
         "line": 11,
@@ -2688,6 +2819,8 @@
     {
       "name": "findCredential",
       "description": "Find and parse an optional credential bundle from the environment without treating absence as failure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
         "line": 44,
@@ -2697,6 +2830,8 @@
     {
       "name": "prefixedCredentialName",
       "description": "Build the canonical prefixed environment variable name for one credential reference.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
         "line": 58,
@@ -2706,6 +2841,8 @@
     {
       "name": "parseCredentialBundle",
       "description": "Parse JSON credential bundles; token variables also support their conventional scalar form.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
         "line": 63,
@@ -2715,6 +2852,8 @@
     {
       "name": "isStringRecord",
       "description": "Narrow credential bundle values to a string-only record.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
         "line": 82,
@@ -2724,6 +2863,8 @@
     {
       "name": "createEnvironmentInfraSecretPort",
       "description": "Resolve explicitly addressed secret values from environment data without serializing them.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
         "line": 7,
@@ -2733,6 +2874,8 @@
     {
       "name": "createNodeInfraAdapterPackageResolver",
       "description": "Load only a catalog-selected package through the host module resolver.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts",
         "line": 4,
@@ -2742,6 +2885,8 @@
     {
       "name": "createProjectInfraCredentialPort",
       "description": "Resolve explicit environment overrides before durable project-local bootstrap credentials.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 19,
@@ -2751,6 +2896,8 @@
     {
       "name": "findProjectCredentialAsync",
       "description": "Resolve environment precedence before falling through to project-local state.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 58,
@@ -2760,6 +2907,8 @@
     {
       "name": "readStoredCredentialAsync",
       "description": "Read one exact credential bundle without enumerating or exposing sibling credentials.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 69,
@@ -2769,6 +2918,8 @@
     {
       "name": "writeStoredCredentialAsync",
       "description": "Persist one opaque bundle atomically with restrictive local-host permissions.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 91,
@@ -2778,6 +2929,8 @@
     {
       "name": "removeTemporaryCredentialAsync",
       "description": "Remove an abandoned unique temporary credential file without masking the original write failure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 121,
@@ -2787,6 +2940,8 @@
     {
       "name": "resolveCredentialPath",
       "description": "Resolve one credential to an opaque hash-named file inside its project/environment scope.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 130,
@@ -2796,6 +2951,8 @@
     {
       "name": "restrictPermissionsAsync",
       "description": "Apply owner-only permissions where the host platform supports POSIX file modes.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 140,
@@ -2805,6 +2962,8 @@
     {
       "name": "missingCredential",
       "description": "Create the canonical missing-credential diagnostic after every trusted source was checked.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 145,
@@ -2814,6 +2973,8 @@
     {
       "name": "invalidCredentialStore",
       "description": "Reject malformed persisted state without exposing or replacing any stored value.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 154,
@@ -2823,6 +2984,8 @@
     {
       "name": "isStoredCredentialBundle",
       "description": "Recognize the private stored credential record.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 162,
@@ -2832,6 +2995,8 @@
     {
       "name": "isStringRecord",
       "description": "Recognize string-only opaque provider credential bundles.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 170,
@@ -2841,6 +3006,8 @@
     {
       "name": "isString",
       "description": "Narrow one unknown value to a string.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 175,
@@ -2850,6 +3017,8 @@
     {
       "name": "isMissingFile",
       "description": "Recognize only the filesystem's absent-file failure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/createProjectInfraCredentialPort.ts",
         "line": 180,
@@ -2859,6 +3028,8 @@
     {
       "name": "readStoredInfraStateAsync",
       "description": "Read exact environment state; malformed ownership state fails closed rather than disappearing.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
         "line": 9,
@@ -2868,6 +3039,8 @@
     {
       "name": "isMissingFile",
       "description": "Recognize only the filesystem's absent-file failure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
         "line": 27,
@@ -2877,6 +3050,8 @@
     {
       "name": "isRecord",
       "description": "Narrow filesystem error values.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
         "line": 32,
@@ -2886,6 +3061,8 @@
     {
       "name": "removeStoredInfraCredentialsAsync",
       "description": "Remove only persisted generated credential state for one explicit project environment.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
         "line": 9,
@@ -2895,6 +3072,8 @@
     {
       "name": "removeStoredInfraStateAsync",
       "description": "Remove only the exact selected environment state after a complete destroy.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
         "line": 7,
@@ -2904,6 +3083,8 @@
     {
       "name": "resolveInfraProjectAsync",
       "description": "Resolve one manifest-backed Infra project from the workspace and optional project selector.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 8,
@@ -2913,6 +3094,8 @@
     {
       "name": "resolveProjectPath",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 46,
@@ -2922,6 +3105,8 @@
     {
       "name": "readProjectManifest",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 57,
@@ -2931,6 +3116,8 @@
     {
       "name": "findWorkspaceRoot",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 81,
@@ -2940,6 +3127,8 @@
     {
       "name": "inferProjectId",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 94,
@@ -2949,6 +3138,8 @@
     {
       "name": "validateExplicitProjectId",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 104,
@@ -2958,6 +3149,8 @@
     {
       "name": "isDirectory",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 122,
@@ -2967,6 +3160,8 @@
     {
       "name": "pathExists",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 131,
@@ -2976,6 +3171,8 @@
     {
       "name": "getErrorMessage",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/resolveInfraProjectAsync.ts",
         "line": 140,
@@ -2985,6 +3182,8 @@
     {
       "name": "writeInfraGeneratedArtifactsAsync",
       "description": "Write validated generated artifacts and remove only stale paths from the prior ledger.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
         "line": 9,
@@ -2994,6 +3193,8 @@
     {
       "name": "writeProjectEnvironmentOutputsAsync",
       "description": "Materialize public local Infra outputs into the project app environment while preserving unrelated entries.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "line": 12,
@@ -3003,6 +3204,8 @@
     {
       "name": "collectEnvironmentValues",
       "description": "Collect only browser-safe public outputs that explicitly declare an environment variable.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "line": 34,
@@ -3012,6 +3215,8 @@
     {
       "name": "mergeEnvironmentFile",
       "description": "Merge managed environment values without changing unrelated lines or retaining duplicate managed keys.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "line": 47,
@@ -3021,6 +3226,8 @@
     {
       "name": "readEnvironmentAssignmentName",
       "description": "Read an environment assignment name without interpreting or mutating its value.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "line": 77,
@@ -3030,6 +3237,8 @@
     {
       "name": "serializeEnvironmentValue",
       "description": "Serialize one primitive Infra output as a quoted dotenv value.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
         "line": 82,
@@ -3039,6 +3248,8 @@
     {
       "name": "writeStoredInfraStateAsync",
       "description": "Persist serializable desired identity plus a secret-safe canonical ledger atomically.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts",
         "line": 9,
@@ -3048,6 +3259,8 @@
     {
       "name": "collectInfraWorkloadsAsync",
       "description": "Collect each service workload graph once in deterministic adapter order.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/collectInfraWorkloadsAsync.ts",
         "line": 12,
@@ -3057,6 +3270,8 @@
     {
       "name": "destroyInfraEnvironmentAsync",
       "description": "Destroy exact owned resources in reverse dependency order behind explicit scope confirmation.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
         "line": 22,
@@ -3066,6 +3281,8 @@
     {
       "name": "validateDestroyRequest",
       "description": "Refuse cross-project confirmation and unowned persistent deletion before any mutation.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
         "line": 97,
@@ -3075,6 +3292,8 @@
     {
       "name": "destroyFailure",
       "description": "Create one stable non-provider-specific destroy safety failure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
         "line": 129,
@@ -3084,6 +3303,8 @@
     {
       "name": "downInfraEnvironmentAsync",
       "description": "Reversibly suspend services and runtime while retaining compute and persistent data.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
         "line": 15,
@@ -3093,6 +3314,8 @@
     {
       "name": "generateInfraEnvironmentAsync",
       "description": "Generate deterministic review artifacts without mutating local or remote infrastructure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
         "line": 15,
@@ -3102,6 +3325,8 @@
     {
       "name": "getInfraEnvironmentOutputs",
       "description": "Return only safe serialized public outputs and secret references from the canonical ledger.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
         "line": 8,
@@ -3111,6 +3336,8 @@
     {
       "name": "planInfraEnvironmentAsync",
       "description": "Aggregate a side-effect-free dependency-ordered plan from all selected adapters.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
         "line": 13,
@@ -3120,6 +3347,8 @@
     {
       "name": "prepareInfraOperationAsync",
       "description": "Resolve and validate one operation without creating, updating or deleting infrastructure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
         "line": 16,
@@ -3129,6 +3358,8 @@
     {
       "name": "hasSameProviderSelection",
       "description": "Compare provider identity only; configuration changes remain normal in-place reconciliation.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
         "line": 100,
@@ -3138,6 +3369,8 @@
     {
       "name": "providerSelection",
       "description": "Read the closed provider slots in stable capability order.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
         "line": 108,
@@ -3147,6 +3380,8 @@
     {
       "name": "mergeOutputs",
       "description": "Prefer freshly inspected outputs while preserving unrelated safe prior values.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
         "line": 123,
@@ -3156,6 +3391,8 @@
     {
       "name": "outputKey",
       "description": "Create one stable public-or-secret output identity without reading its value.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
         "line": 132,
@@ -3165,6 +3402,8 @@
     {
       "name": "prepareInfraServicesAsync",
       "description": "Run optional mutating service preparation before runtime workload materialization.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraServicesAsync.ts",
         "line": 11,
@@ -3174,6 +3413,8 @@
     {
       "name": "resolveInfraAdaptersAsync",
       "description": "Resolve exactly the selected provider packages and validate their public adapter boundaries.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 21,
@@ -3183,6 +3424,8 @@
     {
       "name": "orderServiceAdapters",
       "description": "Order services by selected capability dependencies while preserving catalog order for peers.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 54,
@@ -3192,6 +3435,8 @@
     {
       "name": "hasCapability",
       "description": "Compare catalog capability values across descriptor union members.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 78,
@@ -3201,6 +3446,8 @@
     {
       "name": "instantiateModules",
       "description": "Invoke selected factories safely and require their instances to match the module descriptor.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 83,
@@ -3210,6 +3457,8 @@
     {
       "name": "getSelectedCatalogEntries",
       "description": "Select each configured adapter once, including multi-capability service providers.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 114,
@@ -3219,6 +3468,8 @@
     {
       "name": "loadModuleAsync",
       "description": "Convert module-resolution errors into provider-safe diagnostics without importing alternatives.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 128,
@@ -3228,6 +3479,8 @@
     {
       "name": "isInfraAdapterPackageModule",
       "description": "Validate the runtime shape of a dynamically loaded provider package.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 149,
@@ -3237,6 +3490,8 @@
     {
       "name": "isComputeAdapter",
       "description": "Validate one compute adapter instance without trusting a dynamic module cast.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 158,
@@ -3246,6 +3501,8 @@
     {
       "name": "isRuntimeAdapter",
       "description": "Validate one runtime adapter instance without trusting a dynamic module cast.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 170,
@@ -3255,6 +3512,8 @@
     {
       "name": "isServiceAdapter",
       "description": "Validate one service adapter instance without trusting a dynamic module cast.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 182,
@@ -3264,6 +3523,8 @@
     {
       "name": "isAdapterForDescriptor",
       "description": "Match a factory result to the exact descriptor selected from its module.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 194,
@@ -3273,6 +3534,8 @@
     {
       "name": "hasAdapterMethods",
       "description": "Check a dynamic adapter descriptor kind and its required lifecycle methods.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 211,
@@ -3282,6 +3545,8 @@
     {
       "name": "validateInstances",
       "description": "Ensure factories returned exactly one matching compute/runtime adapter and every service.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 225,
@@ -3291,6 +3556,8 @@
     {
       "name": "instanceDiagnostic",
       "description": "Create an adapter-factory diagnostic without exposing module exception details.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 245,
@@ -3300,6 +3567,8 @@
     {
       "name": "adapterFailure",
       "description": "Create a failed adapter resolution result.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 250,
@@ -3309,6 +3578,8 @@
     {
       "name": "isRecord",
       "description": "Narrow dynamically loaded module and adapter values.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
         "line": 255,
@@ -3318,6 +3589,8 @@
     {
       "name": "statusInfraEnvironmentAsync",
       "description": "Aggregate provider-neutral compute, runtime and service status.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
         "line": 12,
@@ -3327,6 +3600,8 @@
     {
       "name": "aggregateInfraStatus",
       "description": "Select the most actionable canonical status, treating an empty environment as absent.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
         "line": 63,
@@ -3336,6 +3611,8 @@
     {
       "name": "upInfraEnvironmentAsync",
       "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
         "line": 26,
@@ -3345,6 +3622,8 @@
     {
       "name": "reconcileServicesAsync",
       "description": "Reconcile service-owned external state after its runtime workloads expose outputs.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
         "line": 109,
@@ -3354,6 +3633,8 @@
     {
       "name": "validateInfraAdaptersAsync",
       "description": "Validate compute and service configuration before any mutating adapter call.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts",
         "line": 11,
@@ -3363,6 +3644,8 @@
     {
       "name": "validateInfraEnvironmentAsync",
       "description": "Validate one environment and every selected adapter without mutating infrastructure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
         "line": 9,
@@ -3372,6 +3655,8 @@
     {
       "name": "createInfraCommandServices",
       "description": "Compose command use cases with filesystem, environment-value and package-resolver adapters.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createInfraCommandServices.ts",
         "line": 22,
@@ -3381,6 +3666,8 @@
     {
       "name": "createProjectInfraLifecycle",
       "description": "Create the typed project-facing Infra lifecycle backed by canonical use cases and ownership state.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
         "line": 14,
@@ -3390,6 +3677,8 @@
     {
       "name": "prepareProjectOperationAsync",
       "description": "Resolve one explicit project/environment request with its prior ownership state and dependencies.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
         "line": 126,
@@ -3399,6 +3688,8 @@
     {
       "name": "validateCredentialStateDestroy",
       "description": "Require exact scope confirmation before deleting orphaned project credential state.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
         "line": 163,
@@ -3408,6 +3699,8 @@
     {
       "name": "readEnvironment",
       "description": "Read one exact environment without inventing a fallback.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
         "line": 184,
@@ -3417,6 +3710,8 @@
     {
       "name": "replaceEnvironment",
       "description": "Replace one selected environment while preserving all other manifest state.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts",
         "line": 194,
@@ -3426,6 +3721,8 @@
     {
       "name": "orderInfraPlanActions",
       "description": "Order plan actions dependency-first and reject duplicate owners or dependency cycles.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
         "line": 8,
@@ -3435,6 +3732,8 @@
     {
       "name": "visitAction",
       "description": "Visit one plan node and its in-plan dependencies exactly once.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
         "line": 24,
@@ -3444,6 +3743,8 @@
     {
       "name": "identityKey",
       "description": "Create a collision-safe key for one provider-owned resource identity.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
         "line": 48,
@@ -3453,6 +3754,8 @@
     {
       "name": "invalidPlan",
       "description": "Reject an invalid aggregated plan without exposing provider internals.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
         "line": 53,
@@ -3462,6 +3765,8 @@
     {
       "name": "resolveInfraEnvironment",
       "description": "Resolve one explicitly configured environment while keeping local as the only safe default.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
         "line": 10,
@@ -3471,6 +3776,8 @@
     {
       "name": "getEnvironment",
       "description": "Read a closed environment key without an open object-injection boundary.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
         "line": 40,
@@ -3480,6 +3787,8 @@
     {
       "name": "isAppEnvironmentId",
       "description": "Narrow a CLI environment string through the canonical Contracts vocabulary.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
         "line": 55,
@@ -3489,6 +3798,8 @@
     {
       "name": "failure",
       "description": "Create a stable environment-resolution diagnostic.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
         "line": 60,
@@ -3498,6 +3809,8 @@
     {
       "name": "appendInfraFailure",
       "description": "Preserve earlier safe diagnostics when a later lifecycle stage fails.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
         "line": 4,
@@ -3507,6 +3820,8 @@
     {
       "name": "createInfraExecutionContext",
       "description": "Create one execution context without copying resolved secret values into serializable state.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/createInfraExecutionContext.ts",
         "line": 10,
@@ -3516,6 +3831,8 @@
     {
       "name": "createInfraFailure",
       "description": "Create one sanitized provider-neutral Infra failure.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/createInfraFailure.ts",
         "line": 4,
@@ -3525,6 +3842,8 @@
     {
       "name": "createInfraLedger",
       "description": "Create deterministic serializable lifecycle state without resolved credential or secret values.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/createInfraLedger.ts",
         "line": 10,
@@ -3534,6 +3853,8 @@
     {
       "name": "infraIdentityKey",
       "description": "Create a stable collision-safe key for an Infra-owned resource.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/infraIdentityKey.ts",
         "line": 4,
@@ -3543,6 +3864,8 @@
     {
       "name": "isInfraStoredState",
       "description": "Validate persisted ownership state before any provider receives it.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 11,
@@ -3552,6 +3875,8 @@
     {
       "name": "isInfraLedger",
       "description": "Validate the canonical ledger's serializable outer boundary.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 21,
@@ -3561,6 +3886,8 @@
     {
       "name": "isComputeTarget",
       "description": "Validate portable compute targets without accepting resolved credential payloads.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 45,
@@ -3570,6 +3897,8 @@
     {
       "name": "isOwnedResource",
       "description": "Validate one exact resource plus its dependency identities.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 66,
@@ -3579,6 +3908,8 @@
     {
       "name": "isOutput",
       "description": "Enforce the public-value versus secret-reference output union at rest.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 78,
@@ -3588,6 +3919,8 @@
     {
       "name": "isArtifactIdentity",
       "description": "Validate one generated-artifact ledger identity without accepting file content.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 102,
@@ -3597,6 +3930,8 @@
     {
       "name": "isScopedIdentity",
       "description": "Validate scope, adapter catalog identity, and resource ID.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 111,
@@ -3606,6 +3941,8 @@
     {
       "name": "isControlPlaneReference",
       "description": "Validate an unresolved control-plane credential identity.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 122,
@@ -3615,6 +3952,8 @@
     {
       "name": "isSecretReference",
       "description": "Validate an unresolved secret reference scoped to this exact ledger.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 127,
@@ -3624,6 +3963,8 @@
     {
       "name": "isRecord",
       "description": "Narrow parsed values.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/isInfraStoredState.ts",
         "line": 139,
@@ -3633,6 +3974,8 @@
     {
       "name": "mergeInfraOutputs",
       "description": "Merge output identities while preferring the last adapter result for each owner and name.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/mergeInfraOutputs.ts",
         "line": 6,
@@ -3642,6 +3985,8 @@
     {
       "name": "mergeInfraResources",
       "description": "Merge resource identities while preferring the last adapter result for each owner.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/mergeInfraResources.ts",
         "line": 6,
@@ -3651,6 +3996,8 @@
     {
       "name": "normalizeInfraEnvironmentKey",
       "description": "Convert arbitrary credential and secret identifiers into stable environment-variable segments.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/normalizeInfraEnvironmentKey.ts",
         "line": 2,
@@ -3660,6 +4007,8 @@
     {
       "name": "resolveInfraEnvironmentStateDirectory",
       "description": "Build the canonical project-local state directory for one closed Infra environment.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/resolveInfraEnvironmentStateDirectory.ts",
         "line": 6,
@@ -3669,6 +4018,8 @@
     {
       "name": "resolveInfraStatePath",
       "description": "Build an exact state-file path from a closed canonical environment identifier.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/resolveInfraStatePath.ts",
         "line": 7,
@@ -3678,6 +4029,8 @@
     {
       "name": "resolveProjectFile",
       "description": "Resolve one generated path inside the project while protecting Infra state and traversal.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/resolveProjectFile.ts",
         "line": 6,
@@ -3687,6 +4040,8 @@
     {
       "name": "retainUnchangedAdapterOutputs",
       "description": "Keep prior outputs not owned by adapters that returned a replacement snapshot.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/retainUnchangedAdapterOutputs.ts",
         "line": 6,
@@ -3696,6 +4051,8 @@
     {
       "name": "retainUnchangedAdapterResources",
       "description": "Keep prior resources not owned by adapters that returned a replacement snapshot.",
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/utils/retainUnchangedAdapterResources.ts",
         "line": 6,
@@ -3705,6 +4062,8 @@
     {
       "name": "createCapturedCommandContext",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/testSupport.ts",
         "line": 14,
@@ -3714,6 +4073,8 @@
     {
       "name": "createWorkspaceFixture",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/testSupport.ts",
         "line": 38,
@@ -3723,6 +4084,8 @@
     {
       "name": "createAppManifest",
       "description": null,
+      "see": [],
+      "security": [],
       "sourceLocation": {
         "filePath": "src/testSupport.ts",
         "line": 80,
@@ -3930,11 +4293,6 @@
         "fromPath": "src/index.ts",
         "toPath": "src/types/infraOrchestration.ts",
         "sourcePath": "src/index.ts"
-      },
-      {
-        "fromPath": "src/readme-usage.ts",
-        "toPath": "src/cli/runInfraCliAsync.ts",
-        "sourcePath": "src/readme-usage.ts"
       },
       {
         "fromPath": "src/testSupport.ts",
@@ -4998,12 +5356,6 @@
       }
     ],
     "calls": [
-      {
-        "fromSymbol": "src/readme-usage.ts",
-        "toSymbol": "runInfraCliAsync",
-        "callExpression": "runInfraCliAsync",
-        "sourcePath": "src/readme-usage.ts"
-      },
       {
         "fromSymbol": "createWorkspaceFixture",
         "toSymbol": "createAppManifest",

@@ -1,5 +1,12 @@
 # @ankhorage/infra
 
+## 7.1.7
+
+### Patch Changes
+
+- e844b0a: Document Infra usage from a runnable public example, keep Renovate configuration out of package documentation, and align the runtime dependency graph with current Contracts collection semantics.
+- 91c1d71: Update Ankhorage dependencies: `@ankhorage/local`, `@ankhorage/minikube`, `@ankhorage/paradox`, `@ankhorage/supabase-vault`, `@ankhorage/supabase`, `@ankhorage/utility`.
+
 ## 7.1.6
 
 ### Patch Changes

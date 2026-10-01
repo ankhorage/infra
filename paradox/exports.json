@@ -1,9 +1,11 @@
 [
   {
     "name": "createEnvironmentInfraCredentialPort",
+    "title": null,
     "description": "Resolve execution-only control-plane credentials from exact-name or prefixed environment data.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
     "sourceLocation": {
@@ -35,9 +37,11 @@
   },
   {
     "name": "createEnvironmentInfraSecretPort",
+    "title": null,
     "description": "Resolve explicitly addressed secret values from environment data without serializing them.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraSecretPort.ts",
     "sourceLocation": {
@@ -69,9 +73,11 @@
   },
   {
     "name": "createNodeInfraAdapterPackageResolver",
+    "title": null,
     "description": "Load only a catalog-selected package through the host module resolver.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/adapters/outbound/createNodeInfraAdapterPackageResolver.ts",
     "sourceLocation": {
@@ -98,9 +104,11 @@
   },
   {
     "name": "destroyInfraEnvironmentAsync",
+    "title": null,
     "description": "Destroy exact owned resources in reverse dependency order behind explicit scope confirmation.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
     "sourceLocation": {
@@ -142,9 +150,11 @@
   },
   {
     "name": "downInfraEnvironmentAsync",
+    "title": null,
     "description": "Reversibly suspend services and runtime while retaining compute and persistent data.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
     "sourceLocation": {
@@ -186,9 +196,11 @@
   },
   {
     "name": "generateInfraEnvironmentAsync",
+    "title": null,
     "description": "Generate deterministic review artifacts without mutating local or remote infrastructure.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
     "sourceLocation": {
@@ -230,9 +242,11 @@
   },
   {
     "name": "getInfraEnvironmentOutputs",
+    "title": null,
     "description": "Return only safe serialized public outputs and secret references from the canonical ledger.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
     "sourceLocation": {
@@ -267,9 +281,11 @@
   },
   {
     "name": "InfraAdapterPackageModule",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
     "sourceLocation": {
@@ -302,9 +318,11 @@
   },
   {
     "name": "InfraAdapterPackageResolver",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts",
     "sourceLocation": {
@@ -330,9 +348,11 @@
   },
   {
     "name": "InfraDestroyOperationRequest",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -407,9 +427,11 @@
   },
   {
     "name": "InfraDestroyOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -427,9 +449,11 @@
   },
   {
     "name": "InfraDestroyResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -462,9 +486,11 @@
   },
   {
     "name": "InfraDownOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -482,9 +508,11 @@
   },
   {
     "name": "InfraDownResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -517,9 +545,11 @@
   },
   {
     "name": "InfraGenerateOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -537,9 +567,11 @@
   },
   {
     "name": "InfraGenerateResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -579,9 +611,11 @@
   },
   {
     "name": "InfraOperationRequest",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -642,9 +676,11 @@
   },
   {
     "name": "InfraOrchestrationDependencies",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -686,9 +722,11 @@
   },
   {
     "name": "InfraOutputsOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -706,9 +744,11 @@
   },
   {
     "name": "InfraOutputsResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -741,9 +781,11 @@
   },
   {
     "name": "InfraPlanOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -761,9 +803,11 @@
   },
   {
     "name": "InfraStatusOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -781,9 +825,11 @@
   },
   {
     "name": "InfraStoredState",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -823,9 +869,11 @@
   },
   {
     "name": "InfraUpOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -843,9 +891,11 @@
   },
   {
     "name": "InfraUpRequest",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -863,9 +913,11 @@
   },
   {
     "name": "InfraUpResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -919,9 +971,11 @@
   },
   {
     "name": "InfraValidateOperationResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "unknown",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -939,9 +993,11 @@
   },
   {
     "name": "InfraValidateResult",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -967,9 +1023,11 @@
   },
   {
     "name": "orderInfraPlanActions",
+    "title": null,
     "description": "Order plan actions dependency-first and reject duplicate owners or dependency cycles.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/domain/orderInfraPlanActions.ts",
     "sourceLocation": {
@@ -1001,9 +1059,11 @@
   },
   {
     "name": "planInfraEnvironmentAsync",
+    "title": null,
     "description": "Aggregate a side-effect-free dependency-ordered plan from all selected adapters.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
     "sourceLocation": {
@@ -1045,9 +1105,11 @@
   },
   {
     "name": "PreparedInfraOperation",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -1104,9 +1166,11 @@
   },
   {
     "name": "ResolvedInfraAdapters",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -1146,9 +1210,11 @@
   },
   {
     "name": "ResolvedInfraEnvironment",
+    "title": null,
     "description": null,
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "type",
     "modulePath": "src/types/infraOrchestration.ts",
     "sourceLocation": {
@@ -1188,9 +1254,11 @@
   },
   {
     "name": "resolveInfraAdaptersAsync",
+    "title": null,
     "description": "Resolve exactly the selected provider packages and validate their public adapter boundaries.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/resolveInfraAdaptersAsync.ts",
     "sourceLocation": {
@@ -1231,9 +1299,11 @@
   },
   {
     "name": "resolveInfraEnvironment",
+    "title": null,
     "description": "Resolve one explicitly configured environment while keeping local as the only safe default.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
     "sourceLocation": {
@@ -1267,9 +1337,11 @@
   },
   {
     "name": "statusInfraEnvironmentAsync",
+    "title": null,
     "description": "Aggregate provider-neutral compute, runtime and service status.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
     "sourceLocation": {
@@ -1311,9 +1383,11 @@
   },
   {
     "name": "upInfraEnvironmentAsync",
+    "title": null,
     "description": "Validate and reconcile compute, service preparation, workloads, runtime and services in order.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
     "sourceLocation": {
@@ -1355,9 +1429,11 @@
   },
   {
     "name": "validateInfraEnvironmentAsync",
+    "title": null,
     "description": "Validate one environment and every selected adapter without mutating infrastructure.",
     "isReadme": false,
-    "examples": [],
+    "see": [],
+    "security": [],
     "kind": "function",
     "modulePath": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
     "sourceLocation": {
