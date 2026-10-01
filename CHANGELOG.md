@@ -1,5 +1,12 @@
 # @ankhorage/infra
 
+## 7.1.29
+
+### Patch Changes
+
+- 633d93a: Update dependencies: `@ankhorage/minikube`, `@ankhorage/paradox`, `@ankhorage/utility`.
+- 04bd9b9: Update Renovate-managed workflows.
+
 ## 7.1.28
 
 ### Patch Changes
