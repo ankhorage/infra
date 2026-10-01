@@ -88,7 +88,7 @@ export function createAppManifest(
         },
       },
     },
-    modules: [],
+    modules: {},
   },
 ): AppManifest {
   return {
@@ -99,7 +99,14 @@ export function createAppManifest(
       category: 'developer_tools',
       themeId: 'default',
     },
-    themes: [],
+    themes: {
+      default: {
+        id: 'default',
+        name: 'Default',
+        light: { primaryColor: '#3366ff', harmony: 'analogous' },
+        dark: { primaryColor: '#6699ff', harmony: 'analogous' },
+      },
+    },
     activeThemeId: 'default',
     infra,
     navigator: {

@@ -58,11 +58,11 @@ const manifest = {
       },
       database: { provider: 'supabase', tier: 'dev' },
       auth: { provider: 'supabase' },
-      objectStorage: { provider: 'supabase', buckets: [bucket] },
+      objectStorage: { provider: 'supabase', buckets: { [bucket]: true } },
       networking: { publicBaseUrl },
     },
   },
-  modules: [],
+  modules: {},
 } as const satisfies InfraManifest;
 
 test('runs local k3s and Supabase through the portable compute lifecycle', async () => {

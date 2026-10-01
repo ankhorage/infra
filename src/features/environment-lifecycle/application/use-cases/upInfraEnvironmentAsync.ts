@@ -59,7 +59,7 @@ export async function upInfraEnvironmentAsync(
   const runtimeDesired = {
     selection: environment.value.desired.deployment.runtime,
     targets: compute.value.targets,
-    workloads: [...(environment.value.desired.workloads ?? []), ...workloads.value],
+    workloads: [...Object.values(environment.value.desired.workloads ?? {}), ...workloads.value],
     availableOutputs: mergeInfraOutputs(request.previous?.outputs ?? [], compute.value.outputs),
   };
   const runtimeValidation = await adapters.value.runtime.validateAsync(context, runtimeDesired);

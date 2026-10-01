@@ -1,6 +1,7 @@
 import { createKnipConfig } from '@ankhorage/devtools/knip';
 
 export default createKnipConfig({
+  entry: ['examples/basic-usage/main.ts'],
   ignoreDependencies: [
     '@ankhorage/cerbos',
     '@ankhorage/docker-compose',
@@ -15,6 +16,5 @@ export default createKnipConfig({
     'eslint.local.config.mjs',
     'paradox.config.ts',
     'prettier.local.config.js',
-    'src/readme-usage.ts',
   ],
 });

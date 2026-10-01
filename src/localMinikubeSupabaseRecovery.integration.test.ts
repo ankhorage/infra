@@ -1,4 +1,7 @@
 import { createHmac } from 'node:crypto';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import type {
   InfraControlPlaneCredentialRef,
@@ -21,10 +24,8 @@ const namespace = `${projectId}-local`;
 const baseUrl = 'http://127.0.0.1:54322';
 const logicalBucket = 'phase10-objects';
 const physicalBucket = 'phase10-persistence';
-const minioContainer = 'infra145-minio-recovery';
 const minioHostEndpoint = 'http://127.0.0.1:19000';
 const minioPodEndpoint = 'http://host.minikube.internal:19000';
-const minioImage = 'quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z';
 const s3AccessKey = 'phase10-access';
 const s3SecretKey = 'phase10-secret-key';
 const databaseMarker = 'database-survived-from-s3-backup';
@@ -59,20 +60,19 @@ const manifest = {
       auth: { provider: 'supabase' },
       objectStorage: {
         provider: 'supabase',
-        buckets: [logicalBucket],
+        buckets: { [logicalBucket]: true },
         backend: persistenceTarget,
       },
       networking: { publicBaseUrl: baseUrl },
     },
   },
-  modules: [],
+  modules: {},
 } as const satisfies InfraManifest;
 
 test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_RECOVERY_E2E !== '1')(
   'recovers a fresh Minikube Supabase database while S3-backed Storage remains off-cluster',
   async () => {
-    await stopMinioAsync();
-    await startMinioAsync();
+    const minio = await startMinioAsync();
     try {
       const dependencies = createDependencies();
       const firstUp = requireSuccess(
@@ -110,56 +110,59 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_RECOVERY_E2E !== '1')(
       throw new Error(`${message}\nRecovery diagnostics: ${diagnostics}`, { cause: error });
     } finally {
       await runAllowFailureAsync(['minikube', 'delete', '-p', profile]);
-      await stopMinioAsync();
+      await stopMinioAsync(minio);
     }
   },
   1_200_000,
 );
 
-async function startMinioAsync(): Promise<void> {
-  await runAsync(
-    [
-      'docker',
-      'run',
-      '--detach',
-      '--rm',
-      '--name',
-      minioContainer,
-      '--publish',
-      '19000:9000',
-      '--env',
-      `MINIO_ROOT_USER=${s3AccessKey}`,
-      '--env',
-      `MINIO_ROOT_PASSWORD=${s3SecretKey}`,
-      minioImage,
-      'server',
-      '/data',
-      '--address',
-      ':9000',
-    ],
-    'start MinIO',
-  );
-  await waitForMinioAsync();
-  await runAsync(
-    [
-      'curl',
-      '--fail',
-      '--silent',
-      '--show-error',
-      '--request',
-      'PUT',
-      '--aws-sigv4',
-      'aws:amz:us-east-1:s3',
-      '--user',
-      `${s3AccessKey}:${s3SecretKey}`,
-      `${minioHostEndpoint}/${physicalBucket}`,
-    ],
-    'create MinIO bucket',
-  );
+interface MinioServer {
+  readonly subprocess: ReturnType<typeof Bun.spawn>;
+  readonly dataDirectory: string;
 }
 
-async function waitForMinioAsync(): Promise<void> {
+async function startMinioAsync(): Promise<MinioServer> {
+  const dataDirectory = await mkdtemp(join(tmpdir(), 'infra145-minio-'));
+  const subprocess = Bun.spawn(['minio', 'server', dataDirectory, '--address', ':19000'], {
+    env: {
+      ...process.env,
+      MINIO_ROOT_USER: s3AccessKey,
+      MINIO_ROOT_PASSWORD: s3SecretKey,
+    },
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  const server = { subprocess, dataDirectory };
+  try {
+    await waitForMinioAsync(subprocess);
+    await runAsync(
+      [
+        'curl',
+        '--fail',
+        '--silent',
+        '--show-error',
+        '--request',
+        'PUT',
+        '--aws-sigv4',
+        'aws:amz:us-east-1:s3',
+        '--user',
+        `${s3AccessKey}:${s3SecretKey}`,
+        `${minioHostEndpoint}/${physicalBucket}`,
+      ],
+      'create MinIO bucket',
+    );
+    return server;
+  } catch (error) {
+    await stopMinioAsync(server);
+    throw error;
+  }
+}
+
+async function waitForMinioAsync(subprocess: MinioServer['subprocess']): Promise<void> {
   for (const _attempt of Array.from({ length: 60 }, (_, index) => index)) {
+    if (subprocess.exitCode !== null) {
+      throw new Error(`MinIO exited before becoming ready with code ${subprocess.exitCode}.`);
+    }
     const response = await fetch(`${minioHostEndpoint}/minio/health/live`).catch(() => undefined);
     if (response?.ok === true) return;
     await Bun.sleep(500);
@@ -167,8 +170,10 @@ async function waitForMinioAsync(): Promise<void> {
   throw new Error('MinIO did not become ready.');
 }
 
-async function stopMinioAsync(): Promise<void> {
-  await runAllowFailureAsync(['docker', 'rm', '--force', minioContainer]);
+async function stopMinioAsync(server: MinioServer): Promise<void> {
+  if (server.subprocess.exitCode === null) server.subprocess.kill();
+  await server.subprocess.exited;
+  await rm(server.dataDirectory, { recursive: true, force: true });
 }
 
 async function writeDatabaseMarkerAsync(): Promise<void> {
