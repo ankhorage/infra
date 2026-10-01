@@ -116,25 +116,22 @@ test.skipIf(process.env.ANKH_INFRA_MINIKUBE_SUPABASE_RECOVERY_E2E !== '1')(
   1_200_000,
 );
 
-type MinioServer = {
+interface MinioServer {
   readonly subprocess: ReturnType<typeof Bun.spawn>;
   readonly dataDirectory: string;
-};
+}
 
 async function startMinioAsync(): Promise<MinioServer> {
   const dataDirectory = await mkdtemp(join(tmpdir(), 'infra145-minio-'));
-  const subprocess = Bun.spawn(
-    ['minio', 'server', dataDirectory, '--address', ':19000'],
-    {
-      env: {
-        ...process.env,
-        MINIO_ROOT_USER: s3AccessKey,
-        MINIO_ROOT_PASSWORD: s3SecretKey,
-      },
-      stdout: 'inherit',
-      stderr: 'inherit',
+  const subprocess = Bun.spawn(['minio', 'server', dataDirectory, '--address', ':19000'], {
+    env: {
+      ...process.env,
+      MINIO_ROOT_USER: s3AccessKey,
+      MINIO_ROOT_PASSWORD: s3SecretKey,
     },
-  );
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
   const server = { subprocess, dataDirectory };
   try {
     await waitForMinioAsync(subprocess);
