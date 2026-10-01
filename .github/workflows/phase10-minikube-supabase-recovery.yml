@@ -60,6 +60,21 @@ jobs:
           sudo install /tmp/kubectl /usr/local/bin/kubectl
           kubectl version --client=true
 
+      - name: Install MinIO
+        env:
+          MINIO_VERSION: RELEASE.2025-09-07T16-13-09Z
+        run: |
+          cd /tmp
+          curl --fail --location --silent --show-error \
+            --output "minio.${MINIO_VERSION}" \
+            "https://dl.min.io/server/minio/release/linux-amd64/archive/minio.${MINIO_VERSION}"
+          curl --fail --location --silent --show-error \
+            --output "minio.${MINIO_VERSION}.sha256sum" \
+            "https://dl.min.io/server/minio/release/linux-amd64/archive/minio.${MINIO_VERSION}.sha256sum"
+          sha256sum --check --status "minio.${MINIO_VERSION}.sha256sum"
+          sudo install "minio.${MINIO_VERSION}" /usr/local/bin/minio
+          minio --version
+
       - name: Verify Docker
         run: docker info
 
@@ -114,7 +129,6 @@ jobs:
         env:
           ACCEPTANCE_NAMESPACE: infra145-minikube-supabase-recovery-local
         run: |
-          docker logs infra145-minio-recovery --tail=240 || true
           kubectl get pods --all-namespaces -o wide || true
           kubectl get pvc --all-namespaces || true
           kubectl get events -n "${ACCEPTANCE_NAMESPACE}" --sort-by=.lastTimestamp || true
@@ -139,4 +153,3 @@ jobs:
         if: always()
         run: |
           minikube delete -p infra145-minikube-supabase-recovery || true
-          docker rm --force infra145-minio-recovery || true
