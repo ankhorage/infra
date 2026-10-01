@@ -6,6 +6,7 @@
     "lib": ["ES2022"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "types": ["node"],
     "jsx": "react-native",
     "strict": true,
     "noUncheckedIndexedAccess": true,
