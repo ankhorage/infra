@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.16
+
+### Patch Changes
+
+- 8cf627c: Update Ankhorage dependencies: `@ankhorage/contracts`, `@ankhorage/utility`.
+
 ## 7.1.15
 
 ### Patch Changes
