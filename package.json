@@ -36,8 +36,8 @@
   ],
   "dependencies": {
     "@ankhorage/ankh": "^0.10.4",
-    "@ankhorage/contracts": "^22.8.36",
-    "@ankhorage/utility": "^1.9.27"
+    "@ankhorage/contracts": "^22.8.38",
+    "@ankhorage/utility": "^1.9.28"
   },
   "files": [
     "dist",
@@ -118,8 +118,8 @@
     "@ankhorage/hetzner": "^0.3.0",
     "@ankhorage/k3s": "^0.4.1",
     "@ankhorage/local": "^0.3.2",
-    "@ankhorage/minikube": "^0.4.45",
-    "@ankhorage/paradox": "^0.2.11",
+    "@ankhorage/minikube": "^0.4.47",
+    "@ankhorage/paradox": "^0.2.12",
     "@ankhorage/r2": "^0.2.0",
     "@ankhorage/supabase": "^0.5.14",
     "@ankhorage/supabase-vault": "^0.3.12",
