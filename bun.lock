@@ -7,7 +7,7 @@
       "dependencies": {
         "@ankhorage/ankh": "^0.10.4",
         "@ankhorage/contracts": "^22.8.57",
-        "@ankhorage/utility": "^1.9.46",
+        "@ankhorage/utility": "^1.9.47",
       },
       "devDependencies": {
         "@ankhorage/cerbos": "^0.2.0",
@@ -64,7 +64,7 @@
 
     "@ankhorage/supabase-vault": ["@ankhorage/supabase-vault@0.3.12", "", { "dependencies": { "@ankhorage/contracts": "^22.1.1" } }, "sha512-iEGRrNwf5ZWnnSfONgDUzNdCqhmKsLfokOBNyiBcSpbwqj1X5kVXfv1A8+2MWXHjhboNoIfPDSEwiV6NsqtNJw=="],
 
-    "@ankhorage/utility": ["@ankhorage/utility@1.9.46", "", { "peerDependencies": { "fastify": "^5.12.5" }, "optionalPeers": ["fastify"] }, "sha512-h7aPhgMfbO4PY2muzCSh9/JqD2liFyobWoebC+C5uiwvLLLoWiQMj53f0TP+x6XxZ7zgA2cTeyGJkjBsEpUmFg=="],
+    "@ankhorage/utility": ["@ankhorage/utility@1.9.47", "", { "peerDependencies": { "fastify": "^5.12.5" }, "optionalPeers": ["fastify"] }, "sha512-0qbTIQK4VbK7Rr+UQqQ5iyuH7dYTmHRpWo4YZkWSxWa93KDCgIQ58ar0zNFR5fHNEdE51EikHoYCfApzuwMmFA=="],
 
     "@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
 
