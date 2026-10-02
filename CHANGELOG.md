@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.72
+
+### Patch Changes
+
+- 3610fa8: Update dependencies: `@ankhorage/minikube`, `@ankhorage/utility`.
+
 ## 7.1.71
 
 ### Patch Changes
