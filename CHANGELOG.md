@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.53
+
+### Patch Changes
+
+- b0441ac: Update Renovate-managed workflows.
+
 ## 7.1.52
 
 ### Patch Changes
