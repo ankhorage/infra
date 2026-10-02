@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.60
+
+### Patch Changes
+
+- 44f1b4e: Update dependencies: `@ankhorage/contracts`, `@ankhorage/minikube`, `@ankhorage/utility`.
+
 ## 7.1.59
 
 ### Patch Changes
