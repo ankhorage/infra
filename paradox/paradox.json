@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.1.74",
+      "value": "v7.1.75",
       "color": "cb3837"
     },
     {
@@ -79,11 +79,7 @@
   ],
   "exampleCount": 1,
   "findings": [],
-  "readmeConfig": {
-    "language": "ts",
-    "code": "import { defineParadoxConfig } from '@ankhorage/paradox';\n\nexport default defineParadoxConfig({\n  mode: 'write',\n\n  docs: {\n    title: 'INFRA',\n    description: 'Executable infra provider and standalone CLI for Ankhorage project workflows.',\n    usage: {\n      entrypoints: ['examples/basic-usage/main.ts'],\n    },\n  },\n\n  package: {\n    root: '.',\n    entrypoints: ['src/index.ts'],\n  },\n\n  output: {\n    dir: './paradox',\n  },\n});",
-    "sourcePath": "paradox.config.ts"
-  },
+  "readmeConfig": null,
   "config": null,
   "entrypoints": [
     "src/index.ts"

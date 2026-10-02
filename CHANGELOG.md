@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.75
+
+### Patch Changes
+
+- d838de9: Update dependencies: `@ankhorage/minikube`, `@ankhorage/paradox`, `@ankhorage/utility`.
+
 ## 7.1.74
 
 ### Patch Changes
