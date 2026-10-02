@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.62
+
+### Patch Changes
+
+- 2a2a56d: Update dependencies: `@ankhorage/minikube`.
+
 ## 7.1.61
 
 ### Patch Changes
