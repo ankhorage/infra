@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.43
+
+### Patch Changes
+
+- dbaf5dc: Update Renovate-managed workflows.
+
 ## 7.1.42
 
 ### Patch Changes
