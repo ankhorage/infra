@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.73
+
+### Patch Changes
+
+- e555d38: Update dependencies: `@ankhorage/contracts`, `@ankhorage/utility`.
+
 ## 7.1.72
 
 ### Patch Changes
