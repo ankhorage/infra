@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.1.76",
+      "value": "v7.1.77",
       "color": "cb3837"
     },
     {
@@ -79,7 +79,6 @@
   ],
   "exampleCount": 1,
   "findings": [],
-  "readmeConfig": null,
   "config": null,
   "entrypoints": [
     "src/index.ts"
