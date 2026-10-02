@@ -1,5 +1,12 @@
 # @ankhorage/infra
 
+## 7.1.78
+
+### Patch Changes
+
+- 9482dd7: Update Renovate-managed workflows.
+- ac08664: Update dependencies: `@ankhorage/contracts`, `@ankhorage/minikube`, `@ankhorage/utility`.
+
 ## 7.1.77
 
 ### Patch Changes
