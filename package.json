@@ -36,8 +36,8 @@
   ],
   "dependencies": {
     "@ankhorage/ankh": "^0.11.0",
-    "@ankhorage/contracts": "^22.8.99",
-    "@ankhorage/utility": "^1.9.83"
+    "@ankhorage/contracts": "^22.8.100",
+    "@ankhorage/utility": "^1.9.84"
   },
   "files": [
     "dist",
@@ -117,9 +117,9 @@
     "@ankhorage/docker-compose": "^0.5.3",
     "@ankhorage/hetzner": "^0.3.0",
     "@ankhorage/k3s": "^0.4.1",
-    "@ankhorage/local": "^0.3.8",
-    "@ankhorage/minikube": "^0.4.110",
-    "@ankhorage/paradox": "^0.2.27",
+    "@ankhorage/local": "^0.3.9",
+    "@ankhorage/minikube": "^0.4.111",
+    "@ankhorage/paradox": "^0.2.28",
     "@ankhorage/r2": "^0.2.0",
     "@ankhorage/supabase": "^0.5.14",
     "@ankhorage/supabase-vault": "^0.3.12",
