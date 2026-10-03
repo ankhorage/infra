@@ -2,4 +2,4 @@
 '@ankhorage/infra': patch
 ---
 
-Update dependencies: `@ankhorage/ankh`, `@ankhorage/contracts`, `@ankhorage/local`, `@ankhorage/minikube`, `@ankhorage/utility`.
+Update dependencies: `@ankhorage/contracts`, `@ankhorage/utility`, `@ankhorage/local`, `@ankhorage/minikube`.

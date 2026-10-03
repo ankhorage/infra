@@ -806,10 +806,10 @@ an environment explicitly before destructive operations.</p>
     <p class="muted">Referenced module</p>
     <p><strong>Dependencies:</strong> <code>src/types/infraCli.ts</code></p>
     <p><strong>Exports:</strong> <code>CapturedCommandContext</code>, <code>createAppManifest</code>, <code>createCapturedCommandContext</code>, <code>createWorkspaceFixture</code></p>
-  </article><article class="item" data-search="src/types/infraCli.ts src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts src/types/infraOrchestration.ts src/types/infraProject.ts CreateInfraRuntimeProviderOptions InfraCommandContext InfraCommandDefinition InfraCommandInvocation InfraCommandRunRequest InfraCommandRunResult InfraCommandServices InfraLifecycleOperations ParsedInfraArguments PreparedInfraCommandOperation RunInfraCommandImpl RunInfraCommandOptions">
+  </article><article class="item" data-search="src/types/infraCli.ts src/types/infraOrchestration.ts src/types/infraProject.ts CreateInfraRuntimeProviderOptions InfraCommandContext InfraCommandDefinition InfraCommandInvocation InfraCommandRunRequest InfraCommandRunResult InfraCommandServices InfraLifecycleOperations ParsedInfraArguments PreparedInfraCommandOperation RunInfraCommandImpl RunInfraCommandOptions">
     <h3>src/types/infraCli.ts</h3>
     <p class="muted">Referenced module</p>
-    <p><strong>Dependencies:</strong> <code>src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts</code>, <code>src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts</code>, <code>src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts</code>, <code>src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts</code>, <code>src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts</code>, <code>src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts</code>, <code>src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts</code>, <code>src/types/infraOrchestration.ts</code>, <code>src/types/infraProject.ts</code></p>
+    <p><strong>Dependencies:</strong> <code>src/types/infraOrchestration.ts</code>, <code>src/types/infraProject.ts</code></p>
     <p><strong>Exports:</strong> <code>CreateInfraRuntimeProviderOptions</code>, <code>InfraCommandContext</code>, <code>InfraCommandDefinition</code>, <code>InfraCommandInvocation</code>, <code>InfraCommandRunRequest</code>, <code>InfraCommandRunResult</code>, <code>InfraCommandServices</code>, <code>InfraLifecycleOperations</code>, <code>ParsedInfraArguments</code>, <code>PreparedInfraCommandOperation</code>, <code>RunInfraCommandImpl</code>, <code>RunInfraCommandOptions</code></p>
   </article><article class="item" data-search="src/types/infraOrchestration.ts src/features/environment-lifecycle/application/ports/outbound/infraAdapterPackage.ts InfraDestroyOperationRequest InfraDestroyOperationResult InfraDestroyResult InfraDownOperationResult InfraDownResult InfraEnvironmentResolutionRequest InfraGenerateOperationResult InfraGenerateResult InfraOperationRequest InfraOrchestrationDependencies InfraOutputsOperationResult InfraOutputsResult InfraPlanOperationResult InfraStatusOperationResult InfraStoredState InfraUpOperationResult InfraUpRequest InfraUpResult InfraValidateOperationResult InfraValidateResult PreparedInfraOperation ResolvedInfraAdapters ResolvedInfraEnvironment">
     <h3>src/types/infraOrchestration.ts</h3>
@@ -2221,20 +2221,6 @@ an environment explicitly before destructive operations.</p>
   module_src_testSupport_ts --&gt; module_src_types_infraCli_ts
   module_src_types_infraCli_ts[&quot;src/types/infraCli.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_types_infraCli_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_readStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraCredentialsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeInfraGeneratedArtifactsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeProjectEnvironmentOutputsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_destroyInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_downInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_generateInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraProject_ts
   module_src_types_infraOrchestration_ts[&quot;src/types/infraOrchestration.ts&quot;]
@@ -2579,20 +2565,6 @@ an environment explicitly before destructive operations.</p>
   module_src_testSupport_ts --&gt; module_src_types_infraCli_ts
   module_src_types_infraCli_ts[&quot;src/types/infraCli.ts&quot;]
   package__ankhorage_infra -.-&gt; module_src_types_infraCli_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_readStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraCredentialsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeInfraGeneratedArtifactsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeProjectEnvironmentOutputsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_destroyInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_downInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_generateInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraProject_ts
   module_src_types_infraOrchestration_ts[&quot;src/types/infraOrchestration.ts&quot;]
@@ -2866,20 +2838,6 @@ an environment explicitly before destructive operations.</p>
   module_src_features_environment_lifecycle_utils_retainUnchangedAdapterOutputs_ts --&gt; module_src_features_environment_lifecycle_utils_mergeInfraOutputs_ts
   module_src_features_environment_lifecycle_utils_retainUnchangedAdapterResources_ts --&gt; module_src_features_environment_lifecycle_utils_mergeInfraResources_ts
   module_src_testSupport_ts --&gt; module_src_types_infraCli_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_readStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraCredentialsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeInfraGeneratedArtifactsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeProjectEnvironmentOutputsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_destroyInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_downInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_generateInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraProject_ts
   module_src_types_infraOrchestration_ts --&gt; module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts
@@ -3147,20 +3105,6 @@ an environment explicitly before destructive operations.</p>
   module_src_features_environment_lifecycle_utils_retainUnchangedAdapterOutputs_ts --&gt; module_src_features_environment_lifecycle_utils_mergeInfraOutputs_ts
   module_src_features_environment_lifecycle_utils_retainUnchangedAdapterResources_ts --&gt; module_src_features_environment_lifecycle_utils_mergeInfraResources_ts
   module_src_testSupport_ts --&gt; module_src_types_infraCli_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_readStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraCredentialsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_removeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeInfraGeneratedArtifactsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeProjectEnvironmentOutputsAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_adapters_outbound_writeStoredInfraStateAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_destroyInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_downInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_generateInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_getInfraEnvironmentOutputs_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_planInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_upInfraEnvironmentAsync_ts
-  module_src_types_infraCli_ts --&gt; module_src_features_environment_lifecycle_application_use_cases_validateInfraEnvironmentAsync_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraOrchestration_ts
   module_src_types_infraCli_ts --&gt; module_src_types_infraProject_ts
   module_src_types_infraOrchestration_ts --&gt; module_src_features_environment_lifecycle_application_ports_outbound_infraAdapterPackage_ts

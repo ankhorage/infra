@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.1.97",
+      "value": "v7.1.98",
       "color": "cb3837"
     },
     {
@@ -966,20 +966,6 @@
       "path": "src/types/infraCli.ts",
       "isEntrypoint": false,
       "dependencies": [
-        "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
-        "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
-        "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
-        "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
-        "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
-        "src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts",
-        "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
-        "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
-        "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
-        "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
-        "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
-        "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
-        "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
         "src/types/infraOrchestration.ts",
         "src/types/infraProject.ts"
       ],
@@ -4498,76 +4484,6 @@
         "fromPath": "src/project/index.ts",
         "toPath": "src/types/infraProject.ts",
         "sourcePath": "src/project/index.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
-      },
-      {
-        "fromPath": "src/types/infraCli.ts",
-        "toPath": "src/features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.ts",
-        "sourcePath": "src/types/infraCli.ts"
       },
       {
         "fromPath": "src/types/infraCli.ts",
