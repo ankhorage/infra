@@ -118,10 +118,7 @@ export interface InfraCommandServices {
   ) => Promise<InfraStoredState | null>;
   readonly writeState: (projectPath: string, state: InfraStoredState) => Promise<void>;
   readonly removeState: (projectPath: string, environment: AppEnvironmentId) => Promise<void>;
-  readonly removeCredentials: (
-    projectPath: string,
-    environment: AppEnvironmentId,
-  ) => Promise<void>;
+  readonly removeCredentials: (projectPath: string, environment: AppEnvironmentId) => Promise<void>;
   readonly writeArtifacts: (
     projectPath: string,
     artifacts: readonly InfraGeneratedArtifact[],
