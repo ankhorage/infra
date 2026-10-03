@@ -15,8 +15,8 @@
         "@ankhorage/docker-compose": "^0.5.3",
         "@ankhorage/hetzner": "^0.3.0",
         "@ankhorage/k3s": "^0.4.1",
-        "@ankhorage/local": "^0.3.9",
-        "@ankhorage/minikube": "^0.4.111",
+        "@ankhorage/local": "^0.3.10",
+        "@ankhorage/minikube": "^0.4.112",
         "@ankhorage/paradox": "^0.2.28",
         "@ankhorage/r2": "^0.2.0",
         "@ankhorage/supabase": "^0.5.14",
@@ -48,9 +48,9 @@
 
     "@ankhorage/kubernetes": ["@ankhorage/kubernetes@0.8.2", "", { "dependencies": { "@ankhorage/contracts": "^22.0.3" } }, "sha512-93qzH5pL3ciywNrVK0Tm0Xl88C4up06kgOOdSqO5vwlz+HE42r18IphDIdGBLdxum1dS4SHHNVrPDKrFY+kxcg=="],
 
-    "@ankhorage/local": ["@ankhorage/local@0.3.9", "", { "dependencies": { "@ankhorage/contracts": "^22.8.100" } }, "sha512-UB5dRTk36JlVtJhJ2jIUTVqQuwsg+p9ACKvqWVs69MI1RHCTqd4MvMOUX1/bZptHi6U7bst/XmLXih2gy+k/kg=="],
+    "@ankhorage/local": ["@ankhorage/local@0.3.10", "", { "dependencies": { "@ankhorage/contracts": "^22.8.101" } }, "sha512-V+eBMOeoNqymRzZpPET/prLz8QRTFbvyTT6bxQ9SqAnZsX8WyyYyHKnHLXxPZm8qXbfG803IXADZ3Db2Ps5geQ=="],
 
-    "@ankhorage/minikube": ["@ankhorage/minikube@0.4.111", "", { "dependencies": { "@ankhorage/contracts": "^22.8.100", "@ankhorage/kubernetes": "^0.8.2" } }, "sha512-nNBJ4ACgubg0gUhLPhrt1HBLl/vBZhk/g5HHTJrweVdLt3eVNvwBde2Dwtv+W3cQH6ICShHyyPE4P6CmEV00Sw=="],
+    "@ankhorage/minikube": ["@ankhorage/minikube@0.4.112", "", { "dependencies": { "@ankhorage/contracts": "^22.8.101", "@ankhorage/kubernetes": "^0.8.2" } }, "sha512-J5tZVB+12c6yD9ejEvfCX6ZfLn6ru7GkCXw5GW7cAiFLoVDeYRatNi8saqlPByBOG/zrg693RazMrGqaxtEZmA=="],
 
     "@ankhorage/paradox": ["@ankhorage/paradox@0.2.28", "", { "dependencies": { "@ankhorage/rules": "^0.2.0", "@ankhorage/rules-documentation": "^0.3.4", "@ankhorage/utility": "^1.9.63", "ts-morph": "^28.0.0" }, "bin": { "paradox": "dist/cli/standalone.js" } }, "sha512-nw+LQUPY63U/nfhKbpXNqfnhBrBxfRg/Sq6V47pl1xRgEwOtoSDc/bumxxo8pBE5U7K21PTZckDTrypV/ifV3w=="],
 
