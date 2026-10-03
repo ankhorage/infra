@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.106
+
+### Patch Changes
+
+- 997afdb: Update dependencies: `@ankhorage/contracts`, `@ankhorage/local`, `@ankhorage/minikube`.
+
 ## 7.1.105
 
 ### Patch Changes
