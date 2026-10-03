@@ -35,7 +35,7 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/ankh": "^0.10.4",
+    "@ankhorage/ankh": "^0.10.84",
     "@ankhorage/contracts": "^22.8.98",
     "@ankhorage/utility": "^1.9.81"
   },
@@ -113,7 +113,7 @@
   },
   "devDependencies": {
     "@ankhorage/cerbos": "^0.2.0",
-    "@ankhorage/devtools": "^1.21.3",
+    "@ankhorage/devtools": "^2.1.2",
     "@ankhorage/docker-compose": "^0.5.3",
     "@ankhorage/hetzner": "^0.3.0",
     "@ankhorage/k3s": "^0.4.1",
