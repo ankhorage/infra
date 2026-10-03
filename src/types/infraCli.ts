@@ -1,27 +1,27 @@
 import type { AnkhCapabilityId } from '@ankhorage/contracts/cli';
 import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
-import type { InfraEnvironmentSpec } from '@ankhorage/contracts/infra';
-
-import type { readStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/readStoredInfraStateAsync.js';
-import type { removeStoredInfraCredentialsAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraCredentialsAsync.js';
-import type { removeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/removeStoredInfraStateAsync.js';
-import type { writeInfraGeneratedArtifactsAsync } from '../features/environment-lifecycle/adapters/outbound/writeInfraGeneratedArtifactsAsync.js';
-import type { writeProjectEnvironmentOutputsAsync } from '../features/environment-lifecycle/adapters/outbound/writeProjectEnvironmentOutputsAsync.js';
-import type { writeStoredInfraStateAsync } from '../features/environment-lifecycle/adapters/outbound/writeStoredInfraStateAsync.js';
-import type { destroyInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.js';
-import type { downInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/downInfraEnvironmentAsync.js';
-import type { generateInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/generateInfraEnvironmentAsync.js';
-import type { getInfraEnvironmentOutputs } from '../features/environment-lifecycle/application/use-cases/getInfraEnvironmentOutputs.js';
-import type { planInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.js';
-import type { statusInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/statusInfraEnvironmentAsync.js';
-import type { upInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.js';
-import type { validateInfraEnvironmentAsync } from '../features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.js';
 import type {
+  InfraEnvironmentSpec,
+  InfraGeneratedArtifact,
+  InfraLedger,
+  InfraOutput,
+} from '@ankhorage/contracts/infra';
+
+import type {
+  InfraDestroyOperationRequest,
+  InfraDestroyOperationResult,
+  InfraDownOperationResult,
+  InfraGenerateOperationResult,
   InfraOperationRequest,
   InfraOrchestrationDependencies,
+  InfraOutputsOperationResult,
+  InfraPlanOperationResult,
+  InfraStatusOperationResult,
   InfraStoredState,
+  InfraUpOperationResult,
+  InfraValidateOperationResult,
 } from './infraOrchestration.js';
-import type { ResolvedInfraProject } from './infraProject.js';
+import type { InfraArtifactWriteResult, ResolvedInfraProject } from './infraProject.js';
 
 type InfraCommandName =
   'validate' | 'plan' | 'generate' | 'up' | 'status' | 'outputs' | 'down' | 'destroy';
@@ -71,14 +71,35 @@ export interface InfraCommandInvocation {
 }
 
 export interface InfraLifecycleOperations {
-  readonly validate: typeof validateInfraEnvironmentAsync;
-  readonly plan: typeof planInfraEnvironmentAsync;
-  readonly generate: typeof generateInfraEnvironmentAsync;
-  readonly up: typeof upInfraEnvironmentAsync;
-  readonly status: typeof statusInfraEnvironmentAsync;
-  readonly outputs: typeof getInfraEnvironmentOutputs;
-  readonly down: typeof downInfraEnvironmentAsync;
-  readonly destroy: typeof destroyInfraEnvironmentAsync;
+  readonly validate: (
+    request: InfraOperationRequest,
+    dependencies: InfraOrchestrationDependencies,
+  ) => Promise<InfraValidateOperationResult>;
+  readonly plan: (
+    request: InfraOperationRequest,
+    dependencies: InfraOrchestrationDependencies,
+  ) => Promise<InfraPlanOperationResult>;
+  readonly generate: (
+    request: InfraOperationRequest,
+    dependencies: InfraOrchestrationDependencies,
+  ) => Promise<InfraGenerateOperationResult>;
+  readonly up: (
+    request: InfraOperationRequest,
+    dependencies: InfraOrchestrationDependencies,
+  ) => Promise<InfraUpOperationResult>;
+  readonly status: (
+    request: InfraOperationRequest,
+    dependencies: InfraOrchestrationDependencies,
+  ) => Promise<InfraStatusOperationResult>;
+  readonly outputs: (request: InfraOperationRequest) => InfraOutputsOperationResult;
+  readonly down: (
+    request: InfraOperationRequest,
+    dependencies: InfraOrchestrationDependencies,
+  ) => Promise<InfraDownOperationResult>;
+  readonly destroy: (
+    request: InfraDestroyOperationRequest,
+    dependencies: InfraOrchestrationDependencies,
+  ) => Promise<InfraDestroyOperationResult>;
 }
 
 interface InfraDependencyScope {
@@ -91,12 +112,26 @@ export interface InfraCommandServices {
     readonly cwd: string;
     readonly projectId?: string;
   }) => Promise<ResolvedInfraProject>;
-  readonly readState: typeof readStoredInfraStateAsync;
-  readonly writeState: typeof writeStoredInfraStateAsync;
-  readonly removeState: typeof removeStoredInfraStateAsync;
-  readonly removeCredentials: typeof removeStoredInfraCredentialsAsync;
-  readonly writeArtifacts: typeof writeInfraGeneratedArtifactsAsync;
-  readonly writeEnvironmentOutputs: typeof writeProjectEnvironmentOutputsAsync;
+  readonly readState: (
+    projectPath: string,
+    environment: AppEnvironmentId,
+  ) => Promise<InfraStoredState | null>;
+  readonly writeState: (projectPath: string, state: InfraStoredState) => Promise<void>;
+  readonly removeState: (projectPath: string, environment: AppEnvironmentId) => Promise<void>;
+  readonly removeCredentials: (
+    projectPath: string,
+    environment: AppEnvironmentId,
+  ) => Promise<void>;
+  readonly writeArtifacts: (
+    projectPath: string,
+    artifacts: readonly InfraGeneratedArtifact[],
+    previous: InfraLedger | undefined,
+  ) => Promise<InfraArtifactWriteResult>;
+  readonly writeEnvironmentOutputs: (
+    projectPath: string,
+    environment: AppEnvironmentId,
+    outputs: readonly InfraOutput[],
+  ) => Promise<void>;
   readonly operations: InfraLifecycleOperations;
   readonly createDependencies: (
     context: InfraCommandContext,
