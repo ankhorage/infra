@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.1.107
+
+### Patch Changes
+
+- 73986ba: Update dependencies: `@ankhorage/ankh`, `@ankhorage/devtools`.
+
 ## 7.1.106
 
 ### Patch Changes
