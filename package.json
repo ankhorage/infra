@@ -236,7 +236,7 @@
     "@ankhorage/k3s": "^0.4.1",
     "@ankhorage/local": "^0.3.15",
     "@ankhorage/minikube": "^0.4.117",
-    "@ankhorage/paradox": "^0.2.28",
+    "@ankhorage/paradox": "^0.3.0",
     "@ankhorage/r2": "^0.2.0",
     "@ankhorage/supabase": "^0.5.14",
     "@ankhorage/supabase-vault": "^0.3.12",
