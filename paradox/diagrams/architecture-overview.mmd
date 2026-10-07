@@ -4,6 +4,8 @@ graph TD
   package__ankhorage_infra --> entrypoint_src_index_ts
   module_package_json["package.json"]
   package__ankhorage_infra -.-> module_package_json
+  module_src_capabilities_index_ts["src/capabilities/index.ts"]
+  package__ankhorage_infra -.-> module_src_capabilities_index_ts
   module_src_cli_bin_ts["src/cli/bin.ts"]
   package__ankhorage_infra -.-> module_src_cli_bin_ts
   module_src_cli_bin_ts --> module_src_cli_runInfraCliAsync_ts
@@ -13,7 +15,6 @@ graph TD
   module_src_cli_commands_destroy_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_destroy_ts --> module_src_cli_utils_resolveInfraPersistence_ts
   module_src_cli_commands_destroy_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_destroy_ts --> module_src_constants_ts
   module_src_cli_commands_destroy_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_destroy_ts --> module_src_types_infraOrchestration_ts
   module_src_cli_commands_down_ts["src/cli/commands/down.ts"]
@@ -21,14 +22,12 @@ graph TD
   module_src_cli_commands_down_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_down_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_down_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_down_ts --> module_src_constants_ts
   module_src_cli_commands_down_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_generate_ts["src/cli/commands/generate.ts"]
   package__ankhorage_infra -.-> module_src_cli_commands_generate_ts
   module_src_cli_commands_generate_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_generate_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_generate_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_generate_ts --> module_src_constants_ts
   module_src_cli_commands_generate_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_outputs_ts["src/cli/commands/outputs.ts"]
   package__ankhorage_infra -.-> module_src_cli_commands_outputs_ts
@@ -36,35 +35,30 @@ graph TD
   module_src_cli_commands_outputs_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_outputs_ts --> module_src_cli_utils_writeInfraEnvironmentOutputs_ts
   module_src_cli_commands_outputs_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_outputs_ts --> module_src_constants_ts
   module_src_cli_commands_outputs_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_plan_ts["src/cli/commands/plan.ts"]
   package__ankhorage_infra -.-> module_src_cli_commands_plan_ts
   module_src_cli_commands_plan_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_plan_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_plan_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_plan_ts --> module_src_constants_ts
   module_src_cli_commands_plan_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_status_ts["src/cli/commands/status.ts"]
   package__ankhorage_infra -.-> module_src_cli_commands_status_ts
   module_src_cli_commands_status_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_status_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_status_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_status_ts --> module_src_constants_ts
   module_src_cli_commands_status_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_up_ts["src/cli/commands/up.ts"]
   package__ankhorage_infra -.-> module_src_cli_commands_up_ts
   module_src_cli_commands_up_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_up_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_up_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_up_ts --> module_src_constants_ts
   module_src_cli_commands_up_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_validate_ts["src/cli/commands/validate.ts"]
   package__ankhorage_infra -.-> module_src_cli_commands_validate_ts
   module_src_cli_commands_validate_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_validate_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_validate_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_validate_ts --> module_src_constants_ts
   module_src_cli_commands_validate_ts --> module_src_types_infraCli_ts
   module_src_cli_constants_ts["src/cli/constants.ts"]
   package__ankhorage_infra -.-> module_src_cli_constants_ts
@@ -82,6 +76,7 @@ graph TD
   module_src_cli_createDefaultInfraCommandContext_ts --> module_src_types_infraCli_ts
   module_src_cli_createInfraRuntimeProvider_ts["src/cli/createInfraRuntimeProvider.ts"]
   package__ankhorage_infra -.-> module_src_cli_createInfraRuntimeProvider_ts
+  module_src_cli_createInfraRuntimeProvider_ts --> module_src_capabilities_index_ts
   module_src_cli_createInfraRuntimeProvider_ts --> module_src_cli_constants_ts
   module_src_cli_createInfraRuntimeProvider_ts --> module_src_cli_createProviderCommandDescriptors_ts
   module_src_cli_createInfraRuntimeProvider_ts --> module_src_cli_runInfraCommandAsync_ts
@@ -130,6 +125,7 @@ graph TD
   module_src_constants_ts["src/constants.ts"]
   package__ankhorage_infra -.-> module_src_constants_ts
   module_src_constants_ts --> module_package_json
+  module_src_constants_ts --> module_src_capabilities_index_ts
   module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts["src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts"]
   package__ankhorage_infra -.-> module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts
   module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts --> module_src_features_environment_lifecycle_utils_createInfraFailure_ts

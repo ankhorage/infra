@@ -1,5 +1,6 @@
 graph LR
   module_package_json["package.json"]
+  module_src_capabilities_index_ts["src/capabilities/index.ts"]
   module_src_cli_bin_ts["src/cli/bin.ts"]
   module_src_cli_commands_destroy_ts["src/cli/commands/destroy.ts"]
   module_src_cli_commands_down_ts["src/cli/commands/down.ts"]
@@ -79,44 +80,36 @@ graph LR
   module_src_cli_commands_destroy_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_destroy_ts --> module_src_cli_utils_resolveInfraPersistence_ts
   module_src_cli_commands_destroy_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_destroy_ts --> module_src_constants_ts
   module_src_cli_commands_destroy_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_destroy_ts --> module_src_types_infraOrchestration_ts
   module_src_cli_commands_down_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_down_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_down_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_down_ts --> module_src_constants_ts
   module_src_cli_commands_down_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_generate_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_generate_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_generate_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_generate_ts --> module_src_constants_ts
   module_src_cli_commands_generate_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_outputs_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_outputs_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_outputs_ts --> module_src_cli_utils_writeInfraEnvironmentOutputs_ts
   module_src_cli_commands_outputs_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_outputs_ts --> module_src_constants_ts
   module_src_cli_commands_outputs_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_plan_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_plan_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_plan_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_plan_ts --> module_src_constants_ts
   module_src_cli_commands_plan_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_status_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_status_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_status_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_status_ts --> module_src_constants_ts
   module_src_cli_commands_status_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_up_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_up_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_up_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_up_ts --> module_src_constants_ts
   module_src_cli_commands_up_ts --> module_src_types_infraCli_ts
   module_src_cli_commands_validate_ts --> module_src_cli_utils_prepareInfraCommandOperationAsync_ts
   module_src_cli_commands_validate_ts --> module_src_cli_utils_requireInfraSuccess_ts
   module_src_cli_commands_validate_ts --> module_src_cli_utils_writeInfraStructured_ts
-  module_src_cli_commands_validate_ts --> module_src_constants_ts
   module_src_cli_commands_validate_ts --> module_src_types_infraCli_ts
   module_src_cli_constants_ts --> module_src_cli_commands_destroy_ts
   module_src_cli_constants_ts --> module_src_cli_commands_down_ts
@@ -128,6 +121,7 @@ graph LR
   module_src_cli_constants_ts --> module_src_cli_commands_validate_ts
   module_src_cli_createDefaultInfraCommandContext_ts --> module_src_constants_ts
   module_src_cli_createDefaultInfraCommandContext_ts --> module_src_types_infraCli_ts
+  module_src_cli_createInfraRuntimeProvider_ts --> module_src_capabilities_index_ts
   module_src_cli_createInfraRuntimeProvider_ts --> module_src_cli_constants_ts
   module_src_cli_createInfraRuntimeProvider_ts --> module_src_cli_createProviderCommandDescriptors_ts
   module_src_cli_createInfraRuntimeProvider_ts --> module_src_cli_runInfraCommandAsync_ts
@@ -152,6 +146,7 @@ graph LR
   module_src_cli_utils_writeInfraEnvironmentOutputs_ts --> module_src_types_infraCli_ts
   module_src_cli_utils_writeInfraStructured_ts --> module_src_types_infraCli_ts
   module_src_constants_ts --> module_package_json
+  module_src_constants_ts --> module_src_capabilities_index_ts
   module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts --> module_src_features_environment_lifecycle_utils_createInfraFailure_ts
   module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts --> module_src_features_environment_lifecycle_utils_normalizeInfraEnvironmentKey_ts
   module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraSecretPort_ts --> module_src_features_environment_lifecycle_utils_createInfraFailure_ts

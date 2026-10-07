@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.1.107",
+      "value": "v7.2.0",
       "color": "cb3837"
     },
     {
@@ -91,6 +91,14 @@
       "exports": []
     },
     {
+      "path": "src/capabilities/index.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "CAPABILITIES"
+      ]
+    },
+    {
       "path": "src/cli/bin.ts",
       "isEntrypoint": false,
       "dependencies": [
@@ -106,7 +114,6 @@
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/resolveInfraPersistence.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts",
         "src/types/infraOrchestration.ts"
       ],
@@ -121,7 +128,6 @@
         "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
       "exports": [
@@ -135,7 +141,6 @@
         "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
       "exports": [
@@ -150,7 +155,6 @@
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/writeInfraEnvironmentOutputs.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
       "exports": [
@@ -164,7 +168,6 @@
         "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
       "exports": [
@@ -178,7 +181,6 @@
         "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
       "exports": [
@@ -192,7 +194,6 @@
         "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
       "exports": [
@@ -206,7 +207,6 @@
         "src/cli/utils/prepareInfraCommandOperationAsync.ts",
         "src/cli/utils/requireInfraSuccess.ts",
         "src/cli/utils/writeInfraStructured.ts",
-        "src/constants.ts",
         "src/types/infraCli.ts"
       ],
       "exports": [
@@ -245,6 +245,7 @@
       "path": "src/cli/createInfraRuntimeProvider.ts",
       "isEntrypoint": false,
       "dependencies": [
+        "src/capabilities/index.ts",
         "src/cli/constants.ts",
         "src/cli/createProviderCommandDescriptors.ts",
         "src/cli/runInfraCommandAsync.ts",
@@ -378,10 +379,10 @@
       "path": "src/constants.ts",
       "isEntrypoint": false,
       "dependencies": [
-        "package.json"
+        "package.json",
+        "src/capabilities/index.ts"
       ],
       "exports": [
-        "INFRA_CAPABILITIES",
         "INFRA_COMMAND_CATEGORY",
         "INFRA_PACKAGE_DESCRIPTION",
         "INFRA_PACKAGE_METADATA",
@@ -921,7 +922,6 @@
       "isEntrypoint": false,
       "dependencies": [],
       "exports": [
-        "INFRA_CAPABILITIES",
         "INFRA_COMMAND_CATEGORY",
         "INFRA_PACKAGE_METADATA",
         "INFRA_PACKAGE_NAME",
@@ -2540,7 +2540,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/cli/createInfraRuntimeProvider.ts",
-        "line": 15,
+        "line": 11,
         "column": 1
       }
     },
@@ -4196,6 +4196,11 @@
         "sourcePath": "src/constants.ts"
       },
       {
+        "fromPath": "src/constants.ts",
+        "toPath": "src/capabilities/index.ts",
+        "sourcePath": "src/constants.ts"
+      },
+      {
         "fromPath": "src/index.ts",
         "toPath": "src/features/environment-lifecycle/adapters/outbound/createEnvironmentInfraCredentialPort.ts",
         "sourcePath": "src/index.ts"
@@ -4334,6 +4339,11 @@
         "fromPath": "src/cli/createDefaultInfraCommandContext.ts",
         "toPath": "src/types/infraCli.ts",
         "sourcePath": "src/cli/createDefaultInfraCommandContext.ts"
+      },
+      {
+        "fromPath": "src/cli/createInfraRuntimeProvider.ts",
+        "toPath": "src/capabilities/index.ts",
+        "sourcePath": "src/cli/createInfraRuntimeProvider.ts"
       },
       {
         "fromPath": "src/cli/createInfraRuntimeProvider.ts",
@@ -4512,11 +4522,6 @@
       },
       {
         "fromPath": "src/cli/commands/destroy.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/destroy.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/destroy.ts",
         "toPath": "src/types/infraCli.ts",
         "sourcePath": "src/cli/commands/destroy.ts"
       },
@@ -4547,11 +4552,6 @@
       },
       {
         "fromPath": "src/cli/commands/down.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/down.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/down.ts",
         "toPath": "src/types/infraCli.ts",
         "sourcePath": "src/cli/commands/down.ts"
       },
@@ -4572,11 +4572,6 @@
       },
       {
         "fromPath": "src/cli/commands/generate.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/generate.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/generate.ts",
         "toPath": "src/types/infraCli.ts",
         "sourcePath": "src/cli/commands/generate.ts"
       },
@@ -4594,11 +4589,6 @@
         "fromPath": "src/cli/commands/generate.ts",
         "toPath": "src/cli/utils/writeInfraStructured.ts",
         "sourcePath": "src/cli/commands/generate.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/outputs.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/outputs.ts"
       },
       {
         "fromPath": "src/cli/commands/outputs.ts",
@@ -4627,11 +4617,6 @@
       },
       {
         "fromPath": "src/cli/commands/plan.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/plan.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/plan.ts",
         "toPath": "src/types/infraCli.ts",
         "sourcePath": "src/cli/commands/plan.ts"
       },
@@ -4649,11 +4634,6 @@
         "fromPath": "src/cli/commands/plan.ts",
         "toPath": "src/cli/utils/writeInfraStructured.ts",
         "sourcePath": "src/cli/commands/plan.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/status.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/status.ts"
       },
       {
         "fromPath": "src/cli/commands/status.ts",
@@ -4677,11 +4657,6 @@
       },
       {
         "fromPath": "src/cli/commands/up.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/up.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/up.ts",
         "toPath": "src/types/infraCli.ts",
         "sourcePath": "src/cli/commands/up.ts"
       },
@@ -4699,11 +4674,6 @@
         "fromPath": "src/cli/commands/up.ts",
         "toPath": "src/cli/utils/writeInfraStructured.ts",
         "sourcePath": "src/cli/commands/up.ts"
-      },
-      {
-        "fromPath": "src/cli/commands/validate.ts",
-        "toPath": "src/constants.ts",
-        "sourcePath": "src/cli/commands/validate.ts"
       },
       {
         "fromPath": "src/cli/commands/validate.ts",

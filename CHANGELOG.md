@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.2.0
+
+### Minor Changes
+
+- d766993: feat(capabilities): publish canonical Infra lifecycle capability descriptors
+
 ## 7.1.107
 
 ### Patch Changes
