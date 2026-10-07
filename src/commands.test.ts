@@ -3,6 +3,7 @@ import type { AppManifest } from '@ankhorage/contracts';
 import type { InfraEnvironmentSpec, InfraLedger, InfraResult } from '@ankhorage/contracts/infra';
 import { describe, expect, test } from 'bun:test';
 
+import { CAPABILITIES } from './capabilities/index.js';
 import { INFRA_COMMANDS } from './cli/constants.js';
 import { createInfraRuntimeProvider } from './cli/createInfraRuntimeProvider.js';
 import { createProviderCommandDescriptors } from './cli/createProviderCommandDescriptors.js';
@@ -17,6 +18,9 @@ describe('canonical Infra commands', () => {
   test('exposes the same locked eight-command surface everywhere', () => {
     const names = ['validate', 'plan', 'generate', 'up', 'status', 'outputs', 'down', 'destroy'];
     expect(INFRA_COMMANDS.map(({ standaloneName }) => standaloneName)).toEqual(names);
+    expect(INFRA_COMMANDS.map(({ capability }) => capability)).toEqual(
+      CAPABILITIES.map(({ id }) => id),
+    );
     expect(createProviderCommandDescriptors().map(({ path }) => path.join(' '))).toEqual(names);
     const help = renderProviderHelp({
       commandPrefix: ['ankhorage-infra'],

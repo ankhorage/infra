@@ -35,8 +35,8 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/ankh": "^0.11.1",
-    "@ankhorage/contracts": "^22.8.103",
+    "@ankhorage/ankh": "^0.12.0",
+    "@ankhorage/contracts": "^24.1.0",
     "@ankhorage/utility": "^1.9.85"
   },
   "files": [
@@ -63,6 +63,11 @@
       "import": "./dist/metadata/index.js",
       "default": "./dist/metadata/index.js"
     },
+    "./capabilities": {
+      "types": "./dist/capabilities/index.d.ts",
+      "import": "./dist/capabilities/index.js",
+      "default": "./dist/capabilities/index.js"
+    },
     "./project": {
       "types": "./dist/project/index.d.ts",
       "import": "./dist/project/index.js",
@@ -77,14 +82,126 @@
     "category": "infra",
     "provider": "./dist/cli/index.js",
     "capabilities": [
-      "infra.validate",
-      "infra.plan",
-      "infra.generate",
-      "infra.up",
-      "infra.status",
-      "infra.outputs",
-      "infra.down",
-      "infra.destroy"
+      {
+        "id": "infra.validate",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Validate infrastructure",
+        "description": "Validate the manifest, credentials, compatibility, and selected infrastructure adapters."
+      },
+      {
+        "id": "infra.plan",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Plan infrastructure",
+        "description": "Calculate the infrastructure changes required for the selected environment."
+      },
+      {
+        "id": "infra.generate",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Generate infrastructure",
+        "description": "Generate infrastructure artifacts for the selected environment."
+      },
+      {
+        "id": "infra.up",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Start infrastructure",
+        "description": "Ensure and reconcile the selected infrastructure environment."
+      },
+      {
+        "id": "infra.status",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Get infrastructure status",
+        "description": "Inspect the current status of the selected infrastructure environment."
+      },
+      {
+        "id": "infra.outputs",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Get infrastructure outputs",
+        "description": "Read generated public and referenced outputs for the selected infrastructure environment."
+      },
+      {
+        "id": "infra.down",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Stop infrastructure",
+        "description": "Suspend the selected infrastructure environment while retaining its state."
+      },
+      {
+        "id": "infra.destroy",
+        "owner": "@ankhorage/infra",
+        "access": [
+          "invoke"
+        ],
+        "binding": {
+          "kind": "action",
+          "bindableAs": [
+            "target"
+          ]
+        },
+        "label": "Destroy infrastructure",
+        "description": "Destroy the selected infrastructure environment after explicit confirmation."
+      }
     ]
   },
   "publishConfig": {

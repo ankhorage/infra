@@ -1,4 +1,5 @@
-import { INFRA_CAPABILITIES } from '../../constants.js';
+import type { Capability } from '@ankhorage/contracts/capabilities';
+
 import type { InfraCommandDefinition } from '../../types/infraCli.js';
 import { prepareInfraCommandOperationAsync } from '../utils/prepareInfraCommandOperationAsync.js';
 import { requireInfraSuccess } from '../utils/requireInfraSuccess.js';
@@ -9,7 +10,7 @@ import { writeInfraStructured } from '../utils/writeInfraStructured.js';
 export const outputs = {
   standaloneName: 'outputs',
   path: ['outputs'],
-  capability: INFRA_CAPABILITIES[5],
+  capability: 'infra.outputs' satisfies Capability['id'],
   summary: 'Print safe public outputs and secret references.',
   async run(request, services) {
     const operation = await prepareInfraCommandOperationAsync(request, services);

@@ -1,6 +1,6 @@
+import type { Capability } from '@ankhorage/contracts/capabilities';
 import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
 
-import { INFRA_CAPABILITIES } from '../../constants.js';
 import type { InfraCommandDefinition } from '../../types/infraCli.js';
 import type { InfraDestroyOperationRequest } from '../../types/infraOrchestration.js';
 import { prepareInfraCommandOperationAsync } from '../utils/prepareInfraCommandOperationAsync.js';
@@ -12,7 +12,7 @@ import { writeInfraStructured } from '../utils/writeInfraStructured.js';
 export const destroy = {
   standaloneName: 'destroy',
   path: ['destroy'],
-  capability: INFRA_CAPABILITIES[7],
+  capability: 'infra.destroy' satisfies Capability['id'],
   summary: 'Destroy exact owned resources behind explicit confirmation.',
   async run(request, services) {
     const operation = await prepareInfraCommandOperationAsync(request, services, true);

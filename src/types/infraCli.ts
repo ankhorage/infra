@@ -1,4 +1,4 @@
-import type { AnkhCapabilityId } from '@ankhorage/contracts/cli';
+import type { Capability } from '@ankhorage/contracts/capabilities';
 import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
 import type {
   InfraEnvironmentSpec,
@@ -57,7 +57,7 @@ type InfraCommandImplementation = (
 ) => Promise<InfraCommandRunResult>;
 
 export interface InfraCommandDefinition {
-  readonly capability: AnkhCapabilityId;
+  readonly capability: Capability['id'];
   readonly path: readonly [InfraCommandName];
   readonly standaloneName: InfraCommandName;
   readonly summary: string;
