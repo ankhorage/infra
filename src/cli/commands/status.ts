@@ -1,4 +1,5 @@
-import { INFRA_CAPABILITIES } from '../../constants.js';
+import type { Capability } from '@ankhorage/contracts/capabilities';
+
 import type { InfraCommandDefinition } from '../../types/infraCli.js';
 import { prepareInfraCommandOperationAsync } from '../utils/prepareInfraCommandOperationAsync.js';
 import { requireInfraSuccess } from '../utils/requireInfraSuccess.js';
@@ -8,7 +9,7 @@ import { writeInfraStructured } from '../utils/writeInfraStructured.js';
 export const status = {
   standaloneName: 'status',
   path: ['status'],
-  capability: INFRA_CAPABILITIES[4],
+  capability: 'infra.status' satisfies Capability['id'],
   summary: 'Aggregate provider-neutral environment status.',
   async run(request, services) {
     const operation = await prepareInfraCommandOperationAsync(request, services);

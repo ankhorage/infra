@@ -1,4 +1,5 @@
-import { INFRA_CAPABILITIES } from '../../constants.js';
+import type { Capability } from '@ankhorage/contracts/capabilities';
+
 import type { InfraCommandDefinition } from '../../types/infraCli.js';
 import { prepareInfraCommandOperationAsync } from '../utils/prepareInfraCommandOperationAsync.js';
 import { requireInfraSuccess } from '../utils/requireInfraSuccess.js';
@@ -8,7 +9,7 @@ import { writeInfraStructured } from '../utils/writeInfraStructured.js';
 export const up = {
   standaloneName: 'up',
   path: ['up'],
-  capability: INFRA_CAPABILITIES[3],
+  capability: 'infra.up' satisfies Capability['id'],
   summary: 'Idempotently ensure and reconcile the selected environment.',
   async run(request, services) {
     const operation = await prepareInfraCommandOperationAsync(request, services);

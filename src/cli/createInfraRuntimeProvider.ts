@@ -1,11 +1,7 @@
 import type { AnkhRuntimeCommandProvider } from '@ankhorage/ankh';
 
-import {
-  INFRA_CAPABILITIES,
-  INFRA_COMMAND_CATEGORY,
-  INFRA_PACKAGE_NAME,
-  INFRA_PACKAGE_VERSION,
-} from '../constants.js';
+import { CAPABILITIES } from '../capabilities/index.js';
+import { INFRA_COMMAND_CATEGORY, INFRA_PACKAGE_NAME, INFRA_PACKAGE_VERSION } from '../constants.js';
 import type { CreateInfraRuntimeProviderOptions } from '../types/infraCli.js';
 import { INFRA_COMMANDS } from './constants.js';
 import { createProviderCommandDescriptors } from './createProviderCommandDescriptors.js';
@@ -20,7 +16,7 @@ export function createInfraRuntimeProvider(
     id: INFRA_PACKAGE_NAME,
     category: INFRA_COMMAND_CATEGORY,
     version: INFRA_PACKAGE_VERSION,
-    capabilities: [...INFRA_CAPABILITIES],
+    capabilities: CAPABILITIES,
     commands: createProviderCommandDescriptors(),
     handlers: INFRA_COMMANDS.map((command) => ({
       path: command.path,
