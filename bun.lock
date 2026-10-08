@@ -6,7 +6,7 @@
       "name": "@ankhorage/infra",
       "dependencies": {
         "@ankhorage/ankh": "^0.12.2",
-        "@ankhorage/contracts": "^24.1.0",
+        "@ankhorage/contracts": "^24.2.0",
         "@ankhorage/utility": "^1.9.85",
       },
       "devDependencies": {
@@ -15,8 +15,8 @@
         "@ankhorage/docker-compose": "^0.5.3",
         "@ankhorage/hetzner": "^0.3.0",
         "@ankhorage/k3s": "^0.4.1",
-        "@ankhorage/local": "^0.3.15",
-        "@ankhorage/minikube": "^0.4.117",
+        "@ankhorage/local": "^0.3.16",
+        "@ankhorage/minikube": "^0.4.118",
         "@ankhorage/paradox": "^0.3.1",
         "@ankhorage/r2": "^0.2.0",
         "@ankhorage/supabase": "^0.5.14",
