@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.2.6
+
+### Patch Changes
+
+- 6d94c68: Consume canonical Capability declarations and runtime mechanics from their released owning packages.
+
 ## 7.2.5
 
 ### Patch Changes
