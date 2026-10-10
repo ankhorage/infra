@@ -1,4 +1,4 @@
-import type { Capability } from '@ankhorage/contracts/capabilities';
+import type { Capability } from '@ankhorage/contracts/capability';
 import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
 
 import type { InfraCommandDefinition } from '../../types/infraCli.js';
