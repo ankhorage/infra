@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.2.8
+
+### Patch Changes
+
+- 1b64453: Update dependencies: `@ankhorage/capability`.
+
 ## 7.2.7
 
 ### Patch Changes
