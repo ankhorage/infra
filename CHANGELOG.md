@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.2.9
+
+### Patch Changes
+
+- 949c64e: Update dependencies: `@ankhorage/ankh`.
+
 ## 7.2.8
 
 ### Patch Changes
