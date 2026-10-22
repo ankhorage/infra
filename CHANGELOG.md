@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.2.10
+
+### Patch Changes
+
+- 31ac9bf: Update dependencies: `@ankhorage/utility`.
+
 ## 7.2.9
 
 ### Patch Changes
