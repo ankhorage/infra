@@ -16,19 +16,19 @@ import {
   type K3sClusterSpec,
   type K3sControlPlane,
   type K3sNodeAccess,
-} from '@ankhorage/k3s';
+} from '@ankhorage/infra-k3s';
 import {
   createInfraAdapter as createLocalInfraAdapter,
   infraAdapterDescriptor as localInfraAdapterDescriptor,
   type LocalHostObservation,
   type LocalHostProbe,
-} from '@ankhorage/local';
+} from '@ankhorage/infra-local';
 import {
   createInfraAdapter as createSupabaseInfraAdapter,
   infraAdapterDescriptor as supabaseInfraAdapterDescriptor,
   type SupabaseControlPlane,
   type SupabaseControlPlaneRequest,
-} from '@ankhorage/supabase';
+} from '@ankhorage/infra-supabase';
 import { expect, test } from 'bun:test';
 
 import { destroyInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.js';

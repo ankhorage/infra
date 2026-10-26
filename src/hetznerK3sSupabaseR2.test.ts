@@ -13,7 +13,7 @@ import {
   type HetznerProjectIdentity,
   type HetznerResourceId,
   infraAdapterDescriptor as hetznerInfraAdapterDescriptor,
-} from '@ankhorage/hetzner';
+} from '@ankhorage/infra-hetzner';
 import {
   createInfraAdapter as createK3sInfraAdapter,
   infraAdapterDescriptor as k3sInfraAdapterDescriptor,
@@ -21,20 +21,20 @@ import {
   type K3sClusterSpec,
   type K3sControlPlane,
   type K3sNodeAccess,
-} from '@ankhorage/k3s';
+} from '@ankhorage/infra-k3s';
 import {
   createInfraAdapter as createR2InfraAdapter,
   infraAdapterDescriptor as r2InfraAdapterDescriptor,
   type R2BucketControlPlane,
   type R2BucketObservation,
   type R2CloudRequest,
-} from '@ankhorage/r2';
+} from '@ankhorage/infra-r2';
 import {
   createInfraAdapter as createSupabaseInfraAdapter,
   infraAdapterDescriptor as supabaseInfraAdapterDescriptor,
   type SupabaseControlPlane,
   type SupabaseControlPlaneRequest,
-} from '@ankhorage/supabase';
+} from '@ankhorage/infra-supabase';
 import { expect, test } from 'bun:test';
 
 import { planInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/planInfraEnvironmentAsync.js';
@@ -57,7 +57,7 @@ const manifest = {
       },
       database: { provider: 'supabase', tier: 'prod' },
       auth: { provider: 'supabase' },
-      objectStorage: { provider: 'r2', accountId: r2AccountId, buckets: [r2Bucket] },
+      objectStorage: { provider: 'r2', accountId: r2AccountId, buckets: { [r2Bucket]: true } },
       networking: {
         domain,
         publicBaseUrl,

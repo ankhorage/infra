@@ -33,11 +33,11 @@ inputs, but its behavior is assigned to exactly one owner.
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | Contracts                         | Canonical portable types, provider IDs, compatibility and validation metadata in `@ankhorage/contracts`                              |
 | Infra                             | Provider-neutral use cases, adapter resolution/composition, dependency ordering, ledger and public CLI in `@ankhorage/infra`         |
-| Local                             | Validation and portable targeting of the current host in `@ankhorage/local`                                                          |
+| Local                             | Validation and portable targeting of the current host in `@ankhorage/infra-local`                                                    |
 | Kubernetes                        | Standard Kubernetes desired-resource projection, reconcile, readiness, status and output behavior in `@ankhorage/kubernetes`         |
-| Minikube                          | Minikube profile/cluster lifecycle and Minikube-specific runtime bridging in `@ankhorage/minikube`                                   |
-| Supabase                          | Supabase platform topology, migrations, readiness and outputs in `@ankhorage/supabase`                                               |
-| Cerbos                            | Cerbos policy/configuration/workload intent in `@ankhorage/cerbos`                                                                   |
+| Minikube                          | Minikube profile/cluster lifecycle and Minikube-specific runtime bridging in `@ankhorage/infra-minikube`                             |
+| Supabase                          | Supabase platform topology, migrations, readiness and outputs in `@ankhorage/infra-supabase`                                         |
+| Cerbos                            | Cerbos policy/configuration/workload intent in `@ankhorage/infra-cerbos`                                                             |
 | Supabase Vault                    | Canonical SecretStore implementation and migration in `@ankhorage/supabase-vault`                                                    |
 | Application workload producer     | The app/CI build boundary that produces a prebuilt image and an explicit portable workload; it is outside the Infra runtime contract |
 | Studio/local development consumer | Studio or another caller that consumes Infra outputs for authoring and local app runtime configuration                               |

@@ -54,10 +54,10 @@ describe('selected adapter resolution', () => {
 
     expect(result.ok).toBe(true);
     expect(requested).toEqual([
-      '@ankhorage/local',
-      '@ankhorage/docker-compose',
-      '@ankhorage/supabase',
-      '@ankhorage/cerbos',
+      '@ankhorage/infra-local',
+      '@ankhorage/infra-docker-compose',
+      '@ankhorage/infra-supabase',
+      '@ankhorage/infra-cerbos',
     ]);
     if (!result.ok) throw new Error('Expected adapters.');
     expect(result.value.services.map(({ descriptor }) => descriptor.id)).toEqual([
@@ -66,7 +66,7 @@ describe('selected adapter resolution', () => {
     ]);
   });
 
-  it('fails closed for unavailable and malformed selected packages', async () => {
+  it('classifies failed imports, missing exports, and invalid descriptors separately', async () => {
     const missing = await resolveInfraAdaptersAsync(local, {
       loadAsync: () => Promise.reject(new Error('missing')),
     });
@@ -75,13 +75,27 @@ describe('selected adapter resolution', () => {
       missing.diagnostics.every(({ code }) => code === 'infra-adapter-package-unavailable'),
     ).toBe(true);
 
-    const malformed = await resolveInfraAdaptersAsync(local, {
+    const missingExport = await resolveInfraAdaptersAsync(local, {
       loadAsync: () => Promise.resolve({ createInfraAdapter: () => ({}) }),
     });
-    expect(malformed.ok).toBe(false);
-    expect(malformed.diagnostics.every(({ code }) => code === 'infra-adapter-module-invalid')).toBe(
-      true,
-    );
+    expect(missingExport.ok).toBe(false);
+    expect(
+      missingExport.diagnostics.every(({ code }) => code === 'infra-adapter-export-missing'),
+    ).toBe(true);
+
+    const staleDescriptor = await resolveInfraAdaptersAsync(local, {
+      loadAsync(packageName) {
+        const descriptor = descriptorForPackage(packageName);
+        return Promise.resolve({
+          infraAdapterDescriptor: { ...descriptor, package: '@ankhorage/supabase' },
+          createInfraAdapter: () => createAdapter(descriptor),
+        });
+      },
+    });
+    expect(staleDescriptor.ok).toBe(false);
+    expect(
+      staleDescriptor.diagnostics.every(({ code }) => code === 'infra-adapter-descriptor-invalid'),
+    ).toBe(true);
   });
 
   it('rejects a factory that throws or returns another valid adapter identity', async () => {
