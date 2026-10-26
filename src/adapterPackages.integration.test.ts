@@ -70,7 +70,7 @@ function production(withOptionalServices: boolean): InfraEnvironmentSpec {
     database: { provider: 'supabase' },
     ...(withOptionalServices
       ? {
-          objectStorage: { provider: 'r2' as const, buckets: ['media'] },
+          objectStorage: { provider: 'r2' as const, buckets: { media: true } },
           authz: { provider: 'cerbos' as const, kind: 'ABAC' as const },
           secretStore: { provider: 'supabase-vault' as const },
         }

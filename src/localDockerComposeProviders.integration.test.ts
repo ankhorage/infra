@@ -31,7 +31,7 @@ const manifest = {
       },
       database: { provider: 'supabase', tier: 'dev' },
       auth: { provider: 'supabase' },
-      objectStorage: { provider: 'supabase', buckets: [bucket] },
+      objectStorage: { provider: 'supabase', buckets: { [bucket]: true } },
       authz: {
         provider: 'cerbos',
         kind: 'ABAC',

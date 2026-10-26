@@ -15,7 +15,7 @@ import {
   type HetznerProjectIdentity,
   type HetznerResourceId,
   infraAdapterDescriptor as hetznerInfraAdapterDescriptor,
-} from '@ankhorage/hetzner';
+} from '@ankhorage/infra-hetzner';
 import {
   createInfraAdapter as createK3sInfraAdapter,
   infraAdapterDescriptor as k3sInfraAdapterDescriptor,
@@ -23,13 +23,13 @@ import {
   type K3sClusterSpec,
   type K3sControlPlane,
   type K3sNodeAccess,
-} from '@ankhorage/k3s';
+} from '@ankhorage/infra-k3s';
 import {
   createInfraAdapter as createSupabaseInfraAdapter,
   infraAdapterDescriptor as supabaseInfraAdapterDescriptor,
   type SupabaseControlPlane,
   type SupabaseControlPlaneRequest,
-} from '@ankhorage/supabase';
+} from '@ankhorage/infra-supabase';
 import { expect, test } from 'bun:test';
 
 import { destroyInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/destroyInfraEnvironmentAsync.js';
@@ -71,7 +71,7 @@ const manifest = {
       auth: { provider: 'supabase' },
       objectStorage: {
         provider: 'supabase',
-        buckets: ['media'],
+        buckets: { media: true },
         backend: { ...persistenceTarget, bucket: 'infra145-storage' },
       },
       networking: {

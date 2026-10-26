@@ -73,12 +73,12 @@ jobs:
           import { dirname, resolve } from "node:path";
 
           const packageJson = await Bun.file("package.json").json();
-          const minikubeEntry = import.meta.resolve("@ankhorage/minikube");
+          const minikubeEntry = import.meta.resolve("@ankhorage/infra-minikube");
           const minikube = await Bun.file(new URL("../package.json", minikubeEntry)).json();
-          const minikubeRange = packageJson.devDependencies?.["@ankhorage/minikube"];
-          const supabaseEntry = import.meta.resolve("@ankhorage/supabase");
+          const minikubeRange = packageJson.devDependencies?.["@ankhorage/infra-minikube"];
+          const supabaseEntry = import.meta.resolve("@ankhorage/infra-supabase");
           const supabase = await Bun.file(new URL("../package.json", supabaseEntry)).json();
-          const supabaseRange = packageJson.devDependencies?.["@ankhorage/supabase"];
+          const supabaseRange = packageJson.devDependencies?.["@ankhorage/infra-supabase"];
           const minikubeRequire = createRequire(minikubeEntry);
           const driverEntry = minikubeRequire.resolve("@ankhorage/kubernetes");
           const driver = await Bun.file(resolve(dirname(driverEntry), "../package.json")).json();

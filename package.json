@@ -37,7 +37,7 @@
   "dependencies": {
     "@ankhorage/ankh": "^0.13.2",
     "@ankhorage/capability": "^0.2.2",
-    "@ankhorage/contracts": "^26.0.2",
+    "@ankhorage/contracts": "^26.2.2",
     "@ankhorage/utility": "^1.10.0"
   },
   "files": [
@@ -230,16 +230,16 @@
     "knip:test": "bun run knip:check"
   },
   "devDependencies": {
-    "@ankhorage/cerbos": "^0.2.0",
+    "@ankhorage/infra-cerbos": "^0.2.3",
     "@ankhorage/devtools": "^2.3.30",
-    "@ankhorage/docker-compose": "^0.5.3",
-    "@ankhorage/hetzner": "^0.3.0",
-    "@ankhorage/k3s": "^0.4.1",
-    "@ankhorage/local": "^0.3.24",
-    "@ankhorage/minikube": "^0.4.126",
+    "@ankhorage/infra-docker-compose": "^0.5.6",
+    "@ankhorage/infra-hetzner": "^0.3.3",
+    "@ankhorage/infra-k3s": "^0.4.4",
+    "@ankhorage/infra-local": "^0.3.27",
+    "@ankhorage/infra-minikube": "^0.4.129",
     "@ankhorage/paradox": "^0.3.5",
-    "@ankhorage/r2": "^0.2.0",
-    "@ankhorage/supabase": "^0.5.14",
+    "@ankhorage/infra-r2": "^0.3.0",
+    "@ankhorage/infra-supabase": "^0.6.0",
     "@ankhorage/supabase-vault": "^0.3.12",
     "@types/bun": "^1.4.2",
     "@types/node": "^26.6.5",

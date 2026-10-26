@@ -131,27 +131,39 @@ async function loadModuleAsync(
 ): Promise<InfraResult<InfraAdapterPackageModule>> {
   try {
     const loaded: unknown = await resolver.loadAsync(packageName);
-    return isInfraAdapterPackageModule(loaded)
-      ? { ok: true, value: loaded, diagnostics: [] }
-      : adapterFailure(
-          'infra-adapter-module-invalid',
-          `Selected adapter package ${packageName} does not export its canonical descriptor and factory.`,
-        );
+    if (
+      !isRecord(loaded) ||
+      !('infraAdapterDescriptor' in loaded) ||
+      !('createInfraAdapter' in loaded)
+    )
+      return adapterFailure(
+        'infra-adapter-export-missing',
+        `Selected adapter package ${packageName} is missing its canonical descriptor or factory export.`,
+      );
+    if (!isInfraAdapterDescriptor(loaded.infraAdapterDescriptor))
+      return adapterFailure(
+        'infra-adapter-descriptor-invalid',
+        `Selected adapter package ${packageName} exported a descriptor that does not match the canonical catalog.`,
+      );
+    if (!isInfraAdapterFactory(loaded.createInfraAdapter))
+      return adapterFailure(
+        'infra-adapter-export-missing',
+        `Selected adapter package ${packageName} is missing its canonical descriptor or factory export.`,
+      );
+    return {
+      ok: true,
+      value: {
+        infraAdapterDescriptor: loaded.infraAdapterDescriptor,
+        createInfraAdapter: loaded.createInfraAdapter,
+      },
+      diagnostics: [],
+    };
   } catch {
     return adapterFailure(
       'infra-adapter-package-unavailable',
       `Selected adapter package ${packageName} could not be loaded.`,
     );
   }
-}
-
-/*** Validate the runtime shape of a dynamically loaded provider package. */
-function isInfraAdapterPackageModule(value: unknown): value is InfraAdapterPackageModule {
-  return (
-    isRecord(value) &&
-    isInfraAdapterDescriptor(value.infraAdapterDescriptor) &&
-    typeof value.createInfraAdapter === 'function'
-  );
 }
 
 /*** Validate one compute adapter instance without trusting a dynamic module cast. */
@@ -254,4 +266,9 @@ function adapterFailure(code: string, message: string): InfraResult<never> {
 /*** Narrow dynamically loaded module and adapter values. */
 function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
   return typeof value === 'object' && value !== null;
+}
+
+/*** Narrow a dynamically loaded adapter factory without trusting its module type. */
+function isInfraAdapterFactory(value: unknown): value is () => unknown {
+  return typeof value === 'function';
 }
