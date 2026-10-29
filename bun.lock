@@ -12,7 +12,7 @@
       },
       "devDependencies": {
         "@ankhorage/cerbos": "^0.2.0",
-        "@ankhorage/devtools": "^2.3.35",
+        "@ankhorage/devtools": "^2.3.36",
         "@ankhorage/docker-compose": "^0.5.3",
         "@ankhorage/hetzner": "^0.3.0",
         "@ankhorage/k3s": "^0.4.1",
@@ -41,7 +41,7 @@
 
     "@ankhorage/contracts": ["@ankhorage/contracts@26.2.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.1", "@ankhorage/utility": "^1.10.0" } }, "sha512-wUyJmFRiypoo5wqZCHG7KZm01bl++M45DaFmc8mAWq6uKZyXUH2FkvNsRXhH4XoZC1gz8unmwuPo9JN8tIx33w=="],
 
-    "@ankhorage/devtools": ["@ankhorage/devtools@2.3.35", "", { "dependencies": { "@ankhorage/apm": "^0.8.15", "@ankhorage/capability": "^0.2.2", "@ankhorage/contracts": "^26.3.0", "@ankhorage/project-detector": "^0.3.5", "@ankhorage/rules-repository": "^0.2.0", "@ankhorage/utility": "^0.5.5", "@changesets/cli": "^3.0.3", "@eslint/compat": "^2.1.1", "@eslint/js": "^10.0.1", "@next/eslint-plugin-next": "^16.4.3", "eslint": "^10.13.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.7", "eslint-plugin-react": "^7.37.5", "eslint-plugin-react-hooks": "^7.1.1", "eslint-plugin-react-native": "^5.0.0", "eslint-plugin-security": "^4.2.0", "eslint-plugin-simple-import-sort": "^14.0.0", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.44.0", "prettier": "^3.9.10", "typescript": "~6.0.3", "typescript-eslint": "^8.72.1" }, "bin": { "ankhorage-knip": "dist/cli/bin/knip.js", "ankhorage-eslint": "dist/cli/bin/eslint.js", "ankhorage-prettier": "dist/cli/bin/prettier.js", "ankhorage-changeset": "dist/cli/bin/changeset.js", "ankhorage-structure": "dist/cli/bin/structure.js", "ankhorage-repository": "dist/cli/bin/repository.js", "ankhorage-apm-release": "dist/cli/bin/apm-release.js" } }, "sha512-YsQrmvSKc/wltZOL4zjn4vSSeM051u2mxacjuyIpuLRaEG8vT4bkqIzXjnQgsR+6apLQUiEtsggb7ncUzPVQlw=="],
+    "@ankhorage/devtools": ["@ankhorage/devtools@2.3.36", "", { "dependencies": { "@ankhorage/apm": "^0.8.15", "@ankhorage/capability": "^0.2.2", "@ankhorage/contracts": "^26.3.0", "@ankhorage/project-detector": "^0.3.5", "@ankhorage/rules-repository": "0.2.3", "@ankhorage/utility": "^0.5.5", "@changesets/cli": "^3.0.3", "@eslint/compat": "^2.1.1", "@eslint/js": "^10.0.1", "@next/eslint-plugin-next": "^16.4.3", "eslint": "^10.13.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.7", "eslint-plugin-react": "^7.37.5", "eslint-plugin-react-hooks": "^7.1.1", "eslint-plugin-react-native": "^5.0.0", "eslint-plugin-security": "^4.2.0", "eslint-plugin-simple-import-sort": "^14.0.0", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.44.0", "prettier": "^3.9.10", "typescript": "~6.0.3", "typescript-eslint": "^8.72.1" }, "bin": { "ankhorage-knip": "dist/cli/bin/knip.js", "ankhorage-eslint": "dist/cli/bin/eslint.js", "ankhorage-prettier": "dist/cli/bin/prettier.js", "ankhorage-changeset": "dist/cli/bin/changeset.js", "ankhorage-structure": "dist/cli/bin/structure.js", "ankhorage-repository": "dist/cli/bin/repository.js", "ankhorage-apm-release": "dist/cli/bin/apm-release.js" } }, "sha512-556ufmkQ2UCXeXgC6TH5IyF09SBCyaDLUOygfYBSAlH8CYJvikXwb+go8lje9AMU1WCMw9DDWQRb1gWd13WI1Q=="],
 
     "@ankhorage/docker-compose": ["@ankhorage/docker-compose@0.5.3", "", { "dependencies": { "@ankhorage/contracts": "^19.1.0" } }, "sha512-D3NX2qNEVoAviFPHNrd20d5bib2nTN7ccWzLLFKqyGEEBcrkg1VDNsgNyzvrkChRgr23Eeyw3mRWBpDSGnOAbg=="],
 
@@ -65,7 +65,7 @@
 
     "@ankhorage/rules-documentation": ["@ankhorage/rules-documentation@0.3.4", "", { "dependencies": { "@ankhorage/rules": "^0.2.0" } }, "sha512-UdjehHVOajgMQo1yQFUxQ7S1quWTvslnI/FveSGQomuTGXTj//k8Tm3QTiYijcO3qHiWAKByI311Q1IjZpLOMQ=="],
 
-    "@ankhorage/rules-repository": ["@ankhorage/rules-repository@0.2.0", "", { "dependencies": { "@ankhorage/rules": "^0.2.0" } }, "sha512-ugJq6urUXGpexwcJAERSfauHJAUtWN2ZkogsAMYUX9dMCH8wXcQrdWOuYHjL5G7wB6f0IX2Ebjri7091AuF1XQ=="],
+    "@ankhorage/rules-repository": ["@ankhorage/rules-repository@0.2.3", "", { "dependencies": { "@ankhorage/rules": "^0.2.0" } }, "sha512-NPQ45JiorrNXvSNiNDiiyz7O5KiojJRi4ai1924L5Gxnm86wFmhUoti8/t0+kyV/no1kzY39z5NOli2W38loUQ=="],
 
     "@ankhorage/supabase": ["@ankhorage/supabase@0.5.14", "", { "dependencies": { "@ankhorage/contracts": "^22.0.3", "@ankhorage/supabase-vault": "^0.3.3" } }, "sha512-kiYMORsMtEeNf6i5ytrAcT8/2W7n0iHJvsysgdiI4bWcUUkOYoAYDcpaRwZ7IplDMq3qu7TPluDzDAN/GyOdCA=="],
 
