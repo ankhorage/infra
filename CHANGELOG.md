@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.3.1
+
+### Patch Changes
+
+- ff667a0: Update dependencies: `@ankhorage/contracts`.
+
 ## 7.3.0
 
 ### Minor Changes

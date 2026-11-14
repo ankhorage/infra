@@ -2,8 +2,10 @@
   "packageName": "INFRA",
   "packageId": "@ankhorage/infra",
   "description": "Executable infra provider and standalone CLI for Ankhorage project workflows.",
-  "collaborators": null,
-  "donation": null,
+  "collaborators": true,
+  "donation": {
+    "account": "ankhorage"
+  },
   "badges": [
     {
       "id": "license",
@@ -14,7 +16,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.3.0",
+      "value": "v7.3.1",
       "color": "cb3837"
     },
     {
