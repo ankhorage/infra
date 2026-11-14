@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.3.0
+
+### Minor Changes
+
+- b182936: Validate declarative internal API-to-workload assignments before planning or infrastructure mutation.
+
 ## 7.2.12
 
 ### Patch Changes

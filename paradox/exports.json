@@ -1022,6 +1022,43 @@
     "structuredRows": []
   },
   {
+    "name": "InfraWorkloadApiAssignment",
+    "title": null,
+    "description": null,
+    "isReadme": false,
+    "see": [],
+    "security": [],
+    "kind": "type",
+    "modulePath": "src/types/infraWorkloadApiComposition.ts",
+    "sourceLocation": {
+      "filePath": "src/types/infraWorkloadApiComposition.ts",
+      "line": 2,
+      "column": 1
+    },
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "apiId",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "workloadId",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
     "name": "orderInfraPlanActions",
     "title": null,
     "description": "Order plan actions dependency-first and reject duplicate owners or dependency cycles.",
@@ -1336,6 +1373,50 @@
     "structuredRows": []
   },
   {
+    "name": "resolveInfraWorkloadApiComposition",
+    "title": null,
+    "description": "Resolve internal API declarations to exactly one declared workload without selecting HTTP transport.",
+    "isReadme": false,
+    "see": [],
+    "security": [],
+    "kind": "function",
+    "modulePath": "src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts",
+    "sourceLocation": {
+      "filePath": "src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts",
+      "line": 11,
+      "column": 1
+    },
+    "exportPaths": [
+      "src/index.ts"
+    ],
+    "relatedSymbols": [
+      "InfraWorkloadApiAssignment"
+    ],
+    "signatures": [
+      {
+        "label": "(manifest: InfraManifest, workloads: readonly InfraWorkloadSpec[]) => InfraResult<readonly InfraWorkloadApiAssignment[]>",
+        "parameters": [
+          {
+            "name": "manifest",
+            "type": "InfraManifest",
+            "required": true,
+            "description": null
+          },
+          {
+            "name": "workloads",
+            "type": "readonly InfraWorkloadSpec[]",
+            "required": true,
+            "description": null
+          }
+        ],
+        "returnType": "InfraResult<readonly InfraWorkloadApiAssignment[]>",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
     "name": "statusInfraEnvironmentAsync",
     "title": null,
     "description": "Aggregate provider-neutral compute, runtime and service status.",
@@ -1392,7 +1473,7 @@
     "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
     "sourceLocation": {
       "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-      "line": 26,
+      "line": 27,
       "column": 1
     },
     "exportPaths": [

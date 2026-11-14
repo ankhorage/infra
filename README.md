@@ -3,7 +3,7 @@
 
 # INFRA
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v7.2.12](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![paradox: canonical](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v7.3.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![paradox: canonical](././paradox/badges/docs.svg)
 
 Executable infra provider and standalone CLI for Ankhorage project workflows.
 
@@ -43,3 +43,4 @@ import { createInfraRuntimeProvider } from '@ankhorage/infra/cli';
 - [getInfraEnvironmentOutputs sequence](././paradox/diagrams/sequences/get-infra-environment-outputs.mmd)
 - [orderInfraPlanActions sequence](././paradox/diagrams/sequences/order-infra-plan-actions.mmd)
 - [resolveInfraEnvironment sequence](././paradox/diagrams/sequences/resolve-infra-environment.mmd)
+- [resolveInfraWorkloadApiComposition sequence](././paradox/diagrams/sequences/resolve-infra-workload-api-composition.mmd)

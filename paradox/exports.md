@@ -324,6 +324,19 @@ Source: `src/types/infraOrchestration.ts:77:1`
 | --- | --- | --- | --- | --- |
 | environment | property | `"local" \| "preview" \| "production"` | yes |  |
 
+## InfraWorkloadApiAssignment
+
+Kind: `type`
+Module: `src/types/infraWorkloadApiComposition.ts`
+Source: `src/types/infraWorkloadApiComposition.ts:2:1`
+
+### Members
+
+| Name | Kind | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| apiId | property | `string` | yes |  |
+| workloadId | property | `string` | yes |  |
+
 ## orderInfraPlanActions
 
 Kind: `function`
@@ -426,6 +439,21 @@ Resolve one explicitly configured environment while keeping local as the only sa
   - request: `InfraEnvironmentResolutionRequest`
   - returns: `InfraResult<ResolvedInfraEnvironment>`
 
+## resolveInfraWorkloadApiComposition
+
+Kind: `function`
+Module: `src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts`
+Source: `src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts:11:1`
+
+Resolve internal API declarations to exactly one declared workload without selecting HTTP transport.
+
+### Signatures
+
+- `(manifest: InfraManifest, workloads: readonly InfraWorkloadSpec[]) => InfraResult<readonly InfraWorkloadApiAssignment[]>`
+  - manifest: `InfraManifest`
+  - workloads: `readonly InfraWorkloadSpec[]`
+  - returns: `InfraResult<readonly InfraWorkloadApiAssignment[]>`
+
 ## statusInfraEnvironmentAsync
 
 Kind: `function`
@@ -445,7 +473,7 @@ Aggregate provider-neutral compute, runtime and service status.
 
 Kind: `function`
 Module: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts`
-Source: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:26:1`
+Source: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:27:1`
 
 Validate and reconcile compute, service preparation, workloads, runtime and services in order.
 

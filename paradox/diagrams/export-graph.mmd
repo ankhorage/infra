@@ -54,6 +54,7 @@ graph LR
   module_src_features_environment_lifecycle_composition_createProjectInfraLifecycle_ts["src/features/environment-lifecycle/composition/createProjectInfraLifecycle.ts"]
   module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts["src/features/environment-lifecycle/domain/orderInfraPlanActions.ts"]
   module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts["src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts"]
+  module_src_features_environment_lifecycle_domain_resolveInfraWorkloadApiComposition_ts["src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts"]
   module_src_features_environment_lifecycle_utils_appendInfraFailure_ts["src/features/environment-lifecycle/utils/appendInfraFailure.ts"]
   module_src_features_environment_lifecycle_utils_createInfraExecutionContext_ts["src/features/environment-lifecycle/utils/createInfraExecutionContext.ts"]
   module_src_features_environment_lifecycle_utils_createInfraFailure_ts["src/features/environment-lifecycle/utils/createInfraFailure.ts"]
@@ -75,6 +76,7 @@ graph LR
   module_src_types_infraCli_ts["src/types/infraCli.ts"]
   module_src_types_infraOrchestration_ts["src/types/infraOrchestration.ts"]
   module_src_types_infraProject_ts["src/types/infraProject.ts"]
+  module_src_types_infraWorkloadApiComposition_ts["src/types/infraWorkloadApiComposition.ts"]
   export_createEnvironmentInfraCredentialPort["createEnvironmentInfraCredentialPort"]
   module_src_features_environment_lifecycle_adapters_outbound_createEnvironmentInfraCredentialPort_ts --> export_createEnvironmentInfraCredentialPort
   export_createEnvironmentInfraSecretPort["createEnvironmentInfraSecretPort"]
@@ -144,6 +146,8 @@ graph LR
   module_src_types_infraOrchestration_ts --> export_InfraValidateOperationResult
   export_InfraValidateResult["InfraValidateResult"]
   module_src_types_infraOrchestration_ts --> export_InfraValidateResult
+  export_InfraWorkloadApiAssignment["InfraWorkloadApiAssignment"]
+  module_src_types_infraWorkloadApiComposition_ts --> export_InfraWorkloadApiAssignment
   export_orderInfraPlanActions["orderInfraPlanActions"]
   module_src_features_environment_lifecycle_domain_orderInfraPlanActions_ts --> export_orderInfraPlanActions
   export_planInfraEnvironmentAsync["planInfraEnvironmentAsync"]
@@ -166,6 +170,9 @@ graph LR
   export_resolveInfraEnvironment["resolveInfraEnvironment"]
   module_src_features_environment_lifecycle_domain_resolveInfraEnvironment_ts --> export_resolveInfraEnvironment
   export_resolveInfraEnvironment -.-> export_ResolvedInfraEnvironment
+  export_resolveInfraWorkloadApiComposition["resolveInfraWorkloadApiComposition"]
+  module_src_features_environment_lifecycle_domain_resolveInfraWorkloadApiComposition_ts --> export_resolveInfraWorkloadApiComposition
+  export_resolveInfraWorkloadApiComposition -.-> export_InfraWorkloadApiAssignment
   export_statusInfraEnvironmentAsync["statusInfraEnvironmentAsync"]
   module_src_features_environment_lifecycle_application_use_cases_statusInfraEnvironmentAsync_ts --> export_statusInfraEnvironmentAsync
   export_statusInfraEnvironmentAsync -.-> export_InfraOperationRequest
