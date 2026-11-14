@@ -7,7 +7,7 @@
       "dependencies": {
         "@ankhorage/ankh": "^0.13.6",
         "@ankhorage/capability": "^0.2.2",
-        "@ankhorage/contracts": "^26.11.0",
+        "@ankhorage/contracts": "^26.11.1",
         "@ankhorage/utility": "^1.10.0",
       },
       "devDependencies": {
@@ -16,8 +16,8 @@
         "@ankhorage/infra-docker-compose": "^0.5.6",
         "@ankhorage/infra-hetzner": "^0.3.3",
         "@ankhorage/infra-k3s": "^0.4.4",
-        "@ankhorage/infra-local": "^0.3.31",
-        "@ankhorage/infra-minikube": "^0.4.133",
+        "@ankhorage/infra-local": "^0.3.32",
+        "@ankhorage/infra-minikube": "^0.4.134",
         "@ankhorage/infra-r2": "^0.3.0",
         "@ankhorage/infra-supabase": "^0.6.0",
         "@ankhorage/paradox": "^0.4.0",
@@ -37,7 +37,7 @@
 
     "@ankhorage/color-theory": ["@ankhorage/color-theory@0.3.2", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-MWbv58Pdvu1SnB9j06F8YqkmRBOAxWtpDAX6DAndm+AQw5QA2BzAcT+HOvBDEmT9ReKPnpwuYWfehmNXxa4jLw=="],
 
-    "@ankhorage/contracts": ["@ankhorage/contracts@26.11.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.2", "@ankhorage/utility": "^1.10.0" } }, "sha512-bntCz485J9/1URswB+NlXsl1qykD1jmhkCyhhoRMK9/S66OhybKSKRav8iTeaalgmkRN+hH5MWF66Sm3FFNC2Q=="],
+    "@ankhorage/contracts": ["@ankhorage/contracts@26.11.1", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.2", "@ankhorage/utility": "^1.10.0" } }, "sha512-rzIbYjM/Hqk7lwMZGQPbahohgsoM3b0SDXoh/UqbRc6EIrcZ8wUineVrk2fdJzPJ8BMJaeu0a87qmspXZzW3Ew=="],
 
     "@ankhorage/devtools": ["@ankhorage/devtools@2.7.0", "", { "dependencies": { "@ankhorage/apm": "^0.8.15", "@ankhorage/capability": "^0.2.2", "@ankhorage/contracts": "^26.11.0", "@ankhorage/project-detector": "^0.3.5", "@ankhorage/rules-repository": "^0.4.0", "@ankhorage/utility": "^0.5.5", "@changesets/cli": "^3.0.3", "@eslint/compat": "^2.1.1", "@eslint/js": "^10.0.1", "@next/eslint-plugin-next": "^16.4.5", "eslint": "^10.14.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.7", "eslint-plugin-react": "^7.37.5", "eslint-plugin-react-hooks": "^7.1.1", "eslint-plugin-react-native": "^5.0.0", "eslint-plugin-security": "^4.2.1", "eslint-plugin-simple-import-sort": "^14.0.0", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.44.1", "prettier": "^3.9.10", "typescript": "~6.0.3", "typescript-eslint": "^8.72.1" }, "bin": { "ankhorage-knip": "dist/cli/bin/knip.js", "ankhorage-eslint": "dist/cli/bin/eslint.js", "ankhorage-prettier": "dist/cli/bin/prettier.js", "ankhorage-changeset": "dist/cli/bin/changeset.js", "ankhorage-ci-impact": "dist/cli/bin/ci-impact.js", "ankhorage-structure": "dist/cli/bin/structure.js", "ankhorage-repository": "dist/cli/bin/repository.js", "ankhorage-apm-release": "dist/cli/bin/apm-release.js" } }, "sha512-s3IgExQ47hKR7Ecu0aWlLEEHv3DGV31CS+gXoiIstQoobk4QZ5aEKFccGpizwQKDa2vAuaE5kZ92j3bM3AaFIg=="],
 
@@ -49,9 +49,9 @@
 
     "@ankhorage/infra-k3s": ["@ankhorage/infra-k3s@0.4.4", "", { "dependencies": { "@ankhorage/contracts": "^26.2.2", "@ankhorage/kubernetes": "^0.9.0", "@ankhorage/utility": "^1.2.0" } }, "sha512-JzyDvVzdM0WjyXh4Y+6gmthDi8I3csYd6zegT3YHlaKOLDUHhtQmFYnUegNX3bfqZFg3M1wru9d8yZE5SAW5bQ=="],
 
-    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.31", "", { "dependencies": { "@ankhorage/contracts": "^26.10.0" } }, "sha512-F24XfHa9YGSB/NTfryZsBNFlRKlI1e0it6alUo4m9Gd0FpcnYjWdVPNR2va7fY7szThsfmAbGXcRTJ3EqJEtHA=="],
+    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.32", "", { "dependencies": { "@ankhorage/contracts": "^26.11.1" } }, "sha512-1Hb/3qx7WOUxRmxkXwiW59zIjpWjXGpFp/3iiPzzOpGtzfsZEnR27bMhS/Ns2Nl0KZ6bAVvHIoF0WJXzxViEvA=="],
 
-    "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.133", "", { "dependencies": { "@ankhorage/contracts": "^26.11.0", "@ankhorage/kubernetes": "^0.9.0" } }, "sha512-kj4PoXRAK78vfA6BsnBIBf2t9VbvDobvx4jkatfTYTsZ7nG8JTLuqfrJEfRhqsXymyWeV3EGYJxi8Jko1MWubg=="],
+    "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.134", "", { "dependencies": { "@ankhorage/contracts": "^26.11.1", "@ankhorage/kubernetes": "^0.9.0" } }, "sha512-ed0RhJnx1S44w+COCa/7UQjeu0njpjUOBXXUFDjytHW4LG3CWiH8X9Ba/12AdAJxYZt7BD6NV4Xl5yfmglRqEQ=="],
 
     "@ankhorage/infra-r2": ["@ankhorage/infra-r2@0.3.0", "", { "dependencies": { "@ankhorage/contracts": "^26.2.2", "@ankhorage/utility": "^0.8.0" } }, "sha512-r/HRbWrSZh4pk/8l+X0X4z5W8WeXfx9efBcBrE302S2hCzmVUkgF/nU48BXdY2+m1PIwVbLu7iUj3nrGFkEYgg=="],
 
