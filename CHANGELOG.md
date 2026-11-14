@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.3.3
+
+### Patch Changes
+
+- 8f4b12b: Add canonical authored repository metadata for organization-wide tooling and documentation consumers.
+
 ## 7.3.2
 
 ### Patch Changes
