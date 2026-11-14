@@ -35,7 +35,7 @@
     "openapi"
   ],
   "dependencies": {
-    "@ankhorage/ankh": "^0.13.6",
+    "@ankhorage/ankh": "^0.13.7",
     "@ankhorage/capability": "^0.2.3",
     "@ankhorage/contracts": "^26.11.1",
     "@ankhorage/utility": "^1.10.1"
