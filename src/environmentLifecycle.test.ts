@@ -54,10 +54,10 @@ describe('selected adapter resolution', () => {
 
     expect(result.ok).toBe(true);
     expect(requested).toEqual([
-      '@ankhorage/local',
-      '@ankhorage/docker-compose',
-      '@ankhorage/supabase',
-      '@ankhorage/cerbos',
+      '@ankhorage/infra-local',
+      '@ankhorage/infra-docker-compose',
+      '@ankhorage/infra-supabase',
+      '@ankhorage/infra-cerbos',
     ]);
     if (!result.ok) throw new Error('Expected adapters.');
     expect(result.value.services.map(({ descriptor }) => descriptor.id)).toEqual([

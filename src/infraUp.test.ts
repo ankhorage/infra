@@ -39,11 +39,11 @@ describe('environment up orchestration', () => {
       'local.validate',
       'supabase.validate',
       'cerbos.validate',
+      'supabase.workloads',
+      'cerbos.workloads',
       'local.ensure',
       'supabase.prepare',
       'cerbos.prepare',
-      'supabase.workloads',
-      'cerbos.workloads',
       'docker-compose.validate',
       'docker-compose.ensure',
       'supabase.reconcile',
@@ -83,7 +83,36 @@ describe('environment up orchestration', () => {
     expect(calls).toEqual(['local.validate', 'supabase.validate']);
   });
 
-  it('stops before workload materialization when service preparation fails', async () => {
+  it('stops before mutation when workload API composition is invalid', async () => {
+    const calls: string[] = [];
+    const invalidManifest = {
+      ...manifest,
+      environments: {
+        local: {
+          ...environment,
+          workloads: {
+            api: {
+              ...workload('api'),
+              apis: { apiIds: { missing: true } },
+            },
+          },
+        },
+      },
+    };
+    const result = await upInfraEnvironmentAsync(
+      { projectId: 'sample', manifest: invalidManifest },
+      createDependencies(calls, [], []),
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      diagnostics: [{ code: 'infra-workload-api-missing' }],
+    });
+    expect(calls.some((call) => call.endsWith('.ensure'))).toBe(false);
+    expect(calls.some((call) => call.endsWith('.prepare'))).toBe(false);
+  });
+
+  it('stops before runtime reconciliation when service preparation fails', async () => {
     const calls: string[] = [];
     const dependencies = createDependencies(calls, [], [], 'supabase.prepare');
     const result = await upInfraEnvironmentAsync({ projectId: 'sample', manifest }, dependencies);
@@ -97,10 +126,12 @@ describe('environment up orchestration', () => {
       'local.validate',
       'supabase.validate',
       'cerbos.validate',
+      'supabase.workloads',
+      'cerbos.workloads',
       'local.ensure',
       'supabase.prepare',
     ]);
-    expect(calls).not.toContain('supabase.workloads');
+    expect(calls).not.toContain('docker-compose.validate');
     expect(calls).not.toContain('docker-compose.ensure');
   });
 
