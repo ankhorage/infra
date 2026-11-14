@@ -20,7 +20,7 @@
         "@ankhorage/infra-minikube": "^0.4.132",
         "@ankhorage/infra-r2": "^0.3.0",
         "@ankhorage/infra-supabase": "^0.6.0",
-        "@ankhorage/paradox": "^0.3.5",
+        "@ankhorage/paradox": "^0.3.7",
         "@ankhorage/supabase-vault": "^0.3.12",
         "@types/bun": "^1.4.2",
         "@types/node": "^26.6.6",
