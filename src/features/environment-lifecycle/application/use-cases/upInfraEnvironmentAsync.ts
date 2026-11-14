@@ -13,6 +13,7 @@ import type {
   InfraUpRequest,
 } from '../../../../types/infraOrchestration.js';
 import { resolveInfraEnvironment } from '../../domain/resolveInfraEnvironment.js';
+import { resolveInfraWorkloadApiComposition } from '../../domain/resolveInfraWorkloadApiComposition.js';
 import { appendInfraFailure } from '../../utils/appendInfraFailure.js';
 import { createInfraExecutionContext } from '../../utils/createInfraExecutionContext.js';
 import { createInfraLedger } from '../../utils/createInfraLedger.js';
@@ -44,6 +45,18 @@ export async function upInfraEnvironmentAsync(
   const validation = await validateInfraAdaptersAsync(context, adapters.value);
   if (!validation.ok) return appendInfraFailure(diagnostics, validation);
   diagnostics.push(...validation.diagnostics);
+  const workloads = await collectInfraWorkloadsAsync(context, adapters.value.services);
+  if (!workloads.ok) return appendInfraFailure(diagnostics, workloads);
+  diagnostics.push(...workloads.diagnostics);
+  const allWorkloads = [
+    ...Object.values(environment.value.desired.workloads ?? {}),
+    ...workloads.value,
+  ];
+  const apiComposition = resolveInfraWorkloadApiComposition(
+    environment.value.manifest,
+    allWorkloads,
+  );
+  if (!apiComposition.ok) return appendInfraFailure(diagnostics, apiComposition);
   const compute = await adapters.value.compute.ensureAsync(
     context,
     environment.value.desired.deployment.compute,
@@ -53,13 +66,10 @@ export async function upInfraEnvironmentAsync(
   const preparation = await prepareInfraServicesAsync(context, adapters.value.services);
   if (!preparation.ok) return appendInfraFailure(diagnostics, preparation);
   diagnostics.push(...preparation.diagnostics);
-  const workloads = await collectInfraWorkloadsAsync(context, adapters.value.services);
-  if (!workloads.ok) return appendInfraFailure(diagnostics, workloads);
-  diagnostics.push(...workloads.diagnostics);
   const runtimeDesired = {
     selection: environment.value.desired.deployment.runtime,
     targets: compute.value.targets,
-    workloads: [...Object.values(environment.value.desired.workloads ?? {}), ...workloads.value],
+    workloads: allWorkloads,
     availableOutputs: mergeInfraOutputs(request.previous?.outputs ?? [], compute.value.outputs),
   };
   const runtimeValidation = await adapters.value.runtime.validateAsync(context, runtimeDesired);

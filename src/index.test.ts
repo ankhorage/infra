@@ -16,6 +16,7 @@ describe('@ankhorage/infra', () => {
       'planInfraEnvironmentAsync',
       'resolveInfraAdaptersAsync',
       'resolveInfraEnvironment',
+      'resolveInfraWorkloadApiComposition',
       'statusInfraEnvironmentAsync',
       'upInfraEnvironmentAsync',
       'validateInfraEnvironmentAsync',

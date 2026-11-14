@@ -16,6 +16,7 @@ export { upInfraEnvironmentAsync } from './features/environment-lifecycle/applic
 export { validateInfraEnvironmentAsync } from './features/environment-lifecycle/application/use-cases/validateInfraEnvironmentAsync.js';
 export { orderInfraPlanActions } from './features/environment-lifecycle/domain/orderInfraPlanActions.js';
 export { resolveInfraEnvironment } from './features/environment-lifecycle/domain/resolveInfraEnvironment.js';
+export { resolveInfraWorkloadApiComposition } from './features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.js';
 export type {
   InfraDestroyOperationRequest,
   InfraDestroyOperationResult,
@@ -40,3 +41,4 @@ export type {
   ResolvedInfraAdapters,
   ResolvedInfraEnvironment,
 } from './types/infraOrchestration.js';
+export type { InfraWorkloadApiAssignment } from './types/infraWorkloadApiComposition.js';

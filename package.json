@@ -37,7 +37,7 @@
   "dependencies": {
     "@ankhorage/ankh": "^0.13.6",
     "@ankhorage/capability": "^0.2.2",
-    "@ankhorage/contracts": "^26.0.2",
+    "@ankhorage/contracts": "^26.10.0",
     "@ankhorage/utility": "^1.10.0"
   },
   "files": [
