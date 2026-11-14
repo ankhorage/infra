@@ -3,11 +3,9 @@ import { createKnipConfig } from '@ankhorage/devtools/knip';
 export default createKnipConfig({
   entry: ['examples/basic-usage/main.ts'],
   ignoreDependencies: [
-    '@ankhorage/cerbos',
-    '@ankhorage/docker-compose',
-    '@ankhorage/local',
-    '@ankhorage/minikube',
-    '@ankhorage/r2',
+    '@ankhorage/infra-cerbos',
+    '@ankhorage/infra-docker-compose',
+    '@ankhorage/infra-minikube',
     '@ankhorage/supabase-vault',
   ],
   ignoreFiles: [

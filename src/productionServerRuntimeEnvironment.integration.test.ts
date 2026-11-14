@@ -7,7 +7,7 @@ import type {
   InfraResourceStatus,
   InfraResult,
 } from '@ankhorage/contracts/infra';
-import { infraAdapterDescriptor as hetznerInfraAdapterDescriptor } from '@ankhorage/hetzner';
+import { infraAdapterDescriptor as hetznerInfraAdapterDescriptor } from '@ankhorage/infra-hetzner';
 import {
   createInfraAdapter as createK3sInfraAdapter,
   infraAdapterDescriptor as k3sInfraAdapterDescriptor,
@@ -15,7 +15,7 @@ import {
   type K3sClusterSpec,
   type K3sControlPlane,
   type K3sNodeAccess,
-} from '@ankhorage/k3s';
+} from '@ankhorage/infra-k3s';
 import { expect, test } from 'bun:test';
 
 import { type InfraOrchestrationDependencies, upInfraEnvironmentAsync } from './index.js';
