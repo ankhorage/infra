@@ -7,6 +7,7 @@ import type {
 } from '../../../../types/infraOrchestration.js';
 import { resolveInfraEnvironment } from '../../domain/resolveInfraEnvironment.js';
 import { resolveInfraWorkloadApiComposition } from '../../domain/resolveInfraWorkloadApiComposition.js';
+import { validateInfraWorkloadGraph } from '../../domain/validateInfraWorkloadGraph.js';
 import { appendInfraFailure } from '../../utils/appendInfraFailure.js';
 import { createInfraExecutionContext } from '../../utils/createInfraExecutionContext.js';
 import { collectInfraWorkloadsAsync } from './collectInfraWorkloadsAsync.js';
@@ -62,6 +63,8 @@ export async function prepareInfraOperationAsync(
     ...Object.values(environment.value.desired.workloads ?? {}),
     ...workloads.value,
   ];
+  const workloadGraph = validateInfraWorkloadGraph(allWorkloads);
+  if (!workloadGraph.ok) return appendInfraFailure(diagnostics, workloadGraph);
   const apiComposition = resolveInfraWorkloadApiComposition(
     environment.value.manifest,
     allWorkloads,

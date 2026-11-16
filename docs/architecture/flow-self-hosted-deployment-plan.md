@@ -73,9 +73,12 @@ of these are true:
    not reconcile infrastructure.
 
 The published `isInfraWorkloadSpec` and `parseInfraManifest` validators can
-independently check the generic Infra shape before plan or generate runs. They
-cannot validate the Flow-specific items above until the Flow descriptor exists,
-and Infra must report that condition rather than substitute a guessed image,
+independently check the generic Infra shape before plan or generate runs. Infra
+also rejects duplicate workloads and missing or cyclic workload dependencies
+before any provider planning or reconciliation. These generic checks cannot
+validate the Flow-specific image digest, topology, health, persistence,
+scheduler, or artifact-storage semantics until the Flow descriptor exists, and
+Infra must report that condition rather than substitute a guessed image,
 command, port, persistence engine, scheduler, or telemetry backend.
 
 ## Required acceptance after the descriptor release

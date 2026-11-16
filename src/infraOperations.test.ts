@@ -87,6 +87,33 @@ describe('provider-neutral lifecycle operations', () => {
     expect(calls.some((call) => call.endsWith('.plan'))).toBe(false);
   });
 
+  it('refuses a missing workload dependency before provider inspection or planning', async () => {
+    const calls: string[] = [];
+    const invalidManifest = {
+      ...manifest,
+      environments: {
+        local: {
+          ...desired,
+          workloads: {
+            worker: { ...workload('worker'), dependsOn: { api: true } },
+          },
+        },
+      },
+    };
+
+    const result = await planInfraEnvironmentAsync(
+      { projectId: 'sample', manifest: invalidManifest },
+      createDependencies(calls),
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      diagnostics: [{ code: 'infra-workload-dependency-missing' }],
+    });
+    expect(calls).not.toContain('local.inspect');
+    expect(calls.some((call) => call.endsWith('.plan'))).toBe(false);
+  });
+
   it('plans fresh remote compute and a deferred runtime without inventing an SSH target', async () => {
     const calls: string[] = [];
     const remoteManifest = {
