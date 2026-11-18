@@ -2,12 +2,13 @@
 
 ## Status
 
-`@ankhorage/flow@0.8.0` publishes the exact portable descriptor through
+`@ankhorage/flow@0.10.0` publishes the exact portable descriptor through
 `@ankhorage/flow/deployment`. Its `createFlowDeploymentDescriptor` function
 creates separate `flow-api` and `flow-worker` workloads from caller-supplied,
-provider-neutral inputs. The released owner acceptance verifies those
-processes in a test-owned Docker network, but builds its image from the Flow
-checkout; the package release has no OCI image asset.
+provider-neutral inputs. The released package has no OCI image asset. Flow PR
+#32 has green CI, including its test-owned container check, but remains Draft
+and its own fresh-runner immutable-digest acceptance is not a published release
+result.
 
 Infra must not add a Flow facade or reproduce the descriptor. An application
 selects its published Flow version, passes its explicit deployment input to
@@ -57,7 +58,7 @@ Before a Flow deployment can be accepted, a dry run must fail closed unless all
 of these are true:
 
 1. The consuming application uses the released
-   `@ankhorage/flow@0.8.0` `@ankhorage/flow/deployment` API and selects an
+   `@ankhorage/flow@0.10.0` `@ankhorage/flow/deployment` API and selects an
    immutable image it is authorized to deploy.
 2. The descriptor validates as an `InfraWorkloadSpec` graph using the published
    `@ankhorage/contracts/infra` validators.
@@ -82,6 +83,32 @@ the complete generic graph, rejecting duplicate workloads and missing or cyclic
 dependencies before provider planning or reconciliation. It must report an
 incomplete application graph rather than substitute an image, command, port,
 persistence engine, scheduler, or telemetry backend.
+
+## Executable portable fixture
+
+`src/infraOperations.test.ts` contains a deliberately non-deployable
+`example.invalid` fixture. It exercises the complete portable graph through
+Infra `plan`: separate API and worker workloads, retained durable state,
+artifact storage, scheduler, unresolved secret references, probes, public and
+internal exposure, ports, resource limits, and dependency edges. It asserts
+that plan forwards the graph to the runtime adapter without resolving a secret
+or calling ensure/reconcile.
+
+The fixture URI and all-zero digest are test data only, not an OCI publication
+or a candidate production image. No test fixture workload represents an
+application owner or cloud resource. Missing secret material, failed workers,
+and provider-specific lifecycle outcomes cannot be established by this
+provider-neutral fixture: they remain blocked until Flow PR #32 publishes and
+fresh-digest-accepts an OCI artifact and an application supplies real durable,
+artifact-storage, and scheduler owners.
+
+| Case                                  | Provider-neutral result                                                | Adapter/container result                                    |
+| ------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Complete graph dry run                | PASS: fixture reaches runtime validate and plan without mutation       | BLOCKED/UNEXECUTED: no real application graph or OCI digest |
+| Missing dependency                    | PASS: rejected before compute inspection or adapter plan               | BLOCKED/UNEXECUTED: no real graph to project                |
+| Invalid Flow descriptor configuration | BLOCKED/UNEXECUTED: owned and validated by Flow's published descriptor | BLOCKED/UNEXECUTED                                          |
+| Missing secret material               | BLOCKED/UNEXECUTED: runtime secret resolution is adapter-owned         | BLOCKED/UNEXECUTED                                          |
+| Worker failure, restart and recovery  | BLOCKED/UNEXECUTED: requires real worker image and durable owner       | BLOCKED/UNEXECUTED                                          |
 
 ## Required acceptance after the descriptor release
 
