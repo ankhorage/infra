@@ -60,6 +60,48 @@ The word "unidentified" is deliberate: this repository has no evidence for a
 specific application, backend, provider or credential owner and must not
 invent one.
 
+## Missing application-owner implementation
+
+The application owner is the only component permitted to call the published
+`createFlowDeploymentDescriptor` function. It must use
+`@ankhorage/flow@0.10.1` and pass exactly this released contract, with values
+from its own declared environment rather than values inferred by Infra:
+
+| Released input path                                           | Application-owner obligation                                                              | Not supplied by an existing published composition                  |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `image`                                                       | The approved immutable Flow digest                                                        | No application selects the approved digest in a workload graph.    |
+| `api.apiToken`                                                | An unresolved `InfraSecretReference`                                                      | No secret resolver binding or reference identity is declared.      |
+| `api.hostname`, `api.port`, `api.resources`                   | Public listener identity and capacity                                                     | No application owns the public endpoint or resource policy.        |
+| `api.secretRefs`, `worker.secretRefs`                         | Process-specific unresolved secret references                                             | No secret-reference set is declared for either process.            |
+| `runtime.module`                                              | One compatible module string shared by API and worker                                     | No durable runtime module is published by a consuming application. |
+| `persistence`                                                 | One retained durable-volume or durable-service specification used by both workloads       | No compatible durable backend and retention policy are selected.   |
+| `artifactStorage.dependencyId`, `artifactStorage.environment` | A concrete graph dependency plus reference-only storage configuration                     | No artifact-storage workload/service or configuration is declared. |
+| `scheduler.dependencyId`, `scheduler.environment`             | A concrete graph dependency plus reference-only scheduler configuration                   | No scheduler workload/service or configuration is declared.        |
+| complete `workloads` graph                                    | The returned Flow workloads plus all named dependency workloads                           | No application graph contains those dependency identities.         |
+| provider/runtime configuration                                | Registry pull authorization, secret projection and selected runtime adapter configuration | No authorized GHCR access or provider configuration is supplied.   |
+| previous immutable revision                                   | A prior compatible descriptor/image/configuration retained for rollback                   | No application-owned previous revision exists.                     |
+
+The descriptor itself rejects a non-digest image, missing API token reference,
+loopback API hostname, blank runtime module, missing worker secret references,
+missing artifact/scheduler configuration, blank dependency identities, blank
+environment keys and colliding environment keys. Infra must preserve those
+Flow-owned rejections and then reject graph-level missing or cyclic workload
+dependencies before adapter planning. It must not turn a registry
+`unauthorized` response into an artifact failure or a credential fallback.
+
+### Published composition review
+
+The released packages were inspected on 18 November 2026. Runtime `5.5.4`
+depends on Flow `^0.10.1`, but exports a host-bound remote `RuntimeFlowPort`;
+it does not export or invoke the deployment descriptor and supplies none of
+the server-side input above. Templates `12.6.44` has no matching Flow
+deployment composition, and Projects `0.3.0` has no Flow or Infra dependency.
+An organisation-wide source search likewise found no
+`createFlowDeploymentDescriptor`, `FLOW_RUNTIME_MODULE`, or approved Flow
+image use. Consequently none of these releases can currently own this server
+deployment contract; this is an application-owner implementation gap, not a
+reason to add a Flow-specific adapter in Infra.
+
 The released Flow deployment descriptor produces only published
 `@ankhorage/contracts/infra` `InfraWorkloadSpec` values. Infra will pass those
 values through its existing provider-neutral lifecycle. A descriptor is
@@ -160,6 +202,14 @@ retain diagnostics for each scenario:
 | Restart  | A separate worker resumes eligible work from the shared durable backend                                        | Blocked: no application-owned durable runtime or complete graph                                            |
 | Recovery | Interrupted work is recovered without claiming stronger delivery semantics than Flow provides                  | Blocked: no application-owned durable runtime or complete graph                                            |
 | Rollback | A previous immutable image/config revision restores only through a descriptor-declared compatible path         | Blocked: no application-owned previous revision, compatible runtime or complete graph                      |
+
+The testable boundary is deliberately partitioned: Infra's existing portable
+tests prove dry-run non-mutation and graph rejection for missing dependencies;
+the released Flow artifact owns invalid descriptor and secret-reference input
+rejection; a real application/provider fixture must prove secret resolution,
+worker recovery, configuration versioning and rollback against its retained
+previous revision. The latter scenarios remain unexecuted, rather than being
+simulated with the existing portable fixture.
 
 Passing generic Infra unit tests, the Flow owner's test-owned image acceptance,
 or a generated plan is not evidence that any of these scenarios is deployable
