@@ -17,6 +17,18 @@ artifact-storage, scheduler/ingress, secret-reference and registry-access
 configuration remains absent, so Infra must not create a substitute workload
 or provider configuration.
 
+## Release verification boundary
+
+The published package metadata and packed `@ankhorage/flow@0.10.1` artifact
+verify the `./deployment` export, `FlowDeploymentDescriptorInput`, release
+commit `4f1a991299d3c6e02415760b3e190fdb1dcd3a8d`, and the immutable digest
+recorded above. This resolves the former Flow OCI-release blocker.
+
+A direct registry-manifest read can still fail closed in an environment without
+GHCR authorization. That is an application/provider registry-access
+configuration gap, not evidence that the released digest is absent or floating.
+It must remain separate from the provider-acceptance cases below.
+
 Infra must not add a Flow facade or reproduce the descriptor. An application
 selects its published Flow version, passes its explicit deployment input to
 `createFlowDeploymentDescriptor`, and places the returned workloads together
