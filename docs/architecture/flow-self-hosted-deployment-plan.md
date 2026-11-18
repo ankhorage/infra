@@ -6,9 +6,11 @@
 `@ankhorage/flow/deployment`. Its `createFlowDeploymentDescriptor` function
 creates separate `flow-api` and `flow-worker` workloads from caller-supplied,
 provider-neutral inputs. The released package has no OCI image asset. Flow PR
-#32 is merged and its exact-head CI is green, including the test-owned
-container check, but no newly published release result or fresh accepted
-immutable OCI digest is verified.
+#32's post-merge jobs published and fresh-runner-accepted an immutable image,
+but the overall release workflow failed when finalizing its tag and GitHub
+release. Infra therefore does not adopt an OCI URI or digest: a complete real
+application graph with durable-store, artifact-storage, and scheduler owners
+is still absent.
 
 Infra must not add a Flow facade or reproduce the descriptor. An application
 selects its published Flow version, passes its explicit deployment input to
