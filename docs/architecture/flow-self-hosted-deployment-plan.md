@@ -6,9 +6,9 @@
 `@ankhorage/flow/deployment`. Its `createFlowDeploymentDescriptor` function
 creates separate `flow-api` and `flow-worker` workloads from caller-supplied,
 provider-neutral inputs. The released package has no OCI image asset. Flow PR
-#32 has green CI, including its test-owned container check, but remains Draft
-and its own fresh-runner immutable-digest acceptance is not a published release
-result.
+#32 is merged and its exact-head CI is green, including the test-owned
+container check, but no newly published release result or fresh accepted
+immutable OCI digest is verified.
 
 Infra must not add a Flow facade or reproduce the descriptor. An application
 selects its published Flow version, passes its explicit deployment input to
@@ -98,9 +98,9 @@ The fixture URI and all-zero digest are test data only, not an OCI publication
 or a candidate production image. No test fixture workload represents an
 application owner or cloud resource. Missing secret material, failed workers,
 and provider-specific lifecycle outcomes cannot be established by this
-provider-neutral fixture: they remain blocked until Flow PR #32 publishes and
-fresh-digest-accepts an OCI artifact and an application supplies real durable,
-artifact-storage, and scheduler owners.
+provider-neutral fixture: they remain blocked until the Flow PR #32 release
+publishes and fresh-digest-accepts an OCI artifact and an application supplies
+real durable, artifact-storage, and scheduler owners.
 
 | Case                                  | Provider-neutral result                                                | Adapter/container result                                    |
 | ------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------- |
