@@ -2,15 +2,20 @@
 
 ## Status
 
-`@ankhorage/flow@0.10.0` publishes the exact portable descriptor through
+`@ankhorage/flow@0.10.1` publishes the exact portable descriptor through
 `@ankhorage/flow/deployment`. Its `createFlowDeploymentDescriptor` function
 creates separate `flow-api` and `flow-worker` workloads from caller-supplied,
-provider-neutral inputs. The released package has no OCI image asset. Flow PR
-#32's post-merge jobs published and fresh-runner-accepted an immutable image,
-but the overall release workflow failed when finalizing its tag and GitHub
-release. Infra therefore does not adopt an OCI URI or digest: a complete real
-application graph with durable-store, artifact-storage, and scheduler owners
-is still absent.
+provider-neutral inputs. Flow release `v0.10.1` is published at
+`4f1a991299d3c6e02415760b3e190fdb1dcd3a8d`; the only approved runtime image
+for this plan is
+`ghcr.io/ankhorage/flow@sha256:d5888481fc2c0e93fed791e835ccaaeac6e42d17abb6040758fb731c27af32e8`.
+It is immutable; no floating image tag is accepted.
+
+The completed Flow release removes the OCI-publication blocker, but it does
+not supply a consuming application's complete graph. A real durable-runtime,
+artifact-storage, scheduler/ingress, secret-reference and registry-access
+configuration remains absent, so Infra must not create a substitute workload
+or provider configuration.
 
 Infra must not add a Flow facade or reproduce the descriptor. An application
 selects its published Flow version, passes its explicit deployment input to
@@ -24,6 +29,24 @@ No workload, provider, or generated artifact is added by this documentation.
 In particular, it must not cause `infra up` to create any Flow resource.
 
 ## Composition contract
+
+The published `FlowDeploymentDescriptorInput` makes ownership explicit:
+
+| Dependency                                             | Concrete owner                                                    | Required configuration that is still absent                                                                                                                                   |
+| ------------------------------------------------------ | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Flow API and worker processes                          | `@ankhorage/flow@0.10.1`                                          | The consuming application must call the published descriptor with its own input.                                                                                              |
+| Immutable image                                        | Flow release                                                      | Use only `ghcr.io/ankhorage/flow@sha256:d5888481fc2c0e93fed791e835ccaaeac6e42d17abb6040758fb731c27af32e8`; registry credentials or public-read policy have not been supplied. |
+| Shared durable runtime                                 | Unidentified consuming-application owner                          | `persistence` identity and compatible API/worker runtime module.                                                                                                              |
+| API listener and token                                 | Unidentified consuming-application owner                          | Non-loopback `api.hostname`, `api.port`, API resources, and unresolved `api.apiToken` reference.                                                                              |
+| Worker configuration                                   | Unidentified consuming-application owner                          | Worker resources and unresolved `worker.secretRefs`.                                                                                                                          |
+| Artifact storage                                       | Unidentified consuming-application owner                          | `artifactStorage.dependencyId` and reference-only environment values.                                                                                                         |
+| Scheduler ingress                                      | Unidentified consuming-application owner                          | `scheduler.dependencyId` and reference-only environment values.                                                                                                               |
+| Secret resolution, registry access, runtime projection | Selected Infra adapter and its configured application environment | Adapter-specific secret and registry configuration; no provider configuration has been authorized.                                                                            |
+| Generic graph validation and lifecycle ordering        | `@ankhorage/infra`                                                | Complete application-owned `workloads` graph.                                                                                                                                 |
+
+The word "unidentified" is deliberate: this repository has no evidence for a
+specific application, backend, provider or credential owner and must not
+invent one.
 
 The released Flow deployment descriptor produces only published
 `@ankhorage/contracts/infra` `InfraWorkloadSpec` values. Infra will pass those
@@ -60,8 +83,9 @@ Before a Flow deployment can be accepted, a dry run must fail closed unless all
 of these are true:
 
 1. The consuming application uses the released
-   `@ankhorage/flow@0.10.0` `@ankhorage/flow/deployment` API and selects an
-   immutable image it is authorized to deploy.
+   `@ankhorage/flow@0.10.1` `@ankhorage/flow/deployment` API and selects the
+   approved immutable digest
+   `ghcr.io/ankhorage/flow@sha256:d5888481fc2c0e93fed791e835ccaaeac6e42d17abb6040758fb731c27af32e8`.
 2. The descriptor validates as an `InfraWorkloadSpec` graph using the published
    `@ankhorage/contracts/infra` validators.
 3. The descriptor declares separate `flow-api` and internal `flow-worker`
@@ -97,39 +121,39 @@ that plan forwards the graph to the runtime adapter without resolving a secret
 or calling ensure/reconcile.
 
 The fixture URI and all-zero digest are test data only, not an OCI publication
-or a candidate production image. No test fixture workload represents an
+or a candidate production image. In particular, the released Flow digest is
+not copied into this fixture. No test fixture workload represents an
 application owner or cloud resource. Missing secret material, failed workers,
 and provider-specific lifecycle outcomes cannot be established by this
-provider-neutral fixture: they remain blocked until the Flow PR #32 release
-publishes and fresh-digest-accepts an OCI artifact and an application supplies
-real durable, artifact-storage, and scheduler owners.
+provider-neutral fixture: they remain blocked until an application supplies
+real durable, artifact-storage, scheduler, registry-access and secret owners.
 
-| Case                                  | Provider-neutral result                                                | Adapter/container result                                    |
-| ------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Complete graph dry run                | PASS: fixture reaches runtime validate and plan without mutation       | BLOCKED/UNEXECUTED: no real application graph or OCI digest |
-| Missing dependency                    | PASS: rejected before compute inspection or adapter plan               | BLOCKED/UNEXECUTED: no real graph to project                |
-| Invalid Flow descriptor configuration | BLOCKED/UNEXECUTED: owned and validated by Flow's published descriptor | BLOCKED/UNEXECUTED                                          |
-| Missing secret material               | BLOCKED/UNEXECUTED: runtime secret resolution is adapter-owned         | BLOCKED/UNEXECUTED                                          |
-| Worker failure, restart and recovery  | BLOCKED/UNEXECUTED: requires real worker image and durable owner       | BLOCKED/UNEXECUTED                                          |
+| Case                                  | Provider-neutral result                                                       | Adapter/container result                                                               |
+| ------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Complete graph dry run                | PASS: fixture reaches runtime validate and plan without mutation              | BLOCKED/UNEXECUTED: OCI digest is published, but no real application graph is supplied |
+| Missing dependency                    | PASS: rejected before compute inspection or adapter plan                      | BLOCKED/UNEXECUTED: no real graph to project                                           |
+| Invalid Flow descriptor configuration | BLOCKED/UNEXECUTED: owned and validated by Flow's published descriptor        | BLOCKED/UNEXECUTED                                                                     |
+| Missing secret material               | BLOCKED/UNEXECUTED: runtime secret resolution is adapter-owned                | BLOCKED/UNEXECUTED                                                                     |
+| Worker failure, restart and recovery  | BLOCKED/UNEXECUTED: requires real application-owned runtime and durable owner | BLOCKED/UNEXECUTED                                                                     |
 
 ## Required acceptance after the descriptor release
 
 Run the same descriptor through a local/containerized runtime adapter and
 retain diagnostics for each scenario:
 
-| Scenario | Required proof                                                                                                 | Current status                                                            |
-| -------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Start    | Descriptor-declared API and worker topology becomes ready; secret values are absent from state and diagnostics | Blocked: no deployable Flow OCI image and application graph are published |
-| Stop     | Runtime stops workloads while retained durable state remains                                                   | Blocked: no deployable Flow OCI image and application graph are published |
-| Restart  | A separate worker resumes eligible work from the shared durable backend                                        | Blocked: no deployable Flow OCI image and application graph are published |
-| Recovery | Interrupted work is recovered without claiming stronger delivery semantics than Flow provides                  | Blocked: no deployable Flow OCI image and application graph are published |
-| Rollback | A previous immutable image/config revision restores only through a descriptor-declared compatible path         | Blocked: no deployable Flow OCI image and application graph are published |
+| Scenario | Required proof                                                                                                 | Current status                                                                                             |
+| -------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Start    | Descriptor-declared API and worker topology becomes ready; secret values are absent from state and diagnostics | Blocked: no complete application graph, secret/registry configuration or authorized provider configuration |
+| Stop     | Runtime stops workloads while retained durable state remains                                                   | Blocked: no complete application graph, secret/registry configuration or authorized provider configuration |
+| Restart  | A separate worker resumes eligible work from the shared durable backend                                        | Blocked: no application-owned durable runtime or complete graph                                            |
+| Recovery | Interrupted work is recovered without claiming stronger delivery semantics than Flow provides                  | Blocked: no application-owned durable runtime or complete graph                                            |
+| Rollback | A previous immutable image/config revision restores only through a descriptor-declared compatible path         | Blocked: no application-owned previous revision, compatible runtime or complete graph                      |
 
 Passing generic Infra unit tests, the Flow owner's test-owned image acceptance,
 or a generated plan is not evidence that any of these scenarios is deployable
-through an Infra adapter. A deployable, immutable Flow image and an
-application-owned complete graph with real artifact-storage and scheduler
-owners are required before running the adapter-owned container acceptance
-matrix. The matrix must also include negative missing-dependency,
-invalid-secret, worker-failure and rollback scenarios before this status can
-change.
+through an Infra adapter. The published immutable Flow image and an
+application-owned complete graph with real durable-runtime, artifact-storage,
+scheduler, registry-access and secret owners are required before running the
+adapter-owned container acceptance matrix. The matrix must also include
+negative missing-dependency, invalid-secret, worker-failure and rollback
+scenarios before this status can change.
