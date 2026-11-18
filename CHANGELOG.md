@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.3.4
+
+### Patch Changes
+
+- d4d981c: Update dependencies: `@ankhorage/contracts`.
+
 ## 7.3.3
 
 ### Patch Changes

@@ -1,7 +1,8 @@
 {
   "packageName": "INFRA",
   "packageId": "@ankhorage/infra",
-  "description": "Executable infra provider and standalone CLI for Ankhorage project workflows.",
+  "description": "Plans, generates, applies, inspects, and destroys project infrastructure through independently released provider adapters.",
+  "purpose": "Provide one project-aware infrastructure lifecycle while keeping cloud, cluster, storage, database, and policy technologies replaceable behind explicit adapters.",
   "collaborators": true,
   "donation": {
     "account": "ankhorage"
@@ -16,7 +17,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.3.3",
+      "value": "v7.3.4",
       "color": "cb3837"
     },
     {
