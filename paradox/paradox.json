@@ -3,6 +3,7 @@
   "packageId": "@ankhorage/infra",
   "description": "Plans, generates, applies, inspects, and destroys project infrastructure through independently released provider adapters.",
   "purpose": "Provide one project-aware infrastructure lifecycle while keeping cloud, cluster, storage, database, and policy technologies replaceable behind explicit adapters.",
+  "productDocumentation": null,
   "collaborators": true,
   "donation": {
     "account": "ankhorage"
@@ -17,7 +18,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.3.4",
+      "value": "v7.3.5",
       "color": "cb3837"
     },
     {
