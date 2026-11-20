@@ -236,7 +236,7 @@
     "@ankhorage/infra-hetzner": "^0.3.3",
     "@ankhorage/infra-k3s": "^0.4.4",
     "@ankhorage/infra-local": "^0.3.33",
-    "@ankhorage/infra-minikube": "^0.4.135",
+    "@ankhorage/infra-minikube": "^0.4.136",
     "@ankhorage/paradox": "^0.6.0",
     "@ankhorage/infra-r2": "^0.3.0",
     "@ankhorage/infra-supabase": "^0.6.0",
