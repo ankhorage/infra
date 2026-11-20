@@ -17,7 +17,7 @@
         "@ankhorage/infra-hetzner": "^0.3.3",
         "@ankhorage/infra-k3s": "^0.4.4",
         "@ankhorage/infra-local": "^0.3.33",
-        "@ankhorage/infra-minikube": "^0.4.135",
+        "@ankhorage/infra-minikube": "^0.4.136",
         "@ankhorage/infra-r2": "^0.3.0",
         "@ankhorage/infra-supabase": "^0.6.0",
         "@ankhorage/paradox": "^0.6.0",
@@ -51,7 +51,7 @@
 
     "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.33", "", { "dependencies": { "@ankhorage/contracts": "^26.12.0" } }, "sha512-H/K02EJf2+cWFlqN4W9LtdNOQAxFnbMLo50vf1d4TorCsaVD8qvyQypocnQj7gfAL/YRjlxym8kH0C/O3VhqhQ=="],
 
-    "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.135", "", { "dependencies": { "@ankhorage/contracts": "^26.11.1", "@ankhorage/kubernetes": "^0.9.1" } }, "sha512-FYZmSVh64yCHr9S7ZQJp+lnCK7cKun8BU3U8Gd6sShHI27AoQv6lyz7sckOWNkt8ZKlPPInVaCRuuIeCSSQpvA=="],
+    "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.136", "", { "dependencies": { "@ankhorage/contracts": "^26.13.0", "@ankhorage/kubernetes": "^0.9.1" } }, "sha512-Crw2sfh/ucHMeLcp8lXFZ5GP/0KNBO8GCPZe7AIPKdVLdT/WQNvNv2Y4khHGKTBlcyoxVkEASPhP5lCVZKKq7A=="],
 
     "@ankhorage/infra-r2": ["@ankhorage/infra-r2@0.3.0", "", { "dependencies": { "@ankhorage/contracts": "^26.2.2", "@ankhorage/utility": "^0.8.0" } }, "sha512-r/HRbWrSZh4pk/8l+X0X4z5W8WeXfx9efBcBrE302S2hCzmVUkgF/nU48BXdY2+m1PIwVbLu7iUj3nrGFkEYgg=="],
 
