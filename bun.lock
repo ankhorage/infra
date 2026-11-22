@@ -7,7 +7,7 @@
       "dependencies": {
         "@ankhorage/ankh": "^0.13.7",
         "@ankhorage/capability": "^0.2.3",
-        "@ankhorage/contracts": "^26.13.0",
+        "@ankhorage/contracts": "^26.13.1",
         "@ankhorage/utility": "^1.10.1",
       },
       "devDependencies": {
@@ -16,7 +16,7 @@
         "@ankhorage/infra-docker-compose": "^0.5.6",
         "@ankhorage/infra-hetzner": "^0.3.4",
         "@ankhorage/infra-k3s": "^0.4.5",
-        "@ankhorage/infra-local": "^0.3.33",
+        "@ankhorage/infra-local": "^0.3.34",
         "@ankhorage/infra-minikube": "^0.4.136",
         "@ankhorage/infra-r2": "^0.3.0",
         "@ankhorage/infra-supabase": "^0.6.1",
@@ -35,9 +35,9 @@
 
     "@ankhorage/capability": ["@ankhorage/capability@0.2.3", "", { "dependencies": { "@ankhorage/contracts": "^26.0.0", "@ankhorage/utility": "^1.9.85" } }, "sha512-xjQeaB0wLkdtHCjzzCvQ3+sJCKjQ20I+0FIpmdl60bpy9yij6UUgdoXEI3lWMpPoXG9tMMHmWQfXp7IP31bq4A=="],
 
-    "@ankhorage/color-theory": ["@ankhorage/color-theory@0.3.3", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-t3Vxwp53Hdxf6pkzUMcW/K7xh8axcgL4d5hqAWSMGPlOTiZJ1rzIraFH0e5AaeiCip7zmCbz+tOv7dCSQh3i6Q=="],
+    "@ankhorage/color-theory": ["@ankhorage/color-theory@0.3.4", "", { "dependencies": { "@types/culori": "^4.0.1", "culori": "^4.0.2" } }, "sha512-zM4GfmwJFXolPElp9gaGCZ7syIYAq8a1NFsLO9SSgjnrL6ceCsmsko58iFqAXe5XeXe7rsj4ON33dSwJRjeygA=="],
 
-    "@ankhorage/contracts": ["@ankhorage/contracts@26.13.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.3", "@ankhorage/utility": "^1.10.1" } }, "sha512-W3EgZlIDO4eOz0Ykwt/525desBP+3lxmERR+AYKi/jxoH9k+xkiIVUwA3/559DujuRugOqYL03CDMIi3rGu2+w=="],
+    "@ankhorage/contracts": ["@ankhorage/contracts@26.13.1", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.4", "@ankhorage/utility": "^1.10.1" } }, "sha512-Xm76yrJ0HzYPOaLqlmZ3KxgYRzRPVAwLoGhMRkZ97LnIruSM84ZDao/X0H3ai+U7P4tR22pL9Jrg14Fia5P3ww=="],
 
     "@ankhorage/devtools": ["@ankhorage/devtools@2.10.2", "", { "dependencies": { "@ankhorage/apm": "^0.8.15", "@ankhorage/capability": "^0.2.3", "@ankhorage/contracts": "^26.13.1", "@ankhorage/project-detector": "^0.3.6", "@ankhorage/rules-repository": "^0.5.0", "@ankhorage/utility": "^0.5.5", "@changesets/cli": "^3.0.3", "@eslint/compat": "^2.1.1", "@eslint/js": "^10.0.1", "@next/eslint-plugin-next": "^16.4.6", "eslint": "^10.15.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.7", "eslint-plugin-react": "^7.37.5", "eslint-plugin-react-hooks": "^7.1.1", "eslint-plugin-react-native": "^5.0.0", "eslint-plugin-security": "^4.2.1", "eslint-plugin-simple-import-sort": "^14.0.0", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.47.0", "prettier": "^3.10.1", "typescript": "~6.0.3", "typescript-eslint": "^8.73.0", "yaml": "^2.9.1" }, "bin": { "ankhorage-knip": "dist/cli/bin/knip.js", "ankhorage-eslint": "dist/cli/bin/eslint.js", "ankhorage-prettier": "dist/cli/bin/prettier.js", "ankhorage-changeset": "dist/cli/bin/changeset.js", "ankhorage-ci-impact": "dist/cli/bin/ci-impact.js", "ankhorage-structure": "dist/cli/bin/structure.js", "ankhorage-repository": "dist/cli/bin/repository.js", "ankhorage-apm-release": "dist/cli/bin/apm-release.js" } }, "sha512-jRKGQEDva4Ph6u6IBL5qaZLxq6yH/Z/1uLKRUWZp9lmRoxPsq71gZkayLNs21yaO7UjZaS0vn17wpDw6hFYMyA=="],
 
@@ -49,7 +49,7 @@
 
     "@ankhorage/infra-k3s": ["@ankhorage/infra-k3s@0.4.5", "", { "dependencies": { "@ankhorage/contracts": "^26.13.0", "@ankhorage/kubernetes": "^0.9.1", "@ankhorage/utility": "^1.10.1" } }, "sha512-SJOs7uJhD3jfm+376iHnDketlkIA5ivMwGTBaZsfF5c7tP1x5VL4iN69apM4vv+jt3RzaH58Dfd6Vmqga1yqUQ=="],
 
-    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.33", "", { "dependencies": { "@ankhorage/contracts": "^26.12.0" } }, "sha512-H/K02EJf2+cWFlqN4W9LtdNOQAxFnbMLo50vf1d4TorCsaVD8qvyQypocnQj7gfAL/YRjlxym8kH0C/O3VhqhQ=="],
+    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.34", "", { "dependencies": { "@ankhorage/contracts": "^26.13.1" } }, "sha512-CGJejuSjHnogRxHu1KtZ6iEsYAyISvH2Cl7T21GWZmMWSXZueEjKHMsYRkAyWtz/3sAL5GxVWPQITonAr6Hh+A=="],
 
     "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.136", "", { "dependencies": { "@ankhorage/contracts": "^26.13.0", "@ankhorage/kubernetes": "^0.9.1" } }, "sha512-Crw2sfh/ucHMeLcp8lXFZ5GP/0KNBO8GCPZe7AIPKdVLdT/WQNvNv2Y4khHGKTBlcyoxVkEASPhP5lCVZKKq7A=="],
 
@@ -935,6 +935,8 @@
 
     "@ankhorage/paradox/@ankhorage/rules-repository/@ankhorage/rules": ["@ankhorage/rules@0.6.0", "", { "dependencies": { "@ankhorage/ankh": "^0.13.1", "@ankhorage/capability": "^0.2.1", "@ankhorage/contracts": "^26.0.0", "@ankhorage/utility": "^1.9.0" }, "bin": { "ankhorage-rules": "dist/cli/standalone.js" } }, "sha512-wb8mqMW1EB7cPV40bu5B8T1KOHXzhnfi153ztj8OUTEb25jzhDTrsY/rgztLZiZMn7qnmWjckgRof/mY7SPvbQ=="],
 
+    "@ankhorage/supabase-vault/@ankhorage/contracts/@ankhorage/color-theory": ["@ankhorage/color-theory@0.3.3", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-t3Vxwp53Hdxf6pkzUMcW/K7xh8axcgL4d5hqAWSMGPlOTiZJ1rzIraFH0e5AaeiCip7zmCbz+tOv7dCSQh3i6Q=="],
+
     "@typescript-eslint/utils/@eslint-community/eslint-utils/eslint-visitor-keys": ["eslint-visitor-keys@3.4.3", "", {}, "sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag=="],
 
     "eslint-plugin-import/minimatch/brace-expansion": ["brace-expansion@1.1.22", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.1" } }, "sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ=="],
@@ -942,6 +944,8 @@
     "eslint-plugin-react/minimatch/brace-expansion": ["brace-expansion@1.1.22", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.1" } }, "sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ=="],
 
     "eslint/@eslint-community/eslint-utils/eslint-visitor-keys": ["eslint-visitor-keys@3.4.3", "", {}, "sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag=="],
+
+    "@ankhorage/devtools/@ankhorage/utility/@ankhorage/contracts/@ankhorage/color-theory": ["@ankhorage/color-theory@0.3.3", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-t3Vxwp53Hdxf6pkzUMcW/K7xh8axcgL4d5hqAWSMGPlOTiZJ1rzIraFH0e5AaeiCip7zmCbz+tOv7dCSQh3i6Q=="],
 
     "eslint-plugin-import/minimatch/brace-expansion/balanced-match": ["balanced-match@1.0.2", "", {}, "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw=="],
 
