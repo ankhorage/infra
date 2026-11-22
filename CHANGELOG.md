@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.3.6
+
+### Patch Changes
+
+- 6d3a5fa: Update dependencies: `@ankhorage/contracts`, `@ankhorage/infra-local`.
+
 ## 7.3.5
 
 ### Patch Changes
