@@ -16,7 +16,7 @@
         "@ankhorage/infra-docker-compose": "^0.5.6",
         "@ankhorage/infra-hetzner": "^0.3.4",
         "@ankhorage/infra-k3s": "^0.4.5",
-        "@ankhorage/infra-local": "^0.3.34",
+        "@ankhorage/infra-local": "^0.3.35",
         "@ankhorage/infra-minikube": "^0.4.136",
         "@ankhorage/infra-r2": "^0.3.0",
         "@ankhorage/infra-supabase": "^0.6.1",
@@ -49,7 +49,7 @@
 
     "@ankhorage/infra-k3s": ["@ankhorage/infra-k3s@0.4.5", "", { "dependencies": { "@ankhorage/contracts": "^26.13.0", "@ankhorage/kubernetes": "^0.9.1", "@ankhorage/utility": "^1.10.1" } }, "sha512-SJOs7uJhD3jfm+376iHnDketlkIA5ivMwGTBaZsfF5c7tP1x5VL4iN69apM4vv+jt3RzaH58Dfd6Vmqga1yqUQ=="],
 
-    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.34", "", { "dependencies": { "@ankhorage/contracts": "^26.13.1" } }, "sha512-CGJejuSjHnogRxHu1KtZ6iEsYAyISvH2Cl7T21GWZmMWSXZueEjKHMsYRkAyWtz/3sAL5GxVWPQITonAr6Hh+A=="],
+    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.35", "", { "dependencies": { "@ankhorage/contracts": "^26.14.0" } }, "sha512-rB66PKKvsM/uRHvRoZJMqk0GzrzdTD/UfaInI/V7N0IKkfI1mQJ4EVeKtSkeHKN+SP3aVxPebfgv7Qasu1MSHQ=="],
 
     "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.136", "", { "dependencies": { "@ankhorage/contracts": "^26.13.0", "@ankhorage/kubernetes": "^0.9.1" } }, "sha512-Crw2sfh/ucHMeLcp8lXFZ5GP/0KNBO8GCPZe7AIPKdVLdT/WQNvNv2Y4khHGKTBlcyoxVkEASPhP5lCVZKKq7A=="],
 
