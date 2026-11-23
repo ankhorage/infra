@@ -231,7 +231,7 @@
   },
   "devDependencies": {
     "@ankhorage/infra-cerbos": "^0.2.4",
-    "@ankhorage/devtools": "^2.10.15",
+    "@ankhorage/devtools": "^2.10.16",
     "@ankhorage/infra-docker-compose": "^0.5.6",
     "@ankhorage/infra-hetzner": "^0.3.4",
     "@ankhorage/infra-k3s": "^0.4.5",
