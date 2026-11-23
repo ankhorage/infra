@@ -16,8 +16,8 @@
         "@ankhorage/infra-docker-compose": "^0.5.6",
         "@ankhorage/infra-hetzner": "^0.3.4",
         "@ankhorage/infra-k3s": "^0.4.5",
-        "@ankhorage/infra-local": "^0.3.35",
-        "@ankhorage/infra-minikube": "^0.4.136",
+        "@ankhorage/infra-local": "^0.3.36",
+        "@ankhorage/infra-minikube": "^0.4.137",
         "@ankhorage/infra-r2": "^0.3.0",
         "@ankhorage/infra-supabase": "^0.6.1",
         "@ankhorage/paradox": "^0.6.0",
@@ -49,9 +49,9 @@
 
     "@ankhorage/infra-k3s": ["@ankhorage/infra-k3s@0.4.5", "", { "dependencies": { "@ankhorage/contracts": "^26.13.0", "@ankhorage/kubernetes": "^0.9.1", "@ankhorage/utility": "^1.10.1" } }, "sha512-SJOs7uJhD3jfm+376iHnDketlkIA5ivMwGTBaZsfF5c7tP1x5VL4iN69apM4vv+jt3RzaH58Dfd6Vmqga1yqUQ=="],
 
-    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.35", "", { "dependencies": { "@ankhorage/contracts": "^26.14.0" } }, "sha512-rB66PKKvsM/uRHvRoZJMqk0GzrzdTD/UfaInI/V7N0IKkfI1mQJ4EVeKtSkeHKN+SP3aVxPebfgv7Qasu1MSHQ=="],
+    "@ankhorage/infra-local": ["@ankhorage/infra-local@0.3.36", "", { "dependencies": { "@ankhorage/contracts": "^26.15.0" } }, "sha512-4m8S/73u29q3lGGsD74MKjqvhwK4sJqfR7VFUf3LQzhhjCvKJOCJk7KY2r6ikth63ZPqdxltQyNfr8zmzxHD4A=="],
 
-    "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.136", "", { "dependencies": { "@ankhorage/contracts": "^26.13.0", "@ankhorage/kubernetes": "^0.9.1" } }, "sha512-Crw2sfh/ucHMeLcp8lXFZ5GP/0KNBO8GCPZe7AIPKdVLdT/WQNvNv2Y4khHGKTBlcyoxVkEASPhP5lCVZKKq7A=="],
+    "@ankhorage/infra-minikube": ["@ankhorage/infra-minikube@0.4.137", "", { "dependencies": { "@ankhorage/contracts": "^26.15.0", "@ankhorage/kubernetes": "^0.9.1" } }, "sha512-gDmKRhVxVlsxPaiBx+L7rEwKsh0qDNkAML5bzmvIS0lzZHV5RjRDYrp3mCc4kZIZ+rn1RmXKH1vWTxM2s2PAxg=="],
 
     "@ankhorage/infra-r2": ["@ankhorage/infra-r2@0.3.0", "", { "dependencies": { "@ankhorage/contracts": "^26.2.2", "@ankhorage/utility": "^0.8.0" } }, "sha512-r/HRbWrSZh4pk/8l+X0X4z5W8WeXfx9efBcBrE302S2hCzmVUkgF/nU48BXdY2+m1PIwVbLu7iUj3nrGFkEYgg=="],
 
