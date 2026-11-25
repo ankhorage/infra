@@ -1,5 +1,11 @@
 # @ankhorage/infra
 
+## 7.3.7
+
+### Patch Changes
+
+- 3db024f: Reject duplicate, missing, and cyclic workload dependencies before planning or reconciliation.
+
 ## 7.3.6
 
 ### Patch Changes

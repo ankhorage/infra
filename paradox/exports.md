@@ -473,7 +473,7 @@ Aggregate provider-neutral compute, runtime and service status.
 
 Kind: `function`
 Module: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts`
-Source: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:27:1`
+Source: `src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts:28:1`
 
 Validate and reconcile compute, service preparation, workloads, runtime and services in order.
 

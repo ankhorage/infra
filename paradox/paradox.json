@@ -18,7 +18,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v7.3.6",
+      "value": "v7.3.7",
       "color": "cb3837"
     },
     {
@@ -610,6 +610,7 @@
         "src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts",
         "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
         "src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts",
+        "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
         "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
         "src/features/environment-lifecycle/utils/createInfraExecutionContext.ts",
         "src/types/infraOrchestration.ts"
@@ -661,6 +662,7 @@
         "src/features/environment-lifecycle/application/use-cases/validateInfraAdaptersAsync.ts",
         "src/features/environment-lifecycle/domain/resolveInfraEnvironment.ts",
         "src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts",
+        "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
         "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
         "src/features/environment-lifecycle/utils/createInfraExecutionContext.ts",
         "src/features/environment-lifecycle/utils/createInfraLedger.ts",
@@ -760,6 +762,14 @@
       ],
       "exports": [
         "resolveInfraWorkloadApiComposition"
+      ]
+    },
+    {
+      "path": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "validateInfraWorkloadGraph"
       ]
     },
     {
@@ -2534,7 +2544,7 @@
       "modulePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "line": 27,
+        "line": 28,
         "column": 1
       },
       "exportPaths": [
@@ -3439,7 +3449,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
-        "line": 17,
+        "line": 18,
         "column": 1
       }
     },
@@ -3450,7 +3460,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
-        "line": 110,
+        "line": 113,
         "column": 1
       }
     },
@@ -3461,7 +3471,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
-        "line": 118,
+        "line": 121,
         "column": 1
       }
     },
@@ -3472,7 +3482,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
-        "line": 133,
+        "line": 136,
         "column": 1
       }
     },
@@ -3483,7 +3493,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
-        "line": 142,
+        "line": 145,
         "column": 1
       }
     },
@@ -3703,7 +3713,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "line": 27,
+        "line": 28,
         "column": 1
       }
     },
@@ -3714,7 +3724,7 @@
       "security": [],
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
-        "line": 119,
+        "line": 122,
         "column": 1
       }
     },
@@ -3935,6 +3945,83 @@
       "sourceLocation": {
         "filePath": "src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts",
         "line": 65,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateInfraWorkloadGraph",
+      "description": "Validate unique workload identities and an acyclic graph of declared workload dependencies.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateUniqueWorkloadIds",
+      "description": "Reject ambiguous workload identities before resolving graph edges.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "line": 37,
+        "column": 1
+      }
+    },
+    {
+      "name": "findDependencyCycle",
+      "description": "Visit one workload's declared dependencies and return the first stable cycle path.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "line": 49,
+        "column": 1
+      }
+    },
+    {
+      "name": "cyclePath",
+      "description": "Keep a reachable dependency prefix out of the reported cycle.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "line": 74,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDuplicateWorkloadDiagnostic",
+      "description": "Describe an ambiguous workload identity in the composed desired state.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "line": 80,
+        "column": 1
+      }
+    },
+    {
+      "name": "createMissingDependencyDiagnostic",
+      "description": "Describe a workload dependency that is absent from the composed desired state.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "line": 89,
+        "column": 1
+      }
+    },
+    {
+      "name": "createCycleDiagnostic",
+      "description": "Describe a cycle that prevents dependency-first planning and reconciliation.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "line": 101,
         "column": 1
       }
     },
@@ -5291,6 +5378,11 @@
       },
       {
         "fromPath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
+        "toPath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts",
         "toPath": "src/features/environment-lifecycle/utils/appendInfraFailure.ts",
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts"
       },
@@ -5357,6 +5449,11 @@
       {
         "fromPath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
         "toPath": "src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
+      },
+      {
+        "fromPath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts",
+        "toPath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
       },
       {
@@ -6196,6 +6293,48 @@
         "sourcePath": "src/features/environment-lifecycle/domain/resolveInfraWorkloadApiComposition.ts"
       },
       {
+        "fromSymbol": "validateInfraWorkloadGraph",
+        "toSymbol": "validateUniqueWorkloadIds",
+        "callExpression": "validateUniqueWorkloadIds",
+        "sourcePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts"
+      },
+      {
+        "fromSymbol": "validateInfraWorkloadGraph",
+        "toSymbol": "createMissingDependencyDiagnostic",
+        "callExpression": "createMissingDependencyDiagnostic",
+        "sourcePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts"
+      },
+      {
+        "fromSymbol": "validateInfraWorkloadGraph",
+        "toSymbol": "findDependencyCycle",
+        "callExpression": "findDependencyCycle",
+        "sourcePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts"
+      },
+      {
+        "fromSymbol": "validateInfraWorkloadGraph",
+        "toSymbol": "createCycleDiagnostic",
+        "callExpression": "createCycleDiagnostic",
+        "sourcePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts"
+      },
+      {
+        "fromSymbol": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts",
+        "toSymbol": "createDuplicateWorkloadDiagnostic",
+        "callExpression": "createDuplicateWorkloadDiagnostic",
+        "sourcePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts"
+      },
+      {
+        "fromSymbol": "findDependencyCycle",
+        "toSymbol": "cyclePath",
+        "callExpression": "cyclePath",
+        "sourcePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts"
+      },
+      {
+        "fromSymbol": "findDependencyCycle",
+        "toSymbol": "findDependencyCycle",
+        "callExpression": "findDependencyCycle",
+        "sourcePath": "src/features/environment-lifecycle/domain/validateInfraWorkloadGraph.ts"
+      },
+      {
         "fromSymbol": "isInfraStoredState",
         "toSymbol": "isRecord",
         "callExpression": "isRecord",
@@ -6905,6 +7044,12 @@
       },
       {
         "fromSymbol": "prepareInfraOperationAsync",
+        "toSymbol": "validateInfraWorkloadGraph",
+        "callExpression": "validateInfraWorkloadGraph",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts"
+      },
+      {
+        "fromSymbol": "prepareInfraOperationAsync",
         "toSymbol": "resolveInfraWorkloadApiComposition",
         "callExpression": "resolveInfraWorkloadApiComposition",
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/prepareInfraOperationAsync.ts"
@@ -7141,6 +7286,12 @@
         "fromSymbol": "upInfraEnvironmentAsync",
         "toSymbol": "collectInfraWorkloadsAsync",
         "callExpression": "collectInfraWorkloadsAsync",
+        "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
+      },
+      {
+        "fromSymbol": "upInfraEnvironmentAsync",
+        "toSymbol": "validateInfraWorkloadGraph",
+        "callExpression": "validateInfraWorkloadGraph",
         "sourcePath": "src/features/environment-lifecycle/application/use-cases/upInfraEnvironmentAsync.ts"
       },
       {
