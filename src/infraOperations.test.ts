@@ -87,6 +87,68 @@ describe('provider-neutral lifecycle operations', () => {
     expect(calls.some((call) => call.endsWith('.plan'))).toBe(false);
   });
 
+  it('refuses a missing workload dependency before provider inspection or planning', async () => {
+    const calls: string[] = [];
+    const invalidManifest = {
+      ...manifest,
+      environments: {
+        local: {
+          ...desired,
+          workloads: {
+            worker: { ...workload('worker'), dependsOn: { api: true } },
+          },
+        },
+      },
+    };
+
+    const result = await planInfraEnvironmentAsync(
+      { projectId: 'sample', manifest: invalidManifest },
+      createDependencies(calls),
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      diagnostics: [{ code: 'infra-workload-dependency-missing' }],
+    });
+    expect(calls).not.toContain('local.inspect');
+    expect(calls.some((call) => call.endsWith('.plan'))).toBe(false);
+  });
+
+  it('passes a complete test-only Flow-shaped graph to a dry-run without resolving secrets or mutating adapters', async () => {
+    const calls: string[] = [];
+    const runtimeWorkloads: InfraWorkloadSpec[][] = [];
+    const flowManifest = {
+      environments: {
+        local: {
+          ...desired,
+          networking: { publicBaseUrl: 'https://flow.fixture.invalid' },
+          workloads: completeFlowFixture,
+        },
+      },
+      modules: [],
+    } as const;
+
+    const result = await planInfraEnvironmentAsync(
+      { projectId: 'sample', manifest: flowManifest },
+      createDependencies(calls, runtimeWorkloads),
+    );
+
+    expect(result.ok).toBe(true);
+    expect(runtimeWorkloads).toHaveLength(2);
+    expect(runtimeWorkloads[0]?.map(({ id }) => id)).toEqual([
+      'flow-api',
+      'flow-worker',
+      'flow-durable-store',
+      'flow-artifact-storage',
+      'flow-scheduler',
+      'supabase',
+      'supabase-vault',
+    ]);
+    expect(JSON.stringify(runtimeWorkloads)).not.toContain('fixture-secret-value');
+    expect(calls.some((call) => call.endsWith('.ensure'))).toBe(false);
+    expect(calls.some((call) => call.endsWith('.reconcile'))).toBe(false);
+  });
+
   it('plans fresh remote compute and a deferred runtime without inventing an SSH target', async () => {
     const calls: string[] = [];
     const remoteManifest = {
@@ -216,29 +278,39 @@ describe('provider-neutral lifecycle operations', () => {
   });
 });
 
-function createDependencies(calls: string[]): InfraOrchestrationDependencies {
+function createDependencies(
+  calls: string[],
+  runtimeWorkloads?: InfraWorkloadSpec[][],
+): InfraOrchestrationDependencies {
   return {
-    adapterResolver: createResolver(calls),
+    adapterResolver: createResolver(calls, runtimeWorkloads),
     credentials: { resolveAsync: () => Promise.resolve(success({})) },
     secrets: { resolveAsync: () => Promise.resolve(success('resolved-secret')) },
   };
 }
 
-function createResolver(calls: string[]): InfraAdapterPackageResolver {
+function createResolver(
+  calls: string[],
+  runtimeWorkloads?: InfraWorkloadSpec[][],
+): InfraAdapterPackageResolver {
   return {
     loadAsync(packageName) {
       const descriptor = descriptorForPackage(packageName);
       return Promise.resolve({
         infraAdapterDescriptor: descriptor,
-        createInfraAdapter: () => createAdapter(descriptor, calls),
+        createInfraAdapter: () => createAdapter(descriptor, calls, runtimeWorkloads),
       });
     },
   };
 }
 
-function createAdapter(descriptor: InfraAdapterDescriptor, calls: string[]): unknown {
+function createAdapter(
+  descriptor: InfraAdapterDescriptor,
+  calls: string[],
+  runtimeWorkloads?: InfraWorkloadSpec[][],
+): unknown {
   if (descriptor.kind === 'compute') return createCompute(descriptor, calls);
-  if (descriptor.kind === 'runtime') return createRuntime(descriptor, calls);
+  if (descriptor.kind === 'runtime') return createRuntime(descriptor, calls, runtimeWorkloads);
   return createService(descriptor, calls);
 }
 
@@ -266,12 +338,21 @@ function createCompute(descriptor: InfraAdapterDescriptor, calls: string[]): Inf
   };
 }
 
-function createRuntime(descriptor: InfraAdapterDescriptor, calls: string[]): InfraRuntimeAdapter {
+function createRuntime(
+  descriptor: InfraAdapterDescriptor,
+  calls: string[],
+  runtimeWorkloads?: InfraWorkloadSpec[][],
+): InfraRuntimeAdapter {
   return {
     descriptor: descriptor as InfraRuntimeAdapter['descriptor'],
-    validateAsync: () => recordedAsync(calls, `${descriptor.id}.validate`, null),
-    planAsync: () =>
-      recordedAsync(calls, `${descriptor.id}.plan`, [action(runtimeOwner, [computeOwner])]),
+    validateAsync: (_context, desiredState) => {
+      runtimeWorkloads?.push([...desiredState.workloads]);
+      return recordedAsync(calls, `${descriptor.id}.validate`, null);
+    },
+    planAsync: (_context, desiredState) => {
+      runtimeWorkloads?.push([...desiredState.workloads]);
+      return recordedAsync(calls, `${descriptor.id}.plan`, [action(runtimeOwner, [computeOwner])]);
+    },
     ensureAsync: () =>
       recordedAsync(calls, `${descriptor.id}.ensure`, { resources: [], outputs: [] }),
     statusAsync: () =>
@@ -389,6 +470,90 @@ function status(
 
 function workload(id: string): InfraWorkloadSpec {
   return { id, artifact: { kind: 'image', image: `example/${id}:1` } };
+}
+
+const testOnlyImmutableImage =
+  'example.invalid/flow-fixture@sha256:0000000000000000000000000000000000000000000000000000000000000000';
+const testOnlyFlowVolume = {
+  id: 'flow',
+  mountPath: '/var/lib/flow',
+  sizeGiB: 1,
+  retention: 'retain',
+} as const;
+const flowDependencies = {
+  'flow-durable-store': true,
+  'flow-artifact-storage': true,
+  'flow-scheduler': true,
+} as const;
+
+const completeFlowFixture = {
+  'flow-api': {
+    id: 'flow-api',
+    artifact: { kind: 'image', image: testOnlyImmutableImage },
+    command: ['flow', 'api'],
+    ports: { http: { port: 4310, protocol: 'tcp' } },
+    exposure: 'public',
+    health: { kind: 'http', port: 4310, path: '/health' },
+    persistence: { flow: testOnlyFlowVolume },
+    resources: { cpuMillis: 250, memoryMiB: 512 },
+    replicas: 1,
+    dependsOn: flowDependencies,
+    environment: {
+      FLOW_RUNTIME_MODULE: { kind: 'literal', value: 'fixture-flow-runtime' },
+      FLOW_API_HOSTNAME: { kind: 'literal', value: 'flow.fixture.invalid' },
+      FLOW_API_TOKEN: { kind: 'secret', reference: fixtureSecretReference('api-token') },
+      FLOW_ARTIFACT_ENDPOINT: { kind: 'literal', value: 'http://flow-artifact-storage:9000' },
+      FLOW_SCHEDULER_ENDPOINT: { kind: 'literal', value: 'http://flow-scheduler:4311' },
+    },
+  },
+  'flow-worker': {
+    id: 'flow-worker',
+    artifact: { kind: 'image', image: testOnlyImmutableImage },
+    command: ['flow', 'worker'],
+    exposure: 'internal',
+    health: { kind: 'command', command: ['flow', 'worker', 'health'] },
+    persistence: { flow: testOnlyFlowVolume },
+    resources: { cpuMillis: 250, memoryMiB: 512 },
+    replicas: 1,
+    dependsOn: flowDependencies,
+    environment: {
+      FLOW_RUNTIME_MODULE: { kind: 'literal', value: 'fixture-flow-runtime' },
+      FLOW_WORKER_TOKEN: { kind: 'secret', reference: fixtureSecretReference('worker-token') },
+      FLOW_ARTIFACT_ENDPOINT: { kind: 'literal', value: 'http://flow-artifact-storage:9000' },
+      FLOW_SCHEDULER_ENDPOINT: { kind: 'literal', value: 'http://flow-scheduler:4311' },
+    },
+  },
+  'flow-durable-store': {
+    id: 'flow-durable-store',
+    artifact: { kind: 'image', image: 'example.invalid/flow-fixture-store:0' },
+    exposure: 'internal',
+    health: { kind: 'tcp', port: 5432 },
+    ports: { postgres: { port: 5432, protocol: 'tcp' } },
+    persistence: { data: { id: 'data', mountPath: '/data', sizeGiB: 1, retention: 'retain' } },
+  },
+  'flow-artifact-storage': {
+    id: 'flow-artifact-storage',
+    artifact: { kind: 'image', image: 'example.invalid/flow-fixture-artifacts:0' },
+    exposure: 'internal',
+    health: { kind: 'http', port: 9000, path: '/health/live' },
+    ports: { api: { port: 9000, protocol: 'tcp' } },
+  },
+  'flow-scheduler': {
+    id: 'flow-scheduler',
+    artifact: { kind: 'image', image: 'example.invalid/flow-fixture-scheduler:0' },
+    exposure: 'internal',
+    health: { kind: 'command', command: ['scheduler', 'health'] },
+  },
+} as const satisfies Record<string, InfraWorkloadSpec>;
+
+function fixtureSecretReference(key: string) {
+  return {
+    source: 'secret-store' as const,
+    projectId: 'sample',
+    environment: 'local' as const,
+    ref: 'flow-fixture',
+    key,
+  };
 }
 
 function descriptorForPackage(packageName: string): InfraAdapterDescriptor {
